@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1062982681444",
+    "project_id": "somotaskmanagement",
+    "storage_bucket": "somotaskmanagement.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062982681444:android:1a5e01fcc34cbea5d37071",
+        "android_client_info": {
+          "package_name": "com.example.manager_somo_farm_task_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8Vvc95rKSdAO2t4Dhtl8I3UlLSEVhPgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
