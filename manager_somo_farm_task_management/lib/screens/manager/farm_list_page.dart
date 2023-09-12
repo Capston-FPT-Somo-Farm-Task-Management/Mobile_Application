@@ -112,18 +112,15 @@ class FarmListPage extends StatelessWidget {
                                   // our product image
                                   Positioned(
                                     right: 0,
-                                    child: Hero(
-                                      tag: '${products[index].id}',
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        height: 150,
-                                        // image is square but we add extra 20 + 20 padding thats why width is 200
-                                        width: 210,
-                                        child: Image.network(
-                                          products[index].image,
-                                          fit: BoxFit.contain,
-                                        ),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0),
+                                      height: 150,
+                                      // image is square but we add extra 20 + 20 padding thats why width is 200
+                                      width: 210,
+                                      child: Image.network(
+                                        products[index].image,
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
                                   ),
