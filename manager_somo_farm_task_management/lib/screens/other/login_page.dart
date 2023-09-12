@@ -101,7 +101,7 @@ class LoginPage extends StatelessWidget {
                   // Xử lý khi Container được nhấn, ví dụ: chuyển đến trang home
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => FarmListPage(),
+                      builder: (context) => const FarmListPage(),
                     ),
                   );
                 },
