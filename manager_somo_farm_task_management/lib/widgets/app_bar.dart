@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_page.dart';
 
 import '../screens/manager/farm_list_page.dart';
 
@@ -65,8 +67,69 @@ class CustomAppBar extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          // Xử lý hành động khi biểu tượng "add_circle" được nhấp vào
-                          // Đặc điểm xử lý ở đây
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20.0),
+                              ),
+                            ),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            builder: (BuildContext context) {
+                              return Container(
+                                height: MediaQuery.of(context).size.height *
+                                    0.8, // Điều chỉnh chiều cao tối đa của bottom sheet
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(16.0),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const SizedBox(height: 20),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.check_circle),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Task",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.note_add),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Note",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
                         },
                         child: const Icon(
                           Icons.add_circle,
@@ -79,15 +142,249 @@ class CustomAppBar extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          // Xử lý hành động khi biểu tượng "menu" được nhấp vào
-                          // Đặc điểm xử lý ở đây
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20.0),
+                              ),
+                            ),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            builder: (BuildContext context) {
+                              return Container(
+                                height: MediaQuery.of(context).size.height *
+                                    0.8, // Điều chỉnh chiều cao tối đa của bottom sheet
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(16.0),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const SizedBox(height: 20),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.check_circle),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Task",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.map),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Farm map",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.pie_chart_rounded),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Report",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons
+                                                    .calendar_month_outlined),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Schedule",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.landslide),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Habitant",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LiveStockPage(),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(Icons.abc),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Livestock",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PlantPage(),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(Icons.abc),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Plant",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons
+                                                    .perm_contact_calendar_sharp),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Contact",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.person),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Profile",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons
+                                                    .question_mark_rounded),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Question",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: const Row(children: [
+                                                Icon(Icons.logout),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Sign out",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
                         },
-                        child: const Icon(
-                          Icons.menu,
-                          size: 35,
-                          color: kTextBlackColor,
+                        child: const Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.menu,
+                              size: 35,
+                              color: kTextBlackColor,
+                            ),
+                          ],
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
