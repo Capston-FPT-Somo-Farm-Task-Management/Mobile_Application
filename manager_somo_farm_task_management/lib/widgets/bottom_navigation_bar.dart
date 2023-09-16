@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/other/settings_page.dart';
 
@@ -11,24 +13,27 @@ class BottomNavBar extends StatelessWidget {
   const BottomNavBar(
       {super.key, required this.currentIndex, required this.onTabChanged});
 
-  Future<void> _onTabChanged(int index, BuildContext context) async {
+  _onTabChanged(int index, BuildContext context) {
     if (index == 0) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const ManagerHomePage()),
+        MaterialPageRoute(
+            builder: (context) => ManagerHomePage(
+                  farm: getFarm(),
+                )),
       );
     } else if (index == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ManagerHomePage(),
+          builder: (context) => SettingsPage(),
         ),
       );
     } else if (index == 2) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ManagerHomePage(),
+          builder: (context) => SettingsPage(),
         ),
       );
     } else if (index == 3) {
@@ -103,5 +108,21 @@ class BottomNavBar extends StatelessWidget {
 
   Color _getCurrentTabColor(int tabIndex) {
     return currentIndex == tabIndex ? kPrimaryColor : kTextGreyColor;
+  }
+
+  Future<int?> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? farmId = prefs.getInt('farmId');
+    return farmId;
+  }
+
+  Farm getFarm() {
+    Farm farm = products.first;
+    getFarmId().then((value) {
+      if (value != null) {
+        return products.where((f) => f.id == value);
+      }
+    });
+    return farm;
   }
 }
