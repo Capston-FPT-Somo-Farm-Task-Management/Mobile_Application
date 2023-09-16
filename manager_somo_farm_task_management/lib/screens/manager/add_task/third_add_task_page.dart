@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/employee.dart';
-import 'package:manager_somo_farm_task_management/models/employee_task_type.dart';
-import 'package:manager_somo_farm_task_management/models/task.dart';
-import 'package:manager_somo_farm_task_management/models/task_type.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+class ThirdAddTaskPage extends StatefulWidget {
+  const ThirdAddTaskPage({super.key});
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  State<ThirdAddTaskPage> createState() => _ThirdAddTaskPage();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
+class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
@@ -24,18 +20,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
   List<int> remindList = [5, 10, 15, 20];
   String _selectedRepeat = "Không";
   List<String> repeatList = ["Không", "Hàng ngày", "Hàng tuần", "Hàng tháng"];
-  List<String> field = ["Khu CN1", "Khu CN2", "Khu CN3", "Khu TT1"];
-  String _selectedField = "Khu CN1";
-  List<String> taskType = ["Trồng trọt", "Chăn nuôi", "Thú y", "Đất đai"];
-  String _selectedTaskType = listTaskTypes[0].taskTypeName;
-  String _selectedEmployee = listEmployees[0].fullName;
-  List<Employee> filteredEmployees = listEmployeeTaskTypes
-      .where((employeeTaskType) => employeeTaskType.taskTypeId == 1)
-      .map((employeeTaskType) => listEmployees.firstWhere(
-          (employee) => employee.employeeId == employeeTaskType.employeeId))
-      .toList();
-  List<String> user = ["Ronaldo", "Messi", "Benzema", "Mac Hai"];
-  String _selectedUser = "Ronaldo";
 
   int _selectedColor = 0;
   @override
@@ -67,110 +51,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm công việc",
+                "Thêm công việc (3/3)",
                 style: headingStyle,
-              ),
-              MyInputField(
-                title: "Tên công việc",
-                hint: "Nhập tên công việc",
-                controller: _titleController,
-              ),
-              MyInputField(
-                title: "Loại nhiệm vụ",
-                hint: _selectedTaskType,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (TaskType? newValue) {
-                    setState(() {
-                      _selectedTaskType = newValue!.taskTypeName;
-
-                      // Lọc danh sách Employee tương ứng với TaskType đã chọn
-                      filteredEmployees = listEmployeeTaskTypes
-                          .where((employeeTaskType) =>
-                              employeeTaskType.taskTypeId ==
-                              newValue.taskTypeId)
-                          .map((employeeTaskType) => listEmployees.firstWhere(
-                              (employee) =>
-                                  employee.employeeId ==
-                                  employeeTaskType.employeeId))
-                          .toList();
-
-                      // Gọi setState để cập nhật danh sách người thực hiện
-                      _selectedEmployee = filteredEmployees[0]
-                          .fullName; // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ
-                    });
-                  },
-                  items: listTaskTypes
-                      .map<DropdownMenuItem<TaskType>>((TaskType value) {
-                    return DropdownMenuItem<TaskType>(
-                      value: value,
-                      child: Text(value.taskTypeName),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Người thực hiện",
-                hint: _selectedEmployee,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Employee? newValue) {
-                    setState(() {
-                      _selectedUser = newValue!.fullName;
-                    });
-                  },
-                  items: filteredEmployees
-                      .map<DropdownMenuItem<Employee>>((Employee value) {
-                    return DropdownMenuItem<Employee>(
-                      value: value,
-                      child: Text(value.fullName),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Người giám sát",
-                hint: _selectedUser,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedUser = newValue!;
-                    });
-                  },
-                  items: user.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Mô tả",
-                hint: "Nhập mô tả",
-                controller: _noteController,
               ),
               MyInputField(
                 title: "Ngày thực hiện",
@@ -219,31 +101,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     ),
                   ),
                 ],
-              ),
-              MyInputField(
-                title: "Khu đất",
-                hint: _selectedField,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedField = newValue!;
-                    });
-                  },
-                  items: field.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
               ),
               MyInputField(
                 title: "Remind",
