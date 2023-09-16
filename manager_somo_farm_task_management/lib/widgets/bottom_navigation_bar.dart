@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 
 import '../screens/other/settings_page.dart';
 
