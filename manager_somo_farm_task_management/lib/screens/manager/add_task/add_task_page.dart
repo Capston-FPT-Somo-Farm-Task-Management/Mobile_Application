@@ -79,6 +79,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Loại nhiệm vụ",
                 hint: _selectedTaskType,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -119,6 +120,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Người thực hiện",
                 hint: _selectedEmployee,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -144,6 +146,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Người giám sát",
                 hint: _selectedUser,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -221,6 +224,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Khu đất",
                 hint: _selectedField,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -245,6 +249,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Remind",
                 hint: "$_selectedRemind minutes early",
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -269,6 +274,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Lặp lại",
                 hint: "$_selectedRepeat",
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
