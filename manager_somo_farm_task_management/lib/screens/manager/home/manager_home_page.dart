@@ -7,7 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/first_add_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
 
 import '../../../widgets/app_bar.dart';
@@ -69,7 +69,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) =>
-                            FirstAddTaskPage(farm: widget.farm),
+                            // FirstAddTaskPage(farm: widget.farm),
+                            ChooseHabitantPage(farm: widget.farm),
                       ),
                     );
                   },
