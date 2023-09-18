@@ -171,7 +171,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   style: subTitileStyle,
                   onChanged: (String? newValue) {
                     setState(() {
-                      _selectedField = newValue!;
+                      _selectedPriority = newValue!;
                     });
                   },
                   items:
