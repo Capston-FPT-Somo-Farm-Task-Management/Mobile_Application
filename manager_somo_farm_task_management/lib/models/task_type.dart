@@ -33,32 +33,32 @@ class TaskType {
 List<TaskType> listTaskTypes = [
   TaskType(
     taskTypeId: 1,
-    taskTypeName: "Type 1",
-    description: "Description for Type 1",
+    taskTypeName: "Trồng trọt",
+    description: "Description for Trồng trọt",
     status: true,
   ),
   TaskType(
     taskTypeId: 2,
-    taskTypeName: "Type 2",
-    description: "Description for Type 2",
+    taskTypeName: "Chăn nuôi",
+    description: "Description for Chăn nuôi",
     status: false,
   ),
   TaskType(
     taskTypeId: 3,
-    taskTypeName: "Type 3",
-    description: "Description for Type 3",
+    taskTypeName: "Thú y",
+    description: "Description for Thú y",
     status: true,
   ),
   TaskType(
     taskTypeId: 4,
-    taskTypeName: "Type 4",
-    description: "Description for Type 4",
+    taskTypeName: "Đất đai",
+    description: "Description for Đất đai",
     status: false,
   ),
   TaskType(
     taskTypeId: 5,
-    taskTypeName: "Type 5",
-    description: "Description for Type 5",
+    taskTypeName: "Thủy sản",
+    description: "Description for Thủy sản",
     status: true,
   ),
 ];

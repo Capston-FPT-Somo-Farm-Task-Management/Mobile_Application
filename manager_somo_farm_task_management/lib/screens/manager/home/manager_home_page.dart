@@ -5,16 +5,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/add_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
-import 'package:manager_somo_farm_task_management/services/notification_services.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
 
 class ManagerHomePage extends StatefulWidget {
-  const ManagerHomePage({Key? key}) : super(key: key);
+  final Farm farm;
+  const ManagerHomePage({Key? key, required this.farm}) : super(key: key);
 
   @override
   ManagerHomePageState createState() => ManagerHomePageState();
@@ -67,7 +68,9 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const AddTaskPage(),
+                        builder: (context) =>
+                            // FirstAddTaskPage(farm: widget.farm),
+                            ChooseHabitantPage(farm: widget.farm),
                       ),
                     );
                   },

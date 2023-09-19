@@ -42,7 +42,10 @@ dependencies:
   date_picker_timeline: ^1.2.5
   flutter_staggered_animations:
   flutter_local_notifications: ^9.0.3
+  shared_preferences:
   get:
+  font_awesome_flutter: ^10.5.0
+  flutter_chips_input: ^2.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
