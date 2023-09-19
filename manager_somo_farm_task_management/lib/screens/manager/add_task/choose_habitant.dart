@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/farm.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_one_or_many.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/option.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/first_add_task_page.dart';
 
 class ChooseHabitantPage extends StatefulWidget {
@@ -44,158 +46,54 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
               style: headingStyle,
             ),
             const Spacer(),
-
-            GestureDetector(
+            Option(
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => FirstAddTaskPage(farm: widget.farm),
+                    builder: (context) =>
+                        ChooseOneOrMany(farm: widget.farm, isPlant: false),
                   ),
                 );
               },
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: kTextGreyColor,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    ///Container for Icon
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: const Color.fromARGB(255, 246, 255, 246)),
-                      padding: const EdgeInsets.all(16),
-                      child: const Icon(
-                        Icons.pets_outlined,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-
-                    ///For spacing
-                    const SizedBox(
-                      width: 24,
-                    ),
-
-                    ///For Text
-                    const Text(
-                      "Động vật",
-                      style: TextStyle(
-                          fontSize: 18,
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: kTextGreyColor),
-                    ),
-
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
+              title: "Động vật",
+              icon: Icons.pets_outlined,
+              iconColor: kPrimaryColor,
+              backgroundIconColor: const Color.fromARGB(255, 246, 255, 246),
             ),
 
             ///For Spacing
             const SizedBox(height: 16),
 
             ///Container for remind
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: kTextGreyColor,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  ///Container for Icon
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: const Color.fromARGB(255, 246, 255, 246)),
-                    padding: const EdgeInsets.all(16),
-                    child: const Icon(
-                      FontAwesomeIcons.pagelines,
-                      color: kPrimaryColor,
-                    ),
+            Option(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ChooseOneOrMany(farm: widget.farm, isPlant: true),
                   ),
-
-                  ///For spacing
-                  const SizedBox(
-                    width: 24,
-                  ),
-
-                  ///For Text
-                  const Text(
-                    "Thực vật",
-                    style: TextStyle(
-                        fontSize: 18,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                        color: kTextGreyColor),
-                  ),
-
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    onPressed: () {},
-                  )
-                ],
-              ),
+                );
+              },
+              title: "Thực vật",
+              icon: FontAwesomeIcons.pagelines,
+              iconColor: kPrimaryColor,
+              backgroundIconColor: const Color.fromARGB(255, 246, 255, 246),
             ),
             const SizedBox(height: 16),
 
-            ///Container for remind
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: kTextGreyColor,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  ///Container for Icon
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromARGB(255, 245, 243, 241)),
-                    padding: const EdgeInsets.all(16),
-                    child: const Icon(
-                      Icons.help,
-                      color: kSecondColor,
-                    ),
+            Option(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ChooseOneOrMany(farm: widget.farm, isPlant: true),
                   ),
-
-                  ///For spacing
-                  const SizedBox(
-                    width: 24,
-                  ),
-
-                  ///For Text
-                  const Text(
-                    "Khác",
-                    style: TextStyle(
-                        fontSize: 18,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                        color: kTextGreyColor),
-                  ),
-
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    onPressed: () {},
-                  )
-                ],
-              ),
+                );
+              },
+              title: "Khác",
+              icon: Icons.help,
+              iconColor: kSecondColor,
+              backgroundIconColor: const Color.fromARGB(255, 246, 255, 246),
             ),
             const Spacer(),
           ],
