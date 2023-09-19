@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
 class CreateScrops extends StatelessWidget {
   const CreateScrops({super.key});
@@ -120,7 +120,6 @@ class CreateScrops extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               Align(
-                alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -137,7 +136,7 @@ class CreateScrops extends StatelessWidget {
                   ),
                   child: const Center(
                     child: Text(
-                      "Tạo cây trồng",
+                      "Tạo loại cây trồng",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),

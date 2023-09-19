@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/create_the_crops.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/create_the_crops.dart';
 
-import '../../widgets/app_bar.dart';
-import '../../widgets/bottom_navigation_bar.dart';
+import '../../../widgets/app_bar.dart';
+import '../../../widgets/bottom_navigation_bar.dart';
 
 class PlantPage extends StatefulWidget {
   const PlantPage({Key? key}) : super(key: key);
@@ -40,8 +41,7 @@ class PlantPageState extends State<PlantPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                        height: 10), // Khoảng cách giữa đoạn văn bản và nút
+                    const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Row(
@@ -70,7 +70,13 @@ class PlantPageState extends State<PlantPage> {
                           ),
                           const SizedBox(width: 10), // Khoảng cách giữa hai nút
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreatePlant()),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kPrimaryColor,
                               minimumSize: Size(100, 45),

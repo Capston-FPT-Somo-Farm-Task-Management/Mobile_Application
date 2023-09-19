@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
 import '../screens/manager/farm_list_page.dart';
 
