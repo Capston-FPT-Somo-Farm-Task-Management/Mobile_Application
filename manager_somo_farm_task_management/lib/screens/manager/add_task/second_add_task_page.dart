@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/employee.dart';
 import 'package:manager_somo_farm_task_management/models/employee_task_type.dart';
 import 'package:manager_somo_farm_task_management/models/material.dart';
@@ -26,6 +27,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
       .map((employeeTaskType) => listEmployees.firstWhere(
           (employee) => employee.employeeId == employeeTaskType.employeeId))
       .toList();
+  List<Employee> selectedEmployees = [];
+  List<MaterialFarm> selectedMaterials = [];
   List<String> user = ["Ronaldo", "Messi", "Benzema", "Mac Hai"];
   String _selectedUser = "Ronaldo";
 
@@ -156,7 +159,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                             }
                           },
                           onChanged: (data) {
-                            print(data);
+                            selectedEmployees = data.cast<Employee>();
+                            print(data.length);
                           },
                           chipBuilder: (context, state, employee) {
                             return InputChip(
@@ -253,6 +257,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                             }
                           },
                           onChanged: (data) {
+                            selectedMaterials = data.cast<MaterialFarm>();
                             print(data);
                           },
                           chipBuilder: (context, state, material) {
@@ -290,11 +295,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   Container(),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ThirdAddTaskPage(),
-                        ),
-                      );
+                      _validateDate();
                     },
                     child: Container(
                       width: 120,
@@ -321,5 +322,23 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
         ),
       ),
     );
+  }
+
+  _validateDate() {
+    if (_titleController.text.isNotEmpty &&
+        _noteController.text.isNotEmpty &&
+        selectedEmployees.isNotEmpty &&
+        selectedMaterials.isNotEmpty) {
+      //add database
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const ThirdAddTaskPage(),
+        ),
+      );
+    } else {
+      // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
+      SnackbarShowNoti.showSnackbar(
+          context, 'Vui lòng điền đầy đủ thông tin', true);
+    }
   }
 }
