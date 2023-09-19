@@ -9,7 +9,13 @@ import 'package:manager_somo_farm_task_management/screens/manager/add_task/compo
 
 class FirstAddTaskPage extends StatefulWidget {
   final Farm farm;
-  const FirstAddTaskPage({super.key, required this.farm});
+  final bool isOne;
+  final bool isPlant;
+  const FirstAddTaskPage(
+      {super.key,
+      required this.farm,
+      required this.isOne,
+      required this.isPlant});
 
   @override
   State<FirstAddTaskPage> createState() => _FirstAddTaskPage();
@@ -132,7 +138,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                 ),
               ),
               MyInputField(
-                title: "Khu đất",
+                title: widget.isPlant ? "Vườn" : "Chuồng",
                 hint: _selectedField,
                 widget: DropdownButton(
                   underline: Container(height: 0),
@@ -157,6 +163,33 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   }).toList(),
                 ),
               ),
+              if (widget.isOne)
+                MyInputField(
+                  title: widget.isPlant ? "Id cây trồng" : "Id con vật",
+                  hint: _selectedField,
+                  widget: DropdownButton(
+                    underline: Container(height: 0),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.grey,
+                    ),
+                    iconSize: 32,
+                    elevation: 4,
+                    style: subTitileStyle,
+                    onChanged: (Field? newValue) {
+                      setState(() {
+                        _selectedField = newValue!.fieldName;
+                      });
+                    },
+                    items: filteredField
+                        .map<DropdownMenuItem<Field>>((Field value) {
+                      return DropdownMenuItem<Field>(
+                        value: value,
+                        child: Text(value.fieldName),
+                      );
+                    }).toList(),
+                  ),
+                ),
               MyInputField(
                 title: "Độ ưu tiên",
                 hint: _selectedPriority,
