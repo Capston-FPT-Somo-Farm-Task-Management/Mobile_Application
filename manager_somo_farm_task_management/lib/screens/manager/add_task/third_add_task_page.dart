@@ -12,18 +12,21 @@ class ThirdAddTaskPage extends StatefulWidget {
 }
 
 class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
-  DateTime? _selectedDate;
+  DateTime? _selectedStartDate;
+  DateTime? _selectedEndDate;
   DateTime? _selectedDateRepeatUntil;
   String _endTime = "hh:mm a";
   String _startTime = "hh:mm a";
-  int _selectedRemind = 5;
-  List<int> remindList = [5, 10, 15, 20];
+  int _selectedRemind = 0;
+  List<int> remindList = [0, 5, 10, 15, 20];
   String _selectedRepeat = "Không";
   List<String> repeatList = ["Không", "Hàng ngày", "Hàng tuần", "Hàng tháng"];
   String showInputFieldRepeat = "Không";
   List<int> repeatNumbers = [];
   int _selectedRepeatNumber = 1;
   int _selectedColor = 0;
+  List<String> priorities = ["Thấp", "Trung Bình", "Cao"];
+  String _selectedPriority = "Thấp";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,54 +60,36 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Ngày thực hiện",
-                hint: _selectedDate == null
-                    ? "dd/MM/yyy"
-                    : DateFormat('dd/MM/yyyy').format(_selectedDate!),
+                title: "Ngày giờ thực hiện",
+                hint: _selectedStartDate == null
+                    ? "dd/MM/yyyy HH:mm a"
+                    : DateFormat('dd/MM/yyyy HH:mm a')
+                        .format(_selectedStartDate!),
                 widget: IconButton(
                   icon: const Icon(
                     Icons.calendar_today_outlined,
                     color: Colors.grey,
                   ),
                   onPressed: () {
-                    _getDateFromUser(false);
+                    _getDateTimeFromUser(true);
                   },
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: MyInputField(
-                      title: "Giờ bắt đầu",
-                      hint: _startTime,
-                      widget: IconButton(
-                        onPressed: () {
-                          _getTimeFromUser(isStartTime: true);
-                        },
-                        icon: const Icon(
-                          Icons.access_time_rounded,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
+              MyInputField(
+                title: "Ngày giờ kết thúc",
+                hint: _selectedEndDate == null
+                    ? "dd/MM/yyyy HH:mm a"
+                    : DateFormat('dd/MM/yyyy HH:mm a')
+                        .format(_selectedEndDate!),
+                widget: IconButton(
+                  icon: const Icon(
+                    Icons.calendar_today_outlined,
+                    color: Colors.grey,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: MyInputField(
-                      title: "Giờ kết thúc",
-                      hint: _endTime,
-                      widget: IconButton(
-                        onPressed: () {
-                          _getTimeFromUser(isStartTime: false);
-                        },
-                        icon: const Icon(
-                          Icons.access_time_rounded,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  onPressed: () {
+                    _getDateTimeFromUser(false);
+                  },
+                ),
               ),
               MyInputField(
                 title: "Remind",
@@ -217,10 +202,36 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                       color: Colors.grey,
                     ),
                     onPressed: () {
-                      _getDateFromUser(true);
+                      _getDateFromUser();
                     },
                   ),
                 ),
+              MyInputField(
+                title: "Độ ưu tiên",
+                hint: _selectedPriority,
+                widget: DropdownButton(
+                  underline: Container(height: 0),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey,
+                  ),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitileStyle,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedPriority = newValue!;
+                    });
+                  },
+                  items:
+                      priorities.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
               const SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,7 +306,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   }
 
   _validateDate() {
-    if (_selectedDate != null &&
+    if (_selectedStartDate != null &&
+        _selectedEndDate != null &&
         _startTime != "hh:mm a" &&
         _endTime != "hh:mm a" &&
         _selectedRepeat == "Không") {
@@ -310,7 +322,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     }
   }
 
-  _getDateFromUser(bool repeatUntilDate) async {
+  _getDateFromUser() async {
     DateTime? _pickerDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -321,21 +333,64 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       print("it's null or something is wrong");
       return;
     }
-    if (repeatUntilDate && _selectedDate == null) {
+    if (_selectedStartDate == null) {
       SnackbarShowNoti.showSnackbar(context, "Chọn ngày thực hiện trước", true);
-    } else if (repeatUntilDate && _pickerDate.isBefore(_selectedDate!)) {
+    } else if (_pickerDate.isBefore(_selectedStartDate!)) {
       SnackbarShowNoti.showSnackbar(
           context, "Ngày kết thúc lặp lại phải lớn hơn ngày thực hiện", true);
     } else {
       setState(() {
-        if (repeatUntilDate) {
-          _selectedDateRepeatUntil = _pickerDate;
-        } else {
-          _selectedDate = _pickerDate;
-          _selectedDateRepeatUntil = null;
-        }
+        _selectedDateRepeatUntil = _pickerDate;
       });
     }
+  }
+
+  _getDateTimeFromUser(bool isStart) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 36525)),
+    );
+
+    if (selectedDate != null) {
+      // Nếu người dùng đã chọn một ngày, tiếp theo bạn có thể chọn giờ
+      TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (selectedTime != null) {
+        // Người dùng đã chọn cả ngày và giờ
+        DateTime selectedDateTime = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
+
+        if (isStart == false && _selectedStartDate == null) {
+          SnackbarShowNoti.showSnackbar(
+              context, "Chọn ngày giờ thực hiện trước", true);
+        } else if (isStart == false &&
+            selectedDateTime.isBefore(_selectedStartDate!)) {
+          SnackbarShowNoti.showSnackbar(context,
+              "Ngày giờ kết thúc phải lớn hơn ngày giờ thực hiện", true);
+        } else {
+          setState(() {
+            if (isStart) {
+              _selectedStartDate = selectedDateTime;
+              _selectedEndDate = null;
+            } else {
+              _selectedEndDate = selectedDateTime;
+            }
+          });
+        }
+      }
+      return;
+    }
+    return;
   }
 
   _getTimeFromUser({required bool isStartTime}) async {

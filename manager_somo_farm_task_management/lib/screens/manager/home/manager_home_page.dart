@@ -150,7 +150,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
             itemCount: taskList.length,
             itemBuilder: (_, index) {
               Task task = taskList[index];
-              if (task.repeat == 'Daily') {
+              if (task.repeat == 1) {
                 // DateTime date =
                 //     DateFormat.jm().parseLoose(task.startTime.toString());
                 // var myTime = DateFormat("HH:mm").format(date);
@@ -177,7 +177,12 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   ),
                 );
               }
-              if (task.date == DateFormat.yMd().format(_selectedDate)) {
+              if (task.startDate.isBefore(_selectedDate) &&
+                      task.endDate.isAfter(_selectedDate) ||
+                  DateFormat.yMd().format(task.startDate) ==
+                      DateFormat.yMd().format(_selectedDate) ||
+                  DateFormat.yMd().format(task.endDate) ==
+                      DateFormat.yMd().format(_selectedDate)) {
                 return AnimationConfiguration.staggeredList(
                   position: index,
                   child: SlideAnimation(
@@ -207,7 +212,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task.isCompleted == 1
+          height: task.status == 3
               ? MediaQuery.of(context).size.height * 0.24
               : MediaQuery.of(context).size.height * 0.32,
           color: kBackgroundColor,
@@ -222,7 +227,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 ),
               ),
               const Spacer(),
-              task.isCompleted == 1
+              task.status == 3
                   ? Container()
                   : _bottomSheetButton(
                       label: "Đã hoàn thành",

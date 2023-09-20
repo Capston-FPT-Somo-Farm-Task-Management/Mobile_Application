@@ -26,8 +26,6 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
   List<Area> filteredArea = [];
   String _selectedZone = zones[0].zoneName;
   String _selectedField = fields[0].fieldName;
-  List<String> priorities = ["Thấp", "Trung Bình", "Cao"];
-  String _selectedPriority = "Thấp";
   List<Zone> filteredZone =
       zones.where((zone) => zone.areaId == areas[0].areaId).toList();
   List<Field> filteredField =
@@ -190,32 +188,6 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                     }).toList(),
                   ),
                 ),
-              MyInputField(
-                title: "Độ ưu tiên",
-                hint: _selectedPriority,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedPriority = newValue!;
-                    });
-                  },
-                  items:
-                      priorities.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
               const SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
