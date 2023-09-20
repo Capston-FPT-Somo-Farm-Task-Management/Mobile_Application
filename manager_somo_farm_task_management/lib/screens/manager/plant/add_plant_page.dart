@@ -21,9 +21,9 @@ class CreatePlantState extends State<CreatePlant> {
   List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
   List<String> zones = [];
   List<String> lands = [];
-  String _selectedArea = "Khu vực xyz";
-  String _selectedZone = "";
-  String _selectedLand = "";
+  String _selectedArea = "Khu vực 1";
+  String _selectedZone = "Vùng 1";
+  String _selectedLand = "Khu đất 1";
   int _currentIndex = 0;
 
   @override
@@ -109,57 +109,55 @@ class CreatePlantState extends State<CreatePlant> {
                   }).toList(),
                 ),
               ),
-              if (zones.isNotEmpty)
-                MyInputField(
-                  title: "Chọn vùng",
-                  hint: _selectedZone,
-                  widget: DropdownButton(
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
-                    ),
-                    iconSize: 32,
-                    elevation: 4,
-                    style: subTitileStyle,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedZone = newValue!;
-                      });
-                      updateLands(_selectedZone);
-                    },
-                    items: zones.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+              MyInputField(
+                title: "Chọn vùng",
+                hint: _selectedZone,
+                widget: DropdownButton(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey,
                   ),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitileStyle,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedZone = newValue!;
+                    });
+                    updateLands(_selectedZone);
+                  },
+                  items: zones.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
-              if (_selectedZone.isNotEmpty && _selectedLand.isNotEmpty)
-                MyInputField(
-                  title: "Chọn khu đất",
-                  hint: _selectedLand,
-                  widget: DropdownButton(
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
-                    ),
-                    iconSize: 32,
-                    elevation: 4,
-                    style: subTitileStyle,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedLand = newValue!;
-                      });
-                    },
-                    items: lands.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+              ),
+              MyInputField(
+                title: "Chọn khu đất",
+                hint: _selectedLand,
+                widget: DropdownButton(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey,
                   ),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitileStyle,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedLand = newValue!;
+                    });
+                  },
+                  items: lands.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
+              ),
               MyInputNumber(
                 title: "Số lượng",
                 hint: "Nhập số lượng",
@@ -219,7 +217,6 @@ class CreatePlantState extends State<CreatePlant> {
     if (area == "Khu vực 1") {
       setState(() {
         zones = ["Vùng 1", "Vùng 2", "Vùng 3", "Vùng 4"];
-        _selectedZone = "Vùng 1";
       });
     } else {
       setState(() {
@@ -233,7 +230,6 @@ class CreatePlantState extends State<CreatePlant> {
     if (zone == "Vùng 1") {
       setState(() {
         lands = ["Khu đất 1", "Khu đất 2", "Khu đất 3", "Khu đất 4"];
-        _selectedLand = "Khu đất 1";
       });
     } else {
       setState(() {

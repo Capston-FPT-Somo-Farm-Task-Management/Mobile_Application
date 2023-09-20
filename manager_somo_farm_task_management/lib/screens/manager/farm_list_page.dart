@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/farm.dart';
 import 'home/manager_home_page.dart';
@@ -73,13 +74,17 @@ class FarmListPage extends StatelessWidget {
                             margin: margin,
                             height: 160,
                             child: InkWell(
-                              onTap: () {
+                              onTap: () async {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ManagerHomePage(),
+                                    builder: (context) =>
+                                        ManagerHomePage(farm: products[index]),
                                   ),
                                 );
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setInt('farmId', products[index].id);
                               },
                               child: Stack(
                                 alignment: Alignment.bottomCenter,

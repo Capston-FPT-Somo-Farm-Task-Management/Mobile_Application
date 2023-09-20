@@ -1,42 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/employee.dart';
-import 'package:manager_somo_farm_task_management/models/employee_task_type.dart';
-import 'package:manager_somo_farm_task_management/models/task.dart';
-import 'package:manager_somo_farm_task_management/models/task_type.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+class ThirdAddTaskPage extends StatefulWidget {
+  const ThirdAddTaskPage({super.key});
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  State<ThirdAddTaskPage> createState() => _ThirdAddTaskPage();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
-  String _endTime = "9:30 PM";
-  String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
+class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
+  DateTime? _selectedDate;
+  DateTime? _selectedDateRepeatUntil;
+  String _endTime = "hh:mm a";
+  String _startTime = "hh:mm a";
   int _selectedRemind = 5;
   List<int> remindList = [5, 10, 15, 20];
   String _selectedRepeat = "Không";
   List<String> repeatList = ["Không", "Hàng ngày", "Hàng tuần", "Hàng tháng"];
-  List<String> field = ["Khu CN1", "Khu CN2", "Khu CN3", "Khu TT1"];
-  String _selectedField = "Khu CN1";
-  List<String> taskType = ["Trồng trọt", "Chăn nuôi", "Thú y", "Đất đai"];
-  String _selectedTaskType = listTaskTypes[0].taskTypeName;
-  String _selectedEmployee = listEmployees[0].fullName;
-  List<Employee> filteredEmployees = listEmployeeTaskTypes
-      .where((employeeTaskType) => employeeTaskType.taskTypeId == 1)
-      .map((employeeTaskType) => listEmployees.firstWhere(
-          (employee) => employee.employeeId == employeeTaskType.employeeId))
-      .toList();
-  List<String> user = ["Ronaldo", "Messi", "Benzema", "Mac Hai"];
-  String _selectedUser = "Ronaldo";
-
+  String showInputFieldRepeat = "Không";
+  List<int> repeatNumbers = [];
+  int _selectedRepeatNumber = 1;
   int _selectedColor = 0;
   @override
   Widget build(BuildContext context) {
@@ -67,118 +53,21 @@ class _AddTaskPageState extends State<AddTaskPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm công việc",
+                "Thêm công việc (3/3)",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Tên công việc",
-                hint: "Nhập tên công việc",
-                controller: _titleController,
-              ),
-              MyInputField(
-                title: "Loại nhiệm vụ",
-                hint: _selectedTaskType,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (TaskType? newValue) {
-                    setState(() {
-                      _selectedTaskType = newValue!.taskTypeName;
-
-                      // Lọc danh sách Employee tương ứng với TaskType đã chọn
-                      filteredEmployees = listEmployeeTaskTypes
-                          .where((employeeTaskType) =>
-                              employeeTaskType.taskTypeId ==
-                              newValue.taskTypeId)
-                          .map((employeeTaskType) => listEmployees.firstWhere(
-                              (employee) =>
-                                  employee.employeeId ==
-                                  employeeTaskType.employeeId))
-                          .toList();
-
-                      // Gọi setState để cập nhật danh sách người thực hiện
-                      _selectedEmployee = filteredEmployees[0]
-                          .fullName; // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ
-                    });
-                  },
-                  items: listTaskTypes
-                      .map<DropdownMenuItem<TaskType>>((TaskType value) {
-                    return DropdownMenuItem<TaskType>(
-                      value: value,
-                      child: Text(value.taskTypeName),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Người thực hiện",
-                hint: _selectedEmployee,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Employee? newValue) {
-                    setState(() {
-                      _selectedUser = newValue!.fullName;
-                    });
-                  },
-                  items: filteredEmployees
-                      .map<DropdownMenuItem<Employee>>((Employee value) {
-                    return DropdownMenuItem<Employee>(
-                      value: value,
-                      child: Text(value.fullName),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Người giám sát",
-                hint: _selectedUser,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedUser = newValue!;
-                    });
-                  },
-                  items: user.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Mô tả",
-                hint: "Nhập mô tả",
-                controller: _noteController,
-              ),
-              MyInputField(
                 title: "Ngày thực hiện",
-                hint: DateFormat('dd/MM/yyyy').format(_selectedDate),
+                hint: _selectedDate == null
+                    ? "dd/MM/yyy"
+                    : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                 widget: IconButton(
                   icon: const Icon(
                     Icons.calendar_today_outlined,
                     color: Colors.grey,
                   ),
                   onPressed: () {
-                    _getDateFromUser();
+                    _getDateFromUser(false);
                   },
                 ),
               ),
@@ -218,33 +107,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 ],
               ),
               MyInputField(
-                title: "Khu đất",
-                hint: _selectedField,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedField = newValue!;
-                    });
-                  },
-                  items: field.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
                 title: "Remind",
                 hint: "$_selectedRemind minutes early",
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -269,6 +135,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: "Lặp lại",
                 hint: "$_selectedRepeat",
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -279,6 +146,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedRepeat = newValue!;
+                      showInputFieldRepeat = newValue;
+                      if (showInputFieldRepeat != "Không") {
+                        for (int i = 1; i <= 30; i++) {
+                          repeatNumbers.add(i);
+                        }
+                      }
                     });
                   },
                   items:
@@ -295,6 +168,59 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   }).toList(),
                 ),
               ),
+              if (showInputFieldRepeat != "Không")
+                MyInputField(
+                  title: "Lặp mỗi",
+                  hint: "$_selectedRepeatNumber",
+                  widget: DropdownButton(
+                    underline: Container(height: 0),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.grey,
+                    ),
+                    iconSize: 32,
+                    elevation: 4,
+                    style: subTitileStyle,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedRepeatNumber = int.parse(newValue!);
+                      });
+                    },
+                    items: repeatNumbers
+                        .map<DropdownMenuItem<String>>((int value) {
+                      return DropdownMenuItem<String>(
+                        value: value.toString(),
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                    menuMaxHeight: 200,
+                  ),
+                ),
+              if (showInputFieldRepeat != "Không")
+                Container(
+                  margin: const EdgeInsets.only(top: 7.0),
+                  child: Text(
+                    showInputFieldRepeat.split(' ').last,
+                    style: titileStyle,
+                  ),
+                ),
+              if (showInputFieldRepeat != "Không")
+                MyInputField(
+                  title: "Lặp đến ngày",
+                  hint: _selectedDateRepeatUntil == null
+                      ? "dd/MM/yyy"
+                      : DateFormat('dd/MM/yyyy')
+                          .format(_selectedDateRepeatUntil!),
+                  widget: IconButton(
+                    icon: const Icon(
+                      Icons.calendar_today_outlined,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      _getDateFromUser(true);
+                    },
+                  ),
+                ),
               const SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -369,74 +295,89 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
+    if (_selectedDate != null &&
+        _startTime != "hh:mm a" &&
+        _endTime != "hh:mm a" &&
+        _selectedRepeat == "Không") {
       //add database
+      Navigator.of(context).pop();
+    } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
       Navigator.of(context).pop();
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
-      const snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.error,
-              color: Colors.red, // Màu của biểu tượng cảnh báo
-            ),
-            SizedBox(width: 8), // Khoảng cách giữa biểu tượng và nội dung
-            Text(
-              'Vui lòng điền đầy đủ thông tin',
-              style: TextStyle(
-                color: Colors.red, // Màu của nội dung
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white, // Màu nền của Snackbar
-      );
-
-      // Hiển thị Snackbar
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      SnackbarShowNoti.showSnackbar(
+          context, 'Vui lòng điền đầy đủ thông tin', true);
     }
   }
 
-  _getDateFromUser() async {
+  _getDateFromUser(bool repeatUntilDate) async {
     DateTime? _pickerDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
+      firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 36525)),
     );
-    if (_pickerDate != null) {
-      setState(() {
-        _selectedDate = _pickerDate;
-      });
-    } else {
+    if (_pickerDate == null) {
       print("it's null or something is wrong");
+      return;
+    }
+    if (repeatUntilDate && _selectedDate == null) {
+      SnackbarShowNoti.showSnackbar(context, "Chọn ngày thực hiện trước", true);
+    } else if (repeatUntilDate && _pickerDate.isBefore(_selectedDate!)) {
+      SnackbarShowNoti.showSnackbar(
+          context, "Ngày kết thúc lặp lại phải lớn hơn ngày thực hiện", true);
+    } else {
+      setState(() {
+        if (repeatUntilDate) {
+          _selectedDateRepeatUntil = _pickerDate;
+        } else {
+          _selectedDate = _pickerDate;
+          _selectedDateRepeatUntil = null;
+        }
+      });
     }
   }
 
   _getTimeFromUser({required bool isStartTime}) async {
     var pickerTime = await _showTimePicker();
-    String _formatedTime = pickerTime.format(context);
+
     if (pickerTime == null) {
-      print('Time canceld');
-    } else if (isStartTime) {
+      print('Time canceled');
+      return;
+    }
+
+    String _formattedTime = pickerTime.format(context);
+
+    if (isStartTime) {
       setState(() {
-        _startTime = _formatedTime;
+        _startTime = _formattedTime;
+        _endTime = "hh:mm a";
       });
-    } else if (!isStartTime) {
-      setState(() {
-        _endTime = _formatedTime;
-      });
+    } else if (_startTime == "hh:mm a") {
+      SnackbarShowNoti.showSnackbar(context, "Chọn giờ bắt đầu trước", true);
+    } else {
+      DateTime startTime = DateFormat('hh:mm a').parse(_startTime);
+      DateTime endTime = DateFormat('hh:mm a').parse(_formattedTime);
+
+      if (endTime.isAfter(startTime)) {
+        setState(() {
+          _endTime = _formattedTime;
+        });
+      } else {
+        SnackbarShowNoti.showSnackbar(
+            context, "Giờ kết thúc phải lớn hơn giờ bắt đầu", true);
+      }
     }
   }
 
   _showTimePicker() {
+    String time = DateFormat("hh:mm a").format(DateTime.now()).toString();
     return showTimePicker(
       initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: TimeOfDay(
-        hour: int.parse(_startTime.split(":")[0]),
-        minute: int.parse(_startTime.split(":")[1].split(" ")[0]),
+        hour: int.parse(time.split(":")[0]),
+        minute: int.parse(time.split(":")[1].split(" ")[0]),
       ),
     );
   }
