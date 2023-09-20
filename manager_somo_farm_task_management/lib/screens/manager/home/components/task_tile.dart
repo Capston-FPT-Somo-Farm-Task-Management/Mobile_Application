@@ -92,7 +92,7 @@ class TaskTile extends StatelessWidget {
   _getBGClr(int no) {
     switch (no) {
       case 0:
-        return kPrimaryColor;
+        return kSecondLightColor;
       case 1:
         return kSecondColor;
       case 2:
