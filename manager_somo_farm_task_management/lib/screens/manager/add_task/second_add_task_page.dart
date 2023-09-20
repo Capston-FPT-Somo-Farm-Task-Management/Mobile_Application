@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/employee.dart';
@@ -8,6 +9,7 @@ import 'package:manager_somo_farm_task_management/models/material.dart';
 import 'package:manager_somo_farm_task_management/models/task_type.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/third_add_task_page.dart';
+import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
 class SecondAddTaskPage extends StatefulWidget {
   const SecondAddTaskPage({super.key});
@@ -18,8 +20,7 @@ class SecondAddTaskPage extends StatefulWidget {
 
 class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-
+  final QuillController _quillController = QuillController.basic();
   String _selectedTaskType = listTaskTypes[0].taskTypeName;
   Key _keyChange = UniqueKey();
   List<Employee> filteredEmployees = listEmployeeTaskTypes
@@ -282,10 +283,47 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   ],
                 ),
               ),
-              MyInputField(
-                title: "Mô tả",
-                hint: "Nhập mô tả",
-                controller: _noteController,
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Mô tả",
+                      style: titileStyle,
+                    ),
+                    QuillToolbar.basic(
+                      controller: _quillController,
+                      multiRowsDisplay: false,
+                      showSearchButton: false,
+                    ),
+                    Container(
+                      height: 200, // Điều chỉnh chiều cao theo nhu cầu của bạn
+                      margin: const EdgeInsets.only(top: 8.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: QuillEditor(
+                        controller: _quillController, // Tạo một controller mới
+                        readOnly: false,
+                        autoFocus: false,
+                        expands: false, // Tắt tính năng mở rộng tự động
+                        padding: const EdgeInsets.all(
+                            8), // Điều chỉnh padding theo nhu cầu của bạn
+                        placeholder: "Nhập mô tả",
+                        focusNode: FocusNode(),
+                        scrollController: ScrollController(),
+                        scrollable: true,
+                        enableSelectionToolbar: true,
+                        // Các thuộc tính khác của QuillEditor có thể được cấu hình ở đây
+                      ),
+                    )
+                  ],
+                ),
               ),
               const SizedBox(height: 18),
               Row(
@@ -325,10 +363,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty &&
-        _noteController.text.isNotEmpty &&
-        selectedEmployees.isNotEmpty &&
-        selectedMaterials.isNotEmpty) {
+    if (_titleController.text.isNotEmpty && selectedEmployees.isNotEmpty) {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(
