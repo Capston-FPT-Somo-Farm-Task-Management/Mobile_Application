@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
 
 import '../screens/manager/farm_list_page.dart';
 
@@ -168,7 +170,13 @@ class CustomAppBar extends StatelessWidget {
                                             alignment: Alignment
                                                 .centerLeft, // Căn lề trái
                                             child: InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const TaskPage(),
+                                                ));
+                                              },
                                               child: const Row(children: [
                                                 Icon(Icons.check_circle),
                                                 SizedBox(width: 15),
@@ -262,7 +270,7 @@ class CustomAppBar extends StatelessWidget {
                                                 ));
                                               },
                                               child: const Row(children: [
-                                                Icon(Icons.abc),
+                                                Icon(FontAwesomeIcons.hippo),
                                                 SizedBox(width: 15),
                                                 Text(
                                                   "Livestock",
@@ -285,7 +293,8 @@ class CustomAppBar extends StatelessWidget {
                                                 ));
                                               },
                                               child: const Row(children: [
-                                                Icon(Icons.abc),
+                                                Icon(
+                                                    FontAwesomeIcons.pagelines),
                                                 SizedBox(width: 15),
                                                 Text(
                                                   "Plant",
