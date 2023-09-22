@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/option.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/first_add_task_page.dart';
 
 class ChooseOneOrMany extends StatefulWidget {
-  final Farm farm;
+  final int farmId;
   final bool isPlant;
-  const ChooseOneOrMany({super.key, required this.farm, required this.isPlant});
+  const ChooseOneOrMany(
+      {super.key, required this.farmId, required this.isPlant});
   @override
   _ChooseOneOrManyState createState() => _ChooseOneOrManyState();
 }
@@ -51,7 +51,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => FirstAddTaskPage(
-                            farm: widget.farm,
+                            farmId: widget.farmId,
                             isOne: true,
                             isPlant: false,
                           ),
@@ -69,7 +69,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => FirstAddTaskPage(
-                            farm: widget.farm,
+                            farmId: widget.farmId,
                             isOne: true,
                             isPlant: true,
                           ),
@@ -89,7 +89,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => FirstAddTaskPage(
-                            farm: widget.farm,
+                            farmId: widget.farmId,
                             isOne: false,
                             isPlant: false,
                           ),
@@ -107,7 +107,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => FirstAddTaskPage(
-                            farm: widget.farm,
+                            farmId: widget.farmId,
                             isOne: false,
                             isPlant: true,
                           ),
