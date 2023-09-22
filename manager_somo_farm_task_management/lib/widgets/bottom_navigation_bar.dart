@@ -19,7 +19,7 @@ class BottomNavBar extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => ManagerHomePage(
-                  farm: getFarm(),
+                  farmId: getFarm(),
                 )),
       );
     } else if (index == 1) {
@@ -116,13 +116,10 @@ class BottomNavBar extends StatelessWidget {
     return farmId;
   }
 
-  Farm getFarm() {
-    Farm farm = products.first;
+  int getFarm() {
     getFarmId().then((value) {
-      if (value != null) {
-        return products.where((f) => f.id == value);
-      }
+      return value;
     });
-    return farm;
+    return 0;
   }
 }
