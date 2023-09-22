@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThirdAddTaskPage extends StatefulWidget {
   const ThirdAddTaskPage({super.key});
@@ -15,8 +17,6 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
   DateTime? _selectedDateRepeatUntil;
-  String _endTime = "hh:mm a";
-  String _startTime = "hh:mm a";
   int _selectedRemind = 0;
   List<int> remindList = [0, 5, 10, 15, 20];
   String _selectedRepeat = "Không";
@@ -24,9 +24,24 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   String showInputFieldRepeat = "Không";
   List<int> repeatNumbers = [];
   int _selectedRepeatNumber = 1;
-  int _selectedColor = 0;
   List<String> priorities = ["Thấp", "Trung Bình", "Cao"];
   String _selectedPriority = "Thấp";
+  int? farmId;
+  getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
+
+    setState(() {
+      farmId = storedFarmId;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getFarmId();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -234,48 +249,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
               ),
               const SizedBox(height: 18),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Color",
-                        style: titileStyle,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Wrap(
-                        children: List<Widget>.generate(3, (index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedColor = index;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                radius: 14,
-                                backgroundColor: index == 0
-                                    ? kPrimaryColor
-                                    : index == 1
-                                        ? kSecondColor
-                                        : kTextBlueColor,
-                                child: _selectedColor == index
-                                    ? const Icon(
-                                        Icons.done,
-                                        color: Colors.white,
-                                        size: 16,
-                                      )
-                                    : Container(),
-                              ),
-                            ),
-                          );
-                        }),
-                      )
-                    ],
-                  ),
                   GestureDetector(
                     onTap: () => _validateDate(),
                     child: Container(
@@ -308,13 +283,23 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   _validateDate() {
     if (_selectedStartDate != null &&
         _selectedEndDate != null &&
-        _startTime != "hh:mm a" &&
-        _endTime != "hh:mm a" &&
         _selectedRepeat == "Không") {
       //add database
-      Navigator.of(context).pop();
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (BuildContext context) => ManagerHomePage(
+                  farmId: farmId!,
+                )),
+        (route) => false, // Xóa tất cả các route khỏi stack
+      );
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (BuildContext context) => ManagerHomePage(
+                  farmId: farmId!,
+                )),
+        (route) => false, // Xóa tất cả các route khỏi stack
+      );
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar(
@@ -374,7 +359,9 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           SnackbarShowNoti.showSnackbar(
               context, "Chọn ngày giờ thực hiện trước", true);
         } else if (isStart == false &&
-            selectedDateTime.isBefore(_selectedStartDate!)) {
+                selectedDateTime.isBefore(_selectedStartDate!) ||
+            isStart == false &&
+                selectedDateTime.isAtSameMomentAs(_selectedStartDate!)) {
           SnackbarShowNoti.showSnackbar(context,
               "Ngày giờ kết thúc phải lớn hơn ngày giờ thực hiện", true);
         } else {
@@ -391,49 +378,5 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       return;
     }
     return;
-  }
-
-  _getTimeFromUser({required bool isStartTime}) async {
-    var pickerTime = await _showTimePicker();
-
-    if (pickerTime == null) {
-      print('Time canceled');
-      return;
-    }
-
-    String _formattedTime = pickerTime.format(context);
-
-    if (isStartTime) {
-      setState(() {
-        _startTime = _formattedTime;
-        _endTime = "hh:mm a";
-      });
-    } else if (_startTime == "hh:mm a") {
-      SnackbarShowNoti.showSnackbar(context, "Chọn giờ bắt đầu trước", true);
-    } else {
-      DateTime startTime = DateFormat('hh:mm a').parse(_startTime);
-      DateTime endTime = DateFormat('hh:mm a').parse(_formattedTime);
-
-      if (endTime.isAfter(startTime)) {
-        setState(() {
-          _endTime = _formattedTime;
-        });
-      } else {
-        SnackbarShowNoti.showSnackbar(
-            context, "Giờ kết thúc phải lớn hơn giờ bắt đầu", true);
-      }
-    }
-  }
-
-  _showTimePicker() {
-    String time = DateFormat("hh:mm a").format(DateTime.now()).toString();
-    return showTimePicker(
-      initialEntryMode: TimePickerEntryMode.input,
-      context: context,
-      initialTime: TimeOfDay(
-        hour: int.parse(time.split(":")[0]),
-        minute: int.parse(time.split(":")[1].split(" ")[0]),
-      ),
-    );
   }
 }
