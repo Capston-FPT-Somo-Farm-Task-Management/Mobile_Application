@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/create_the_crops.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
@@ -26,11 +28,23 @@ class TaskPageState extends State<TaskPage> {
   ];
   List<Task> filteredTaskList = taskList;
   String? selectedFilter;
-  bool SortOrderAsc = true;
+  bool sortOrderAsc = true;
+
+  int? farmId;
   @override
-  void initState() {
+  initState() {
     super.initState();
     selectedFilter = filters[0];
+    getFarmId();
+  }
+
+  Future<void> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
+
+    setState(() {
+      farmId = storedFarmId;
+    });
   }
 
   @override
@@ -63,10 +77,12 @@ class TaskPageState extends State<TaskPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
+                          Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => CreateScrops()),
+                              builder: (context) =>
+                                  // FirstAddTaskPage(farm: widget.farm),
+                                  ChooseHabitantPage(farmId: farmId!),
+                            ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -78,7 +94,7 @@ class TaskPageState extends State<TaskPage> {
                         ),
                         child: const Center(
                           child: Text(
-                            "Thêm công việc",
+                            "Thêm việc",
                             style: TextStyle(fontSize: 19),
                           ),
                         ),
@@ -115,16 +131,16 @@ class TaskPageState extends State<TaskPage> {
                       icon: const Icon(Icons.calendar_month_outlined),
                       onPressed: () {
                         setState(() {
-                          if (SortOrderAsc) {
+                          if (sortOrderAsc) {
                             // Sắp xếp tăng dần (ngày gần đến xa)
                             filteredTaskList.sort(
                                 (a, b) => a.startDate.compareTo(b.startDate));
-                            SortOrderAsc = false;
+                            sortOrderAsc = false;
                           } else {
                             // Sắp xếp giảm dần (ngày xa đến gần)
                             filteredTaskList.sort(
                                 (a, b) => b.startDate.compareTo(a.startDate));
-                            SortOrderAsc = true;
+                            sortOrderAsc = true;
                           }
                         });
                       },
@@ -189,150 +205,164 @@ class TaskPageState extends State<TaskPage> {
                 itemBuilder: (context, index) {
                   final task = filteredTaskList[index];
 
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 7,
-                          offset: Offset(4, 8), // Shadow position
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey, // Màu của đường viền
-                              width: 1.0, // Độ dày của đường viền
-                            ),
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return TaskDetailsPopup(task: task);
+                        },
+                      );
+                    },
+                    onLongPress: () {
+                      _showBottomSheet(context, task);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 7,
+                            offset: Offset(4, 8), // Shadow position
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          task.name.length > 15
-                                              ? '${task.name.substring(0, 15)}...'
-                                              : task.name,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: task.status == 1
-                                                ? Colors.red
-                                                : task.status == 2
-                                                    ? Colors.orange
-                                                    : kPrimaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          padding: const EdgeInsets.all(10),
-                                          child: Text(
-                                            Task.getStatus(task.status),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey, // Màu của đường viền
+                                width: 1.0, // Độ dày của đường viền
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            task.name.length > 15
+                                                ? '${task.name.substring(0, 15)}...'
+                                                : task.name,
                                             style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white),
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const Icon(
-                                          Icons.access_time_rounded,
-                                          color: Colors.black,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          "${DateFormat('dd/MM HH:mm').format(task.startDate)} - ${DateFormat('dd/MM HH:mm').format(task.endDate)}",
-                                          style: GoogleFonts.lato(
-                                            textStyle: const TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.black),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: task.status == 1
+                                                  ? Colors.red
+                                                  : task.status == 2
+                                                      ? Colors.orange
+                                                      : kPrimaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: const EdgeInsets.all(10),
+                                            child: Text(
+                                              Task.getStatus(task.status),
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Giám sát: ${task.supervisorId.toString()}",
-                                          style: GoogleFonts.lato(
-                                            textStyle: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.access_time_rounded,
+                                            color: Colors.black,
+                                            size: 18,
                                           ),
-                                        ),
-                                        Text(
-                                          "Vị trí: ${task.fieldId.toString()}",
-                                          style: GoogleFonts.lato(
-                                            textStyle: const TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.black),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            "${DateFormat('dd/MM HH:mm').format(task.startDate)} - ${DateFormat('dd/MM HH:mm').format(task.endDate)}",
+                                            style: GoogleFonts.lato(
+                                              textStyle: const TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.black),
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Giám sát: ${task.supervisorId.toString()}",
+                                            style: GoogleFonts.lato(
+                                              textStyle: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          Text(
+                                            "Vị trí: ${task.fieldId.toString()}",
+                                            style: GoogleFonts.lato(
+                                              textStyle: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[400], // Đặt màu xám ở đây
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 1.0,
-                            ),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
+                              ],
                             ),
                           ),
-                          height: 45,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Loại: ${task.taskTypeId}',
-                                style: const TextStyle(fontSize: 16),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400], // Đặt màu xám ở đây
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
                               ),
-                              Text(
-                                'Ưu tiên: ${Priority.getPriority(task.priority)}',
-                                style: const TextStyle(fontSize: 16),
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
                               ),
-                            ],
-                          ),
-                        )
-                      ],
+                            ),
+                            height: 45,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Loại: ${task.taskTypeId}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  'Ưu tiên: ${Priority.getPriority(task.priority)}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -348,6 +378,98 @@ class TaskPageState extends State<TaskPage> {
             _currentIndex = index;
           });
         },
+      ),
+    );
+  }
+
+  _showBottomSheet(BuildContext context, Task task) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.only(top: 4),
+          height: task.status == 3
+              ? MediaQuery.of(context).size.height * 0.24
+              : MediaQuery.of(context).size.height * 0.32,
+          color: kBackgroundColor,
+          child: Column(
+            children: [
+              Container(
+                height: 6,
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: kTextGreyColor,
+                ),
+              ),
+              const Spacer(),
+              task.status == 3
+                  ? Container()
+                  : _bottomSheetButton(
+                      label: "Đã hoàn thành",
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      cls: kPrimaryColor,
+                      context: context,
+                    ),
+              _bottomSheetButton(
+                label: "Xóa",
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                cls: Colors.red[300]!,
+                context: context,
+              ),
+              const SizedBox(height: 20),
+              _bottomSheetButton(
+                label: "Đóng",
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                cls: Colors.white,
+                isClose: true,
+                context: context,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _bottomSheetButton({
+    required String label,
+    required Function()? onTap,
+    required Color cls,
+    bool isClose = false,
+    required BuildContext context,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        height: 55,
+        width: MediaQuery.of(context).size.width * 0.9,
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 2,
+            color: isClose == true ? Colors.grey[300]! : cls,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          color: isClose == true ? Colors.transparent : cls,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: isClose
+                ? titileStyle
+                : titileStyle.copyWith(
+                    color: Colors.white,
+                  ),
+          ),
+        ),
       ),
     );
   }
