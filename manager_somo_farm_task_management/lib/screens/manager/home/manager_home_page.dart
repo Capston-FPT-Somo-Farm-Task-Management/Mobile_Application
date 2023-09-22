@@ -5,17 +5,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
 
 class ManagerHomePage extends StatefulWidget {
-  final Farm farm;
-  const ManagerHomePage({Key? key, required this.farm}) : super(key: key);
+  final int farmId;
+  const ManagerHomePage({Key? key, required this.farmId}) : super(key: key);
 
   @override
   ManagerHomePageState createState() => ManagerHomePageState();
@@ -70,7 +70,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       MaterialPageRoute(
                         builder: (context) =>
                             // FirstAddTaskPage(farm: widget.farm),
-                            ChooseHabitantPage(farm: widget.farm),
+                            ChooseHabitantPage(farmId: widget.farmId),
                       ),
                     );
                   },
@@ -167,6 +167,14 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         children: [
                           GestureDetector(
                             onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return TaskDetailsPopup(task: task);
+                                },
+                              );
+                            },
+                            onLongPress: () {
                               _showBottomSheet(context, taskList[index]);
                             },
                             child: TaskTile(taskList[index]),
@@ -191,6 +199,14 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         children: [
                           GestureDetector(
                             onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return TaskDetailsPopup(task: task);
+                                },
+                              );
+                            },
+                            onLongPress: () {
                               _showBottomSheet(context, taskList[index]);
                             },
                             child: TaskTile(taskList[index]),
