@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/area.dart';
-import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/models/field.dart';
 import 'package:manager_somo_farm_task_management/models/zone.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/second_add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 
 class FirstAddTaskPage extends StatefulWidget {
-  final Farm farm;
+  final int farmId;
   final bool isOne;
   final bool isPlant;
   const FirstAddTaskPage(
       {super.key,
-      required this.farm,
+      required this.farmId,
       required this.isOne,
       required this.isPlant});
 
@@ -34,7 +33,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
   @override
   void initState() {
     super.initState();
-    filteredArea = areas.where((a) => a.farmId == widget.farm.id).toList();
+    filteredArea = areas.where((a) => a.farmId == widget.farmId).toList();
   }
 
   @override
