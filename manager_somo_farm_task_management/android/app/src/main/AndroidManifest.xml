@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
-        android:label="manager_somo_farm_task_management"
+        android:label="Somo Farm Task Management"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
