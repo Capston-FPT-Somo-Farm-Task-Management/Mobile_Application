@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
+import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
@@ -31,6 +33,7 @@ class TaskPageState extends State<TaskPage> {
   bool sortOrderAsc = true;
 
   int? farmId;
+  final TextEditingController searchController = TextEditingController();
   @override
   initState() {
     super.initState();
@@ -44,6 +47,15 @@ class TaskPageState extends State<TaskPage> {
 
     setState(() {
       farmId = storedFarmId;
+    });
+  }
+
+  void searchTasks(String keyword) {
+    setState(() {
+      filteredTaskList = taskList
+          .where((task) => removeDiacritics(task.name.toLowerCase())
+              .contains(removeDiacritics(keyword.toLowerCase())))
+          .toList();
     });
   }
 
@@ -113,8 +125,12 @@ class TaskPageState extends State<TaskPage> {
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      child: const TextField(
-                        decoration: InputDecoration(
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: (keyword) {
+                          searchTasks(keyword);
+                        },
+                        decoration: const InputDecoration(
                           hintText: "Tìm kiếm...",
                           border: InputBorder.none,
                           icon: Icon(Icons.search),
@@ -416,7 +432,18 @@ class TaskPageState extends State<TaskPage> {
               _bottomSheetButton(
                 label: "Xóa",
                 onTap: () {
-                  Navigator.of(context).pop();
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ConfirmDeleteDialog(
+                          title: "Xóa công việc",
+                          content: "Bạn có chắc muốn xóa công việc này?",
+                          onConfirm: () {
+                            Navigator.of(context).pop();
+                          },
+                          buttonConfirmText: "Xóa",
+                        );
+                      });
                 },
                 cls: Colors.red[300]!,
                 context: context,
