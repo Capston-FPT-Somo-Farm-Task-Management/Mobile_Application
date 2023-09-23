@@ -54,7 +54,7 @@ class Task {
 List<Task> taskList = [
   Task(
     id: 1,
-    startDate: DateTime.now(),
+    startDate: DateTime.now().add(Duration(minutes: 5)),
     endDate: DateTime.now().add(Duration(days: 7)),
     name: "Làm bài tập toán",
     description: "Hoàn thành bài tập toán đại số",
@@ -144,7 +144,7 @@ List<Task> taskList = [
     status: 3,
     createDate: DateTime.now(),
     iterations: 2,
-    remind: 5,
+    remind: 0,
     repeat: 0,
   ),
 ];
