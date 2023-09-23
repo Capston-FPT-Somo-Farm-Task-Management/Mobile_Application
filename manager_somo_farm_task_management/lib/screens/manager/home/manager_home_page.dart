@@ -4,11 +4,13 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/services/notification_services.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
@@ -23,17 +25,16 @@ class ManagerHomePage extends StatefulWidget {
 
 class ManagerHomePageState extends State<ManagerHomePage> {
   int _currentIndex = 0;
-  var notifyHelper;
   DateTime _selectedDate = DateTime.now();
   @override
   void initState() {
     super.initState();
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
-    //notifyHelper = NotifyHelper();
-    //notifyHelper.initializeNotification();
+    notificationService.initialNotification();
   }
 
+  NotificationService notificationService = NotificationService();
   @override
   Widget build(BuildContext context) {
     // Tiếp tục với mã widget của bạn như trước
@@ -150,15 +151,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
             itemCount: taskList.length,
             itemBuilder: (_, index) {
               Task task = taskList[index];
+              if (task.remind != 0) {
+                notificationService.scheduleNotification(task);
+              }
               if (task.repeat == 1) {
-                // DateTime date =
-                //     DateFormat.jm().parseLoose(task.startTime.toString());
-                // var myTime = DateFormat("HH:mm").format(date);
-                // // notifyHelper.scheduledNotification(
-                // //   int.parse(myTime.toString().split(":")[0]),
-                // //   int.parse(myTime.toString().split(":")[1]),
-                // //   task,
-                // // );
                 return AnimationConfiguration.staggeredList(
                   position: index,
                   child: SlideAnimation(
@@ -256,7 +252,18 @@ class ManagerHomePageState extends State<ManagerHomePage> {
               _bottomSheetButton(
                 label: "Xóa",
                 onTap: () {
-                  Navigator.of(context).pop();
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ConfirmDeleteDialog(
+                          title: "Xóa công việc",
+                          content: "Bạn có chắc muốn xóa công việc này?",
+                          onConfirm: () {
+                            Navigator.of(context).pop();
+                          },
+                          buttonConfirmText: "Xóa",
+                        );
+                      });
                 },
                 cls: Colors.red[300]!,
                 context: context,
