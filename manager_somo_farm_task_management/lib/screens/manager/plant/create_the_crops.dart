@@ -83,35 +83,6 @@ class CreateScrops extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 25),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "ID của cây",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                height: 50,
-                child: Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                        hintText: "Nhập ID cây...",
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 50),
               const Divider(
                 color: Colors.grey, // Đặt màu xám

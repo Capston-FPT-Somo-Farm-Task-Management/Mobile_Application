@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/create_the_crops.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/add_group_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/add_livestock_page.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
@@ -49,7 +50,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CreateScrops()),
+                                      builder: (context) => CreateLiveStock()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -68,7 +69,14 @@ class LiveStockPageState extends State<LiveStockPage> {
                             ),
                             const SizedBox(width: 10),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CreateLiveStockGroup()),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: kPrimaryColor,
                                 minimumSize: Size(100, 45),
