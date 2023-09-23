@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:manager_somo_farm_task_management/componets/constants.dart';
-
+import 'package:intl/intl.dart';
+import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import '../../../../models/task.dart';
 
 class TaskTile extends StatelessWidget {
-  final Task? task;
+  final Task task;
   TaskTile(this.task);
 
   @override
@@ -19,27 +19,41 @@ class TaskTile extends StatelessWidget {
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: _getBGClr(task?.color ?? 0),
+          color: Priority.getBGClr(task.priority),
         ),
         child: Row(children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  task?.title ?? "",
-                  style: GoogleFonts.lato(
-                    textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      task.name.length > 20
+                          ? '${task.name.substring(0, 20)}...'
+                          : task.name,
+                      style: GoogleFonts.lato(
+                        textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                    Text(
+                      Priority.getPriority(task.priority),
+                      style: GoogleFonts.lato(
+                        textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(
                       Icons.access_time_rounded,
@@ -48,7 +62,7 @@ class TaskTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "${task!.startTime} - ${task!.endTime}",
+                      "${DateFormat('dd/MM HH:mm').format(task!.startDate)} - ${DateFormat('dd/MM HH:mm').format(task!.endDate)}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 13, color: Colors.grey[100]),
@@ -56,12 +70,25 @@ class TaskTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  task?.note ?? "",
-                  style: GoogleFonts.lato(
-                    textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
-                  ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Giám sát: ${task.supervisorId.toString()}",
+                      style: GoogleFonts.lato(
+                        textStyle:
+                            TextStyle(fontSize: 15, color: Colors.grey[100]),
+                      ),
+                    ),
+                    Text(
+                      "Vị trí: ${task.fieldId.toString()}",
+                      style: GoogleFonts.lato(
+                        textStyle:
+                            TextStyle(fontSize: 15, color: Colors.grey[100]),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -75,7 +102,11 @@ class TaskTile extends StatelessWidget {
           RotatedBox(
             quarterTurns: 3,
             child: Text(
-              task!.isCompleted == 1 ? "HOÀN THÀNH" : "ĐANG LÀM",
+              task.status == 1
+                  ? "KHÔNG HOÀN THÀNH"
+                  : task.status == 2
+                      ? "ĐANG LÀM"
+                      : "HOÀN THÀNH",
               style: GoogleFonts.lato(
                 textStyle: const TextStyle(
                     fontSize: 10,
@@ -87,18 +118,5 @@ class TaskTile extends StatelessWidget {
         ]),
       ),
     );
-  }
-
-  _getBGClr(int no) {
-    switch (no) {
-      case 0:
-        return kPrimaryColor;
-      case 1:
-        return kSecondColor;
-      case 2:
-        return kTextBlueColor;
-      default:
-        return Colors.orange;
-    }
   }
 }

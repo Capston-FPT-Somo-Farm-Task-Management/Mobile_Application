@@ -12,7 +12,20 @@
           "package_name": "com.example.manager_somo_farm_task_management"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1062982681444-qllpj62o6lrqlsi8blh24q1ka30d00kb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.manager_somo_farm_task_management",
+            "certificate_hash": "be2bad5148d38a3e7f486113930cc22c8ec0b3de"
+          }
+        },
+        {
+          "client_id": "1062982681444-iviolcj81qp1seru63gvb979976uggcd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB8Vvc95rKSdAO2t4Dhtl8I3UlLSEVhPgQ"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1062982681444-iviolcj81qp1seru63gvb979976uggcd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

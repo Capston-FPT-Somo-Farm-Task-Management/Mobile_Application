@@ -15,7 +15,7 @@ class CheckKeepLogin extends StatefulWidget {
 
 class CheckKeepLoginState extends State<CheckKeepLogin> {
   String? username; // Thêm biến để lưu tên người dùng từ SharedPreferences
-  Farm farm = products.first;
+  int? farmId;
   @override
   void initState() {
     super.initState();
@@ -30,21 +30,24 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
 
     setState(() {
       username = storedUsername;
-      farm = products.where((f) => f.id == storedFarmId).singleOrNull!;
+      farmId = storedFarmId;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (farmId == null) {
+      return LoginPage();
+    }
     return Scaffold(
       body: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasData || (username != null)) {
+            } else if (snapshot.hasData) {
               // Nếu đã đăng nhập bằng Firebase Auth hoặc có thông tin từ SharedPreferences
-              return ManagerHomePage(farm: farm);
+              return ManagerHomePage(farmId: farmId!);
             } else if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong!'));
             } else {
