@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/other/login_page.dart';
 
 import '../screens/manager/farm_list_page.dart';
 
@@ -168,12 +171,18 @@ class CustomAppBar extends StatelessWidget {
                                             alignment: Alignment
                                                 .centerLeft, // Căn lề trái
                                             child: InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const TaskPage(),
+                                                ));
+                                              },
                                               child: const Row(children: [
                                                 Icon(Icons.check_circle),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Task",
+                                                  "Công việc",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -190,7 +199,7 @@ class CustomAppBar extends StatelessWidget {
                                                 Icon(Icons.map),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Farm map",
+                                                  "Trang trại",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -207,42 +216,7 @@ class CustomAppBar extends StatelessWidget {
                                                 Icon(Icons.pie_chart_rounded),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Report",
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                              ]),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 25),
-                                          Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: const Row(children: [
-                                                Icon(Icons
-                                                    .calendar_month_outlined),
-                                                SizedBox(width: 15),
-                                                Text(
-                                                  "Schedule",
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                              ]),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 25),
-                                          Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: const Row(children: [
-                                                Icon(Icons.landslide),
-                                                SizedBox(width: 15),
-                                                Text(
-                                                  "Habitant",
+                                                  "Báo cáo",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -262,10 +236,10 @@ class CustomAppBar extends StatelessWidget {
                                                 ));
                                               },
                                               child: const Row(children: [
-                                                Icon(Icons.abc),
+                                                Icon(FontAwesomeIcons.hippo),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Livestock",
+                                                  "Động vật",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -285,28 +259,11 @@ class CustomAppBar extends StatelessWidget {
                                                 ));
                                               },
                                               child: const Row(children: [
-                                                Icon(Icons.abc),
+                                                Icon(
+                                                    FontAwesomeIcons.pagelines),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Plant",
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                              ]),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 25),
-                                          Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: const Row(children: [
-                                                Icon(Icons
-                                                    .perm_contact_calendar_sharp),
-                                                SizedBox(width: 15),
-                                                Text(
-                                                  "Contact",
+                                                  "Thực vật",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -323,7 +280,7 @@ class CustomAppBar extends StatelessWidget {
                                                 Icon(Icons.person),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Profile",
+                                                  "Cá nhân",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -341,7 +298,7 @@ class CustomAppBar extends StatelessWidget {
                                                     .question_mark_rounded),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Question",
+                                                  "Thắc mắc",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -353,12 +310,19 @@ class CustomAppBar extends StatelessWidget {
                                             alignment: Alignment
                                                 .centerLeft, // Căn lề trái
                                             child: InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const LoginPage()),
+                                                );
+                                              },
                                               child: const Row(children: [
                                                 Icon(Icons.logout),
                                                 SizedBox(width: 15),
                                                 Text(
-                                                  "Sign out",
+                                                  "Đăng xuất",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),

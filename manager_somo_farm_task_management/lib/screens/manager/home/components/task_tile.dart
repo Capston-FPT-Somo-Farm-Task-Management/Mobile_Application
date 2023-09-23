@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import '../../../../models/task.dart';
 
 class TaskTile extends StatelessWidget {
@@ -18,7 +19,7 @@ class TaskTile extends StatelessWidget {
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: _getBGClr(task.priority),
+          color: Priority.getBGClr(task.priority),
         ),
         child: Row(children: [
           Expanded(
@@ -40,7 +41,7 @@ class TaskTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      _getPriority(task.priority),
+                      Priority.getPriority(task.priority),
                       style: GoogleFonts.lato(
                         textStyle: const TextStyle(
                             fontSize: 14,
@@ -117,35 +118,5 @@ class TaskTile extends StatelessWidget {
         ]),
       ),
     );
-  }
-
-  _getBGClr(int no) {
-    switch (no) {
-      case 1:
-        return const Color(0xFF277DA1);
-      case 2:
-        return const Color(0xFF90be6d);
-      case 3:
-        return const Color(0xFFf9c74f);
-      case 4:
-        return const Color(0xFFf3722c);
-      case 5:
-        return const Color(0xFFf94144);
-    }
-  }
-
-  _getPriority(int no) {
-    switch (no) {
-      case 1:
-        return "Thấp nhất";
-      case 2:
-        return "Thấp";
-      case 3:
-        return "Trung bình";
-      case 4:
-        return "Cao";
-      case 5:
-        return "Cao nhất";
-    }
   }
 }

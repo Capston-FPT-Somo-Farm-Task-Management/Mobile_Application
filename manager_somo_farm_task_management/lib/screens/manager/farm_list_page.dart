@@ -78,8 +78,8 @@ class FarmListPage extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ManagerHomePage(farm: products[index]),
+                                    builder: (context) => ManagerHomePage(
+                                        farmId: products[index].id),
                                   ),
                                 );
                                 final prefs =

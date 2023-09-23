@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
 
 import '../../widgets/bottom_navigation_bar.dart';
 import 'login_page.dart';
@@ -89,6 +90,7 @@ class SettingsPage extends StatelessWidget {
                   title: const Text('Log out'),
                   onTap: () {
                     // Điều hướng đến trang LoginPage
+                    AuthService().logout();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

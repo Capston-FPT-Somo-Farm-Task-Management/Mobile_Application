@@ -1,92 +1,65 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-// import 'package:get/get.dart';
-// import 'package:manager_somo_farm_task_management/models/task.dart';
-// import 'package:timezone/data/latest.dart' as tz;
-// import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:manager_somo_farm_task_management/models/task.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-// class NotifyHelper {
-//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+class NotificationService {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
-//   NotifyHelper()
-//       : flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final AndroidInitializationSettings androidInitializationSettings =
+      const AndroidInitializationSettings('appicon');
+  void initialNotification() async {
+    InitializationSettings initializationSettings =
+        InitializationSettings(android: androidInitializationSettings);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    tz.initializeTimeZones();
+  }
 
-//   Future initializeNotification() async {
-//     _configureLocalTimezone();
+  void sendNotification() async {
+    AndroidNotificationDetails androidNotificationDetails =
+        const AndroidNotificationDetails(
+      "channelId",
+      "channelName",
+      importance: Importance.max,
+      priority: Priority.max,
+    );
+    NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
 
-//     final AndroidInitializationSettings initializationSettingsAndroid =
-//         AndroidInitializationSettings('appicon');
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'this is title',
+      'description',
+      notificationDetails,
+    );
+  }
 
-//     final InitializationSettings initializationSettings =
-//         InitializationSettings(
-//       android: initializationSettingsAndroid,
-//     );
-//     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-//         onSelectNotification: selectNotification);
-//   }
+  void scheduleNotification(Task task) async {
+    AndroidNotificationDetails androidNotificationDetails =
+        const AndroidNotificationDetails(
+      "channelId",
+      "channelName",
+      importance: Importance.max,
+      priority: Priority.max,
+    );
+    NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
 
-//   Future selectNotification(String? payload) async {
-//     if (payload != null) {
-//       print('notification payload: $payload');
-//     } else {
-//       print("Notification Done");
-//     }
-//     Get.to(() => Container(
-//           color: Colors.white,
-//         ));
-//   }
+    tz.TZDateTime notificationTime = tz.TZDateTime.from(
+      task.startDate.subtract(Duration(minutes: task.remind)),
+      tz.local,
+    );
 
-//   Future displayNotification(
-//       {required String title, required String body}) async {
-//     print("doing test");
-//     // AndroidPlatformChannelSpecifics is deprecated since version 8.0.0
-//     // Use NotificationDetails instead
-//     const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-//         'your channel id', 'your channel name',
-//         importance: Importance.max, priority: Priority.high);
-
-//     const platformChannelSpecifics = NotificationDetails(
-//       android: androidPlatformChannelSpecifics,
-//     );
-//     await flutterLocalNotificationsPlugin.show(
-//       0,
-//       title,
-//       body,
-//       platformChannelSpecifics,
-//       payload: 'It could be anything you pass',
-//     );
-//   }
-
-//   scheduledNotification(int hour, int minutes, Task task) async {
-//     await flutterLocalNotificationsPlugin.zonedSchedule(
-//         0,
-//         'scheduled title',
-//         'theme changes 5 seconds ago',
-//         //tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-//         _convertTime(hour, minutes),
-//         const NotificationDetails(
-//             android: AndroidNotificationDetails(
-//                 'your channel id', 'your channel name')),
-//         androidAllowWhileIdle: true,
-//         uiLocalNotificationDateInterpretation:
-//             UILocalNotificationDateInterpretation.absoluteTime,
-//         matchDateTimeComponents: DateTimeComponents.time);
-//   }
-
-//   tz.TZDateTime _convertTime(int hour, int minutes) {
-//     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-//     tz.TZDateTime scheduleDate =
-//         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minutes);
-//     if (scheduleDate.isBefore(now)) {
-//       scheduleDate = scheduleDate.add(const Duration(days: 1));
-//     }
-//     return scheduleDate;
-//   }
-
-//   Future<void> _configureLocalTimezone() async {
-//     tz.initializeTimeZones();
-//     final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
-//     tz.setLocalLocation(tz.getLocation(timeZone));
-//   }
-// }
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      task.id,
+      task.name,
+      'Bắt đầu trong ${task.remind} phút nữa!',
+      notificationTime,
+      notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+    );
+  }
+}

@@ -36,12 +36,25 @@ class Task {
     required this.remind,
     required this.repeat,
   });
+
+  static String getStatus(int no) {
+    switch (no) {
+      case 1:
+        return "Không hoàn thành";
+      case 2:
+        return "Đang làm";
+      case 3:
+        return "Hoàn thành";
+      default:
+        return "Trạng thái không xác định";
+    }
+  }
 }
 
 List<Task> taskList = [
   Task(
     id: 1,
-    startDate: DateTime.now(),
+    startDate: DateTime.now().add(Duration(minutes: 5)),
     endDate: DateTime.now().add(Duration(days: 7)),
     name: "Làm bài tập toán",
     description: "Hoàn thành bài tập toán đại số",
@@ -52,7 +65,7 @@ List<Task> taskList = [
     managerId: 1,
     otherId: 0,
     habitantId: 1,
-    status: 0,
+    status: 2,
     createDate: DateTime.now(),
     iterations: 3,
     remind: 3,
@@ -71,7 +84,7 @@ List<Task> taskList = [
     managerId: 402,
     otherId: 502,
     habitantId: 602,
-    status: 0,
+    status: 1,
     createDate: DateTime.now(),
     iterations: 2,
     remind: 0,
@@ -90,7 +103,7 @@ List<Task> taskList = [
     managerId: 1,
     otherId: 0,
     habitantId: 1,
-    status: 0,
+    status: 1,
     createDate: DateTime.now(),
     iterations: 1,
     remind: 0,
@@ -109,7 +122,7 @@ List<Task> taskList = [
     managerId: 404,
     otherId: 504,
     habitantId: 604,
-    status: 0,
+    status: 2,
     createDate: DateTime.now(),
     iterations: 4,
     remind: 0,
@@ -128,10 +141,10 @@ List<Task> taskList = [
     managerId: 405,
     otherId: 505,
     habitantId: 605,
-    status: 0,
+    status: 3,
     createDate: DateTime.now(),
     iterations: 2,
-    remind: 5,
+    remind: 0,
     repeat: 0,
   ),
 ];

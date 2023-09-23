@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/area.dart';
 import 'package:manager_somo_farm_task_management/models/field.dart';
+import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/models/zone.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/second_add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 
-class FirstAddTaskPage extends StatefulWidget {
+class FirstUpdateTaskPage extends StatefulWidget {
   final int farmId;
   final bool isOne;
   final bool isPlant;
-  const FirstAddTaskPage(
+  final Task task;
+  const FirstUpdateTaskPage(
       {super.key,
       required this.farmId,
       required this.isOne,
-      required this.isPlant});
+      required this.isPlant,
+      required this.task});
 
   @override
-  State<FirstAddTaskPage> createState() => _FirstAddTaskPage();
+  State<FirstUpdateTaskPage> createState() => _FirstUpdateTaskPage();
 }
 
-class _FirstAddTaskPage extends State<FirstAddTaskPage> {
+class _FirstUpdateTaskPage extends State<FirstUpdateTaskPage> {
   String _selectedArea = areas[0].areaName;
   List<Area> filteredArea = [];
   String _selectedZone = zones[0].zoneName;

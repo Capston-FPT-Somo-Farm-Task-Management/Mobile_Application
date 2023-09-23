@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_one_or_many.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/option.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/first_add_task_page.dart';
 
 class ChooseHabitantPage extends StatefulWidget {
-  final Farm farm;
+  final int farmId;
 
-  const ChooseHabitantPage({super.key, required this.farm});
+  const ChooseHabitantPage({super.key, required this.farmId});
   @override
   _ChooseHabitantPageState createState() => _ChooseHabitantPageState();
 }
@@ -51,7 +49,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        ChooseOneOrMany(farm: widget.farm, isPlant: false),
+                        ChooseOneOrMany(farmId: widget.farmId, isPlant: false),
                   ),
                 );
               },
@@ -70,7 +68,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        ChooseOneOrMany(farm: widget.farm, isPlant: true),
+                        ChooseOneOrMany(farmId: widget.farmId, isPlant: true),
                   ),
                 );
               },
@@ -86,7 +84,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        ChooseOneOrMany(farm: widget.farm, isPlant: true),
+                        ChooseOneOrMany(farmId: widget.farmId, isPlant: true),
                   ),
                 );
               },
