@@ -648,6 +648,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  remove_diacritic:
+    dependency: "direct main"
+    description:
+      name: remove_diacritic
+      sha256: "778912615e4584563590ae79e71398b9ea0a41d2dfc38b3ad888024cd4459b19"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -766,7 +774,7 @@ packages:
     source: hosted
     version: "0.6.0"
   timezone:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: timezone
       sha256: "57b35f6e8ef731f18529695bffc62f92c6189fac2e52c12d478dec1931afb66e"
