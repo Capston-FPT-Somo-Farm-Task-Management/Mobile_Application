@@ -12,6 +12,7 @@ class TaskDetailsPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: EdgeInsets.zero,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -23,9 +24,18 @@ class TaskDetailsPopup extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const Icon(
-            Icons.mode_edit_outline_outlined,
-            color: kPrimaryColor,
+          IconButton(
+            icon: const Icon(
+              Icons.mode_edit_outline_outlined,
+              color: kPrimaryColor,
+            ),
+            onPressed: () {
+              // Navigator.of(context).push(
+              //           MaterialPageRoute(
+              //             builder: (context) =>  FirstUpdateTaskPage(task: task),
+              //           ),
+              //         );
+            },
           )
         ],
       ),
