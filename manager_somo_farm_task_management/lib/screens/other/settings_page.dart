@@ -14,12 +14,15 @@ class SettingsPage extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false, // Ẩn nút quay lại
         centerTitle: true,
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: kPrimaryColor,
+        title: Container(
+          margin: EdgeInsets.only(top: 10),
+          child: Text(
+            'Settings',
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.bold,
+              color: kPrimaryColor,
+            ),
           ),
         ),
       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/screens/other/notification_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/other/settings_page.dart';
@@ -33,7 +33,7 @@ class BottomNavBar extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SettingsPage(),
+          builder: (context) => NotificationPage(),
         ),
       );
     } else if (index == 3) {
@@ -83,7 +83,7 @@ class BottomNavBar extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(
-              Icons.calendar_month_outlined,
+              Icons.notifications_rounded,
               size: _getCurrentTabSize(2),
               color: _getCurrentTabColor(2),
             ),
