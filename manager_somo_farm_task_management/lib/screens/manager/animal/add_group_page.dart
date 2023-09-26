@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
@@ -187,10 +189,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
               Align(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PlantPage()),
-                    );
+                    _validateDate();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryColor,
@@ -212,6 +211,21 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
         ),
       ),
     );
+  }
+
+  _validateDate() {
+    if (_titleController.text.isNotEmpty) {
+      //add database
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const LiveStockPage(),
+        ),
+      );
+    } else {
+      // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
+      SnackbarShowNoti.showSnackbar(
+          context, 'Vui lòng điền đầy đủ thông tin', true);
+    }
   }
 
   void updateZones(String area) {
