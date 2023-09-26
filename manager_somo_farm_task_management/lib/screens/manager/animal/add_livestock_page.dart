@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
-class CreatePlant extends StatefulWidget {
-  const CreatePlant({Key? key}) : super(key: key);
+class CreateLiveStock extends StatefulWidget {
+  const CreateLiveStock({Key? key}) : super(key: key);
 
   @override
-  CreatePlantState createState() => CreatePlantState();
+  CreateLiveStockState createState() => CreateLiveStockState();
 }
 
-class CreatePlantState extends State<CreatePlant> {
+class CreateLiveStockState extends State<CreateLiveStock> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  List<String> crops = ["Sầu riêng", "Mít", "Cam", "Xoai"];
-  String _selectedCrop = "Mít";
+  List<String> livestock = ["Bò", "Heo", "Vịt", "Gà"];
+  String _selectedLiveStock = "Heo";
   List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
   List<String> zones = [];
   List<String> lands = [];
@@ -53,17 +54,22 @@ class CreatePlantState extends State<CreatePlant> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm cây trồng",
+                "Thêm vật nuôi",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Tên cây trồng",
-                hint: "Nhập tên cây trồng",
+                title: "Id vật nuôi",
+                hint: "Nhập id vật nuôi",
                 controller: _titleController,
               ),
               MyInputField(
-                title: "Loại cây trồng",
-                hint: _selectedCrop,
+                title: "Tên vật nuôi",
+                hint: "Nhập tên vật nuôi",
+                controller: _titleController,
+              ),
+              MyInputField(
+                title: "Loại vật nuôi",
+                hint: _selectedLiveStock,
                 widget: DropdownButton(
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
@@ -74,10 +80,11 @@ class CreatePlantState extends State<CreatePlant> {
                   style: subTitileStyle,
                   onChanged: (String? newValue) {
                     setState(() {
-                      _selectedCrop = newValue!;
+                      _selectedLiveStock = newValue!;
                     });
                   },
-                  items: crops.map<DropdownMenuItem<String>>((String value) {
+                  items:
+                      livestock.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -159,8 +166,13 @@ class CreatePlantState extends State<CreatePlant> {
                   }).toList(),
                 ),
               ),
+              MyInputNumber(
+                title: "Số lượng",
+                hint: "Nhập số lượng",
+                controller: _noteController,
+              ),
               MyInputField(
-                title: "Ngày tạo cây trồng",
+                title: "Ngày tạo vật nuôi",
                 hint: DateFormat('dd/MM/yyyy').format(_selectedDate),
                 widget: IconButton(
                   icon: const Icon(
@@ -193,7 +205,7 @@ class CreatePlantState extends State<CreatePlant> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Tạo cây trồng",
+                      "Tạo vật nuôi",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
@@ -211,7 +223,7 @@ class CreatePlantState extends State<CreatePlant> {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const PlantPage(),
+          builder: (context) => const LiveStockPage(),
         ),
       );
     } else {
