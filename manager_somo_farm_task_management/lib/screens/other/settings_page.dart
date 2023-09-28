@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets/bottom_navigation_bar.dart';
 import 'login_page.dart';
@@ -91,13 +92,15 @@ class SettingsPage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.output_outlined),
                   title: const Text('Log out'),
-                  onTap: () {
+                  onTap: () async {
                     // Điều hướng đến trang LoginPage
                     AuthService().logout();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.clear();
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage()),
+                      MaterialPageRoute(builder: (context) => LoginPage()),
                     );
                   },
                 ),

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
-
-import '../manager/farm_list_page.dart';
+import 'package:manager_somo_farm_task_management/services/login_services.dart';
+import 'package:manager_somo_farm_task_management/services/user_services.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  String username = "";
+  String password = "";
+  LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +38,7 @@ class LoginPage extends StatelessWidget {
 
               // Username Field
               const Text(
-                "Username",
+                "Tài khoản",
                 style: TextStyle(
                   color: kSecondLightColor, // Màu 8CAAB9
                   fontSize: 16.0,
@@ -49,17 +54,20 @@ class LoginPage extends StatelessWidget {
                   style: const TextStyle(color: kTextWhiteColor),
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.person, color: kTextWhiteColor),
-                    hintText: 'Username',
-                    hintStyle: TextStyle(color: kTextWhiteColor),
+                    hintText: 'Tài khoản',
+                    hintStyle: TextStyle(color: kTextWhiteColor, height: 1.4),
                     border: InputBorder.none,
                   ),
+                  onChanged: (value) {
+                    username = value;
+                  },
                 ),
               ),
               const SizedBox(height: 20.0),
 
               // Password Field
               const Text(
-                "Password",
+                "Mật khẩu",
                 style: TextStyle(
                   color: kSecondLightColor, // Màu 8CAAB9
                   fontSize: 16.0,
@@ -76,17 +84,20 @@ class LoginPage extends StatelessWidget {
                   obscureText: true,
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.lock, color: kTextWhiteColor),
-                    hintText: 'Password',
-                    hintStyle: TextStyle(color: kTextWhiteColor),
+                    hintText: 'Mật khẩu',
+                    hintStyle: TextStyle(color: kTextWhiteColor, height: 1.4),
                     border: InputBorder.none,
                   ),
+                  onChanged: (value) {
+                    password = value;
+                  },
                 ),
               ),
               const SizedBox(height: 5),
               const Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  "Forgot Password?",
+                  "Quên mật khẩu?",
                   style: TextStyle(
                     color: kSecondLightColor, // Màu 8CAAB9
                     fontSize: 16.0,
@@ -98,13 +109,32 @@ class LoginPage extends StatelessWidget {
 
               // Login Button
               InkWell(
-                onTap: () {
-                  // Xử lý khi Container được nhấn, ví dụ: chuyển đến trang home
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const FarmListPage(),
-                    ),
-                  );
+                onTap: () async {
+                  try {
+                    final result =
+                        await LoginService().Login(username, password);
+                    String role = result['role'];
+                    int id = result['id'];
+
+                    int farmId =
+                        await UserService().getUserById(id).then((value) {
+                      return value['data']['farmId'];
+                    }).catchError((e) {
+                      SnackbarShowNoti.showSnackbar(context, e, true);
+                      return 0; // Trả về giá trị mặc định nếu có lỗi
+                    });
+
+                    if (role == "Manager") {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => ManagerHomePage(farmId: farmId),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    SnackbarShowNoti.showSnackbar(
+                        context, "Tài khoản hoặc mật khẩu không đúng!", true);
+                  }
                 },
                 child: Container(
                   height: 50.0,
