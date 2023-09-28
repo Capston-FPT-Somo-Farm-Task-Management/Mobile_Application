@@ -50,6 +50,8 @@ dependencies:
   google_sign_in: ^6.1.5
   remove_diacritic: ^0.9.0
   timezone: ^0.8.0
+  http: ^1.1.0
+  jwt_decoder: ^2.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
