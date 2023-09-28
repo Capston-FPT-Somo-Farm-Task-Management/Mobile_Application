@@ -14,8 +14,9 @@ class CheckKeepLogin extends StatefulWidget {
 }
 
 class CheckKeepLoginState extends State<CheckKeepLogin> {
-  String? username; // Thêm biến để lưu tên người dùng từ SharedPreferences
+  int? userId; // Thêm biến để lưu tên người dùng từ SharedPreferences
   int? farmId;
+  String? role;
   @override
   void initState() {
     super.initState();
@@ -25,12 +26,13 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
   // Kiểm tra trạng thái đăng nhập từ SharedPreferences
   Future<void> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final storedUsername = prefs.getString('username');
+    final storedUsername = prefs.getInt('userId');
     final storedFarmId = prefs.getInt('farmId');
-
+    final storedRole = prefs.getString('role');
     setState(() {
-      username = storedUsername;
+      userId = storedUsername;
       farmId = storedFarmId;
+      role = storedRole;
     });
   }
 
@@ -45,13 +47,14 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasData) {
+            } else if (snapshot.hasData || userId != null) {
+              //if(role == "Manager")
               // Nếu đã đăng nhập bằng Firebase Auth hoặc có thông tin từ SharedPreferences
               return ManagerHomePage(farmId: farmId!);
             } else if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong!'));
             } else {
-              return const LoginPage();
+              return LoginPage();
             }
           }),
     );

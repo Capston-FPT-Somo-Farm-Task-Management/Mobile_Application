@@ -310,7 +310,7 @@ class CustomAppBar extends StatelessWidget {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const LoginPage()),
+                                                          LoginPage()),
                                                 );
                                               },
                                               child: const Row(children: [

@@ -36,30 +36,34 @@ class NotificationService {
   }
 
   void scheduleNotification(Task task) async {
-    AndroidNotificationDetails androidNotificationDetails =
-        const AndroidNotificationDetails(
-      "channelId",
-      "channelName",
-      importance: Importance.max,
-      priority: Priority.max,
-    );
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails);
+    try {
+      AndroidNotificationDetails androidNotificationDetails =
+          const AndroidNotificationDetails(
+        "channelId",
+        "channelName",
+        importance: Importance.max,
+        priority: Priority.max,
+      );
+      NotificationDetails notificationDetails =
+          NotificationDetails(android: androidNotificationDetails);
 
-    tz.TZDateTime notificationTime = tz.TZDateTime.from(
-      task.startDate.subtract(Duration(minutes: task.remind)),
-      tz.local,
-    );
+      tz.TZDateTime notificationTime = tz.TZDateTime.from(
+        task.startDate.subtract(Duration(minutes: task.remind)),
+        tz.local,
+      );
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      task.id,
-      task.name,
-      'Bắt đầu trong ${task.remind} phút nữa!',
-      notificationTime,
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,
-    );
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        task.id,
+        task.name,
+        'Bắt đầu trong ${task.remind} phút nữa!',
+        notificationTime,
+        notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true,
+      );
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }
