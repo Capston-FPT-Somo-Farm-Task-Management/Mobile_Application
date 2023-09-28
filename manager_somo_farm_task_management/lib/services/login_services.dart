@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginService {
-  static const String baseUrl = "https://somotaskapi.azurewebsites.net/api";
-
   Future<Map<String, dynamic>> Login(String username, String password) async {
     final String loginUrl = '$baseUrl/Login';
 
@@ -38,6 +37,7 @@ class LoginService {
       int userId = int.parse(id);
       prefs.setInt('userId', userId);
       prefs.setString('role', role);
+      prefs.setString('accessToken', accessToken);
       return {
         'role': role,
         'id': userId,
