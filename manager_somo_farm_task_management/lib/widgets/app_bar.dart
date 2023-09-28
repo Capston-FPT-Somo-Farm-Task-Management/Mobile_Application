@@ -225,8 +225,7 @@ class CustomAppBar extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
+                                            alignment: Alignment.centerLeft,
                                             child: InkWell(
                                               onTap: () {
                                                 Navigator.of(context)
@@ -248,8 +247,7 @@ class CustomAppBar extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
+                                            alignment: Alignment.centerLeft,
                                             child: InkWell(
                                               onTap: () {
                                                 Navigator.of(context)
@@ -272,8 +270,7 @@ class CustomAppBar extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
+                                            alignment: Alignment.centerLeft,
                                             child: InkWell(
                                               onTap: () {},
                                               child: const Row(children: [
@@ -289,8 +286,7 @@ class CustomAppBar extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
+                                            alignment: Alignment.centerLeft,
                                             child: InkWell(
                                               onTap: () {},
                                               child: const Row(children: [
@@ -307,8 +303,7 @@ class CustomAppBar extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
-                                            alignment: Alignment
-                                                .centerLeft, // Căn lề trái
+                                            alignment: Alignment.centerLeft,
                                             child: InkWell(
                                               onTap: () {
                                                 Navigator.pushReplacement(

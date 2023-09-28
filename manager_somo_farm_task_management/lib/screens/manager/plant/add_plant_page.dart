@@ -57,6 +57,11 @@ class CreatePlantState extends State<CreatePlant> {
                 style: headingStyle,
               ),
               MyInputField(
+                title: "Id cây trồng",
+                hint: "Nhập Id cây trồng",
+                controller: _titleController,
+              ),
+              MyInputField(
                 title: "Tên cây trồng",
                 hint: "Nhập tên cây trồng",
                 controller: _titleController,

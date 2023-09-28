@@ -32,9 +32,10 @@ class LiveStockPageState extends State<LiveStockPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight),
         child: CustomAppBar(),
       ),
       body: Container(
