@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import 'package:manager_somo_farm_task_management/models/task.dart';
 
 class TaskDetailsPopup extends StatelessWidget {
-  final Task task;
+  final Map<String, dynamic> task;
 
   const TaskDetailsPopup({required this.task});
 
@@ -17,7 +15,7 @@ class TaskDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            task.name,
+            task['name'],
             style: const TextStyle(
               color: kPrimaryColor,
               fontSize: 24,
@@ -56,7 +54,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
               child: SingleChildScrollView(
                 child: Text(
-                  task.description,
+                  task['description'],
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.black54,
@@ -73,7 +71,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Bắt đầu: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(task.startDate)}',
+                  'Bắt đầu: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['startDate']))}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -89,7 +87,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'kết thúc: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(task.endDate)}',
+                  'kết thúc: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['endDate']))}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -105,7 +103,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(task.createDate)}',
+                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(task['createDate']))}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -121,7 +119,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Ưu tiên: ${Priority.getPriority(task.priority)}',
+                  'Ưu tiên: ${task['priority']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -137,7 +135,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Loại công việc: ${task.taskTypeId}',
+                  'Loại công việc: ${task['taskTypeName']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -153,7 +151,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Người quản lí: ${task.managerId}',
+                  'Người quản lí: ${task['memberName']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -169,7 +167,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Người giám sát: ${task.supervisorId}',
+                  'Người giám sát: ${task['receiverName']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -185,7 +183,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Field ID: ${task.fieldId}',
+                  'Chuồng: ${task['fieldName']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -193,7 +191,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            if (task.otherId != null)
+            if (task['otherName'] != null)
               Row(
                 children: [
                   const Icon(
@@ -202,15 +200,14 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Other: ${task.otherId}',
+                    'Other: ${task['otherName']}',
                     style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
                 ],
               ),
-            const SizedBox(height: 16),
-            if (task.habitantId != null)
+            if (task['plantName'] != null)
               Row(
                 children: [
                   const Icon(
@@ -219,7 +216,23 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Habitant: ${task.habitantId}',
+                    'Cây: ${task['plantName']}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            if (task['liveStockName'] != null)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.home,
+                    color: kSecondColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Cây: ${task['liveStockName']}',
                     style: const TextStyle(
                       fontSize: 16,
                     ),
@@ -235,14 +248,13 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Trạng thái: ${task.status}',
+                  'Trạng thái: ${task['status']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -252,7 +264,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Iterations: ${task.iterations}',
+                  'Iterations: ${task['iterations']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -268,7 +280,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Nhắc nhở: ${task.remind} phút trước khi bắt đầu',
+                  'Nhắc nhở: ${task['remind']} phút trước khi bắt đầu',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -284,7 +296,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Repeat: ${task.repeat}',
+                  'Lặp lại: ${task['repeat']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
