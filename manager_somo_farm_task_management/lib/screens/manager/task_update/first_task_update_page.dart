@@ -197,13 +197,13 @@ class _FirstUpdateTaskPage extends State<FirstUpdateTaskPage> {
                 children: [
                   Container(),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const SecondAddTaskPage(),
-                        ),
-                      );
-                    },
+                    // onTap: () {
+                    //   Navigator.of(context).push(
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const SecondAddTaskPage(),
+                    //     ),
+                    //   );
+                    // },
                     child: Container(
                       width: 120,
                       height: 60,
