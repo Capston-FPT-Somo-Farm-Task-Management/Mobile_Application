@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import '../../../../models/task.dart';
 
 class TaskTile extends StatelessWidget {
-  final Task task;
+  final Map<String, dynamic> task;
   TaskTile(this.task);
 
   @override
@@ -19,7 +18,7 @@ class TaskTile extends StatelessWidget {
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Priority.getBGClr(task.priority),
+          color: Priority.getBGClr(task['priority']),
         ),
         child: Row(children: [
           Expanded(
@@ -30,9 +29,9 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      task.name.length > 20
-                          ? '${task.name.substring(0, 20)}...'
-                          : task.name,
+                      task['name'].length > 20
+                          ? '${task['name'].substring(0, 20)}...'
+                          : task['name'],
                       style: GoogleFonts.lato(
                         textStyle: const TextStyle(
                             fontSize: 16,
@@ -41,7 +40,7 @@ class TaskTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      Priority.getPriority(task.priority),
+                      task['priority'],
                       style: GoogleFonts.lato(
                         textStyle: const TextStyle(
                             fontSize: 14,
@@ -62,7 +61,7 @@ class TaskTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "${DateFormat('dd/MM HH:mm').format(task!.startDate)} - ${DateFormat('dd/MM HH:mm').format(task!.endDate)}",
+                      "${DateFormat('dd/MM HH:mm').format(DateTime.parse(task['startDate']))} - ${DateFormat('dd/MM HH:mm').format(DateTime.parse(task['endDate']))}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 13, color: Colors.grey[100]),
@@ -75,14 +74,14 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Giám sát: ${task.supervisorId.toString()}",
+                      "Giám sát: ${task['receiverName']}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 15, color: Colors.grey[100]),
                       ),
                     ),
                     Text(
-                      "Vị trí: ${task.fieldId.toString()}",
+                      "Vị trí: ${task['fieldName']}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 15, color: Colors.grey[100]),
@@ -102,11 +101,7 @@ class TaskTile extends StatelessWidget {
           RotatedBox(
             quarterTurns: 3,
             child: Text(
-              task.status == 1
-                  ? "KHÔNG HOÀN THÀNH"
-                  : task.status == 2
-                      ? "ĐANG LÀM"
-                      : "HOÀN THÀNH",
+              task['status'],
               style: GoogleFonts.lato(
                 textStyle: const TextStyle(
                     fontSize: 10,
