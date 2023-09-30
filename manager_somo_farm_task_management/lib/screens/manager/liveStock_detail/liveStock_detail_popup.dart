@@ -6,8 +6,7 @@ import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
 
 class LiveStockDetailsPopup extends StatelessWidget {
-  final LiveStock liveStock;
-
+  final Map<String, dynamic> liveStock;
   const LiveStockDetailsPopup({required this.liveStock});
 
   @override
@@ -18,10 +17,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            liveStock.name,
+            liveStock['name'],
             style: const TextStyle(
               color: kPrimaryColor,
-              fontSize: 24,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -49,60 +48,132 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 const Icon(
                   FontAwesomeIcons.tag,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Mã động vật: ${liveStock.id}',
+                  'Mã động vật: ${liveStock['externalId']}',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 25),
             Row(
               children: [
                 const Icon(
                   FontAwesomeIcons.paw,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Loại động vật: ${liveStock.type}',
+                  'Loại: ${liveStock['habitantTypeName']}',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.venusMars,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Giới tính: ${liveStock['gender']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 45),
             Row(
               children: [
                 const Icon(
                   Icons.access_time,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(liveStock.createDate)}',
+                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['dateOfBirth']))}',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  Icons.access_time_filled,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Ngày sinh: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 45),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.map,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Khu vực: ${liveStock['areaName']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.locationDot,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Vùng: ${liveStock['zoneName']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
             Row(
               children: [
                 const Icon(
                   FontAwesomeIcons.horseHead,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Số lượng: ${liveStock.quantity}',
+                  'Khu đất: ${liveStock['fieldName']}',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],

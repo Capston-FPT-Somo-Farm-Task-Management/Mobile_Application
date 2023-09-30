@@ -85,7 +85,23 @@ class PlantDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Số lượng: ${plant.quantity}',
+                  'Loai cây: ${plant.typeName}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.tree,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${plant.fieldName}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),

@@ -1,41 +1,48 @@
 class Plant {
   final String id;
   final String name;
+  final String typeName;
+  final String fieldName;
   final DateTime startDate;
-  final int quantity;
 
   Plant({
     required this.id,
     required this.name,
+    required this.typeName,
+    required this.fieldName,
     required this.startDate,
-    required this.quantity,
   });
 }
 
-List<Plant> plants = [
+List<Plant> plant = [
   Plant(
       id: "SE150111",
       name: "Cây sầu riêng",
-      startDate: DateTime(2023, 9, 14),
-      quantity: 125),
+      typeName: "Mít",
+      fieldName: "Khu đất 1",
+      startDate: DateTime(2023, 9, 29)),
   Plant(
       id: "SE150222",
       name: "Cây ổi",
-      startDate: DateTime(2023, 9, 15),
-      quantity: 127),
+      typeName: "Ổi",
+      fieldName: "Khu đất 2",
+      startDate: DateTime(2023, 9, 29)),
   Plant(
       id: "SE150333",
       name: "Cây táo tào",
-      startDate: DateTime(2023, 9, 16),
-      quantity: 123),
+      typeName: "Táo",
+      fieldName: "Khu đất 3",
+      startDate: DateTime(2023, 9, 29)),
   Plant(
       id: "SE150444",
       name: "Cây bơ Đà Lạt",
-      startDate: DateTime(2023, 9, 16),
-      quantity: 123),
+      typeName: "Bơ",
+      fieldName: "Khu đất 4",
+      startDate: DateTime(2023, 9, 29)),
   Plant(
       id: "SE150555",
       name: "Cây bưởi",
-      startDate: DateTime(2023, 9, 16),
-      quantity: 123)
+      typeName: "Mít",
+      fieldName: "Khu đất 5",
+      startDate: DateTime(2023, 9, 29)),
 ];

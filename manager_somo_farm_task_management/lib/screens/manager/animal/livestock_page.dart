@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/animal/add_group_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/add_liveStockGroup_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/animal/add_liveStockType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/animal/add_livestock_page.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
+import 'package:manager_somo_farm_task_management/services/liveStock_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
@@ -18,150 +21,193 @@ class LiveStockPage extends StatefulWidget {
 
 class LiveStockPageState extends State<LiveStockPage> {
   int _currentIndex = 0;
-  List<LiveStock> liveStocks = liveStockList;
+  List<LiveStock> SearchliveStock = liveStockList;
   final TextEditingController searchController = TextEditingController();
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      liveStocks = liveStockList
+      SearchliveStock = liveStockList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
+  List<Map<String, dynamic>> liveStocks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    GetAllLiveStock().then((value) {
+      setState(() {
+        liveStocks = value;
+      });
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
+    return LiveStockService().getAllLiveStock();
+  }
+
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight),
+        preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
       body: Container(
           padding: EdgeInsets.only(left: 20, right: 20, top: 30),
           child: Column(
             children: [
-              Flexible(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Vật nuôi",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Vật nuôi",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CreateLiveStock()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: kPrimaryColor,
-                                minimumSize: Size(120, 45),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Tạo vật nuôi",
-                                  style: TextStyle(fontSize: 19),
-                                ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreateLiveStock()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryColor,
+                              minimumSize: Size(120, 45),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          CreateLiveStockGroup()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: kPrimaryColor,
-                                minimumSize: Size(100, 45),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Tạo chuồng",
-                                  style: TextStyle(fontSize: 19),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Container(
-                        height: 42,
-                        child: Expanded(
-                          flex: 2,
-                          child: Container(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: TextField(
-                              controller: searchController,
-                              onChanged: (keyword) {
-                                searchLiveStocks(keyword);
-                              },
-                              decoration: InputDecoration(
-                                hintText: "Tìm kiếm...",
-                                border: InputBorder.none,
-                                icon: Icon(Icons.search),
+                            child: const Center(
+                              child: Text(
+                                "Tạo vật nuôi",
+                                style: TextStyle(fontSize: 19),
                               ),
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CreateLiveStockGroup()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryColor,
+                              minimumSize: Size(100, 45),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Tạo chuồng",
+                                style: TextStyle(fontSize: 19),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CreateLiveStockType()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryColor,
+                              minimumSize: Size(120, 45),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Tạo loại vật nuôi",
+                                style: TextStyle(fontSize: 19),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Container(
+                      height: 42,
+                      child: Expanded(
+                        flex: 2,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            onChanged: (keyword) {
+                              searchLiveStocks(keyword);
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Tìm kiếm...",
+                              border: InputBorder.none,
+                              icon: Icon(Icons.search),
+                            ),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 30),
-              Expanded(
-                flex: 3,
+              Flexible(
+                flex: 2,
                 child: ListView.separated(
                   itemCount: liveStocks.length,
                   separatorBuilder: (BuildContext context, int index) {
                     return const SizedBox(height: 25);
                   },
                   itemBuilder: (context, index) {
-                    final livestock = liveStocks[index];
+                    Map<String, dynamic> liveStock = liveStocks[index];
 
                     return GestureDetector(
                       onTap: () {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return LiveStockDetailsPopup(liveStock: livestock);
+                            return LiveStockDetailsPopup(liveStock: liveStock);
                           },
                         );
                       },
                       onLongPress: () {
-                        _showBottomSheet(context, livestock);
+                        _showBottomSheet(context, liveStock);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -186,7 +232,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                     width: 1.0, // Độ dày của đường viền
                                   ),
                                 ),
-                                height: 80,
+                                height: 110,
                                 width: double.infinity,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,7 +244,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            livestock.name,
+                                            liveStock['name'],
                                             style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
@@ -206,7 +252,13 @@ class LiveStockPageState extends State<LiveStockPage> {
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
-                                            'Ngày tạo: ${livestock.createDate.toLocal()}',
+                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            'Loại: ${liveStock['habitantTypeName']}',
                                             style:
                                                 const TextStyle(fontSize: 16),
                                           ),
@@ -234,7 +286,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Số lượng: ${livestock.quantity}',
+                                      'Khu đất: ${liveStock['fieldName']}',
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
@@ -261,7 +313,7 @@ class LiveStockPageState extends State<LiveStockPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, LiveStock liveStock) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> liveStock) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

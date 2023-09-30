@@ -2,24 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
-class CreateLiveStockGroup extends StatefulWidget {
-  const CreateLiveStockGroup({Key? key}) : super(key: key);
+class CreatePlantField extends StatefulWidget {
+  const CreatePlantField({Key? key}) : super(key: key);
 
   @override
-  CreateLiveStockGroupState createState() => CreateLiveStockGroupState();
+  CreatePlantFieldState createState() => CreatePlantFieldState();
 }
 
-class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
+class CreatePlantFieldState extends State<CreatePlantField> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  List<String> liveStockType = ["Bò", "Heo", "Gà", "Vịt"];
-  String _selectedCrop = "Bò";
+  List<String> crops = ["Sầu riêng", "Mít", "Cam", "Xoai"];
+  String _selectedCrop = "Mít";
   List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
   List<String> zones = [];
   List<String> lands = [];
@@ -54,16 +53,16 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm chuồng cho vật nuôi",
+                "Thêm vườn cây",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Tên chuồng",
-                hint: "Nhập tên chuồng",
+                title: "Tên vườn",
+                hint: "Nhập tên vườn cây",
                 controller: _titleController,
               ),
               MyInputField(
-                title: "Loại vật nuôi",
+                title: "Loại cây trồng",
                 hint: _selectedCrop,
                 widget: DropdownButton(
                   icon: const Icon(
@@ -78,8 +77,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                       _selectedCrop = newValue!;
                     });
                   },
-                  items: liveStockType
-                      .map<DropdownMenuItem<String>>((String value) {
+                  items: crops.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -137,47 +135,10 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                   }).toList(),
                 ),
               ),
-              MyInputField(
-                title: "Chọn khu đất",
-                hint: _selectedLand,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedLand = newValue!;
-                    });
-                  },
-                  items: lands.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
               MyInputNumber(
-                title: "Số lượng",
+                title: "Số lượng cây trong vườn",
                 hint: "Nhập số lượng",
                 controller: _noteController,
-              ),
-              MyInputField(
-                title: "Ngày tạo",
-                hint: DateFormat('dd/MM/yyyy').format(_selectedDate),
-                widget: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    _getDateFromUser();
-                  },
-                ),
               ),
               const SizedBox(height: 40),
               const Divider(
@@ -214,11 +175,11 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty) {
+    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const LiveStockPage(),
+          builder: (context) => const PlantPage(),
         ),
       );
     } else {

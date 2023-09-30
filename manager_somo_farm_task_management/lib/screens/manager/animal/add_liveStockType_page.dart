@@ -5,21 +5,20 @@ import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
-class CreateLiveStock extends StatefulWidget {
-  const CreateLiveStock({Key? key}) : super(key: key);
+class CreateLiveStockType extends StatefulWidget {
+  const CreateLiveStockType({Key? key}) : super(key: key);
 
   @override
-  CreateLiveStockState createState() => CreateLiveStockState();
+  CreateLiveStockTypeState createState() => CreateLiveStockTypeState();
 }
 
-class CreateLiveStockState extends State<CreateLiveStock> {
+class CreateLiveStockTypeState extends State<CreateLiveStockType> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  List<String> livestock = ["Bò", "Heo", "Vịt", "Gà"];
-  String _selectedLiveStock = "Heo";
+  List<String> liveStockType = ["Bò", "Heo", "Gà", "Vịt"];
+  String _selectedCrop = "Bò";
   List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
   List<String> zones = [];
   List<String> lands = [];
@@ -54,117 +53,13 @@ class CreateLiveStockState extends State<CreateLiveStock> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm vật nuôi",
+                "Thêm loại cho vật nuôi",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Id vật nuôi",
-                hint: "Nhập id vật nuôi",
+                title: "Tên loại vật nuôi",
+                hint: "Nhập tên loại",
                 controller: _titleController,
-              ),
-              MyInputField(
-                title: "Tên vật nuôi",
-                hint: "Nhập tên vật nuôi",
-                controller: _titleController,
-              ),
-              MyInputField(
-                title: "Loại vật nuôi",
-                hint: _selectedLiveStock,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedLiveStock = newValue!;
-                    });
-                  },
-                  items:
-                      livestock.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Chọn khu vực",
-                hint: _selectedArea,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedArea = newValue!;
-                    });
-                    updateZones(_selectedArea);
-                  },
-                  items: area.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Chọn vùng",
-                hint: _selectedZone,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedZone = newValue!;
-                    });
-                    updateLands(_selectedZone);
-                  },
-                  items: zones.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Chọn khu đất",
-                hint: _selectedLand,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedLand = newValue!;
-                    });
-                  },
-                  items: lands.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
               ),
               const SizedBox(height: 40),
               const Divider(
@@ -187,7 +82,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Tạo vật nuôi",
+                      "Tạo loại vật nuôi",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
