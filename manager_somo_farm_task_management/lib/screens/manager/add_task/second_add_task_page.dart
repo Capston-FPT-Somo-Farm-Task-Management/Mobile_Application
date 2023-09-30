@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/models/employee.dart';
-import 'package:manager_somo_farm_task_management/models/employee_task_type.dart';
-import 'package:manager_somo_farm_task_management/models/material.dart';
-import 'package:manager_somo_farm_task_management/models/task_type.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/third_add_task_page.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:manager_somo_farm_task_management/services/employee_service.dart';
+import 'package:manager_somo_farm_task_management/services/material_service.dart';
+import 'package:manager_somo_farm_task_management/services/member_service.dart';
+import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SecondAddTaskPage extends StatefulWidget {
-  const SecondAddTaskPage({super.key});
+  final bool isPlant;
+  const SecondAddTaskPage({super.key, required this.isPlant});
 
   @override
   State<SecondAddTaskPage> createState() => _SecondAddTaskPage();
@@ -20,17 +22,72 @@ class SecondAddTaskPage extends StatefulWidget {
 class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   final TextEditingController _titleController = TextEditingController();
   final QuillController _quillController = QuillController.basic();
-  String _selectedTaskType = listTaskTypes[0].taskTypeName;
+  String _selectedTaskType = "";
   Key _keyChange = UniqueKey();
-  List<Employee> filteredEmployees = listEmployeeTaskTypes
-      .where((employeeTaskType) => employeeTaskType.taskTypeId == 1)
-      .map((employeeTaskType) => listEmployees.firstWhere(
-          (employee) => employee.employeeId == employeeTaskType.employeeId))
-      .toList();
-  List<Employee> selectedEmployees = [];
-  List<MaterialFarm> selectedMaterials = [];
-  List<String> user = ["Ronaldo", "Messi", "Benzema", "Mac Hai"];
-  String _selectedUser = "Ronaldo";
+  List<Map<String, dynamic>> filteredEmployees = [];
+  List<Map<String, dynamic>> selectedEmployees = [];
+  String hintEmployee = "";
+  List<Map<String, dynamic>> selectedMaterials = [];
+  List<Map<String, dynamic>> materials = [];
+  List<Map<String, dynamic>> supervisors = [];
+  String _selectedSupervisor = "Chọn";
+  List<Map<String, dynamic>> taskTypes = [];
+  int farmId = -1;
+  Future<List<Map<String, dynamic>>> getListTaskTypeLivestocks() {
+    return TaskTypeService().getListTaskTypeLivestock();
+  }
+
+  Future<List<Map<String, dynamic>>> getListTaskTypePlants() {
+    return TaskTypeService().getTaskTypePlants();
+  }
+
+  Future<List<Map<String, dynamic>>> getEmployeesbyFarmIdAndTaskTypeId(
+      int farmId, int taskTypeId) {
+    return EmployeeService()
+        .getEmployeesbyFarmIdAndTaskTypeId(farmId, taskTypeId);
+  }
+
+  Future<List<Map<String, dynamic>>> getSupervisorsbyFarmId(int farmId) {
+    return MemberService().getSupervisorsbyFarmId(farmId);
+  }
+
+  Future<int?> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
+    return storedFarmId;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getFarmId().then((f) {
+      setState(() {
+        farmId = f!;
+      });
+      getSupervisorsbyFarmId(f!).then((s) {
+        setState(() {
+          supervisors = s;
+        });
+      });
+    });
+    widget.isPlant
+        ? getListTaskTypePlants().then((value) {
+            setState(() {
+              taskTypes = value;
+            });
+          })
+        : getListTaskTypeLivestocks().then((value) {
+            setState(() {
+              taskTypes = value;
+            });
+          });
+    _selectedTaskType = "Chọn";
+    MaterialService().getMaterial().then((value) {
+      setState(() {
+        materials = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +127,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                 controller: _titleController,
               ),
               MyInputField(
-                title: "Loại nhiệm vụ",
+                title: "Loại công việc",
                 hint: _selectedTaskType,
                 widget: DropdownButton(
                   underline: Container(height: 0),
@@ -81,31 +138,30 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (TaskType? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedTaskType = newValue!.taskTypeName;
-
-                      // Lọc danh sách Employee tương ứng với TaskType đã chọn
-                      filteredEmployees = listEmployeeTaskTypes
-                          .where((employeeTaskType) =>
-                              employeeTaskType.taskTypeId ==
-                              newValue.taskTypeId)
-                          .map((employeeTaskType) => listEmployees.firstWhere(
-                              (employee) =>
-                                  employee.employeeId ==
-                                  employeeTaskType.employeeId))
-                          .toList();
+                      _selectedTaskType = newValue!['name'];
 
                       // Gọi setState để cập nhật danh sách người thực hiện
                       _keyChange =
                           UniqueKey(); // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ
                     });
+                    // Lọc danh sách Employee tương ứng với TaskType đã chọn
+                    getEmployeesbyFarmIdAndTaskTypeId(farmId, newValue!['id'])
+                        .then((value) {
+                      setState(() {
+                        filteredEmployees = value;
+                        hintEmployee = value.isEmpty
+                            ? "Không có người phù hợp với loại công việc"
+                            : "Chọn người thực hiện";
+                      });
+                    });
                   },
-                  items: listTaskTypes
-                      .map<DropdownMenuItem<TaskType>>((TaskType value) {
-                    return DropdownMenuItem<TaskType>(
+                  items: taskTypes.map<DropdownMenuItem<Map<String, dynamic>>>(
+                      (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value.taskTypeName),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
@@ -116,9 +172,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Người thực hiện", // Thay đổi tiêu đề nếu cần thiết
-                      style:
-                          titileStyle, // Đảm bảo bạn đã định nghĩa titileStyle
+                      "Người thực hiện",
+                      style: titileStyle,
                     ),
                     Container(
                       height: 52,
@@ -135,37 +190,38 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                         child: ChipsInput(
                           suggestionsBoxMaxHeight: 200,
                           key: _keyChange,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "Chọn người thực hiện",
+                              hintText: hintEmployee,
                               hintStyle: TextStyle(color: Colors.black45)),
                           initialValue: [],
                           findSuggestions: (String query) {
                             if (query.length != 0) {
                               var lowercaseQuery = query.toLowerCase();
                               return filteredEmployees.where((e) {
-                                return e.fullName
+                                return e['name']
                                     .toLowerCase()
                                     .contains(query.toLowerCase());
                               }).toList(growable: false)
-                                ..sort((a, b) => a.fullName
+                                ..sort((a, b) => a['name']
                                     .toLowerCase()
                                     .indexOf(lowercaseQuery)
-                                    .compareTo(b.fullName
+                                    .compareTo(b['name']
                                         .toLowerCase()
                                         .indexOf(lowercaseQuery)));
                             } else {
-                              return const <Employee>[];
+                              return const <Map<String, dynamic>>[];
                             }
                           },
                           onChanged: (data) {
-                            selectedEmployees = data.cast<Employee>();
-                            print(data.length);
+                            selectedEmployees =
+                                data.cast<Map<String, dynamic>>();
+                            print(selectedEmployees);
                           },
                           chipBuilder: (context, state, employee) {
                             return InputChip(
                               key: ObjectKey(employee),
-                              label: Text(employee.fullName),
+                              label: Text(employee['name']),
                               onDeleted: () => state.deleteChip(employee),
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
@@ -174,7 +230,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           suggestionBuilder: (context, state, profile) {
                             return ListTile(
                               key: ObjectKey(profile),
-                              title: Text(profile.fullName),
+                              title: Text(profile['name']),
                               onTap: () => state.selectSuggestion(profile),
                             );
                           },
@@ -184,9 +240,14 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   ],
                 ),
               ),
+              if (hintEmployee == "Không có người phù hợp với loại công việc")
+                Text(
+                  "Hãy chọn loại công việc khác",
+                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
+                ),
               MyInputField(
                 title: "Người giám sát",
-                hint: _selectedUser,
+                hint: _selectedSupervisor,
                 widget: DropdownButton(
                   underline: Container(height: 0),
                   icon: const Icon(
@@ -196,15 +257,17 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedUser = newValue!;
+                      _selectedSupervisor = newValue!['name'];
                     });
                   },
-                  items: user.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: supervisors
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
@@ -242,38 +305,39 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                             if (query.length != 0) {
                               var lowercaseQuery = query.toLowerCase();
                               return materials.where((m) {
-                                return m.materialName
+                                return m['name']
                                     .toLowerCase()
                                     .contains(query.toLowerCase());
                               }).toList(growable: false)
-                                ..sort((a, b) => a.materialName
+                                ..sort((a, b) => a['name']
                                     .toLowerCase()
                                     .indexOf(lowercaseQuery)
-                                    .compareTo(b.materialName
+                                    .compareTo(b['name']
                                         .toLowerCase()
                                         .indexOf(lowercaseQuery)));
                             } else {
-                              return const <Employee>[];
+                              return const <Map<String, dynamic>>[];
                             }
                           },
                           onChanged: (data) {
-                            selectedMaterials = data.cast<MaterialFarm>();
+                            selectedMaterials =
+                                data.cast<Map<String, dynamic>>();
                             print(data);
                           },
                           chipBuilder: (context, state, material) {
                             return InputChip(
                               key: ObjectKey(material),
-                              label: Text(material.materialName),
+                              label: Text(material['name']),
                               onDeleted: () => state.deleteChip(material),
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
                             );
                           },
-                          suggestionBuilder: (context, state, profile) {
+                          suggestionBuilder: (context, state, material) {
                             return ListTile(
-                              key: ObjectKey(profile),
-                              title: Text(profile.materialName),
-                              onTap: () => state.selectSuggestion(profile),
+                              key: ObjectKey(material),
+                              title: Text(material['name']),
+                              onTap: () => state.selectSuggestion(material),
                             );
                           },
                         ),
