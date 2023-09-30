@@ -7,7 +7,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/animal/add_liv
 import 'package:manager_somo_farm_task_management/screens/manager/animal/add_livestock_page.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
-import 'package:manager_somo_farm_task_management/services/liveStock_service.dart';
+import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';

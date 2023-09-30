@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
-class PlantService {
-  Future<List<Map<String, dynamic>>> getPlantExternalIdsByFieldId(
+class LiveStockService {
+  Future<List<Map<String, dynamic>>> getLiveStockExternalIdsByFieldId(
       int fieldId) async {
     final String getTasksUrl = '$baseUrl/LiveStock/ExternalId/Field($fieldId)';
 
@@ -20,26 +20,26 @@ class PlantService {
           List<Map<String, dynamic>>.from(data['data']);
       return ids;
     } else {
-      throw Exception('Failed to get LiveStocks ExternalId by user ID');
+      throw Exception('Failed to get LiveStock ExternalIds by user ID');
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAllPlant() async {
-    final String getPlantUrl = '$baseUrl/Plant';
+  Future<List<Map<String, dynamic>>> getAllLiveStock() async {
+    final String getLiveStockUrl = '$baseUrl/LiveStock';
 
     final http.Response response = await http.get(
-      Uri.parse(getPlantUrl),
+      Uri.parse(getLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
       },
     );
 
     if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> plants =
+      final List<Map<String, dynamic>> liveStocks =
           List<Map<String, dynamic>>.from(json.decode(response.body));
-      return plants;
+      return liveStocks;
     } else {
-      throw Exception('Failed to get plant');
+      throw Exception('Failed to get LiveStock ExternalIds by user ID');
     }
   }
 }

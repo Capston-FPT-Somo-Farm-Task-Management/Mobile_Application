@@ -253,6 +253,28 @@ class CustomAppBar extends StatelessWidget {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
                                                   builder: (context) =>
+                                                      LiveStockPage(),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(FontAwesomeIcons.hippo),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Tạo chuồng",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
                                                       PlantPage(),
                                                 ));
                                               },
@@ -262,6 +284,28 @@ class CustomAppBar extends StatelessWidget {
                                                 SizedBox(width: 15),
                                                 Text(
                                                   "Thực vật",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LiveStockPage(),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(FontAwesomeIcons.hippo),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Tạo vườn",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:manager_somo_farm_task_management/models/farm.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../manager/home/manager_home_page.dart';
@@ -14,7 +13,7 @@ class CheckKeepLogin extends StatefulWidget {
 }
 
 class CheckKeepLoginState extends State<CheckKeepLogin> {
-  int? userId; // Thêm biến để lưu tên người dùng từ SharedPreferences
+  int? userId;
   int? farmId;
   String? role;
   @override

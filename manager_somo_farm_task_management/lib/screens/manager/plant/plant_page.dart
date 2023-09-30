@@ -6,8 +6,6 @@ import 'package:manager_somo_farm_task_management/models/plant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/create_the_crops.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
@@ -24,17 +22,18 @@ class PlantPage extends StatefulWidget {
 class PlantPageState extends State<PlantPage> {
   int _currentIndex = 0;
   List<Plant> listPlant = plant;
+
+  List<Map<String, dynamic>> plants = [];
+  List<Map<String, dynamic>> ListPlants = [];
   final TextEditingController searchController = TextEditingController();
   void searchPlants(String keyword) {
     setState(() {
-      listPlant = plant
-          .where((plant) => removeDiacritics(plant.name.toLowerCase())
+      ListPlants = plants
+          .where((plant) => removeDiacritics(plant['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
-
-  List<Map<String, dynamic>> plants = [];
 
   @override
   void initState() {

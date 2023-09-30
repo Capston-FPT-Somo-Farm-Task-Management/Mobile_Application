@@ -15,17 +15,6 @@ class CreateLiveStockType extends StatefulWidget {
 
 class CreateLiveStockTypeState extends State<CreateLiveStockType> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
-  List<String> liveStockType = ["Bò", "Heo", "Gà", "Vịt"];
-  String _selectedCrop = "Bò";
-  List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
-  List<String> zones = [];
-  List<String> lands = [];
-  String _selectedArea = "Khu vực 1";
-  String _selectedZone = "Vùng 1";
-  String _selectedLand = "Khu đất 1";
-  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -107,48 +96,6 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar(
           context, 'Vui lòng điền đầy đủ thông tin', true);
-    }
-  }
-
-  void updateZones(String area) {
-    if (area == "Khu vực 1") {
-      setState(() {
-        zones = ["Vùng 1", "Vùng 2", "Vùng 3", "Vùng 4"];
-      });
-    } else {
-      setState(() {
-        zones = [];
-        _selectedZone = "";
-      });
-    }
-  }
-
-  void updateLands(String zone) {
-    if (zone == "Vùng 1") {
-      setState(() {
-        lands = ["Khu đất 1", "Khu đất 2", "Khu đất 3", "Khu đất 4"];
-      });
-    } else {
-      setState(() {
-        lands = [];
-        _selectedLand = "";
-      });
-    }
-  }
-
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
-      lastDate: DateTime.now().add(const Duration(days: 36525)),
-    );
-    if (_pickerDate != null) {
-      setState(() {
-        _selectedDate = _pickerDate;
-      });
-    } else {
-      print("it's null or something is wrong");
     }
   }
 }

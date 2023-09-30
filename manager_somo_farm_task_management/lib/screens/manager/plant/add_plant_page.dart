@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
 class CreatePlant extends StatefulWidget {
@@ -16,7 +15,6 @@ class CreatePlant extends StatefulWidget {
 class CreatePlantState extends State<CreatePlant> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
   List<String> crops = ["Sầu riêng", "Mít", "Cam", "Xoai"];
   String _selectedCrop = "Mít";
   List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
@@ -236,22 +234,6 @@ class CreatePlantState extends State<CreatePlant> {
         lands = [];
         _selectedLand = "";
       });
-    }
-  }
-
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
-      lastDate: DateTime.now().add(const Duration(days: 36525)),
-    );
-    if (_pickerDate != null) {
-      setState(() {
-        _selectedDate = _pickerDate;
-      });
-    } else {
-      print("it's null or something is wrong");
     }
   }
 }

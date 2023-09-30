@@ -3,10 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,39 +23,53 @@ class TaskPageState extends State<TaskPage> {
   int _currentIndex = 0;
   final List<String> filters = [
     "Tất cả",
-    "Đang làm",
+    "Chuẩn bị",
     "Hoàn thành",
+    "Đang thực hiện",
     "Không hoàn thành",
   ];
-  List<Task> filteredTaskList = taskList;
+
   String? selectedFilter;
   bool sortOrderAsc = true;
 
   int? farmId;
   final TextEditingController searchController = TextEditingController();
+  List<Map<String, dynamic>> tasks = [];
+  List<Map<String, dynamic>> filteredTaskList = [];
   @override
   initState() {
     super.initState();
     selectedFilter = filters[0];
-    getFarmId();
+    getFarmId().then((value) {
+      farmId = value;
+    });
+    getTasks().then((value) {
+      setState(() {
+        tasks = value;
+        filteredTaskList = tasks;
+      });
+    });
   }
 
-  Future<void> getFarmId() async {
+  Future<int?> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
-
-    setState(() {
-      farmId = storedFarmId;
-    });
+    return storedFarmId;
   }
 
   void searchTasks(String keyword) {
     setState(() {
-      filteredTaskList = taskList
-          .where((task) => removeDiacritics(task.name.toLowerCase())
+      filteredTaskList = tasks
+          .where((task) => removeDiacritics(task['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
+  }
+
+  Future<List<Map<String, dynamic>>> getTasks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('userId');
+    return TaskService().getTasksByUserId(userId!);
   }
 
   @override
@@ -149,13 +162,13 @@ class TaskPageState extends State<TaskPage> {
                         setState(() {
                           if (sortOrderAsc) {
                             // Sắp xếp tăng dần (ngày gần đến xa)
-                            filteredTaskList.sort(
-                                (a, b) => a.startDate.compareTo(b.startDate));
+                            filteredTaskList.sort((a, b) =>
+                                a['startDate'].compareTo(b['startDate']));
                             sortOrderAsc = false;
                           } else {
                             // Sắp xếp giảm dần (ngày xa đến gần)
-                            filteredTaskList.sort(
-                                (a, b) => b.startDate.compareTo(a.startDate));
+                            filteredTaskList.sort((a, b) =>
+                                b['startDate'].compareTo(a['startDate']));
                             sortOrderAsc = true;
                           }
                         });
@@ -182,19 +195,28 @@ class TaskPageState extends State<TaskPage> {
                                 newValue; // Cập nhật giá trị đã chọn cho Dropdown 1
                             if (selectedFilter == "Tất cả") {
                               // Nếu đã chọn "Tất cả", hiển thị tất cả các nhiệm vụ
-                              filteredTaskList = taskList;
+                              filteredTaskList = tasks;
                             }
                             if (selectedFilter == "Không hoàn thành") {
-                              filteredTaskList =
-                                  taskList.where((t) => t.status == 1).toList();
+                              filteredTaskList = tasks
+                                  .where(
+                                      (t) => t['status'] == "Không hoàn thành")
+                                  .toList();
                             }
-                            if (selectedFilter == "Đang làm") {
-                              filteredTaskList =
-                                  taskList.where((t) => t.status == 2).toList();
+                            if (selectedFilter == "Đang thực hiện") {
+                              filteredTaskList = tasks
+                                  .where((t) => t['status'] == "Đang thực hiện")
+                                  .toList();
                             }
                             if (selectedFilter == "Hoàn thành") {
-                              filteredTaskList =
-                                  taskList.where((t) => t.status == 3).toList();
+                              filteredTaskList = tasks
+                                  .where((t) => t['status'] == "Hoàn thành")
+                                  .toList();
+                            }
+                            if (selectedFilter == "Chuẩn bị") {
+                              filteredTaskList = tasks
+                                  .where((t) => t['status'] == "Chuẩn bị")
+                                  .toList();
                             }
                           });
                         },
@@ -271,9 +293,9 @@ class TaskPageState extends State<TaskPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            task.name.length > 15
-                                                ? '${task.name.substring(0, 15)}...'
-                                                : task.name,
+                                            task['name'].length > 15
+                                                ? '${task['name'].substring(0, 15)}...'
+                                                : task['name'],
                                             style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
@@ -281,17 +303,21 @@ class TaskPageState extends State<TaskPage> {
                                           ),
                                           Container(
                                             decoration: BoxDecoration(
-                                              color: task.status == 1
-                                                  ? Colors.red
-                                                  : task.status == 2
-                                                      ? Colors.orange
-                                                      : kPrimaryColor,
+                                              color: task['status'] ==
+                                                      "Không hoàn thành"
+                                                  ? Colors.red[400]
+                                                  : task['status'] == "Chuẩn bị"
+                                                      ? Colors.orange[400]
+                                                      : task['status'] ==
+                                                              "Đang thực hiện"
+                                                          ? kTextBlueColor
+                                                          : kPrimaryColor,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             padding: const EdgeInsets.all(10),
                                             child: Text(
-                                              Task.getStatus(task.status),
+                                              task['status'],
                                               style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -312,7 +338,7 @@ class TaskPageState extends State<TaskPage> {
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            "${DateFormat('dd/MM HH:mm').format(task.startDate)} - ${DateFormat('dd/MM HH:mm').format(task.endDate)}",
+                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
                                             style: GoogleFonts.lato(
                                               textStyle: const TextStyle(
                                                   fontSize: 13,
@@ -327,7 +353,7 @@ class TaskPageState extends State<TaskPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            "Giám sát: ${task.supervisorId.toString()}",
+                                            "Giám sát: ${task['receiverName']}",
                                             style: GoogleFonts.lato(
                                               textStyle: const TextStyle(
                                                   fontSize: 15,
@@ -335,7 +361,7 @@ class TaskPageState extends State<TaskPage> {
                                             ),
                                           ),
                                           Text(
-                                            "Vị trí: ${task.fieldId.toString()}",
+                                            "Vị trí: ${task['fieldName']}",
                                             style: GoogleFonts.lato(
                                               textStyle: const TextStyle(
                                                   fontSize: 15,
@@ -368,11 +394,11 @@ class TaskPageState extends State<TaskPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Loại: ${task.taskTypeId}',
+                                  'Loại: ${task['taskTypeName']}',
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Text(
-                                  'Ưu tiên: ${Priority.getPriority(task.priority)}',
+                                  'Ưu tiên: ${task['priority']}',
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ],
@@ -399,13 +425,13 @@ class TaskPageState extends State<TaskPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Task task) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> task) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task.status == 3
+          height: task['status'] == 3
               ? MediaQuery.of(context).size.height * 0.24
               : MediaQuery.of(context).size.height * 0.32,
           color: kBackgroundColor,
@@ -420,7 +446,7 @@ class TaskPageState extends State<TaskPage> {
                 ),
               ),
               const Spacer(),
-              task.status == 3
+              task['status'] == 3
                   ? Container()
                   : _bottomSheetButton(
                       label: "Đã hoàn thành",
