@@ -6,11 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/notification_services.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
@@ -26,12 +27,24 @@ class ManagerHomePage extends StatefulWidget {
 class ManagerHomePageState extends State<ManagerHomePage> {
   int _currentIndex = 0;
   DateTime _selectedDate = DateTime.now();
+  List<Map<String, dynamic>> tasks = [];
   @override
   void initState() {
     super.initState();
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
     notificationService.initialNotification();
+    getTasks().then((value) {
+      setState(() {
+        tasks = value;
+      });
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getTasks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('userId');
+    return TaskService().getTasksByUserId(userId!);
   }
 
   NotificationService notificationService = NotificationService();
@@ -148,13 +161,13 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   _showTask() {
     return Expanded(
         child: ListView.builder(
-            itemCount: taskList.length,
+            itemCount: tasks.length,
             itemBuilder: (_, index) {
-              Task task = taskList[index];
-              if (task.remind != 0) {
-                notificationService.scheduleNotification(task);
-              }
-              if (task.repeat == 1) {
+              Map<String, dynamic> task = tasks[index];
+              // if (task.remind != 0) {
+              //   notificationService.scheduleNotification(task);
+              // }
+              if (task['repeat'] == 1) {
                 return AnimationConfiguration.staggeredList(
                   position: index,
                   child: SlideAnimation(
@@ -171,9 +184,9 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               );
                             },
                             onLongPress: () {
-                              _showBottomSheet(context, taskList[index]);
+                              _showBottomSheet(context, task);
                             },
-                            child: TaskTile(taskList[index]),
+                            child: TaskTile(task),
                           )
                         ],
                       ),
@@ -181,11 +194,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   ),
                 );
               }
-              if (task.startDate.isBefore(_selectedDate) &&
-                      task.endDate.isAfter(_selectedDate) ||
-                  DateFormat.yMd().format(task.startDate) ==
+              if (DateTime.parse(task['startDate']).isBefore(_selectedDate) &&
+                      DateTime.parse(task['endDate']).isAfter(_selectedDate) ||
+                  DateFormat.yMd().format(DateTime.parse(task['startDate'])) ==
                       DateFormat.yMd().format(_selectedDate) ||
-                  DateFormat.yMd().format(task.endDate) ==
+                  DateFormat.yMd().format(DateTime.parse(task['endDate'])) ==
                       DateFormat.yMd().format(_selectedDate)) {
                 return AnimationConfiguration.staggeredList(
                   position: index,
@@ -203,9 +216,9 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               );
                             },
                             onLongPress: () {
-                              _showBottomSheet(context, taskList[index]);
+                              _showBottomSheet(context, task);
                             },
-                            child: TaskTile(taskList[index]),
+                            child: TaskTile(task),
                           )
                         ],
                       ),
@@ -218,13 +231,13 @@ class ManagerHomePageState extends State<ManagerHomePage> {
             }));
   }
 
-  _showBottomSheet(BuildContext context, Task task) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> task) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task.status == 3
+          height: task['status'] == "Hoàn thành" || task['status'] == "Chuẩn bị"
               ? MediaQuery.of(context).size.height * 0.24
               : MediaQuery.of(context).size.height * 0.32,
           color: kBackgroundColor,
@@ -239,10 +252,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 ),
               ),
               const Spacer(),
-              task.status == 3
+              task['status'] == "Hoàn thành"
                   ? Container()
                   : _bottomSheetButton(
-                      label: "Đã hoàn thành",
+                      label: "Xem bằng chứng",
                       onTap: () {
                         Navigator.of(context).pop();
                       },
