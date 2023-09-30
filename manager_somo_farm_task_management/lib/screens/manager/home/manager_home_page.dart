@@ -237,7 +237,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task['status'] == "Hoàn thành" || task['status'] == "Chuẩn bị"
+          height: task['status'] != "Hoàn thành"
               ? MediaQuery.of(context).size.height * 0.24
               : MediaQuery.of(context).size.height * 0.32,
           color: kBackgroundColor,
@@ -252,35 +252,62 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 ),
               ),
               const Spacer(),
-              task['status'] == "Hoàn thành"
-                  ? Container()
-                  : _bottomSheetButton(
-                      label: "Xem bằng chứng",
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      cls: kPrimaryColor,
-                      context: context,
-                    ),
-              _bottomSheetButton(
-                label: "Xóa",
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return ConfirmDeleteDialog(
-                          title: "Xóa công việc",
-                          content: "Bạn có chắc muốn xóa công việc này?",
-                          onConfirm: () {
-                            Navigator.of(context).pop();
-                          },
-                          buttonConfirmText: "Xóa",
-                        );
-                      });
-                },
-                cls: Colors.red[300]!,
-                context: context,
-              ),
+              if (task['status'] == "Hoàn thành")
+                _bottomSheetButton(
+                  label: "Xem bằng chứng",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              if (task['status'] == "Hoàn thành")
+                _bottomSheetButton(
+                  label: "Đánh giá",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              if (task['status'] == "Không hoàn thành")
+                _bottomSheetButton(
+                  label: "Đánh giá",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              if (task['status'] == "Chuẩn bị")
+                _bottomSheetButton(
+                  label: "Xóa",
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ConfirmDeleteDialog(
+                            title: "Xóa công việc",
+                            content: "Bạn có chắc muốn xóa công việc này?",
+                            onConfirm: () {
+                              Navigator.of(context).pop();
+                            },
+                            buttonConfirmText: "Xóa",
+                          );
+                        });
+                  },
+                  cls: Colors.red[300]!,
+                  context: context,
+                ),
+              if (task['status'] == "Đang thực hiện")
+                _bottomSheetButton(
+                  label: "Hoàn thành",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
               const SizedBox(height: 20),
               _bottomSheetButton(
                 label: "Đóng",
