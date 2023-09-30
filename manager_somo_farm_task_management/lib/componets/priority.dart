@@ -8,7 +8,7 @@ class Priority {
       case "Thấp":
         return const Color(0xFF90BE6D);
       case "Trung bình":
-        return const Color(0xFFF9C74F);
+        return Color.fromARGB(255, 198, 162, 78);
       case "Cao":
         return const Color(0xFFF3722C);
       case "Cao nhất":
