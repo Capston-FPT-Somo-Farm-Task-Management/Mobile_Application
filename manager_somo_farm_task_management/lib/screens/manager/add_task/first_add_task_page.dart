@@ -41,6 +41,14 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
     return ZoneService().getZonesbyAreaId(areaId);
   }
 
+  Future<List<Map<String, dynamic>>> getZonesbyAreaPlantId(int areaId) {
+    return ZoneService().getZonesbyAreaPlantId(areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> getZonesbyAreaLivestockId(int areaId) {
+    return ZoneService().getZonesbyAreaLivestockId(areaId);
+  }
+
   Future<List<Map<String, dynamic>>> getFieldsbyZoneId(int zoneId) {
     return FieldService().getFieldsbyZoneId(zoneId);
   }
@@ -114,13 +122,24 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                       _selectedArea = newValue!['name'];
                     });
                     // Lọc danh sách Zone tương ứng với Area đã chọn
-                    getZonesbyAreaId(newValue!['id']).then((value) {
-                      setState(() {
-                        filteredZone = value;
-                        // Gọi setState để cập nhật danh sách zone
-                        _selectedZone = value.isEmpty ? "Chưa có" : "Chọn";
-                      });
-                    });
+                    widget.isPlant
+                        ? getZonesbyAreaPlantId(newValue!['id']).then((value) {
+                            setState(() {
+                              filteredZone = value;
+                              // Gọi setState để cập nhật danh sách zone
+                              _selectedZone =
+                                  value.isEmpty ? "Chưa có" : "Chọn";
+                            });
+                          })
+                        : getZonesbyAreaLivestockId(newValue!['id'])
+                            .then((value) {
+                            setState(() {
+                              filteredZone = value;
+                              // Gọi setState để cập nhật danh sách zone
+                              _selectedZone =
+                                  value.isEmpty ? "Chưa có" : "Chọn";
+                            });
+                          });
                   },
                   items: filteredArea
                       .map<DropdownMenuItem<Map<String, dynamic>>>(
