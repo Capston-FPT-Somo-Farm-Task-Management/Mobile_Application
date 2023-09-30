@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/area.dart';
-import 'package:manager_somo_farm_task_management/models/field.dart';
-import 'package:manager_somo_farm_task_management/models/zone.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/second_add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
+import 'package:manager_somo_farm_task_management/services/area_service.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
+import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
+import 'package:manager_somo_farm_task_management/services/plant_service.dart';
+import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 
 class FirstAddTaskPage extends StatefulWidget {
   final int farmId;
@@ -21,19 +24,45 @@ class FirstAddTaskPage extends StatefulWidget {
 }
 
 class _FirstAddTaskPage extends State<FirstAddTaskPage> {
-  String _selectedArea = areas[0].areaName;
-  List<Area> filteredArea = [];
-  String _selectedZone = zones[0].zoneName;
-  String _selectedField = fields[0].fieldName;
-  List<Zone> filteredZone =
-      zones.where((zone) => zone.areaId == areas[0].areaId).toList();
-  List<Field> filteredField =
-      fields.where((f) => f.zoneId == zones[0].zoneId).toList();
+  String _selectedArea = "";
+  List<Map<String, dynamic>> filteredArea = [];
+  String _selectedZone = "";
+  String _selectedField = "";
+  String _selectedExternalId = "";
+  List<Map<String, dynamic>> filteredZone = [];
+  List<Map<String, dynamic>> filteredField = [];
+  List<Map<String, dynamic>> filteredExternalId = [];
+
+  Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
+    return AreaService().getAreasByFarmId(widget.farmId);
+  }
+
+  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
+    return ZoneService().getZonesbyAreaId(areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> getFieldsbyZoneId(int zoneId) {
+    return FieldService().getFieldsbyZoneId(zoneId);
+  }
+
+  Future<List<Map<String, dynamic>>> getPlantExternalIdsbyFieldId(int fieldId) {
+    return PlantService().getPlantExternalIdsByFieldId(fieldId);
+  }
+
+  Future<List<Map<String, dynamic>>> getLiveStockExternalIdsbyFieldId(
+      int fieldId) {
+    return LiveStockService().getLiveStockExternalIdsByFieldId(fieldId);
+  }
 
   @override
   void initState() {
     super.initState();
-    filteredArea = areas.where((a) => a.farmId == widget.farmId).toList();
+    getAreasbyFarmId().then((a) {
+      setState(() {
+        filteredArea = a;
+        _selectedArea = "Chọn";
+      });
+    });
   }
 
   @override
@@ -80,23 +109,25 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (Area? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedArea = newValue!.areaName;
-
-                      // Lọc danh sách Zone tương ứng với Area đã chọn
-                      filteredZone = zones
-                          .where((zone) => zone.areaId == newValue.areaId)
-                          .toList();
-
-                      // Gọi setState để cập nhật danh sách zone
-                      _selectedZone = filteredZone[0].zoneName;
+                      _selectedArea = newValue!['name'];
+                    });
+                    // Lọc danh sách Zone tương ứng với Area đã chọn
+                    getZonesbyAreaId(newValue!['id']).then((value) {
+                      setState(() {
+                        filteredZone = value;
+                        // Gọi setState để cập nhật danh sách zone
+                        _selectedZone = value.isEmpty ? "Chưa có" : "Chọn";
+                      });
                     });
                   },
-                  items: filteredArea.map<DropdownMenuItem<Area>>((Area value) {
-                    return DropdownMenuItem<Area>(
+                  items: filteredArea
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value.areaName),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
@@ -113,27 +144,33 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (Zone? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedZone = newValue!.zoneName;
-
-                      // Lọc danh sách Filed tương ứng với Zone đã chọn
-                      filteredField = fields
-                          .where((f) => f.zoneId == newValue.zoneId)
-                          .toList();
-
-                      // Gọi setState để cập nhật danh sách zone
-                      _selectedField = filteredField[0].fieldName;
+                      _selectedZone = newValue!['name'];
+                    });
+                    // Lọc danh sách Filed tương ứng với Zone đã chọn
+                    getFieldsbyZoneId(newValue!['id']).then((value) {
+                      setState(() {
+                        filteredField = value;
+                        _selectedField = value.isEmpty ? "Chưa có" : "Chọn";
+                      });
                     });
                   },
-                  items: filteredZone.map<DropdownMenuItem<Zone>>((Zone value) {
-                    return DropdownMenuItem<Zone>(
+                  items: filteredZone
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value.zoneName),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
               ),
+              if (_selectedZone == "Chưa có")
+                Text(
+                  "Hãy chọn khu vực khác",
+                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
+                ),
               MyInputField(
                 title: widget.isPlant ? "Vườn" : "Chuồng",
                 hint: _selectedField,
@@ -146,24 +183,49 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (Field? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedField = newValue!.fieldName;
+                      _selectedField = newValue!['name'];
                     });
+                    if (widget.isOne) {
+                      widget.isPlant
+                          ? getPlantExternalIdsbyFieldId(newValue!['id'])
+                              .then((value) {
+                              setState(() {
+                                filteredExternalId = value;
+                                _selectedExternalId =
+                                    value.isEmpty ? "Chưa có" : "Chọn";
+                              });
+                            })
+                          : getLiveStockExternalIdsbyFieldId(newValue!['id'])
+                              .then((value) {
+                              setState(() {
+                                filteredExternalId = value;
+                                _selectedExternalId =
+                                    value.isEmpty ? "Chưa có" : "Chọn";
+                              });
+                            });
+                    }
                   },
-                  items:
-                      filteredField.map<DropdownMenuItem<Field>>((Field value) {
-                    return DropdownMenuItem<Field>(
+                  items: filteredField
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value.fieldName),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
               ),
+              if (_selectedField == "Chưa có")
+                Text(
+                  "Hãy chọn vùng khác",
+                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
+                ),
               if (widget.isOne)
                 MyInputField(
-                  title: widget.isPlant ? "Id cây trồng" : "Id con vật",
-                  hint: _selectedField,
+                  title: widget.isPlant ? "Mã cây trồng" : "Mã vật nuôi",
+                  hint: _selectedExternalId,
                   widget: DropdownButton(
                     underline: Container(height: 0),
                     icon: const Icon(
@@ -173,20 +235,33 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                     iconSize: 32,
                     elevation: 4,
                     style: subTitileStyle,
-                    onChanged: (Field? newValue) {
+                    onChanged: (Map<String, dynamic>? newValue) {
                       setState(() {
-                        _selectedField = newValue!.fieldName;
+                        _selectedExternalId = newValue!['externalId'];
                       });
                     },
-                    items: filteredField
-                        .map<DropdownMenuItem<Field>>((Field value) {
-                      return DropdownMenuItem<Field>(
+                    items: filteredExternalId
+                        .map<DropdownMenuItem<Map<String, dynamic>>>(
+                            (Map<String, dynamic> value) {
+                      return DropdownMenuItem<Map<String, dynamic>>(
                         value: value,
-                        child: Text(value.fieldName),
+                        child: Text(value['externalId']),
                       );
                     }).toList(),
                   ),
                 ),
+              if (_selectedExternalId == "Chưa có")
+                widget.isPlant
+                    ? Text(
+                        "Hãy chọn vườn khác",
+                        style: TextStyle(
+                            fontSize: 11, color: Colors.red, height: 2),
+                      )
+                    : Text(
+                        "Hãy chọn chuồng khác",
+                        style: TextStyle(
+                            fontSize: 11, color: Colors.red, height: 2),
+                      ),
               const SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -195,11 +270,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   Container(),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const SecondAddTaskPage(),
-                        ),
-                      );
+                      validate(context, widget.isPlant);
                     },
                     child: Container(
                       width: 120,
@@ -226,5 +297,25 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
         ),
       ),
     );
+  }
+
+  validate(context, isPlant) {
+    if (_selectedArea != "Chọn" &&
+        _selectedZone != "Chọn" &&
+        _selectedZone != "Chưa có" &&
+        _selectedField != "Chưa có" &&
+        _selectedField != "Chọn" &&
+        _selectedExternalId != "Chọn" &&
+        _selectedExternalId != "Chưa có") {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SecondAddTaskPage(
+            isPlant: isPlant,
+          ),
+        ),
+      );
+    } else {
+      SnackbarShowNoti.showSnackbar(context, "Dữ liệu không hợp lệ", true);
+    }
   }
 }
