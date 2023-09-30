@@ -23,8 +23,9 @@ class TaskPageState extends State<TaskPage> {
   int _currentIndex = 0;
   final List<String> filters = [
     "Tất cả",
-    "Đang làm",
+    "Chuẩn bị",
     "Hoàn thành",
+    "Đang thực hiện",
     "Không hoàn thành",
   ];
 
@@ -197,16 +198,25 @@ class TaskPageState extends State<TaskPage> {
                               filteredTaskList = tasks;
                             }
                             if (selectedFilter == "Không hoàn thành") {
-                              filteredTaskList =
-                                  tasks.where((t) => t['status'] == 1).toList();
+                              filteredTaskList = tasks
+                                  .where(
+                                      (t) => t['status'] == "Không hoàn thành")
+                                  .toList();
                             }
-                            if (selectedFilter == "Đang làm") {
-                              filteredTaskList =
-                                  tasks.where((t) => t['status'] == 2).toList();
+                            if (selectedFilter == "Đang thực hiện") {
+                              filteredTaskList = tasks
+                                  .where((t) => t['status'] == "Đang thực hiện")
+                                  .toList();
                             }
                             if (selectedFilter == "Hoàn thành") {
-                              filteredTaskList =
-                                  tasks.where((t) => t['status'] == 3).toList();
+                              filteredTaskList = tasks
+                                  .where((t) => t['status'] == "Hoàn thành")
+                                  .toList();
+                            }
+                            if (selectedFilter == "Chuẩn bị") {
+                              filteredTaskList = tasks
+                                  .where((t) => t['status'] == "Chuẩn bị")
+                                  .toList();
                             }
                           });
                         },
@@ -292,11 +302,15 @@ class TaskPageState extends State<TaskPage> {
                                           ),
                                           Container(
                                             decoration: BoxDecoration(
-                                              color: task['status'] == 1
-                                                  ? Colors.red
-                                                  : task['status'] == 2
-                                                      ? Colors.orange
-                                                      : kPrimaryColor,
+                                              color: task['status'] ==
+                                                      "Không hoàn thành"
+                                                  ? Colors.red[400]
+                                                  : task['status'] == "Chuẩn bị"
+                                                      ? Colors.orange[400]
+                                                      : task['status'] ==
+                                                              "Đang thực hiện"
+                                                          ? kTextBlueColor
+                                                          : kPrimaryColor,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
@@ -323,7 +337,7 @@ class TaskPageState extends State<TaskPage> {
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            "${DateFormat('dd/MM/yy  HH:mm').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('dd/MM/yy  HH:mm').format(DateTime.parse(task['endDate']))}",
+                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
                                             style: GoogleFonts.lato(
                                               textStyle: const TextStyle(
                                                   fontSize: 13,
