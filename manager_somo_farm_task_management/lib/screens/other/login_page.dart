@@ -5,6 +5,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/home/manager_h
 import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
 import 'package:manager_somo_farm_task_management/services/login_services.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   String username = "";
@@ -111,6 +112,8 @@ class LoginPage extends StatelessWidget {
               InkWell(
                 onTap: () async {
                   try {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
                     final result =
                         await LoginService().Login(username, password);
                     String role = result['role'];
@@ -118,6 +121,7 @@ class LoginPage extends StatelessWidget {
 
                     int farmId =
                         await UserService().getUserById(id).then((value) {
+                      prefs.setInt('farmId', value['data']['farmId']);
                       return value['data']['farmId'];
                     }).catchError((e) {
                       SnackbarShowNoti.showSnackbar(context, e, true);
