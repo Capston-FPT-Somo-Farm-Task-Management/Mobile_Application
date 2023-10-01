@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 
 class TaskDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -10,12 +11,13 @@ class TaskDetailsPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      insetPadding: EdgeInsets.zero,
+      insetPadding: EdgeInsets.all(20),
+      contentPadding: EdgeInsets.all(20),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            task['name'],
+            wrapWords(task['name'], 20),
             style: const TextStyle(
               color: kPrimaryColor,
               fontSize: 24,
@@ -63,31 +65,98 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.calendar_today,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Bắt đầu: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['startDate']))}',
-                  style: const TextStyle(
-                    fontSize: 16,
+            if (task['otherName'] != null)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.person_outline,
+                    color: kSecondColor,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
+                  const SizedBox(width: 8),
+                  Text(
+                    wrapWords('Đối tượng: ${task['otherName']}', 30),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            if (task['plantName'] != null)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.home,
+                    color: kSecondColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    wrapWords('Cây: ${task['plantName']}', 30),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            if (task['plantName'] != null) const SizedBox(height: 16),
+            if (task['plantName'] != null)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.tag,
+                    color: kSecondColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    wrapWords('Mã cây: ${task['externalId']}', 30),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            if (task['liveStockName'] != null)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.home,
+                    color: kSecondColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    wrapWords('Con vật: ${task['liveStockName']}', 30),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            if (task['liveStockName'] != null) const SizedBox(height: 16),
+            if (task['liveStockName'] != null)
+              Row(
+                children: [
+                  const Icon(
+                    Icons.tag,
+                    color: kSecondColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    wrapWords('Mã con vật: ${task['externalId']}', 30),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 const Icon(
-                  Icons.calendar_today,
+                  Icons.business,
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'kết thúc: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['endDate']))}',
+                  wrapWords('Chuồng: ${task['fieldName']}', 30),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -104,6 +173,38 @@ class TaskDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(task['createDate']))}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Bắt đầu: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['startDate']))}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'kết thúc: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['endDate']))}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -144,6 +245,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.supervised_user_circle,
@@ -151,7 +253,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Người quản lí: ${task['memberName']}',
+                  wrapWords('Người quản lí: ${task['memberName']}', 30),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -167,88 +269,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Người giám sát: ${task['receiverName']}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.business,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Chuồng: ${task['fieldName']}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (task['otherName'] != null)
-              Row(
-                children: [
-                  const Icon(
-                    Icons.person_outline,
-                    color: kSecondColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Other: ${task['otherName']}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            if (task['plantName'] != null)
-              Row(
-                children: [
-                  const Icon(
-                    Icons.home,
-                    color: kSecondColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Cây: ${task['plantName']}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            if (task['liveStockName'] != null)
-              Row(
-                children: [
-                  const Icon(
-                    Icons.home,
-                    color: kSecondColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Cây: ${task['liveStockName']}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.check_circle,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Trạng thái: ${task['status']}',
+                  wrapWords('Người giám sát: ${task['receiverName']}', 30),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -297,6 +318,22 @@ class TaskDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Lặp lại: ${task['repeat']}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  Icons.check_circle,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Trạng thái: ${task['status']}', 30),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
