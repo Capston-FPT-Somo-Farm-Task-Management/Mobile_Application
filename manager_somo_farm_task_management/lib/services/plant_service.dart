@@ -23,4 +23,23 @@ class PlantService {
       throw Exception('Failed to get LiveStocks ExternalId by user ID');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getAllPlant() async {
+    final String getPlantUrl = '$baseUrl/Plant';
+
+    final http.Response response = await http.get(
+      Uri.parse(getPlantUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<Map<String, dynamic>> plants =
+          List<Map<String, dynamic>>.from(json.decode(response.body));
+      return plants;
+    } else {
+      throw Exception('Failed to get plant');
+    }
+  }
 }

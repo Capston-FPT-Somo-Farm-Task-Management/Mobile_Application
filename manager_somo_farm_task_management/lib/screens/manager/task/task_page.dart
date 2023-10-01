@@ -235,6 +235,7 @@ class TaskPageState extends State<TaskPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
+              flex: 3,
               child: ListView.separated(
                 itemCount: filteredTaskList.length,
                 separatorBuilder: (BuildContext context, int index) {

@@ -166,24 +166,6 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                   }).toList(),
                 ),
               ),
-              MyInputNumber(
-                title: "Số lượng",
-                hint: "Nhập số lượng",
-                controller: _noteController,
-              ),
-              MyInputField(
-                title: "Ngày tạo vật nuôi",
-                hint: DateFormat('dd/MM/yyyy').format(_selectedDate),
-                widget: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    _getDateFromUser();
-                  },
-                ),
-              ),
               const SizedBox(height: 40),
               const Divider(
                 color: Colors.grey, // Đặt màu xám

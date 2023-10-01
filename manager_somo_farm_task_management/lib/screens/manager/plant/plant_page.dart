@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plantField_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/create_the_crops.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
+import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../widgets/app_bar.dart';
@@ -19,15 +21,32 @@ class PlantPage extends StatefulWidget {
 
 class PlantPageState extends State<PlantPage> {
   int _currentIndex = 0;
-  List<Plant> listPlant = plants;
+  List<Plant> listPlant = plant;
+
+  List<Map<String, dynamic>> plants = [];
+  List<Map<String, dynamic>> ListPlants = [];
   final TextEditingController searchController = TextEditingController();
   void searchPlants(String keyword) {
     setState(() {
-      listPlant = plants
-          .where((plant) => removeDiacritics(plant.name.toLowerCase())
+      ListPlants = plants
+          .where((plant) => removeDiacritics(plant['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    GetAllPlant().then((value) {
+      setState(() {
+        plants = value;
+      });
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> GetAllPlant() {
+    return PlantService().getAllPlant();
   }
 
   @override
@@ -41,124 +60,152 @@ class PlantPageState extends State<PlantPage> {
         padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
         child: Column(
           children: [
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Cây trồng của tôi",
-                        style: TextStyle(
-                          fontSize: 28, // Thay đổi kích thước phù hợp
-                          fontWeight: FontWeight.bold,
-                        ),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Cây trồng của tôi",
+                      style: TextStyle(
+                        fontSize: 28, // Thay đổi kích thước phù hợp
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateScrops()),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryColor,
-                              minimumSize: Size(120, 45),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Tạo loại cây trồng",
-                                style: TextStyle(fontSize: 19),
-                              ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreatePlant()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryColor,
+                            minimumSize: Size(100, 45),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
                           ),
-                          const SizedBox(width: 10), // Khoảng cách giữa hai nút
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreatePlant()),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryColor,
-                              minimumSize: Size(100, 45),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Tạo cây trồng",
-                                style: TextStyle(fontSize: 19),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Container(
-                      height: 42,
-                      child: Expanded(
-                        flex: 2,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onChanged: (keyword) {
-                              searchPlants(keyword);
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Tìm kiếm...",
-                              border: InputBorder.none,
-                              icon: Icon(Icons.search),
+                          child: const Center(
+                            child: Text(
+                              "Tạo cây trồng",
+                              style: TextStyle(fontSize: 19),
                             ),
                           ),
                         ),
+                        const SizedBox(width: 10), // Khoảng cách giữa hai nút
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreatePlantField()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryColor,
+                            minimumSize: Size(120, 45),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Tạo vườn",
+                              style: TextStyle(fontSize: 19),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreatePlantType()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryColor,
+                            minimumSize: Size(120, 45),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Tạo loại cây trồng",
+                              style: TextStyle(fontSize: 19),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Container(
+                    height: 42,
+                    child: Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          onChanged: (keyword) {
+                            searchPlants(keyword);
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Tìm kiếm...",
+                            border: InputBorder.none,
+                            icon: Icon(Icons.search),
+                          ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 30),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: ListView.separated(
-                itemCount: listPlant.length,
+                itemCount: plants.length,
                 separatorBuilder: (BuildContext context, int index) {
                   return const SizedBox(height: 25);
                 },
                 itemBuilder: (context, index) {
-                  final plant = listPlant[index];
+                  Map<String, dynamic> plant = plants[index];
 
                   return GestureDetector(
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return PlantDetailsPopup(plant: plant);
-                        },
-                      );
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (BuildContext context) {
+                      //     return PlantDetailsPopup(plant: plant);
+                      //   },
+                      // );
                     },
                     onLongPress: () {
-                      _showBottomSheet(context, plant);
+                      // _showBottomSheet(context, plant);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -183,7 +230,7 @@ class PlantPageState extends State<PlantPage> {
                                   width: 1.0, // Độ dày của đường viền
                                 ),
                               ),
-                              height: 80,
+                              height: 110,
                               width: double.infinity,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +242,7 @@ class PlantPageState extends State<PlantPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          plant.name,
+                                          plant['name'],
                                           style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
@@ -203,7 +250,12 @@ class PlantPageState extends State<PlantPage> {
                                         ),
                                         const SizedBox(height: 10),
                                         Text(
-                                          'Ngày tạo: ${plant.startDate.toLocal()}',
+                                          'Loại cây: ${plant['habitantTypeName']}',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
                                           style: const TextStyle(fontSize: 16),
                                         ),
                                       ],
@@ -230,7 +282,7 @@ class PlantPageState extends State<PlantPage> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    'Số lượng: ${plant.quantity}',
+                                    '${plant['fieldName']}',
                                     style: const TextStyle(fontSize: 16),
                                   ),
                                 ),

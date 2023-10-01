@@ -48,6 +48,22 @@ class PlantDetailsPopup extends StatelessWidget {
             Row(
               children: [
                 const Icon(
+                  FontAwesomeIcons.tag,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Mã cây trồng: ${plant.id}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
                   Icons.access_time,
                   color: kSecondColor,
                 ),
@@ -69,7 +85,23 @@ class PlantDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Số lượng: ${plant.quantity}',
+                  'Loai cây: ${plant.typeName}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.tree,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${plant.fieldName}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
