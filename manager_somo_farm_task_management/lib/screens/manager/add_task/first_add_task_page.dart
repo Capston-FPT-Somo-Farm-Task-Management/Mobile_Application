@@ -120,6 +120,10 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedArea = newValue!['name'];
+                      _selectedField = "";
+                      _selectedExternalId = "";
+                      filteredField = [];
+                      filteredExternalId = [];
                     });
                     // Lọc danh sách Zone tương ứng với Area đã chọn
                     widget.isPlant
@@ -166,6 +170,8 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedZone = newValue!['name'];
+                      _selectedExternalId = "";
+                      filteredExternalId = [];
                     });
                     // Lọc danh sách Filed tương ứng với Zone đã chọn
                     getFieldsbyZoneId(newValue!['id']).then((value) {
