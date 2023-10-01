@@ -39,7 +39,7 @@ class LiveStockService {
           List<Map<String, dynamic>>.from(json.decode(response.body));
       return liveStocks;
     } else {
-      throw Exception('Failed to get LiveStock ExternalIds by user ID');
+      throw Exception('Failed to get LiveStocks');
     }
   }
 
@@ -58,7 +58,7 @@ class LiveStockService {
           Map<String, dynamic>.from(json.decode(response.body));
       return plants;
     } else {
-      throw Exception('Failed to get plant');
+      throw Exception('Failed to get livestock');
     }
   }
 }

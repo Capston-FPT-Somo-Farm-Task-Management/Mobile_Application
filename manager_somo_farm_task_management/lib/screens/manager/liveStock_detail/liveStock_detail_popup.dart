@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/livestock.dart';
-import 'package:manager_somo_farm_task_management/models/plant.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 
 class LiveStockDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> liveStock;
@@ -52,7 +51,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Mã động vật: ${liveStock['externalId']}',
+                  wrapWords('Mã động vật: ${liveStock['externalId']}', 30),
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -69,7 +68,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Loại: ${liveStock['habitantTypeName']}',
+                  wrapWords('Loại: ${liveStock['habitantTypeName']}', 30),
                   style: const TextStyle(
                     fontSize: 18,
                   ),
