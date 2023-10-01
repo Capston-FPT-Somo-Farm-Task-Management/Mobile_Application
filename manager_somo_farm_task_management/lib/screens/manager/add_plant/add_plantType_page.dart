@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+
+import '../../../componets/input_field.dart';
 
 class CreatePlantType extends StatefulWidget {
   const CreatePlantType({Key? key}) : super(key: key);

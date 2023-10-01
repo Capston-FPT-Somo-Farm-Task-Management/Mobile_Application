@@ -54,9 +54,9 @@ class LiveStockService {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> plants =
+      final Map<String, dynamic> liveStock =
           Map<String, dynamic>.from(json.decode(response.body));
-      return plants;
+      return liveStock;
     } else {
       throw Exception('Failed to get livestock');
     }

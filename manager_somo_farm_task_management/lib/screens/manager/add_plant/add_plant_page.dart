@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 
-class CreateLiveStock extends StatefulWidget {
-  const CreateLiveStock({Key? key}) : super(key: key);
+import '../../../componets/input_field.dart';
+
+class CreatePlant extends StatefulWidget {
+  const CreatePlant({Key? key}) : super(key: key);
 
   @override
-  CreateLiveStockState createState() => CreateLiveStockState();
+  CreatePlantState createState() => CreatePlantState();
 }
 
-class CreateLiveStockState extends State<CreateLiveStock> {
+class CreatePlantState extends State<CreatePlant> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
-  List<String> livestock = ["Bò", "Heo", "Vịt", "Gà"];
-  String _selectedLiveStock = "Heo";
+  List<String> crops = ["Sầu riêng", "Mít", "Cam", "Xoai"];
+  String _selectedCrop = "Mít";
   List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
   List<String> zones = [];
   List<String> lands = [];
@@ -54,22 +51,22 @@ class CreateLiveStockState extends State<CreateLiveStock> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm vật nuôi",
+                "Thêm cây trồng",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Id vật nuôi",
-                hint: "Nhập id vật nuôi",
+                title: "Id cây trồng",
+                hint: "Nhập Id cây trồng",
                 controller: _titleController,
               ),
               MyInputField(
-                title: "Tên vật nuôi",
-                hint: "Nhập tên vật nuôi",
+                title: "Tên cây trồng",
+                hint: "Nhập tên cây trồng",
                 controller: _titleController,
               ),
               MyInputField(
-                title: "Loại vật nuôi",
-                hint: _selectedLiveStock,
+                title: "Loại cây trồng",
+                hint: _selectedCrop,
                 widget: DropdownButton(
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
@@ -80,11 +77,10 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                   style: subTitileStyle,
                   onChanged: (String? newValue) {
                     setState(() {
-                      _selectedLiveStock = newValue!;
+                      _selectedCrop = newValue!;
                     });
                   },
-                  items:
-                      livestock.map<DropdownMenuItem<String>>((String value) {
+                  items: crops.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -187,7 +183,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Tạo vật nuôi",
+                      "Tạo cây trồng",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
@@ -205,7 +201,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const LiveStockPage(),
+          builder: (context) => const PlantPage(),
         ),
       );
     } else {
@@ -238,22 +234,6 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         lands = [];
         _selectedLand = "";
       });
-    }
-  }
-
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
-      lastDate: DateTime.now().add(const Duration(days: 36525)),
-    );
-    if (_pickerDate != null) {
-      setState(() {
-        _selectedDate = _pickerDate;
-      });
-    } else {
-      print("it's null or something is wrong");
     }
   }
 }

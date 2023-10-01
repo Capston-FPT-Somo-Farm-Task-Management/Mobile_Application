@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+
+import '../../../componets/input_field.dart';
 
 class CreateLiveStockType extends StatefulWidget {
   const CreateLiveStockType({Key? key}) : super(key: key);
