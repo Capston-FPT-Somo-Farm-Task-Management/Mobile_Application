@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import 'package:manager_somo_farm_task_management/models/plant.dart';
-import 'package:manager_somo_farm_task_management/models/task.dart';
 
 class PlantDetailsPopup extends StatelessWidget {
-  final Plant plant;
+  final Map<String, dynamic> plant;
 
   const PlantDetailsPopup({required this.plant});
 
@@ -19,7 +16,7 @@ class PlantDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            plant.name,
+            plant['name'],
             style: const TextStyle(
               color: kPrimaryColor,
               fontSize: 24,
@@ -50,60 +47,98 @@ class PlantDetailsPopup extends StatelessWidget {
                 const Icon(
                   FontAwesomeIcons.tag,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Mã cây trồng: ${plant.id}',
+                  'Mã cây trồng: ${plant['externalId']}',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.tree,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Loai cây: ${plant['habitantTypeName']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 45),
             Row(
               children: [
                 const Icon(
                   Icons.access_time,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(plant.startDate)}',
+                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 45),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.map,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Khu vực: ${plant['areaName']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.locationDot,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Vùng: ${plant['zoneName']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
             Row(
               children: [
                 const Icon(
                   FontAwesomeIcons.tree,
                   color: kSecondColor,
+                  size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
-                  'Loai cây: ${plant.typeName}',
+                  'Khu đất: ${plant['fieldName']}',
                   style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.tree,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${plant.fieldName}',
-                  style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                   ),
                 ),
               ],

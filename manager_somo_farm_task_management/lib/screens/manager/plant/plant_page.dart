@@ -3,9 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plantField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plantType_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/add_plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantField_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantType_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
@@ -197,15 +198,15 @@ class PlantPageState extends State<PlantPage> {
 
                   return GestureDetector(
                     onTap: () {
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     return PlantDetailsPopup(plant: plant);
-                      //   },
-                      // );
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return PlantDetailsPopup(plant: plant);
+                        },
+                      );
                     },
                     onLongPress: () {
-                      // _showBottomSheet(context, plant);
+                      _showBottomSheet(context, plant);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -310,7 +311,7 @@ class PlantPageState extends State<PlantPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Plant plant) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> plant) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
