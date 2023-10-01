@@ -35,7 +35,7 @@ class NotificationService {
     );
   }
 
-  void scheduleNotification(Task task) async {
+  void scheduleNotification(Map<String, dynamic> task) async {
     try {
       AndroidNotificationDetails androidNotificationDetails =
           const AndroidNotificationDetails(
@@ -48,14 +48,15 @@ class NotificationService {
           NotificationDetails(android: androidNotificationDetails);
 
       tz.TZDateTime notificationTime = tz.TZDateTime.from(
-        task.startDate.subtract(Duration(minutes: task.remind)),
+        DateTime.parse(task['startDate'])
+            .subtract(Duration(minutes: task['remind'])),
         tz.local,
       );
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        task.id,
-        task.name,
-        'Bắt đầu trong ${task.remind} phút nữa!',
+        task['id'],
+        task['name'],
+        'Bắt đầu trong ${task['remind']} phút nữa!',
         notificationTime,
         notificationDetails,
         uiLocalNotificationDateInterpretation:

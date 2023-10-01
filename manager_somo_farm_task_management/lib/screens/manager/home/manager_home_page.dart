@@ -164,36 +164,38 @@ class ManagerHomePageState extends State<ManagerHomePage> {
             itemCount: tasks.length,
             itemBuilder: (_, index) {
               Map<String, dynamic> task = tasks[index];
-              // if (task.remind != 0) {
-              //   notificationService.scheduleNotification(task);
-              // }
-              if (task['repeat'] == 1) {
-                return AnimationConfiguration.staggeredList(
-                  position: index,
-                  child: SlideAnimation(
-                    child: FadeInAnimation(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return TaskDetailsPopup(task: task);
-                                },
-                              );
-                            },
-                            onLongPress: () {
-                              _showBottomSheet(context, task);
-                            },
-                            child: TaskTile(task),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+              if (task['remind'] != 0 &&
+                  DateTime.parse(task['startDate']).isAfter(
+                      DateTime.now().add(Duration(minutes: task['remind'])))) {
+                notificationService.scheduleNotification(task);
               }
+              // if (task['repeat'] == "Hằng ngày") {
+              //   return AnimationConfiguration.staggeredList(
+              //     position: index,
+              //     child: SlideAnimation(
+              //       child: FadeInAnimation(
+              //         child: Row(
+              //           children: [
+              //             GestureDetector(
+              //               onTap: () {
+              //                 showDialog(
+              //                   context: context,
+              //                   builder: (BuildContext context) {
+              //                     return TaskDetailsPopup(task: task);
+              //                   },
+              //                 );
+              //               },
+              //               onLongPress: () {
+              //                 _showBottomSheet(context, task);
+              //               },
+              //               child: TaskTile(task),
+              //             )
+              //           ],
+              //         ),
+              //       ),
+              //     ),
+              //   );
+              // }
               if (DateTime.parse(task['startDate']).isBefore(_selectedDate) &&
                       DateTime.parse(task['endDate']).isAfter(_selectedDate) ||
                   DateFormat.yMd().format(DateTime.parse(task['startDate'])) ==
