@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/animal/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/other/login_page.dart';

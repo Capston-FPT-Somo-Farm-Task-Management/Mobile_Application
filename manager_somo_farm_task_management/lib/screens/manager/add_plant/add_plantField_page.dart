@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_field.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/components/input_number.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
+
+import '../../../componets/input_field.dart';
+import '../../../componets/input_number.dart';
 
 class CreatePlantField extends StatefulWidget {
   const CreatePlantField({Key? key}) : super(key: key);
