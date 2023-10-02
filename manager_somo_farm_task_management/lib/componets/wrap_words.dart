@@ -4,7 +4,7 @@ String wrapWords(String input, int maxChars) {
   String currentLine = '';
 
   for (String word in words) {
-    if (word.length > 10) {
+    if (word.length > 11) {
       // Nếu từ có độ dài lớn hơn 10, cắt thành các phần nhỏ
       List<String> subWords = [];
       while (word.length > 10) {
