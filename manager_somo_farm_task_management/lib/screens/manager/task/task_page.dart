@@ -140,23 +140,21 @@ class TaskPageState extends State<TaskPage> {
                 const SizedBox(height: 15),
                 Container(
                   height: 42,
-                  child: Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: (keyword) {
-                          searchTasks(keyword);
-                        },
-                        decoration: const InputDecoration(
-                          hintText: "Tìm kiếm...",
-                          border: InputBorder.none,
-                          icon: Icon(Icons.search),
-                        ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (keyword) {
+                        searchTasks(keyword);
+                      },
+                      decoration: const InputDecoration(
+                        hintText: "Tìm kiếm...",
+                        border: InputBorder.none,
+                        icon: Icon(Icons.search),
                       ),
                     ),
                   ),
