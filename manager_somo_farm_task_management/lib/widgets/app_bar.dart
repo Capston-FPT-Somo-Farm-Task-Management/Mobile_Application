@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/employee/employee_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
@@ -312,6 +313,28 @@ class CustomAppBar extends StatelessWidget {
                                           //     ]),
                                           //   ),
                                           // ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EmployeekPage(),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(Icons.people_alt_outlined),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Nhân viên",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
                                           const SizedBox(height: 25),
                                           Align(
                                             alignment: Alignment.centerLeft,
