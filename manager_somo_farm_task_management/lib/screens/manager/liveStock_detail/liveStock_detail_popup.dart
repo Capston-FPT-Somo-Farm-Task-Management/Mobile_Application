@@ -92,6 +92,23 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.weightScale,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Cân nặng: ${liveStock['weight']} kg',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 45),
             Row(
               children: [

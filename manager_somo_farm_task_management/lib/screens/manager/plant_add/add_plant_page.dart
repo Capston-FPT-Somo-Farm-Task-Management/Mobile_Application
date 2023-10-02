@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
@@ -20,6 +21,7 @@ class CreatePlant extends StatefulWidget {
 class CreatePlantState extends State<CreatePlant> {
   final TextEditingController _titleIdController = TextEditingController();
   final TextEditingController _titleNameController = TextEditingController();
+  final TextEditingController _titleNumberController = TextEditingController();
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredField = [];
@@ -103,6 +105,11 @@ class CreatePlantState extends State<CreatePlant> {
               MyInputField(
                 title: "Tên cây trồng",
                 hint: "Nhập tên cây trồng",
+                controller: _titleNameController,
+              ),
+              MyInputNumber(
+                title: "Độ cao dự kiến của cây trồng (mét)",
+                hint: "Nhập độ cao",
                 controller: _titleNameController,
               ),
               MyInputField(
@@ -277,6 +284,7 @@ class CreatePlantState extends State<CreatePlant> {
   _validateDate() {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
+        _titleNumberController.text.isNotEmpty &&
         _selectedPlantType != "Chọn" &&
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
