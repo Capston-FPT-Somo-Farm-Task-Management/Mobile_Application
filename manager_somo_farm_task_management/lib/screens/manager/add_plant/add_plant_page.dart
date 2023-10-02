@@ -2,28 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
+import 'package:manager_somo_farm_task_management/services/area_service.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
+import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 
 import '../../../componets/input_field.dart';
 
 class CreatePlant extends StatefulWidget {
-  const CreatePlant({Key? key}) : super(key: key);
+  final int farmId;
+  const CreatePlant({super.key, required this.farmId});
 
   @override
   CreatePlantState createState() => CreatePlantState();
 }
 
 class CreatePlantState extends State<CreatePlant> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  List<String> crops = ["Sầu riêng", "Mít", "Cam", "Xoai"];
-  String _selectedCrop = "Mít";
-  List<String> area = ["Khu vực 1", "Khu vực 2", "Khu vực 3", "Khu vực 4"];
-  List<String> zones = [];
-  List<String> lands = [];
-  String _selectedArea = "Khu vực 1";
-  String _selectedZone = "Vùng 1";
-  String _selectedLand = "Khu đất 1";
-  int _currentIndex = 0;
+  final TextEditingController _titleIdController = TextEditingController();
+  final TextEditingController _titleNameController = TextEditingController();
+  List<Map<String, dynamic>> filteredArea = [];
+  List<Map<String, dynamic>> filteredZone = [];
+  List<Map<String, dynamic>> filteredField = [];
+  List<Map<String, dynamic>> filterHabitantType = [];
+  String _selectedArea = "";
+  String _selectedZone = "";
+  String _selectedField = "";
+  String _selectedPlantType = "";
+
+  Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
+    return AreaService().getAreasByFarmId(widget.farmId);
+  }
+
+  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
+    return ZoneService().getZonesbyAreaId(areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> getZonesbyAreaPlantId(int areaId) {
+    return ZoneService().getZonesbyAreaPlantId(areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> getFieldsbyZoneId(int zoneId) {
+    return FieldService().getFieldsbyZoneId(zoneId);
+  }
+
+  Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() {
+    return HabitantTypeService().getPlantTypeFromHabitantType();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAreasbyFarmId().then((a) {
+      setState(() {
+        filteredArea = a;
+        _selectedArea = "Chọn";
+      });
+    });
+    getPlantTypeFromHabitantType().then((p) {
+      setState(() {
+        filterHabitantType = p;
+        _selectedPlantType = "Chọn";
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +98,18 @@ class CreatePlantState extends State<CreatePlant> {
               MyInputField(
                 title: "Id cây trồng",
                 hint: "Nhập Id cây trồng",
-                controller: _titleController,
+                controller: _titleIdController,
               ),
               MyInputField(
                 title: "Tên cây trồng",
                 hint: "Nhập tên cây trồng",
-                controller: _titleController,
+                controller: _titleNameController,
               ),
               MyInputField(
                 title: "Loại cây trồng",
-                hint: _selectedCrop,
+                hint: _selectedPlantType,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -75,23 +117,26 @@ class CreatePlantState extends State<CreatePlant> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedCrop = newValue!;
+                      _selectedPlantType = newValue!['name'];
                     });
                   },
-                  items: crops.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filterHabitantType
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
               ),
               MyInputField(
-                title: "Chọn khu vực",
+                title: "Khu vực",
                 hint: _selectedArea,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -99,24 +144,36 @@ class CreatePlantState extends State<CreatePlant> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedArea = newValue!;
+                      _selectedArea = newValue!['name'];
+                      _selectedField = "";
+                      filteredField = [];
                     });
-                    updateZones(_selectedArea);
+                    // Lọc danh sách Zone tương ứng với Area đã chọn
+                    getZonesbyAreaPlantId(newValue!['id']).then((value) {
+                      setState(() {
+                        filteredZone = value;
+                        // Gọi setState để cập nhật danh sách zone
+                        _selectedZone = value.isEmpty ? "Chưa có" : "Chọn";
+                      });
+                    });
                   },
-                  items: area.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filteredArea
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
               ),
               MyInputField(
-                title: "Chọn vùng",
+                title: "Vùng",
                 hint: _selectedZone,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -124,24 +181,38 @@ class CreatePlantState extends State<CreatePlant> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedZone = newValue!;
+                      _selectedZone = newValue!['name'];
                     });
-                    updateLands(_selectedZone);
+                    // Lọc danh sách Filed tương ứng với Zone đã chọn
+                    getFieldsbyZoneId(newValue!['id']).then((value) {
+                      setState(() {
+                        filteredField = value;
+                        _selectedField = value.isEmpty ? "Chưa có" : "Chọn";
+                      });
+                    });
                   },
-                  items: zones.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filteredZone
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
               ),
+              if (_selectedZone == "Chưa có")
+                Text(
+                  "Khu vực chưa có vùng! Hãy chọn khu vực khác",
+                  style: TextStyle(fontSize: 14, color: Colors.red, height: 2),
+                ),
               MyInputField(
-                title: "Chọn khu đất",
-                hint: _selectedLand,
+                title: "Vườn",
+                hint: _selectedField,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -149,19 +220,26 @@ class CreatePlantState extends State<CreatePlant> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedLand = newValue!;
+                      _selectedField = newValue!['name'];
                     });
                   },
-                  items: lands.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filteredField
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
               ),
+              if (_selectedField == "Chưa có")
+                Text(
+                  "Vùng bạn chọn chưa có vườn! Hãy chọn vùng khác",
+                  style: TextStyle(fontSize: 14, color: Colors.red, height: 2),
+                ),
               const SizedBox(height: 40),
               const Divider(
                 color: Colors.grey, // Đặt màu xám
@@ -197,43 +275,22 @@ class CreatePlantState extends State<CreatePlant> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty) {
-      //add database
+    if (_titleIdController.text.isNotEmpty &&
+        _titleNameController.text.isNotEmpty &&
+        _selectedPlantType != "Chọn" &&
+        _selectedArea != "Chọn" &&
+        _selectedZone != "Chọn" &&
+        _selectedZone != "Chưa có" &&
+        _selectedField != "Chưa có" &&
+        _selectedField != "Chọn") {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => const PlantPage(),
         ),
       );
     } else {
-      // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin', true);
-    }
-  }
-
-  void updateZones(String area) {
-    if (area == "Khu vực 1") {
-      setState(() {
-        zones = ["Vùng 1", "Vùng 2", "Vùng 3", "Vùng 4"];
-      });
-    } else {
-      setState(() {
-        zones = [];
-        _selectedZone = "";
-      });
-    }
-  }
-
-  void updateLands(String zone) {
-    if (zone == "Vùng 1") {
-      setState(() {
-        lands = ["Khu đất 1", "Khu đất 2", "Khu đất 3", "Khu đất 4"];
-      });
-    } else {
-      setState(() {
-        lands = [];
-        _selectedLand = "";
-      });
+          context, 'Vui lòng điền đầy đủ thông tin của cây trồng', true);
     }
   }
 }

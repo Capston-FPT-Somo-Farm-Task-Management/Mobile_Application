@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
+
 class SnackbarShowNoti {
   static void showSnackbar(
       BuildContext context, String message, bool isWarning) {
@@ -21,8 +22,8 @@ class SnackbarShowNoti {
             message,
             style: isWarning
                 ? const TextStyle(
-                    color: Colors.red, // Màu của nội dung
-                  )
+                    color: Colors.red, fontSize: 15 // Màu của nội dung
+                    )
                 : const TextStyle(
                     color: kPrimaryColor, // Màu của nội dung
                   ),
