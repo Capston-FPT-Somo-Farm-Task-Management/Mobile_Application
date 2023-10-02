@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
@@ -147,6 +148,38 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                 ],
               ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.mapLocationDot,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Khu vực: ${task['areaName']}', 30),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.borderNone,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Vùng: ${task['zoneName']}', 30),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
