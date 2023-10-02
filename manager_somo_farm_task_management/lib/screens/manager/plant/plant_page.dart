@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantType_page.dart';
@@ -42,6 +43,10 @@ class PlantPageState extends State<PlantPage> {
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
+  }
+
+  Future<Map<String, dynamic>> deletePlant(int id, String status) {
+    return PlantService().deletePlant(id, status);
   }
 
   @override
@@ -203,109 +208,113 @@ class PlantPageState extends State<PlantPage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: ListView.separated(
+              child: ListView.builder(
                 itemCount: plants.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 25);
-                },
                 itemBuilder: (context, index) {
                   Map<String, dynamic> plant = plants[index];
-
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return PlantDetailsPopup(plant: plant);
-                        },
-                      );
-                    },
-                    onLongPress: () {
-                      _showBottomSheet(context, plant);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.teal,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 7,
-                            offset: Offset(4, 8), // Shadow position
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
+                  if (plant['status'] == 'Inactive') {
+                    return SizedBox.shrink();
+                  }
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 25),
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return PlantDetailsPopup(plant: plant);
+                          },
+                        );
+                      },
+                      onLongPress: () {
+                        _showBottomSheet(context, plant);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 7,
+                              offset: Offset(4, 8), // Shadow position
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.grey, // Màu của đường viền
+                                    width: 1.0, // Độ dày của đường viền
+                                  ),
+                                ),
+                                height: 110,
+                                width: double.infinity,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            plant['name'],
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            'Loại cây: ${plant['habitantTypeName']}',
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                            Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.grey[400], // Đặt màu xám ở đây
                                 border: Border.all(
-                                  color: Colors.grey, // Màu của đường viền
-                                  width: 1.0, // Độ dày của đường viền
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
                                 ),
                               ),
-                              height: 110,
-                              width: double.infinity,
+                              height: 45,
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          plant['name'],
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          'Loại cây: ${plant['habitantTypeName']}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      '${plant['fieldName']}',
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
                                 ],
-                              )),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[400], // Đặt màu xám ở đây
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
                               ),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
-                              ),
-                            ),
-                            height: 45,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '${plant['fieldName']}',
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -356,10 +365,15 @@ class PlantPageState extends State<PlantPage> {
                           content: "Bạn có chắc muốn xóa cây này?",
                           onConfirm: () {
                             Navigator.of(context).pop();
+                            setState(() {});
+                            plants.remove(plant);
+                            deletePlant(plant['id'], plant['status']);
                           },
                           buttonConfirmText: "Xóa",
                         );
                       });
+                  SnackbarShowNoti.showSnackbar(
+                      context, 'Xóa thành công cây trồng', true);
                 },
                 cls: Colors.red[300]!,
                 context: context,

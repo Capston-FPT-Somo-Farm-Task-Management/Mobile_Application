@@ -61,4 +61,22 @@ class PlantService {
       throw Exception('Failed to get plant');
     }
   }
+
+  Future<Map<String, dynamic>> deletePlant(int id, String status) async {
+    final String deletePlantUrl = '$baseUrl/Plant/ChangeStatus/${id}';
+    var body = jsonEncode({"status": status});
+    final http.Response response = await http.put(Uri.parse(deletePlantUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> liveStock =
+          Map<String, dynamic>.from(json.decode(response.body));
+      return liveStock;
+    } else {
+      throw Exception('Failed to delete plant');
+    }
+  }
 }

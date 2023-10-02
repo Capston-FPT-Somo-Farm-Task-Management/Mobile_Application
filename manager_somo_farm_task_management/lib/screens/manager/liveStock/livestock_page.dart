@@ -210,9 +210,6 @@ class LiveStockPageState extends State<LiveStockPage> {
                 flex: 2,
                 child: ListView.builder(
                   itemCount: liveStocks.length,
-                  // separatorBuilder: (BuildContext context, int index) {
-                  //   return const SizedBox(height: 25);
-                  // },
                   itemBuilder: (context, index) {
                     Map<String, dynamic> liveStock = liveStocks[index];
 
