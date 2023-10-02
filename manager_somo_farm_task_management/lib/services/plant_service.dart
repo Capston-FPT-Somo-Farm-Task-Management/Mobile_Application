@@ -62,6 +62,7 @@ class PlantService {
     }
   }
 
+//Duy deptrai
   Future<Map<String, dynamic>> deletePlant(int id, String status) async {
     final String deletePlantUrl = '$baseUrl/Plant/ChangeStatus/${id}';
     var body = jsonEncode({"status": status});
