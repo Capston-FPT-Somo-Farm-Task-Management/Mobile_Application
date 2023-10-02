@@ -4,9 +4,9 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantType_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
