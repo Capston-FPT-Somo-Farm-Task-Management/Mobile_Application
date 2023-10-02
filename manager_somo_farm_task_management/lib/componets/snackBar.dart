@@ -21,8 +21,8 @@ class SnackbarShowNoti {
             message,
             style: isWarning
                 ? const TextStyle(
-                    color: Colors.red, // Màu của nội dung
-                  )
+                    color: Colors.red, fontSize: 14 // Màu của nội dung
+                    )
                 : const TextStyle(
                     color: kPrimaryColor, // Màu của nội dung
                   ),

@@ -9,24 +9,32 @@ import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_
 import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
 
 class PlantPage extends StatefulWidget {
-  const PlantPage({Key? key}) : super(key: key);
+  const PlantPage({super.key});
 
   @override
   PlantPageState createState() => PlantPageState();
 }
 
 class PlantPageState extends State<PlantPage> {
+  int? farmId;
   int _currentIndex = 0;
-  List<Plant> listPlant = plant;
 
   List<Map<String, dynamic>> plants = [];
   List<Map<String, dynamic>> ListPlants = [];
   final TextEditingController searchController = TextEditingController();
+
+  Future<int?> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
+    return storedFarmId;
+  }
+
   void searchPlants(String keyword) {
     setState(() {
       ListPlants = plants
@@ -39,6 +47,9 @@ class PlantPageState extends State<PlantPage> {
   @override
   void initState() {
     super.initState();
+    getFarmId().then((value) {
+      farmId = value;
+    });
     GetAllPlant().then((value) {
       setState(() {
         plants = value;
@@ -84,7 +95,9 @@ class PlantPageState extends State<PlantPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlant()),
+                                  builder: (context) => CreatePlant(
+                                        farmId: farmId!,
+                                      )),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -107,7 +120,9 @@ class PlantPageState extends State<PlantPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlantField()),
+                                  builder: (context) => CreatePlantField(
+                                        farmId: farmId!,
+                                      )),
                             );
                           },
                           style: ElevatedButton.styleFrom(
