@@ -62,6 +62,7 @@ class LiveStockService {
     }
   }
 
+//Xoa xon vat bằng cách thay đổi status
   Future<Map<String, dynamic>> deleteLiveStock(int id, String status) async {
     final String deleteLiveStockUrl = '$baseUrl/LiveStock/ChangeStatus/${id}';
     var body = jsonEncode({"status": status});

@@ -62,6 +62,7 @@ class PlantService {
     }
   }
 
+  //Xóa cây trồng bằng cách thay đổi status
   Future<Map<String, dynamic>> deletePlant(int id, String status) async {
     final String deletePlantUrl = '$baseUrl/Plant/ChangeStatus/${id}';
     var body = jsonEncode({"status": status});
