@@ -4,8 +4,8 @@ import 'package:manager_somo_farm_task_management/models/area.dart';
 import 'package:manager_somo_farm_task_management/models/field.dart';
 import 'package:manager_somo_farm_task_management/models/task.dart';
 import 'package:manager_somo_farm_task_management/models/zone.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/second_add_task_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/second_add_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 
 class FirstUpdateTaskPage extends StatefulWidget {
   final int farmId;

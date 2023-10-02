@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_one_or_many.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/option.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_one_or_many.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/option.dart';
 
 class ChooseHabitantPage extends StatefulWidget {
   final int farmId;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/second_add_task_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/second_add_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';

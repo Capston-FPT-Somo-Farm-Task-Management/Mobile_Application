@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
