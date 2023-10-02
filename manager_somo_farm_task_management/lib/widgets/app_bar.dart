@@ -235,7 +235,7 @@ class CustomAppBar extends StatelessWidget {
                                                 ));
                                               },
                                               child: const Row(children: [
-                                                Icon(FontAwesomeIcons.hippo),
+                                                Icon(FontAwesomeIcons.paw),
                                                 SizedBox(width: 15),
                                                 Text(
                                                   "Động vật",

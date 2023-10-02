@@ -4,10 +4,33 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThirdAddTaskPage extends StatefulWidget {
-  const ThirdAddTaskPage({super.key});
+  final int fiedlId;
+  int? plantId;
+  int? liveStockId;
+  int? otherId;
+  final String taskName;
+  final int taskTypeId;
+  final List<int> employeeIds;
+  final int supervisorId;
+  final List<int> materialIds;
+  String? description;
+  ThirdAddTaskPage({
+    super.key,
+    required this.fiedlId,
+    this.plantId,
+    this.liveStockId,
+    this.otherId,
+    required this.taskName,
+    required this.taskTypeId,
+    required this.employeeIds,
+    required this.supervisorId,
+    required this.materialIds,
+    this.description,
+  });
 
   @override
   State<ThirdAddTaskPage> createState() => _ThirdAddTaskPage();
@@ -24,9 +47,16 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   String showInputFieldRepeat = "Không";
   List<int> repeatNumbers = [];
   int _selectedRepeatNumber = 1;
-  List<String> priorities = ["Thấp", "Trung Bình", "Cao"];
-  String _selectedPriority = "Thấp";
+  List<String> priorities = [
+    "Thấp nhất",
+    "Thấp",
+    "Trung Bình",
+    "Cao",
+    "Cao nhất"
+  ];
+  String _selectedPriority = "Thấp nhất";
   int? farmId;
+  int? userId;
   getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
@@ -36,10 +66,24 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     });
   }
 
+  getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedUserId = prefs.getInt('userId');
+
+    setState(() {
+      userId = storedUserId;
+    });
+  }
+
+  Future<bool> createTask(Map<String, dynamic> taskData, int managerId) {
+    return TaskService().createTask(taskData, managerId);
+  }
+
   @override
   void initState() {
     super.initState();
     getFarmId();
+    getUserId();
   }
 
   @override
@@ -263,7 +307,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                       alignment: Alignment
                           .center, // Đặt alignment thành Alignment.center
                       child: const Text(
-                        "Create Task",
+                        "Tạo việc",
                         style: TextStyle(
                           color: kTextWhiteColor,
                         ),
@@ -285,13 +329,43 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
         _selectedEndDate != null &&
         _selectedRepeat == "Không") {
       //add database
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-            builder: (BuildContext context) => ManagerHomePage(
-                  farmId: farmId!,
-                )),
-        (route) => false, // Xóa tất cả các route khỏi stack
-      );
+      Map<String, dynamic> taskData = {
+        "employeeIds": widget.employeeIds,
+        "materialIds": widget.materialIds,
+        "farmTask": {
+          "name": widget.taskName,
+          "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+              .format(_selectedStartDate!),
+          "endDate":
+              DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!),
+          "description": widget.description,
+          "priority": _selectedPriority,
+          "repeat": _selectedRepeat,
+          "iterations": _selectedRepeatNumber,
+          "receiverId": widget.supervisorId,
+          "fieldId": widget.fiedlId,
+          "taskTypeId": widget.taskTypeId,
+          "memberId": userId,
+          "otherId": widget.otherId,
+          "plantId": widget.plantId,
+          "liveStockId": widget.liveStockId,
+          "remind": _selectedRemind,
+        }
+      };
+      createTask(taskData, userId!).then((value) {
+        if (value) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (BuildContext context) => ManagerHomePage(
+                      farmId: farmId!,
+                    )),
+            (route) => false, // Xóa tất cả các route khỏi stack
+          );
+        }
+      }).catchError((e) {
+        SnackbarShowNoti.showSnackbar(
+            context, "Đã xảy ra lỗi khi tạo công việc!", true);
+      });
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(

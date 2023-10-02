@@ -13,7 +13,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SecondAddTaskPage extends StatefulWidget {
   final bool isPlant;
-  const SecondAddTaskPage({super.key, required this.isPlant});
+  final int fieldId;
+  int? plantId;
+  int? otherId;
+  int? liveStockId;
+  SecondAddTaskPage(
+      {super.key,
+      required this.isPlant,
+      required this.fieldId,
+      this.otherId,
+      this.liveStockId,
+      this.plantId});
 
   @override
   State<SecondAddTaskPage> createState() => _SecondAddTaskPage();
@@ -23,6 +33,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   final TextEditingController _titleController = TextEditingController();
   final QuillController _quillController = QuillController.basic();
   String _selectedTaskType = "";
+  int? _selectedTaskTypeId;
   Key _keyChange = UniqueKey();
   List<Map<String, dynamic>> filteredEmployees = [];
   List<Map<String, dynamic>> selectedEmployees = [];
@@ -31,6 +42,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   List<Map<String, dynamic>> materials = [];
   List<Map<String, dynamic>> supervisors = [];
   String _selectedSupervisor = "Chọn";
+  int? _selectedSupervisorId;
   List<Map<String, dynamic>> taskTypes = [];
   int farmId = -1;
   Future<List<Map<String, dynamic>>> getListTaskTypeLivestocks() {
@@ -141,7 +153,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedTaskType = newValue!['name'];
-
+                      _selectedTaskTypeId = newValue['id'];
+                      selectedEmployees.clear();
                       // Gọi setState để cập nhật danh sách người thực hiện
                       _keyChange =
                           UniqueKey(); // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ
@@ -260,6 +273,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedSupervisor = newValue!['name'];
+                      _selectedSupervisorId = newValue['id'];
                     });
                   },
                   items: supervisors
@@ -430,7 +444,21 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const ThirdAddTaskPage(),
+          builder: (context) => ThirdAddTaskPage(
+            fiedlId: widget.fieldId,
+            otherId: widget.otherId,
+            plantId: widget.plantId,
+            liveStockId: widget.liveStockId,
+            taskName: _titleController.text,
+            taskTypeId: _selectedTaskTypeId!,
+            employeeIds: selectedEmployees
+                .map<int>((employee) => employee['id'] as int)
+                .toList(),
+            supervisorId: _selectedSupervisorId!,
+            materialIds:
+                selectedMaterials.map<int>((m) => m['id'] as int).toList(),
+            description: _quillController.document.toPlainText(),
+          ),
         ),
       );
     } else {
