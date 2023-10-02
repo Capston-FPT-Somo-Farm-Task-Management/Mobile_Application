@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
@@ -20,6 +21,7 @@ class CreateLiveStock extends StatefulWidget {
 class CreateLiveStockState extends State<CreateLiveStock> {
   final TextEditingController _titleIdController = TextEditingController();
   final TextEditingController _titleNameController = TextEditingController();
+  final TextEditingController _titleNumberController = TextEditingController();
 
   List<String> livestock = ["Bò", "Heo", "Vịt", "Gà"];
   String _selectedLiveStock = "Heo";
@@ -96,6 +98,11 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                 title: "Tên vật nuôi",
                 hint: "Nhập tên vật nuôi",
                 controller: _titleNameController,
+              ),
+              MyInputNumber(
+                title: "Khối lượng dự kiến của vật nuôi (kí)",
+                hint: "Nhập khối lượng của vật nuôi",
+                controller: _titleNumberController,
               ),
               MyInputField(
                 title: "Loại vật nuôi",
@@ -267,6 +274,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
   _validateDate() {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
+        _titleNumberController.text.isNotEmpty &&
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có" &&

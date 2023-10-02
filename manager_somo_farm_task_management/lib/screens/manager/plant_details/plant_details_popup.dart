@@ -68,7 +68,24 @@ class PlantDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Loai cây: ${plant['habitantTypeName']}',
+                  'Loại cây: ${plant['habitantTypeName']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.rulerVertical,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Chiều cao: ${plant['height']} mét',
                   style: const TextStyle(
                     fontSize: 18,
                   ),

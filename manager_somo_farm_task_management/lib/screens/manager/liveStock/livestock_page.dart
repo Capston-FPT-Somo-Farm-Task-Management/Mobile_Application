@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -180,24 +181,21 @@ class LiveStockPageState extends State<LiveStockPage> {
                     const SizedBox(height: 15),
                     Container(
                       height: 42,
-                      child: Expanded(
-                        flex: 2,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onChanged: (keyword) {
-                              searchLiveStocks(keyword);
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Tìm kiếm...",
-                              border: InputBorder.none,
-                              icon: Icon(Icons.search),
-                            ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          onChanged: (keyword) {
+                            searchLiveStocks(keyword);
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Tìm kiếm...",
+                            border: InputBorder.none,
+                            icon: Icon(Icons.search),
                           ),
                         ),
                       ),
@@ -275,13 +273,13 @@ class LiveStockPageState extends State<LiveStockPage> {
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
+                                              'Giống ${liveStock['gender']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              'Loại: ${liveStock['habitantTypeName']}',
+                                              '${liveStock['areaName']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
@@ -309,8 +307,17 @@ class LiveStockPageState extends State<LiveStockPage> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        'Khu đất: ${liveStock['fieldName']}',
+                                        '${liveStock['zoneName']}',
                                         style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Expanded(
+                                        child: Text(
+                                          '${liveStock['fieldName']}',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
                                       ),
                                     ),
                                   ],
