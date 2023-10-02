@@ -61,7 +61,7 @@ class TaskTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "${DateFormat('dd/MM HH:mm').format(DateTime.parse(task['startDate']))} - ${DateFormat('dd/MM HH:mm').format(DateTime.parse(task['endDate']))}",
+                      "${DateFormat('HH:mm aa  dd/MM').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm aa dd/MM').format(DateTime.parse(task['endDate']))}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 13, color: Colors.grey[100]),

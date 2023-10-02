@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -30,7 +31,7 @@ class TaskPageState extends State<TaskPage> {
   ];
 
   String? selectedFilter;
-  bool sortOrderAsc = true;
+  String selectedDate = "";
 
   int? farmId;
   final TextEditingController searchController = TextEditingController();
@@ -43,12 +44,11 @@ class TaskPageState extends State<TaskPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    getTasks().then((value) {
-      setState(() {
-        tasks = value;
-        filteredTaskList = tasks;
-      });
-    });
+    getTasks();
+  }
+
+  Future<bool> changeTaskStatus(int taskId, int newStatus) async {
+    return TaskService().changeTaskStatus(taskId, newStatus);
   }
 
   Future<int?> getFarmId() async {
@@ -66,10 +66,19 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getTasks() async {
+  Future<void> getTasks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
-    return TaskService().getTasksByUserId(userId!);
+    TaskService().getTaskActiveByUserId(userId!).then((value) {
+      if (value.isNotEmpty) {
+        setState(() {
+          tasks = value;
+          filteredTaskList = tasks;
+        });
+      } else {
+        throw Exception();
+      }
+    });
   }
 
   @override
@@ -156,20 +165,40 @@ class TaskPageState extends State<TaskPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    Text(selectedDate),
                     IconButton(
                       icon: const Icon(Icons.calendar_month_outlined),
-                      onPressed: () {
+                      onPressed: () async {
+                        DateTime? _selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1),
+                          lastDate: DateTime(9000),
+                        );
+
                         setState(() {
-                          if (sortOrderAsc) {
-                            // Sắp xếp tăng dần (ngày gần đến xa)
-                            filteredTaskList.sort((a, b) =>
-                                a['startDate'].compareTo(b['startDate']));
-                            sortOrderAsc = false;
+                          if (_selectedDate != null) {
+                            filteredTaskList = tasks
+                                .where((task) =>
+                                    DateTime.parse(task['startDate'])
+                                            .isBefore(_selectedDate) &&
+                                        DateTime.parse(task['endDate'])
+                                            .isAfter(_selectedDate) ||
+                                    DateFormat.yMd().format(DateTime.parse(
+                                            task['startDate'])) ==
+                                        DateFormat.yMd()
+                                            .format(_selectedDate) ||
+                                    DateFormat.yMd().format(
+                                            DateTime.parse(task['endDate'])) ==
+                                        DateFormat.yMd().format(_selectedDate))
+                                .toList();
+                            selectedDate =
+                                DateFormat('dd/MM/yy').format(_selectedDate);
                           } else {
-                            // Sắp xếp giảm dần (ngày xa đến gần)
-                            filteredTaskList.sort((a, b) =>
-                                b['startDate'].compareTo(a['startDate']));
-                            sortOrderAsc = true;
+                            setState(() {
+                              selectedDate = "";
+                              filteredTaskList = tasks;
+                            });
                           }
                         });
                       },
@@ -196,27 +225,32 @@ class TaskPageState extends State<TaskPage> {
                             if (selectedFilter == "Tất cả") {
                               // Nếu đã chọn "Tất cả", hiển thị tất cả các nhiệm vụ
                               filteredTaskList = tasks;
+                              selectedDate = "";
                             }
                             if (selectedFilter == "Không hoàn thành") {
                               filteredTaskList = tasks
                                   .where(
                                       (t) => t['status'] == "Không hoàn thành")
                                   .toList();
+                              selectedDate = "";
                             }
                             if (selectedFilter == "Đang thực hiện") {
                               filteredTaskList = tasks
                                   .where((t) => t['status'] == "Đang thực hiện")
                                   .toList();
+                              selectedDate = "";
                             }
                             if (selectedFilter == "Hoàn thành") {
                               filteredTaskList = tasks
                                   .where((t) => t['status'] == "Hoàn thành")
                                   .toList();
+                              selectedDate = "";
                             }
                             if (selectedFilter == "Chuẩn bị") {
                               filteredTaskList = tasks
                                   .where((t) => t['status'] == "Chuẩn bị")
                                   .toList();
+                              selectedDate = "";
                             }
                           });
                         },
@@ -431,7 +465,7 @@ class TaskPageState extends State<TaskPage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task['status'] == 3
+          height: task['status'] != "Hoàn thành"
               ? MediaQuery.of(context).size.height * 0.24
               : MediaQuery.of(context).size.height * 0.32,
           color: kBackgroundColor,
@@ -446,35 +480,72 @@ class TaskPageState extends State<TaskPage> {
                 ),
               ),
               const Spacer(),
-              task['status'] == 3
-                  ? Container()
-                  : _bottomSheetButton(
-                      label: "Đã hoàn thành",
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      cls: kPrimaryColor,
-                      context: context,
-                    ),
-              _bottomSheetButton(
-                label: "Xóa",
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return ConfirmDeleteDialog(
-                          title: "Xóa công việc",
-                          content: "Bạn có chắc muốn xóa công việc này?",
-                          onConfirm: () {
-                            Navigator.of(context).pop();
-                          },
-                          buttonConfirmText: "Xóa",
-                        );
-                      });
-                },
-                cls: Colors.red[300]!,
-                context: context,
-              ),
+              if (task['status'] == "Hoàn thành")
+                _bottomSheetButton(
+                  label: "Xem bằng chứng",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              if (task['status'] == "Hoàn thành")
+                _bottomSheetButton(
+                  label: "Đánh giá",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              if (task['status'] == "Không hoàn thành")
+                _bottomSheetButton(
+                  label: "Đánh giá",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              if (task['status'] == "Chuẩn bị")
+                _bottomSheetButton(
+                  label: "Xóa",
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context1) {
+                          return ConfirmDeleteDialog(
+                            title: "Xóa công việc",
+                            content: "Bạn có chắc muốn xóa công việc này?",
+                            onConfirm: () {
+                              changeTaskStatus(task['id'], 4).then((value) {
+                                if (value) {
+                                  getTasks();
+                                  Navigator.of(context).pop();
+                                  SnackbarShowNoti.showSnackbar(
+                                      context, "Xóa thành công!", false);
+                                } else {
+                                  SnackbarShowNoti.showSnackbar(
+                                      context, "Xảy ra lỗi!", true);
+                                }
+                              });
+                            },
+                            buttonConfirmText: "Xóa",
+                          );
+                        });
+                  },
+                  cls: Colors.red[300]!,
+                  context: context,
+                ),
+              if (task['status'] == "Đang thực hiện")
+                _bottomSheetButton(
+                  label: "Hoàn thành",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
               const SizedBox(height: 20),
               _bottomSheetButton(
                 label: "Đóng",

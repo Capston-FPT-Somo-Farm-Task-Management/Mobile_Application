@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/second_add_task_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/componets/input_field.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/second_add_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
@@ -29,6 +29,10 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
   String _selectedZone = "";
   String _selectedField = "";
   String _selectedExternalId = "";
+  int? fiedlId;
+  int? plantId;
+  int? liveStockId;
+  int? otherId;
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredField = [];
   List<Map<String, dynamic>> filteredExternalId = [];
@@ -211,6 +215,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedField = newValue!['name'];
+                      fiedlId = newValue['id'];
                     });
                     if (widget.isOne) {
                       widget.isPlant
@@ -263,6 +268,9 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                     onChanged: (Map<String, dynamic>? newValue) {
                       setState(() {
                         _selectedExternalId = newValue!['externalId'];
+                        widget.isPlant
+                            ? plantId = newValue['id']
+                            : liveStockId = newValue['id'];
                       });
                     },
                     items: filteredExternalId
@@ -335,7 +343,11 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SecondAddTaskPage(
-            isPlant: isPlant,
+            fieldId: fiedlId!,
+            otherId: null,
+            liveStockId: liveStockId,
+            plantId: plantId,
+            isPlant: widget.isPlant,
           ),
         ),
       );

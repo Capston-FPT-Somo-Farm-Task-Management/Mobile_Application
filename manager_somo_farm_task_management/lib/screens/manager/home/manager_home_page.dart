@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_task/choose_habitant.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/notification_services.dart';
@@ -34,17 +35,32 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
     notificationService.initialNotification();
-    getTasks().then((value) {
-      setState(() {
-        tasks = value;
-      });
+    _getTasksForSelectedDate(DateTime.now());
+    // getTasks().then((value) {
+    //   setState(() {
+    //     tasks = value;
+    //   });
+    // });
+  }
+
+  // Future<List<Map<String, dynamic>>> getTasks() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   int? userId = prefs.getInt('userId');
+  //   return TaskService().getTaskActiveByUserId(userId!);
+  // }
+
+  Future<void> _getTasksForSelectedDate(DateTime selectedDate) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('userId');
+    List<Map<String, dynamic>> selectedDateTasks =
+        await TaskService().getTasksByUserIdAndDate(userId!, selectedDate);
+    setState(() {
+      tasks = selectedDateTasks;
     });
   }
 
-  Future<List<Map<String, dynamic>>> getTasks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? userId = prefs.getInt('userId');
-    return TaskService().getTasksByUserId(userId!);
+  Future<bool> changeTaskStatus(int taskId, int newStatus) async {
+    return TaskService().changeTaskStatus(taskId, newStatus);
   }
 
   NotificationService notificationService = NotificationService();
@@ -139,6 +155,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 setState(() {
                   _selectedDate = date;
                 });
+                _getTasksForSelectedDate(date);
               },
               locale: 'vi_VN',
             ),
@@ -164,76 +181,50 @@ class ManagerHomePageState extends State<ManagerHomePage> {
             itemCount: tasks.length,
             itemBuilder: (_, index) {
               Map<String, dynamic> task = tasks[index];
-              if (task['remind'] != 0 &&
-                  DateTime.parse(task['startDate']).isAfter(
-                      DateTime.now().add(Duration(minutes: task['remind'])))) {
-                notificationService.scheduleNotification(task);
-              }
-              // if (task['repeat'] == "Hằng ngày") {
-              //   return AnimationConfiguration.staggeredList(
-              //     position: index,
-              //     child: SlideAnimation(
-              //       child: FadeInAnimation(
-              //         child: Row(
-              //           children: [
-              //             GestureDetector(
-              //               onTap: () {
-              //                 showDialog(
-              //                   context: context,
-              //                   builder: (BuildContext context) {
-              //                     return TaskDetailsPopup(task: task);
-              //                   },
-              //                 );
-              //               },
-              //               onLongPress: () {
-              //                 _showBottomSheet(context, task);
-              //               },
-              //               child: TaskTile(task),
-              //             )
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   );
+              // if (task['remind'] != 0 &&
+              //     DateTime.parse(task['startDate']).isAfter(
+              //         DateTime.now().add(Duration(minutes: task['remind'])))) {
+              //   notificationService.scheduleNotification(task);
               // }
-              if (DateTime.parse(task['startDate']).isBefore(_selectedDate) &&
-                      DateTime.parse(task['endDate']).isAfter(_selectedDate) ||
-                  DateFormat.yMd().format(DateTime.parse(task['startDate'])) ==
-                      DateFormat.yMd().format(_selectedDate) ||
-                  DateFormat.yMd().format(DateTime.parse(task['endDate'])) ==
-                      DateFormat.yMd().format(_selectedDate)) {
-                return AnimationConfiguration.staggeredList(
-                  position: index,
-                  child: SlideAnimation(
-                    child: FadeInAnimation(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return TaskDetailsPopup(task: task);
-                                },
-                              );
-                            },
-                            onLongPress: () {
-                              _showBottomSheet(context, task);
-                            },
-                            child: TaskTile(task),
-                          )
-                        ],
-                      ),
+              // if (DateTime.parse(task['startDate']).isBefore(_selectedDate) &&
+              //         DateTime.parse(task['endDate']).isAfter(_selectedDate) ||
+              //     DateFormat.yMd().format(DateTime.parse(task['startDate'])) ==
+              //         DateFormat.yMd().format(_selectedDate) ||
+              //     DateFormat.yMd().format(DateTime.parse(task['endDate'])) ==
+              //         DateFormat.yMd().format(_selectedDate)) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return TaskDetailsPopup(task: task);
+                              },
+                            );
+                          },
+                          onLongPress: () {
+                            _showBottomSheet(context, task, _selectedDate);
+                          },
+                          child: TaskTile(task),
+                        )
+                      ],
                     ),
                   ),
-                );
-              } else {
-                return Container();
-              }
+                ),
+              );
+              // } else {
+              //   return Container();
+              // }
             }));
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> task) {
+  _showBottomSheet(
+      BuildContext context, Map<String, dynamic> task, DateTime _selectedDate) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -287,12 +278,22 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   onTap: () {
                     showDialog(
                         context: context,
-                        builder: (BuildContext context) {
+                        builder: (BuildContext context1) {
                           return ConfirmDeleteDialog(
                             title: "Xóa công việc",
                             content: "Bạn có chắc muốn xóa công việc này?",
                             onConfirm: () {
-                              Navigator.of(context).pop();
+                              changeTaskStatus(task['id'], 4).then((value) {
+                                if (value) {
+                                  _getTasksForSelectedDate(_selectedDate);
+                                  Navigator.of(context).pop();
+                                  SnackbarShowNoti.showSnackbar(
+                                      context, "Xóa thành công!", false);
+                                } else {
+                                  SnackbarShowNoti.showSnackbar(
+                                      context, "Xảy ra lỗi!", true);
+                                }
+                              });
                             },
                             buttonConfirmText: "Xóa",
                           );
