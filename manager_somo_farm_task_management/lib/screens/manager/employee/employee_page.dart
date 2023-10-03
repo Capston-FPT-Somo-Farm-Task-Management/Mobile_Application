@@ -82,7 +82,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Cây trồng của tôi",
+                      "Nhân viên",
                       style: TextStyle(
                         fontSize: 28, // Thay đổi kích thước phù hợp
                         fontWeight: FontWeight.bold,
@@ -113,62 +113,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo cây trồng",
-                              style: TextStyle(fontSize: 19),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10), // Khoảng cách giữa hai nút
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreatePlantField(
-                                        farmId: farmId!,
-                                      )),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            minimumSize: Size(120, 45),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Tạo vườn",
-                              style: TextStyle(fontSize: 19),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreatePlantType()),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            minimumSize: Size(120, 45),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Tạo loại cây trồng",
+                              "Tạo nhân viên",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
