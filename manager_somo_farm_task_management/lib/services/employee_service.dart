@@ -25,4 +25,40 @@ class EmployeeService {
       throw Exception('Failed to get fields by zone ID');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getEmployeesbyFarmId(int farmId) async {
+    final String getEmsUrl = '$baseUrl/Employee/Farm($farmId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getEmsUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> ems =
+          List<Map<String, dynamic>>.from(data['data']);
+      return ems;
+    } else {
+      throw Exception('Failed to get ems by farm ID');
+    }
+  }
+
+  Future<bool> createEmployee(Map<String, dynamic> employeeData) async {
+    final String apiUrl = "$baseUrl/Employee";
+    var body = jsonEncode(employeeData);
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception("Failed to create employee");
+    }
+  }
 }

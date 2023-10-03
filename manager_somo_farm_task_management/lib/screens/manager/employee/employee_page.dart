@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
-import 'package:manager_somo_farm_task_management/services/plant_service.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/employee_add/employee_add.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
+import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
-import '../../../widgets/bottom_navigation_bar.dart';
 
 class EmployeekPage extends StatefulWidget {
   const EmployeekPage({super.key});
@@ -23,46 +20,55 @@ class EmployeekPage extends StatefulWidget {
 
 class EmployeekPageState extends State<EmployeekPage> {
   int? farmId;
-  int _currentIndex = 0;
-
-  List<Map<String, dynamic>> plants = [];
-  List<Map<String, dynamic>> ListPlants = [];
   final TextEditingController searchController = TextEditingController();
-
-  Future<int?> getFarmId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedFarmId = prefs.getInt('farmId');
-    return storedFarmId;
+  List<Map<String, dynamic>> employees = [];
+  List<Map<String, dynamic>> filteredEmployeeList = [];
+  final List<String> filters = [
+    "Tất cả",
+    "Active",
+    "Inactive",
+  ];
+  String? selectedFilter;
+  @override
+  initState() {
+    super.initState();
+    selectedFilter = filters[0];
+    _initializeData();
   }
 
-  void searchPlants(String keyword) {
+  Future<void> _initializeData() async {
+    await getFarmId();
+    await getEmployees();
+  }
+
+  Future<void> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
     setState(() {
-      ListPlants = plants
-          .where((plant) => removeDiacritics(plant['name'].toLowerCase())
+      farmId = storedFarmId;
+    });
+  }
+
+  void searchEmployees(String keyword) {
+    setState(() {
+      filteredEmployeeList = employees
+          .where((task) => removeDiacritics(task['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
-  Future<Map<String, dynamic>> deletePlant(int id, String status) {
-    return PlantService().deletePlant(id, status);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getFarmId().then((value) {
-      farmId = value;
+  Future<void> getEmployees() async {
+    EmployeeService().getEmployeesbyFarmId(farmId!).then((value) {
+      if (value.isNotEmpty) {
+        setState(() {
+          employees = value;
+          filteredEmployeeList = employees;
+        });
+      } else {
+        throw Exception();
+      }
     });
-    GetAllPlant().then((value) {
-      setState(() {
-        plants = value;
-      });
-    });
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllPlant() {
-    return PlantService().getAllPlant();
   }
 
   @override
@@ -73,7 +79,8 @@ class EmployeekPageState extends State<EmployeekPage> {
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -99,10 +106,14 @@ class EmployeekPageState extends State<EmployeekPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlant(
+                                  builder: (context) => CreateEmployee(
                                         farmId: farmId!,
                                       )),
-                            );
+                            ).then((value) {
+                              if (value != null) {
+                                getEmployees();
+                              }
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
@@ -113,7 +124,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo nhân viên",
+                              "Thêm nhân viên",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -124,157 +135,267 @@ class EmployeekPageState extends State<EmployeekPage> {
                   const SizedBox(height: 15),
                   Container(
                     height: 42,
-                    child: Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: TextField(
-                          controller: searchController,
-                          onChanged: (keyword) {
-                            searchPlants(keyword);
-                          },
-                          decoration: InputDecoration(
-                            hintText: "Tìm kiếm...",
-                            border: InputBorder.none,
-                            icon: Icon(Icons.search),
-                          ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: (keyword) {
+                          searchEmployees(keyword);
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Tìm kiếm...",
+                          border: InputBorder.none,
+                          icon: Icon(Icons.search),
                         ),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey, // Màu đường viền
+                            width: 1.0, // Độ rộng của đường viền
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              5.0), // Độ bo góc của đường viền
+                        ),
+                        child: DropdownButton<String>(
+                          isDense: true,
+                          alignment: Alignment.center,
+                          hint: Text(selectedFilter!),
+                          value:
+                              selectedFilter, // Giá trị đã chọn cho Dropdown 1
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedFilter =
+                                  newValue; // Cập nhật giá trị đã chọn cho Dropdown 1
+                              if (selectedFilter == "Tất cả") {
+                                filteredEmployeeList = employees;
+                              }
+                              if (selectedFilter == "Active") {
+                                filteredEmployeeList = employees
+                                    .where((t) => t['status'] == "Active")
+                                    .toList();
+                              }
+                              if (selectedFilter == "Inactive") {
+                                filteredEmployeeList = employees
+                                    .where((t) => t['status'] == "Inactive")
+                                    .toList();
+                              }
+                            });
+                          },
+                          items: filters
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),
             SizedBox(height: 30),
             Expanded(
-              flex: 2,
-              child: ListView.builder(
-                itemCount: plants.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> plant = plants[index];
-                  if (plant['status'] == 'Inactive') {
-                    return SizedBox.shrink();
-                  }
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 25),
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return PlantDetailsPopup(plant: plant);
-                          },
-                        );
-                      },
-                      onLongPress: () {
-                        _showBottomSheet(context, plant);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 7,
-                              offset: Offset(4, 8), // Shadow position
+              flex: 3,
+              child: filteredEmployeeList.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.no_accounts_outlined,
+                            size: 75, // Kích thước biểu tượng có thể điều chỉnh
+                            color: Colors.grey, // Màu của biểu tượng
+                          ),
+                          SizedBox(
+                              height:
+                                  16), // Khoảng cách giữa biểu tượng và văn bản
+                          Text(
+                            "Không có nhân viên nào",
+                            style: TextStyle(
+                              fontSize:
+                                  20, // Kích thước văn bản có thể điều chỉnh
+                              color: Colors.grey, // Màu văn bản
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey, // Màu của đường viền
-                                    width: 1.0, // Độ dày của đường viền
-                                  ),
-                                ),
-                                height: 110,
-                                width: double.infinity,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            plant['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Loại cây: ${plant['habitantTypeName']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            Container(
-                              padding: const EdgeInsets.all(10),
+                          ),
+                        ],
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () => getEmployees(),
+                      child: ListView.separated(
+                        itemCount: filteredEmployeeList.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 25);
+                        },
+                        itemBuilder: (context, index) {
+                          final employee = filteredEmployeeList[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return EmployeeDetailsPopup(
+                                      employee: employee);
+                                },
+                              );
+                            },
+                            onLongPress: () {
+                              _showBottomSheet(context, employee);
+                            },
+                            child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.grey[400], // Đặt màu xám ở đây
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
-                              height: 45,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${plant['fieldName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
+                                color: Colors.teal,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 7,
+                                    offset: Offset(4, 8), // Shadow position
                                   ),
                                 ],
                               ),
-                            )
-                          ],
-                        ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color:
+                                            Colors.grey, // Màu của đường viền
+                                        width: 1.0, // Độ dày của đường viền
+                                      ),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    employee['name'].length > 15
+                                                        ? '${employee['name'].substring(0, 15)}...'
+                                                        : employee['name'],
+                                                    style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          employee['status'] ==
+                                                                  "Inactive"
+                                                              ? Colors.red[400]
+                                                              : kPrimaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(
+                                                      employee['status'],
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  const Icon(
+                                                    Icons
+                                                        .phone_android_outlined,
+                                                    color: Colors.black,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    "Điện thoại: ${employee['phoneNumber']}",
+                                                    style: GoogleFonts.lato(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontSize: 13,
+                                                              color:
+                                                                  Colors.black),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.grey[400], // Đặt màu xám ở đây
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1.0,
+                                      ),
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    height: 45,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTabChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
       ),
     );
   }
@@ -310,8 +431,8 @@ class EmployeekPageState extends State<EmployeekPage> {
                           onConfirm: () {
                             Navigator.of(context).pop();
                             setState(() {});
-                            plants.remove(plant);
-                            deletePlant(plant['id'], plant['status']);
+                            // plants.remove(plant);
+                            // deletePlant(plant['id'], plant['status']);
                           },
                           buttonConfirmText: "Xóa",
                         );

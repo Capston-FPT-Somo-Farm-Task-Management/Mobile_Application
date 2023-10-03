@@ -43,4 +43,24 @@ class TaskTypeService {
       throw Exception('Failed to get list TaskTypeLivestock');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getListTaskTypeActive() async {
+    final String getZonesUrl = '$baseUrl/TaskType/Active';
+
+    final http.Response response = await http.get(
+      Uri.parse(getZonesUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> listTaskTypeLivestocks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return listTaskTypeLivestocks;
+    } else {
+      throw Exception('Failed to get list TaskTypeActive');
+    }
+  }
 }
