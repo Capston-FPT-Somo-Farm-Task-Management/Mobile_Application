@@ -68,6 +68,7 @@ class TaskDetailsPopup extends StatelessWidget {
             const SizedBox(height: 16),
             if (task['otherName'] != null)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.person_outline,
@@ -75,7 +76,7 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    wrapWords('Đối tượng: ${task['otherName']}', 30),
+                    wrapWords('Đối tượng: ${task['otherName']}', 35),
                     style: const TextStyle(
                       fontSize: 16,
                     ),
@@ -84,6 +85,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             if (task['plantName'] != null)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.home,
@@ -91,7 +93,7 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    wrapWords('Cây: ${task['plantName']}', 30),
+                    wrapWords('Cây: ${task['plantName']}', 35),
                     style: const TextStyle(
                       fontSize: 16,
                     ),
@@ -101,6 +103,7 @@ class TaskDetailsPopup extends StatelessWidget {
             if (task['plantName'] != null) const SizedBox(height: 16),
             if (task['plantName'] != null)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.tag,
@@ -108,7 +111,7 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    wrapWords('Mã cây: ${task['externalId']}', 30),
+                    wrapWords('Mã cây: ${task['externalId']}', 35),
                     style: const TextStyle(
                       fontSize: 16,
                     ),
@@ -117,6 +120,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             if (task['liveStockName'] != null)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.home,
@@ -124,7 +128,7 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    wrapWords('Con vật: ${task['liveStockName']}', 30),
+                    wrapWords('Con vật: ${task['liveStockName']}', 35),
                     style: const TextStyle(
                       fontSize: 16,
                     ),
@@ -134,6 +138,7 @@ class TaskDetailsPopup extends StatelessWidget {
             if (task['liveStockName'] != null) const SizedBox(height: 16),
             if (task['liveStockName'] != null)
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.tag,
@@ -141,7 +146,7 @@ class TaskDetailsPopup extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    wrapWords('Mã con vật: ${task['externalId']}', 30),
+                    wrapWords('Mã con vật: ${task['externalId']}', 35),
                     style: const TextStyle(
                       fontSize: 16,
                     ),
@@ -150,6 +155,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.mapLocationDot,
@@ -157,7 +163,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Khu vực: ${task['areaName']}', 30),
+                  wrapWords('Khu vực: ${task['areaName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -166,6 +172,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.borderNone,
@@ -173,7 +180,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Vùng: ${task['zoneName']}', 30),
+                  wrapWords('Vùng: ${task['zoneName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -182,6 +189,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.business,
@@ -189,7 +197,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Chuồng: ${task['fieldName']}', 30),
+                  wrapWords('Chuồng: ${task['fieldName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -198,6 +206,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.access_time,
@@ -214,6 +223,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.calendar_today,
@@ -230,6 +240,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.calendar_today,
@@ -238,6 +249,57 @@ class TaskDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'kết thúc: ${DateFormat('HH:mm a  -  dd/MM/yyyy').format(DateTime.parse(task['endDate']))}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.supervised_user_circle,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Người quản lí: ${task['memberName']}', 35),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.person,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Người giám sát: ${task['receiverName']}', 35),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.person,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Thực hiện: ${task['employeeName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -262,6 +324,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.work,
@@ -269,40 +332,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Loại công việc: ${task['taskTypeName']}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(
-                  Icons.supervised_user_circle,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  wrapWords('Người quản lí: ${task['memberName']}', 30),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.person,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  wrapWords('Người giám sát: ${task['receiverName']}', 30),
+                  wrapWords('Loại công việc: ${task['taskTypeName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -327,6 +357,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.notifications,
@@ -334,7 +365,8 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Nhắc nhở: ${task['remind']} phút trước khi bắt đầu',
+                  wrapWords(
+                      'Nhắc nhở: ${task['remind']} phút trước khi bắt đầu', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -359,6 +391,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.check_circle,
@@ -366,7 +399,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Trạng thái: ${task['status']}', 30),
+                  wrapWords('Trạng thái: ${task['status']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
