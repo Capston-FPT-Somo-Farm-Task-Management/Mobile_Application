@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee/employee_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/other/login_page.dart';
-
-import '../screens/manager/farm_list_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
+  Future<int?> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
+    return storedFarmId;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +33,11 @@ class CustomAppBar extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    int? farmId = await getFarmId();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => const FarmListPage(),
+                        builder: (context) => ManagerHomePage(farmId: farmId!),
                       ),
                     );
                   },
