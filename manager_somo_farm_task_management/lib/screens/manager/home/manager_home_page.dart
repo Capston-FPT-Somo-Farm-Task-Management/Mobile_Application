@@ -1,5 +1,6 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -36,18 +37,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     initializeDateFormatting('vi_VN', null);
     notificationService.initialNotification();
     _getTasksForSelectedDate(DateTime.now());
-    // getTasks().then((value) {
-    //   setState(() {
-    //     tasks = value;
-    //   });
-    // });
   }
-
-  // Future<List<Map<String, dynamic>>> getTasks() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   int? userId = prefs.getInt('userId');
-  //   return TaskService().getTaskActiveByUserId(userId!);
-  // }
 
   Future<void> _getTasksForSelectedDate(DateTime selectedDate) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -177,50 +167,62 @@ class ManagerHomePageState extends State<ManagerHomePage> {
 
   _showTask() {
     return Expanded(
-        child: ListView.builder(
-            itemCount: tasks.length,
-            itemBuilder: (_, index) {
-              Map<String, dynamic> task = tasks[index];
-              // if (task['remind'] != 0 &&
-              //     DateTime.parse(task['startDate']).isAfter(
-              //         DateTime.now().add(Duration(minutes: task['remind'])))) {
-              //   notificationService.scheduleNotification(task);
-              // }
-              // if (DateTime.parse(task['startDate']).isBefore(_selectedDate) &&
-              //         DateTime.parse(task['endDate']).isAfter(_selectedDate) ||
-              //     DateFormat.yMd().format(DateTime.parse(task['startDate'])) ==
-              //         DateFormat.yMd().format(_selectedDate) ||
-              //     DateFormat.yMd().format(DateTime.parse(task['endDate'])) ==
-              //         DateFormat.yMd().format(_selectedDate)) {
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                child: SlideAnimation(
-                  child: FadeInAnimation(
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return TaskDetailsPopup(task: task);
-                              },
-                            );
-                          },
-                          onLongPress: () {
-                            _showBottomSheet(context, task, _selectedDate);
-                          },
-                          child: TaskTile(task),
-                        )
-                      ],
+        child: tasks.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.no_backpack,
+                      size: 75, // Kích thước biểu tượng có thể điều chỉnh
+                      color: Colors.grey, // Màu của biểu tượng
                     ),
-                  ),
+                    SizedBox(
+                        height: 16), // Khoảng cách giữa biểu tượng và văn bản
+                    Text(
+                      "Hôm nay không có công việc nào",
+                      style: TextStyle(
+                        fontSize: 20, // Kích thước văn bản có thể điều chỉnh
+                        color: Colors.grey, // Màu văn bản
+                      ),
+                    ),
+                  ],
                 ),
-              );
-              // } else {
-              //   return Container();
-              // }
-            }));
+              )
+            : RefreshIndicator(
+                onRefresh: () => _getTasksForSelectedDate(_selectedDate),
+                child: ListView.builder(
+                    itemCount: tasks.length,
+                    itemBuilder: (_, index) {
+                      Map<String, dynamic> task = tasks[index];
+                      return AnimationConfiguration.staggeredList(
+                        position: index,
+                        child: SlideAnimation(
+                          child: FadeInAnimation(
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return TaskDetailsPopup(task: task);
+                                      },
+                                    );
+                                  },
+                                  onLongPress: () {
+                                    _showBottomSheet(
+                                        context, task, _selectedDate);
+                                  },
+                                  child: TaskTile(task),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ));
   }
 
   _showBottomSheet(
