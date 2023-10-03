@@ -5,6 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 
@@ -23,20 +24,28 @@ class CreateLiveStockState extends State<CreateLiveStock> {
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _titleNumberController = TextEditingController();
 
-  List<String> livestock = ["Bò", "Heo", "Vịt", "Gà"];
-  String _selectedLiveStock = "Heo";
+  List<String> filterGender = ["Đực", "Cái"];
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredField = [];
+  List<Map<String, dynamic>> filterLivestock = [];
   String _selectedArea = "";
   String _selectedZone = "";
   String _selectedField = "";
-  // Lấy Area từ Farm cụ thể
+  String _selectedLiveStock = "";
+  String _selectedGender = "Đực";
+
+  String name = "";
+  String externalId = "";
+  int? weight;
+  bool gender = true;
+  int? habitantTypeId;
+  int? fieldId;
+
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasByFarmId(widget.farmId);
   }
 
-  // Lấy zone từ Area cụ thể
   Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
     return ZoneService().getZonesbyAreaId(areaId);
   }
@@ -49,6 +58,14 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return FieldService().getFieldsbyZoneId(zoneId);
   }
 
+  Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType() {
+    return HabitantTypeService().getLiveStockTypeFromHabitantType();
+  }
+
+  Future<Map<String, dynamic>> CreateLiveStock(Map<String, dynamic> liveStock) {
+    return LiveStockService().CreateLiveStock(liveStock);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +73,12 @@ class CreateLiveStockState extends State<CreateLiveStock> {
       setState(() {
         filteredArea = a;
         _selectedArea = "Chọn";
+      });
+    });
+    getLiveStockTypeFromHabitantType().then((a) {
+      setState(() {
+        filterLivestock = a;
+        _selectedLiveStock = "Chọn";
       });
     });
   }
@@ -99,6 +122,38 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                 hint: "Nhập tên vật nuôi",
                 controller: _titleNameController,
               ),
+              MyInputField(
+                title: "Giới tính vật nuôi",
+                hint: _selectedGender,
+                widget: DropdownButton(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey,
+                  ),
+                  underline: Container(height: 0),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitileStyle,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedGender = newValue!;
+                      if (_selectedGender == 'Đực') {
+                        gender = true;
+                      }
+                      if (_selectedGender == "Cái") {
+                        gender = false;
+                      }
+                    });
+                  },
+                  items: filterGender
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
               MyInputNumber(
                 title: "Khối lượng dự kiến của vật nuôi (kí)",
                 hint: "Nhập khối lượng của vật nuôi",
@@ -108,6 +163,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                 title: "Loại vật nuôi",
                 hint: _selectedLiveStock,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -115,16 +171,18 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedLiveStock = newValue!;
+                      _selectedLiveStock = newValue!['name'];
+                      habitantTypeId = newValue['id'];
                     });
                   },
-                  items:
-                      livestock.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filterLivestock
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
@@ -220,6 +278,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedField = newValue!['name'];
+                      fieldId = newValue['id'];
                     });
                   },
                   items: filteredField
@@ -280,11 +339,21 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         _selectedZone != "Chưa có" &&
         _selectedField != "Chưa có" &&
         _selectedField != "Chọn") {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const LiveStockPage(),
-        ),
-      );
+      Map<String, dynamic> liveStock = {
+        'name': _titleNameController.text,
+        'externalId': _titleIdController.text,
+        'weight': _titleNumberController.text,
+        'habitantTypeId': habitantTypeId,
+        'fieldId': fieldId,
+        'gender': gender,
+      };
+      CreateLiveStock(liveStock).then((value) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LiveStockPage(),
+          ),
+        );
+      });
     } else {
       SnackbarShowNoti.showSnackbar(
           context, 'Vui lòng điền đầy đủ thông tin của vật nuôi', true);

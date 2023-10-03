@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/models/plant.dart';
 
 class PlantService {
   Future<List<Map<String, dynamic>>> getPlantExternalIdsByFieldId(
@@ -72,11 +73,29 @@ class PlantService {
         body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> liveStock =
+      final Map<String, dynamic> plant =
           Map<String, dynamic>.from(json.decode(response.body));
-      return liveStock;
+      return plant;
     } else {
       throw Exception('Failed to delete plant');
+    }
+  }
+
+  Future<Map<String, dynamic>> createPlant(Map<String, dynamic> plant) async {
+    final String createPlantUrl = '$baseUrl/Plant';
+    var body = jsonEncode(plant);
+    final response = await http.post(Uri.parse(createPlantUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> plant =
+          Map<String, dynamic>.from(json.decode(response.body));
+      return plant;
+    } else {
+      throw Exception('Failed to create plant');
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
 
 class LiveStockService {
   Future<List<Map<String, dynamic>>> getLiveStockExternalIdsByFieldId(
@@ -77,6 +78,25 @@ class LiveStockService {
       return liveStock;
     } else {
       throw Exception('Failed to delete livestock');
+    }
+  }
+
+  Future<Map<String, dynamic>> CreateLiveStock(
+      Map<String, dynamic> liveStock) async {
+    final String createLiveStockUrl = '$baseUrl/LiveStock';
+    var body = jsonEncode(liveStock);
+    final response = await http.post(Uri.parse(createLiveStockUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> liveStock =
+          Map<String, dynamic>.from(json.decode(response.body));
+      return liveStock;
+    } else {
+      throw Exception('Failed to create liveStock');
     }
   }
 }
