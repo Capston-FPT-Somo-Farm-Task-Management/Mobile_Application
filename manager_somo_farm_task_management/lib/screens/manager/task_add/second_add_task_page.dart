@@ -14,9 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SecondAddTaskPage extends StatefulWidget {
   final bool isPlant;
   final int fieldId;
-  int? plantId;
-  int? otherId;
-  int? liveStockId;
+  final int? plantId;
+  final int? otherId;
+  final int? liveStockId;
   SecondAddTaskPage(
       {super.key,
       required this.isPlant,
