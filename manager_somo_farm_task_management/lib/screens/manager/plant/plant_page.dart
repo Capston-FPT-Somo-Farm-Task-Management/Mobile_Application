@@ -4,9 +4,9 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/plant.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plantType_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/add_plant/add_plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -180,24 +180,21 @@ class PlantPageState extends State<PlantPage> {
                   const SizedBox(height: 15),
                   Container(
                     height: 42,
-                    child: Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: TextField(
-                          controller: searchController,
-                          onChanged: (keyword) {
-                            searchPlants(keyword);
-                          },
-                          decoration: InputDecoration(
-                            hintText: "Tìm kiếm...",
-                            border: InputBorder.none,
-                            icon: Icon(Icons.search),
-                          ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: (keyword) {
+                          searchPlants(keyword);
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Tìm kiếm...",
+                          border: InputBorder.none,
+                          icon: Icon(Icons.search),
                         ),
                       ),
                     ),
@@ -252,7 +249,7 @@ class PlantPageState extends State<PlantPage> {
                                     width: 1.0, // Độ dày của đường viền
                                   ),
                                 ),
-                                height: 110,
+                                height: 105,
                                 width: double.infinity,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,13 +269,13 @@ class PlantPageState extends State<PlantPage> {
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
-                                            'Loại cây: ${plant['habitantTypeName']}',
+                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
                                             style:
                                                 const TextStyle(fontSize: 16),
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
-                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
+                                            '${plant['areaName']}',
                                             style:
                                                 const TextStyle(fontSize: 16),
                                           ),
@@ -305,6 +302,13 @@ class PlantPageState extends State<PlantPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Expanded(
+                                    child: Text(
+                                      '${plant['zoneName']}',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
                                     child: Text(
                                       '${plant['fieldName']}',
                                       style: const TextStyle(fontSize: 16),
