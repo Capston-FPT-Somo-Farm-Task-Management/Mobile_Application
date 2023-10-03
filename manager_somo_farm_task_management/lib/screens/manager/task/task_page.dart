@@ -11,7 +11,6 @@ import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
-import '../../../widgets/bottom_navigation_bar.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key}) : super(key: key);
@@ -21,7 +20,6 @@ class TaskPage extends StatefulWidget {
 }
 
 class TaskPageState extends State<TaskPage> {
-  int _currentIndex = 0;
   final List<String> filters = [
     "Tất cả",
     "Chuẩn bị",
@@ -81,6 +79,16 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
+  Future<void> _getTasksForSelectedDate(DateTime selectedDate) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('userId');
+    List<Map<String, dynamic>> selectedDateTasks =
+        await TaskService().getTasksByUserIdAndDate(userId!, selectedDate);
+    setState(() {
+      filteredTaskList = selectedDateTasks;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +97,8 @@ class TaskPageState extends State<TaskPage> {
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
         child: Column(
           children: [
             Column(
@@ -176,20 +185,7 @@ class TaskPageState extends State<TaskPage> {
 
                         setState(() {
                           if (_selectedDate != null) {
-                            filteredTaskList = tasks
-                                .where((task) =>
-                                    DateTime.parse(task['startDate'])
-                                            .isBefore(_selectedDate) &&
-                                        DateTime.parse(task['endDate'])
-                                            .isAfter(_selectedDate) ||
-                                    DateFormat.yMd().format(DateTime.parse(
-                                            task['startDate'])) ==
-                                        DateFormat.yMd()
-                                            .format(_selectedDate) ||
-                                    DateFormat.yMd().format(
-                                            DateTime.parse(task['endDate'])) ==
-                                        DateFormat.yMd().format(_selectedDate))
-                                .toList();
+                            _getTasksForSelectedDate(_selectedDate);
                             selectedDate =
                                 DateFormat('dd/MM/yy').format(_selectedDate);
                           } else {
@@ -268,191 +264,229 @@ class TaskPageState extends State<TaskPage> {
             const SizedBox(height: 20),
             Expanded(
               flex: 3,
-              child: ListView.separated(
-                itemCount: filteredTaskList.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 25);
-                },
-                itemBuilder: (context, index) {
-                  final task = filteredTaskList[index];
-
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return TaskDetailsPopup(task: task);
-                        },
-                      );
-                    },
-                    onLongPress: () {
-                      _showBottomSheet(context, task);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.teal,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 7,
-                            offset: Offset(4, 8), // Shadow position
+              child: filteredTaskList.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.no_backpack,
+                            size: 75, // Kích thước biểu tượng có thể điều chỉnh
+                            color: Colors.grey, // Màu của biểu tượng
+                          ),
+                          SizedBox(
+                              height:
+                                  16), // Khoảng cách giữa biểu tượng và văn bản
+                          Text(
+                            "Không có công việc nào",
+                            style: TextStyle(
+                              fontSize:
+                                  20, // Kích thước văn bản có thể điều chỉnh
+                              color: Colors.grey, // Màu văn bản
+                            ),
                           ),
                         ],
                       ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.grey, // Màu của đường viền
-                                width: 1.0, // Độ dày của đường viền
-                              ),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            task['name'].length > 15
-                                                ? '${task['name'].substring(0, 15)}...'
-                                                : task['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: task['status'] ==
-                                                      "Không hoàn thành"
-                                                  ? Colors.red[400]
-                                                  : task['status'] == "Chuẩn bị"
-                                                      ? Colors.orange[400]
-                                                      : task['status'] ==
-                                                              "Đang thực hiện"
-                                                          ? kTextBlueColor
-                                                          : kPrimaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: const EdgeInsets.all(10),
-                                            child: Text(
-                                              task['status'],
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.access_time_rounded,
-                                            color: Colors.black,
-                                            size: 18,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                            style: GoogleFonts.lato(
-                                              textStyle: const TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.black),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Giám sát: ${task['receiverName']}",
-                                            style: GoogleFonts.lato(
-                                              textStyle: const TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                            ),
-                                          ),
-                                          Text(
-                                            "Vị trí: ${task['fieldName']}",
-                                            style: GoogleFonts.lato(
-                                              textStyle: const TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.black),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () => getTasks(),
+                      child: ListView.separated(
+                        itemCount: filteredTaskList.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 25);
+                        },
+                        itemBuilder: (context, index) {
+                          final task = filteredTaskList[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return TaskDetailsPopup(task: task);
+                                },
+                              );
+                            },
+                            onLongPress: () {
+                              _showBottomSheet(context, task);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.teal,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 7,
+                                    offset: Offset(4, 8), // Shadow position
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[400], // Đặt màu xám ở đây
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
+                                ],
                               ),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color:
+                                            Colors.grey, // Màu của đường viền
+                                        width: 1.0, // Độ dày của đường viền
+                                      ),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    task['name'].length > 15
+                                                        ? '${task['name'].substring(0, 15)}...'
+                                                        : task['name'],
+                                                    style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: task['status'] ==
+                                                              "Không hoàn thành"
+                                                          ? Colors.red[400]
+                                                          : task['status'] ==
+                                                                  "Chuẩn bị"
+                                                              ? Colors
+                                                                  .orange[400]
+                                                              : task['status'] ==
+                                                                      "Đang thực hiện"
+                                                                  ? kTextBlueColor
+                                                                  : kPrimaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(
+                                                      task['status'],
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.access_time_rounded,
+                                                    color: Colors.black,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                    style: GoogleFonts.lato(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontSize: 13,
+                                                              color:
+                                                                  Colors.black),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Giám sát: ${task['receiverName']}",
+                                                    style: GoogleFonts.lato(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "Vị trí: ${task['fieldName']}",
+                                                    style: GoogleFonts.lato(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.black),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.grey[400], // Đặt màu xám ở đây
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1.0,
+                                      ),
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    height: 45,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Loại: ${task['taskTypeName']}',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        Text(
+                                          'Ưu tiên: ${task['priority']}',
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                            height: 45,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Loại: ${task['taskTypeName']}',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                Text(
-                                  'Ưu tiên: ${task['priority']}',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTabChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
       ),
     );
   }
