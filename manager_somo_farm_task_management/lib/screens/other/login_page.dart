@@ -8,8 +8,8 @@ import 'package:manager_somo_farm_task_management/services/user_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
-  String username = "";
-  String password = "";
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   LoginPage({super.key});
 
   @override
@@ -59,9 +59,7 @@ class LoginPage extends StatelessWidget {
                     hintStyle: TextStyle(color: kTextWhiteColor, height: 1.4),
                     border: InputBorder.none,
                   ),
-                  onChanged: (value) {
-                    username = value;
-                  },
+                  controller: _usernameController,
                 ),
               ),
               const SizedBox(height: 20.0),
@@ -89,9 +87,7 @@ class LoginPage extends StatelessWidget {
                     hintStyle: TextStyle(color: kTextWhiteColor, height: 1.4),
                     border: InputBorder.none,
                   ),
-                  onChanged: (value) {
-                    password = value;
-                  },
+                  controller: _passwordController,
                 ),
               ),
               const SizedBox(height: 5),
@@ -114,8 +110,8 @@ class LoginPage extends StatelessWidget {
                   try {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    final result =
-                        await LoginService().Login(username, password);
+                    final result = await LoginService().Login(
+                        _usernameController.text, _passwordController.text);
                     String role = result['role'];
                     int id = result['id'];
 
@@ -124,6 +120,7 @@ class LoginPage extends StatelessWidget {
                       prefs.setInt('farmId', value['data']['farmId']);
                       return value['data']['farmId'];
                     }).catchError((e) {
+                      print(e);
                       SnackbarShowNoti.showSnackbar(context, e, true);
                       return 0; // Trả về giá trị mặc định nếu có lỗi
                     });
