@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
 class UserService {
-  static const String baseUrl = "https://somotaskapi.azurewebsites.net/api";
-
   Future<Map<String, dynamic>> getUserById(int userId) async {
     final String getUserUrl = '$baseUrl/Member/$userId';
 
