@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/models/plant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
+import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 
 import '../../../componets/input_field.dart';
 
 class CreatePlant extends StatefulWidget {
   final int farmId;
+
   const CreatePlant({super.key, required this.farmId});
 
   @override
@@ -31,6 +34,12 @@ class CreatePlantState extends State<CreatePlant> {
   String _selectedField = "";
   String _selectedPlantType = "";
 
+  String name = "";
+  String externalId = "";
+  int? habitantTypeId;
+  int? fieldId;
+  int? height;
+
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasByFarmId(widget.farmId);
   }
@@ -49,6 +58,10 @@ class CreatePlantState extends State<CreatePlant> {
 
   Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() {
     return HabitantTypeService().getPlantTypeFromHabitantType();
+  }
+
+  Future<Map<String, dynamic>> CreatePlant(Map<String, dynamic> plant) {
+    return PlantService().createPlant(plant);
   }
 
   @override
@@ -110,7 +123,7 @@ class CreatePlantState extends State<CreatePlant> {
               MyInputNumber(
                 title: "Độ cao dự kiến của cây trồng (mét)",
                 hint: "Nhập độ cao",
-                controller: _titleNameController,
+                controller: _titleNumberController,
               ),
               MyInputField(
                 title: "Loại cây trồng",
@@ -127,6 +140,7 @@ class CreatePlantState extends State<CreatePlant> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedPlantType = newValue!['name'];
+                      habitantTypeId = newValue["id"];
                     });
                   },
                   items: filterHabitantType
@@ -230,6 +244,7 @@ class CreatePlantState extends State<CreatePlant> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedField = newValue!['name'];
+                      fieldId = newValue['id'];
                     });
                   },
                   items: filteredField
@@ -291,11 +306,20 @@ class CreatePlantState extends State<CreatePlant> {
         _selectedZone != "Chưa có" &&
         _selectedField != "Chưa có" &&
         _selectedField != "Chọn") {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const PlantPage(),
-        ),
-      );
+      Map<String, dynamic> plant = {
+        'name': _titleNameController.text,
+        'externalId': _titleIdController.text,
+        'height': _titleNumberController.text,
+        'habitantTypeId': habitantTypeId,
+        'fieldId': fieldId
+      };
+      CreatePlant(plant).then((value) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PlantPage(),
+          ),
+        );
+      });
     } else {
       SnackbarShowNoti.showSnackbar(
           context, 'Vui lòng điền đầy đủ thông tin của cây trồng', true);
