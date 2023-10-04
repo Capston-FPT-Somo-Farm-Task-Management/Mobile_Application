@@ -118,6 +118,8 @@ class EmployeekPageState extends State<EmployeekPage> {
                             ).then((value) {
                               if (value != null) {
                                 getEmployees();
+                                SnackbarShowNoti.showSnackbar(
+                                    context, 'Tạo nhân viên thành công', false);
                               }
                             });
                           },
