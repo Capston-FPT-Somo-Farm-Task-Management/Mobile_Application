@@ -29,6 +29,7 @@ class EmployeekPageState extends State<EmployeekPage> {
     "Inactive",
   ];
   String? selectedFilter;
+  bool isLoading = true;
   @override
   initState() {
     super.initState();
@@ -64,11 +65,16 @@ class EmployeekPageState extends State<EmployeekPage> {
         setState(() {
           employees = value;
           filteredEmployeeList = employees;
+          isLoading = false;
         });
       } else {
         throw Exception();
       }
     });
+  }
+
+  Future<bool> changeStatusEmployee(int id) async {
+    return EmployeeService().changeStatusEmployee(id);
   }
 
   @override
@@ -112,6 +118,8 @@ class EmployeekPageState extends State<EmployeekPage> {
                             ).then((value) {
                               if (value != null) {
                                 getEmployees();
+                                SnackbarShowNoti.showSnackbar(
+                                    context, 'Tạo nhân viên thành công', false);
                               }
                             });
                           },
@@ -209,190 +217,203 @@ class EmployeekPageState extends State<EmployeekPage> {
             SizedBox(height: 30),
             Expanded(
               flex: 3,
-              child: filteredEmployeeList.isEmpty
+              child: isLoading
                   ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.no_accounts_outlined,
-                            size: 75, // Kích thước biểu tượng có thể điều chỉnh
-                            color: Colors.grey, // Màu của biểu tượng
-                          ),
-                          SizedBox(
-                              height:
-                                  16), // Khoảng cách giữa biểu tượng và văn bản
-                          Text(
-                            "Không có nhân viên nào",
-                            style: TextStyle(
-                              fontSize:
-                                  20, // Kích thước văn bản có thể điều chỉnh
-                              color: Colors.grey, // Màu văn bản
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: CircularProgressIndicator(color: kPrimaryColor),
                     )
-                  : RefreshIndicator(
-                      onRefresh: () => getEmployees(),
-                      child: ListView.separated(
-                        itemCount: filteredEmployeeList.length,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(height: 25);
-                        },
-                        itemBuilder: (context, index) {
-                          final employee = filteredEmployeeList[index];
-
-                          return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return EmployeeDetailsPopup(
-                                      employee: employee);
-                                },
-                              );
-                            },
-                            onLongPress: () {
-                              _showBottomSheet(context, employee);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.teal,
-                                borderRadius: BorderRadius.circular(25),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    blurRadius: 7,
-                                    offset: Offset(4, 8), // Shadow position
-                                  ),
-                                ],
+                  : filteredEmployeeList.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.no_accounts_outlined,
+                                size:
+                                    75, // Kích thước biểu tượng có thể điều chỉnh
+                                color: Colors.grey, // Màu của biểu tượng
                               ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color:
-                                            Colors.grey, // Màu của đường viền
-                                        width: 1.0, // Độ dày của đường viền
+                              SizedBox(
+                                  height:
+                                      16), // Khoảng cách giữa biểu tượng và văn bản
+                              Text(
+                                "Không có nhân viên nào",
+                                style: TextStyle(
+                                  fontSize:
+                                      20, // Kích thước văn bản có thể điều chỉnh
+                                  color: Colors.grey, // Màu văn bản
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () => getEmployees(),
+                          child: ListView.separated(
+                            itemCount: filteredEmployeeList.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const SizedBox(height: 25);
+                            },
+                            itemBuilder: (context, index) {
+                              final employee = filteredEmployeeList[index];
+
+                              return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return EmployeeDetailsPopup(
+                                          employee: employee);
+                                    },
+                                  );
+                                },
+                                onLongPress: () {
+                                  _showBottomSheet(context, employee);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.teal,
+                                    borderRadius: BorderRadius.circular(25),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 7,
+                                        offset: Offset(4, 8), // Shadow position
                                       ),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                            color: Colors
+                                                .grey, // Màu của đường viền
+                                            width: 1.0, // Độ dày của đường viền
+                                          ),
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text(
-                                                    employee['name'].length > 15
-                                                        ? '${employee['name'].substring(0, 15)}...'
-                                                        : employee['name'],
-                                                    style: const TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          employee['status'] ==
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        employee['name']
+                                                                    .length >
+                                                                15
+                                                            ? '${employee['name'].substring(0, 15)}...'
+                                                            : employee['name'],
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: employee[
+                                                                      'status'] ==
                                                                   "Inactive"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child: Text(
-                                                      employee['status'],
-                                                      style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.white),
-                                                    ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        child: Text(
+                                                          employee['status'],
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons
+                                                            .phone_android_outlined,
+                                                        color: Colors.black,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        "Điện thoại: ${employee['phoneNumber']}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
-                                              const SizedBox(height: 10),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  const Icon(
-                                                    Icons
-                                                        .phone_android_outlined,
-                                                    color: Colors.black,
-                                                    size: 18,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    "Điện thoại: ${employee['phoneNumber']}",
-                                                    style: GoogleFonts.lato(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontSize: 13,
-                                                              color:
-                                                                  Colors.black),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors
+                                              .grey[400], // Đặt màu xám ở đây
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius: const BorderRadius.only(
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.grey[400], // Đặt màu xám ở đây
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                    ),
-                                    height: 45,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
-                                          style: const TextStyle(fontSize: 16),
+                                        height: 45,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
             ),
           ],
         ),
@@ -400,7 +421,7 @@ class EmployeekPageState extends State<EmployeekPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> plant) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> employee) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -420,27 +441,36 @@ class EmployeekPageState extends State<EmployeekPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: employee['status'] == "Inactive"
+                    ? "Đổi sang Actice"
+                    : "Đổi sang Inactive",
                 onTap: () {
                   showDialog(
                       context: context,
-                      builder: (BuildContext context) {
+                      builder: (BuildContext context1) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa cây",
-                          content: "Bạn có chắc muốn xóa cây này?",
+                          title: "Đổi trạng thái",
+                          content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
                           onConfirm: () {
-                            Navigator.of(context).pop();
-                            setState(() {});
-                            // plants.remove(plant);
-                            // deletePlant(plant['id'], plant['status']);
+                            changeStatusEmployee(employee['id']).then((value) {
+                              if (value) {
+                                getEmployees();
+                                Navigator.of(context).pop();
+                                SnackbarShowNoti.showSnackbar(context,
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(context,
+                                    'Đổi trạng thái không thành công!', true);
+                              }
+                            });
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Có",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      context, 'Xóa thành công cây trồng', true);
                 },
-                cls: Colors.red[300]!,
+                cls: employee['status'] == "Inactive"
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),

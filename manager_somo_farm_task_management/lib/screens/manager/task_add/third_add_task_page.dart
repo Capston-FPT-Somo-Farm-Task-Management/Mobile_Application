@@ -57,6 +57,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   String _selectedPriority = "Thấp nhất";
   int? farmId;
   int? userId;
+  bool isLoading = false;
   getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
@@ -109,222 +110,232 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           left: 20,
           right: 20,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Thêm công việc (3/3)",
-                style: headingStyle,
-              ),
-              MyInputField(
-                title: "Ngày giờ thực hiện",
-                hint: _selectedStartDate == null
-                    ? "dd/MM/yyyy HH:mm a"
-                    : DateFormat('dd/MM/yyyy HH:mm a')
-                        .format(_selectedStartDate!),
-                widget: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    _getDateTimeFromUser(true);
-                  },
+        child: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: kPrimaryColor,
                 ),
-              ),
-              MyInputField(
-                title: "Ngày giờ kết thúc",
-                hint: _selectedEndDate == null
-                    ? "dd/MM/yyyy HH:mm a"
-                    : DateFormat('dd/MM/yyyy HH:mm a')
-                        .format(_selectedEndDate!),
-                widget: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    _getDateTimeFromUser(false);
-                  },
-                ),
-              ),
-              MyInputField(
-                title: "Remind",
-                hint: "$_selectedRemind minutes early",
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedRemind = int.parse(newValue!);
-                    });
-                  },
-                  items: remindList.map<DropdownMenuItem<String>>((int value) {
-                    return DropdownMenuItem<String>(
-                      value: value.toString(),
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputField(
-                title: "Lặp lại",
-                hint: "$_selectedRepeat",
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedRepeat = newValue!;
-                      showInputFieldRepeat = newValue;
-                      if (showInputFieldRepeat != "Không") {
-                        for (int i = 1; i <= 30; i++) {
-                          repeatNumbers.add(i);
-                        }
-                      }
-                    });
-                  },
-                  items:
-                      repeatList.map<DropdownMenuItem<String>>((String? value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value!,
-                        style: const TextStyle(
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Thêm công việc (3/3)",
+                      style: headingStyle,
+                    ),
+                    MyInputField(
+                      title: "Ngày giờ thực hiện",
+                      hint: _selectedStartDate == null
+                          ? "dd/MM/yyyy HH:mm a"
+                          : DateFormat('dd/MM/yyyy HH:mm a')
+                              .format(_selectedStartDate!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
                           color: Colors.grey,
                         ),
+                        onPressed: () {
+                          _getDateTimeFromUser(true);
+                        },
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              if (showInputFieldRepeat != "Không")
-                MyInputField(
-                  title: "Lặp mỗi",
-                  hint: "$_selectedRepeatNumber",
-                  widget: DropdownButton(
-                    underline: Container(height: 0),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
                     ),
-                    iconSize: 32,
-                    elevation: 4,
-                    style: subTitileStyle,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedRepeatNumber = int.parse(newValue!);
-                      });
-                    },
-                    items: repeatNumbers
-                        .map<DropdownMenuItem<String>>((int value) {
-                      return DropdownMenuItem<String>(
-                        value: value.toString(),
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    menuMaxHeight: 200,
-                  ),
-                ),
-              if (showInputFieldRepeat != "Không")
-                Container(
-                  margin: const EdgeInsets.only(top: 7.0),
-                  child: Text(
-                    showInputFieldRepeat.split(' ').last,
-                    style: titileStyle,
-                  ),
-                ),
-              if (showInputFieldRepeat != "Không")
-                MyInputField(
-                  title: "Lặp đến ngày",
-                  hint: _selectedDateRepeatUntil == null
-                      ? "dd/MM/yyy"
-                      : DateFormat('dd/MM/yyyy')
-                          .format(_selectedDateRepeatUntil!),
-                  widget: IconButton(
-                    icon: const Icon(
-                      Icons.calendar_today_outlined,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      _getDateFromUser();
-                    },
-                  ),
-                ),
-              MyInputField(
-                title: "Độ ưu tiên",
-                hint: _selectedPriority,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedPriority = newValue!;
-                    });
-                  },
-                  items:
-                      priorities.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () => _validateDate(),
-                    child: Container(
-                      width: 120,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: kPrimaryColor,
+                    MyInputField(
+                      title: "Ngày giờ kết thúc",
+                      hint: _selectedEndDate == null
+                          ? "dd/MM/yyyy HH:mm a"
+                          : DateFormat('dd/MM/yyyy HH:mm a')
+                              .format(_selectedEndDate!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          _getDateTimeFromUser(false);
+                        },
                       ),
-                      alignment: Alignment
-                          .center, // Đặt alignment thành Alignment.center
-                      child: const Text(
-                        "Tạo việc",
-                        style: TextStyle(
-                          color: kTextWhiteColor,
+                    ),
+                    MyInputField(
+                      title: "Remind",
+                      hint: "$_selectedRemind minutes early",
+                      widget: DropdownButton(
+                        underline: Container(height: 0),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey,
+                        ),
+                        iconSize: 32,
+                        elevation: 4,
+                        style: subTitileStyle,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedRemind = int.parse(newValue!);
+                          });
+                        },
+                        items: remindList
+                            .map<DropdownMenuItem<String>>((int value) {
+                          return DropdownMenuItem<String>(
+                            value: value.toString(),
+                            child: Text(value.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    MyInputField(
+                      title: "Lặp lại",
+                      hint: "$_selectedRepeat",
+                      widget: DropdownButton(
+                        underline: Container(height: 0),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey,
+                        ),
+                        iconSize: 32,
+                        elevation: 4,
+                        style: subTitileStyle,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedRepeat = newValue!;
+                            showInputFieldRepeat = newValue;
+                            if (showInputFieldRepeat != "Không") {
+                              for (int i = 1; i <= 30; i++) {
+                                repeatNumbers.add(i);
+                              }
+                            }
+                          });
+                        },
+                        items: repeatList
+                            .map<DropdownMenuItem<String>>((String? value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value!,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    if (showInputFieldRepeat != "Không")
+                      MyInputField(
+                        title: "Lặp mỗi",
+                        hint: "$_selectedRepeatNumber",
+                        widget: DropdownButton(
+                          underline: Container(height: 0),
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.grey,
+                          ),
+                          iconSize: 32,
+                          elevation: 4,
+                          style: subTitileStyle,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedRepeatNumber = int.parse(newValue!);
+                            });
+                          },
+                          items: repeatNumbers
+                              .map<DropdownMenuItem<String>>((int value) {
+                            return DropdownMenuItem<String>(
+                              value: value.toString(),
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                          menuMaxHeight: 200,
                         ),
                       ),
+                    if (showInputFieldRepeat != "Không")
+                      Container(
+                        margin: const EdgeInsets.only(top: 7.0),
+                        child: Text(
+                          showInputFieldRepeat.split(' ').last,
+                          style: titileStyle,
+                        ),
+                      ),
+                    if (showInputFieldRepeat != "Không")
+                      MyInputField(
+                        title: "Lặp đến ngày",
+                        hint: _selectedDateRepeatUntil == null
+                            ? "dd/MM/yyy"
+                            : DateFormat('dd/MM/yyyy')
+                                .format(_selectedDateRepeatUntil!),
+                        widget: IconButton(
+                          icon: const Icon(
+                            Icons.calendar_today_outlined,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            _getDateFromUser();
+                          },
+                        ),
+                      ),
+                    MyInputField(
+                      title: "Độ ưu tiên",
+                      hint: _selectedPriority,
+                      widget: DropdownButton(
+                        underline: Container(height: 0),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey,
+                        ),
+                        iconSize: 32,
+                        elevation: 4,
+                        style: subTitileStyle,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedPriority = newValue!;
+                          });
+                        },
+                        items: priorities
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _validateDate(),
+                          child: Container(
+                            width: 120,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: kPrimaryColor,
+                            ),
+                            alignment: Alignment
+                                .center, // Đặt alignment thành Alignment.center
+                            child: const Text(
+                              "Tạo việc",
+                              style: TextStyle(
+                                color: kTextWhiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
       ),
     );
   }
 
   _validateDate() {
+    setState(() {
+      isLoading = true;
+    });
     if (_selectedStartDate != null &&
         _selectedEndDate != null &&
         _selectedRepeat == "Không") {
@@ -354,6 +365,9 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       };
       createTask(taskData, userId!).then((value) {
         if (value) {
+          setState(() {
+            isLoading = false;
+          });
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
                 builder: (BuildContext context) => ManagerHomePage(
@@ -363,10 +377,16 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isLoading = false;
+        });
         SnackbarShowNoti.showSnackbar(
             context, "Đã xảy ra lỗi khi tạo công việc!", true);
       });
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
+      setState(() {
+        isLoading = false;
+      });
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (BuildContext context) => ManagerHomePage(
@@ -375,6 +395,9 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
         (route) => false, // Xóa tất cả các route khỏi stack
       );
     } else {
+      setState(() {
+        isLoading = false;
+      });
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar(
           context, 'Vui lòng điền đầy đủ thông tin', true);
