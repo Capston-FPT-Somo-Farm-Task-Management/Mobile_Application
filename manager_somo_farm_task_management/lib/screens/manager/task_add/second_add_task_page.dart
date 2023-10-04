@@ -440,7 +440,11 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty && selectedEmployees.isNotEmpty) {
+    if (_titleController.text.isNotEmpty &&
+        selectedEmployees.isNotEmpty &&
+        _selectedTaskTypeId != null &&
+        _selectedSupervisorId != null &&
+        selectedMaterials.isNotEmpty) {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(
