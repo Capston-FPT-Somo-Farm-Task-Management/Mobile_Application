@@ -61,4 +61,21 @@ class EmployeeService {
       throw Exception("Failed to create employee");
     }
   }
+
+  Future<bool> changeStatusEmployee(int employeeId) async {
+    final String url = '$baseUrl/Employee/ChangeStatus/$employeeId';
+
+    final http.Response response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to change status');
+    }
+  }
 }
