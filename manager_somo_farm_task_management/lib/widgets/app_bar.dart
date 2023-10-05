@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/area/area_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee/employee_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
@@ -174,6 +175,56 @@ class CustomAppBar extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           const SizedBox(height: 20),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () async {
+                                                int? farmId = await getFarmId();
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AreakPage(
+                                                    farmId: farmId!,
+                                                  ),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(FontAwesomeIcons.mapPin),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Khu vực",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft, // Căn lề trái
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const TaskPage(),
+                                                ));
+                                              },
+                                              child: const Row(children: [
+                                                Icon(Icons
+                                                    .border_inner_outlined),
+                                                SizedBox(width: 15),
+                                                Text(
+                                                  "Vùng",
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 25),
                                           Align(
                                             alignment: Alignment
                                                 .centerLeft, // Căn lề trái
