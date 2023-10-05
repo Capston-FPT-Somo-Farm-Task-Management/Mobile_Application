@@ -98,4 +98,24 @@ class PlantService {
       throw Exception('Failed to create plant');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getPlantByFarmId(int id) async {
+    final String getPlantUrl = '$baseUrl/Plant/Farm(${id})';
+
+    final http.Response response = await http.get(
+      Uri.parse(getPlantUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> plants =
+          List<Map<String, dynamic>>.from(data['data']);
+      return plants;
+    } else {
+      throw Exception('Failed to get plant');
+    }
+  }
 }

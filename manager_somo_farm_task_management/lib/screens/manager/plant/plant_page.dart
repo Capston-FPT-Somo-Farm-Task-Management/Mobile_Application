@@ -46,21 +46,42 @@ class PlantPageState extends State<PlantPage> {
     return PlantService().deletePlant(id, status);
   }
 
+  Future<List<Map<String, dynamic>>> getPlantByFarmId(int id) {
+    return PlantService().getPlantByFarmId(id);
+  }
+
+  Future<List<Map<String, dynamic>>> GetAllPlant() {
+    return PlantService().getAllPlant();
+  }
+
+  Future<void> GetPlants() async {
+    int? farmIdValue = await getFarmId();
+
+    setState(() {
+      farmId = farmIdValue;
+    });
+
+    if (farmId != null) {
+      List<Map<String, dynamic>> plantsValue = await getPlantByFarmId(farmId!);
+
+      setState(() {
+        plants = plantsValue;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getFarmId().then((value) {
       farmId = value;
     });
-    GetAllPlant().then((value) {
-      setState(() {
-        plants = value;
-      });
-    });
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllPlant() {
-    return PlantService().getAllPlant();
+    // GetAllPlant().then((value) {
+    //   setState(() {
+    //     alllants = value;
+    //   });
+    // });
+    GetPlants();
   }
 
   @override
