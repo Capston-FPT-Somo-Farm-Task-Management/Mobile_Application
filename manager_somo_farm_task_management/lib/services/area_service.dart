@@ -23,4 +23,24 @@ class AreaService {
       throw Exception('Failed to get area by farm ID');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getAreasActiveByFarmId(int farmId) async {
+    final String getAreasUrl = '$baseUrl/Area/Active/Farm($farmId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> areas =
+          List<Map<String, dynamic>>.from(data['data']);
+      return areas;
+    } else {
+      throw Exception('Failed to get area by farm ID');
+    }
+  }
 }

@@ -46,7 +46,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   List<String> repeatList = ["Không", "Hàng ngày", "Hàng tuần", "Hàng tháng"];
   String showInputFieldRepeat = "Không";
   List<int> repeatNumbers = [];
-  int _selectedRepeatNumber = 1;
+  int _selectedRepeatNumber = 0;
   List<String> priorities = [
     "Thấp nhất",
     "Thấp",
@@ -203,6 +203,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                               for (int i = 1; i <= 30; i++) {
                                 repeatNumbers.add(i);
                               }
+                              _selectedRepeatNumber = 1;
                             }
                           });
                         },
