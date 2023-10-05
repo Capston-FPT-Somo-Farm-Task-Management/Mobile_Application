@@ -4,6 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee/employee_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/other/login_page.dart';
@@ -231,37 +232,61 @@ class CustomAppBar extends StatelessWidget {
                                             ),
                                           ),
                                           const SizedBox(height: 25),
-                                          Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.of(context)
-                                                    .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LiveStockPage(),
-                                                ));
-                                              },
-                                              child: const Row(children: [
-                                                Icon(FontAwesomeIcons.paw),
-                                                SizedBox(width: 15),
-                                                Text(
-                                                  "Động vật",
-                                                  style:
-                                                      TextStyle(fontSize: 20),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          LiveStockPage(),
+                                                    ));
+                                                  },
+                                                  child: const Row(children: [
+                                                    Icon(FontAwesomeIcons.paw),
+                                                    SizedBox(width: 15),
+                                                    Text(
+                                                      "Động vật",
+                                                      style: TextStyle(
+                                                          fontSize: 20),
+                                                    ),
+                                                  ]),
                                                 ),
-                                              ]),
-                                            ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: InkWell(
+                                                  onTap: () {},
+                                                  child: Row(children: [
+                                                    Icon(
+                                                      FontAwesomeIcons
+                                                          .chevronDown,
+                                                      size: 18,
+                                                    )
+                                                  ]),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: InkWell(
-                                              onTap: () {
+                                              onTap: () async {
+                                                int? farmId = await getFarmId();
                                                 Navigator.of(context)
-                                                    .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LiveStockPage(),
-                                                ));
+                                                    .pushReplacement(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CreateLiveStockGroup(
+                                                            farmId: farmId!),
+                                                  ),
+                                                );
                                               },
                                               child: const Row(children: [
                                                 Icon(FontAwesomeIcons.hippo),
@@ -275,27 +300,47 @@ class CustomAppBar extends StatelessWidget {
                                             ),
                                           ),
                                           const SizedBox(height: 25),
-                                          Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.of(context)
-                                                    .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PlantPage(),
-                                                ));
-                                              },
-                                              child: const Row(children: [
-                                                Icon(
-                                                    FontAwesomeIcons.pagelines),
-                                                SizedBox(width: 15),
-                                                Text(
-                                                  "Thực vật",
-                                                  style:
-                                                      TextStyle(fontSize: 20),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PlantPage(),
+                                                    ));
+                                                  },
+                                                  child: const Row(children: [
+                                                    Icon(FontAwesomeIcons
+                                                        .pagelines),
+                                                    SizedBox(width: 15),
+                                                    Text(
+                                                      "Thực vật",
+                                                      style: TextStyle(
+                                                          fontSize: 20),
+                                                    ),
+                                                  ]),
                                                 ),
-                                              ]),
-                                            ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: InkWell(
+                                                  onTap: () {},
+                                                  child: Row(children: [
+                                                    Icon(
+                                                      FontAwesomeIcons
+                                                          .chevronDown,
+                                                      size: 18,
+                                                    )
+                                                  ]),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                           const SizedBox(height: 25),
                                           Align(
