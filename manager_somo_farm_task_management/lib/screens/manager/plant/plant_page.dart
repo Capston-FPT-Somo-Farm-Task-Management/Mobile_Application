@@ -3,8 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
@@ -76,11 +74,6 @@ class PlantPageState extends State<PlantPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    // GetAllPlant().then((value) {
-    //   setState(() {
-    //     alllants = value;
-    //   });
-    // });
     GetPlants();
   }
 
@@ -134,61 +127,6 @@ class PlantPageState extends State<PlantPage> {
                           child: const Center(
                             child: Text(
                               "Tạo cây trồng",
-                              style: TextStyle(fontSize: 19),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10), // Khoảng cách giữa hai nút
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreatePlantField(
-                                        farmId: farmId!,
-                                      )),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            minimumSize: Size(120, 45),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Tạo vườn",
-                              style: TextStyle(fontSize: 19),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreatePlantType()),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            minimumSize: Size(120, 45),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Tạo loại cây trồng",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),

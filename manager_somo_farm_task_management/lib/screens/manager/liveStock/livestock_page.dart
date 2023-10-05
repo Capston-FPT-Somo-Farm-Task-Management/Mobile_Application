@@ -77,7 +77,7 @@ class LiveStockPageState extends State<LiveStockPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetAllLiveStock();
+    GetLiveStocks();
   }
 
   @override
@@ -134,64 +134,40 @@ class LiveStockPageState extends State<LiveStockPage> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateLiveStockGroup(
-                                          farmId: farmId!,
-                                        )),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryColor,
-                              minimumSize: Size(100, 45),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Tạo chuồng",
-                                style: TextStyle(fontSize: 19),
-                              ),
-                            ),
-                          )
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CreateLiveStockType()),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: kPrimaryColor,
-                              minimumSize: Size(120, 45),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Tạo loại vật nuôi",
-                                style: TextStyle(fontSize: 19),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // const SizedBox(height: 10),
+                    // Align(
+                    //   alignment: Alignment.centerLeft,
+                    //   child: Row(
+                    //     children: [
+                    //       ElevatedButton(
+                    //         onPressed: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //                 builder: (context) =>
+                    //                     CreateLiveStockType()),
+                    //           );
+                    //         },
+                    //         style: ElevatedButton.styleFrom(
+                    //           backgroundColor: kPrimaryColor,
+                    //           minimumSize: Size(120, 45),
+                    //           shape: RoundedRectangleBorder(
+                    //             borderRadius: BorderRadius.circular(10.0),
+                    //           ),
+                    //         ),
+                    //         child: const Center(
+                    //           child: Text(
+                    //             "Tạo loại vật nuôi",
+                    //             style: TextStyle(fontSize: 19),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(height: 15),
                     Container(
                       height: 42,
