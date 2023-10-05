@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -13,7 +12,6 @@ import 'package:manager_somo_farm_task_management/services/livestock_service.dar
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
-import '../../../widgets/bottom_navigation_bar.dart';
 
 class LiveStockPage extends StatefulWidget {
   const LiveStockPage({Key? key}) : super(key: key);
@@ -24,7 +22,6 @@ class LiveStockPage extends StatefulWidget {
 
 class LiveStockPageState extends State<LiveStockPage> {
   int? farmId;
-  int _currentIndex = 0;
   List<LiveStock> SearchliveStock = liveStockList;
   final TextEditingController searchController = TextEditingController();
 
@@ -47,6 +44,31 @@ class LiveStockPageState extends State<LiveStockPage> {
     return LiveStockService().deleteLiveStock(id, status);
   }
 
+  Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
+    return LiveStockService().getLiveStockByFarmId(id);
+  }
+
+  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
+    return LiveStockService().getAllLiveStock();
+  }
+
+  Future<void> GetLiveStocks() async {
+    int? farmIdValue = await getFarmId();
+
+    setState(() {
+      farmId = farmIdValue;
+    });
+
+    if (farmId != null) {
+      List<Map<String, dynamic>> liveStocksValue =
+          await getLiveStockByFarmId(farmId!);
+
+      setState(() {
+        liveStocks = liveStocksValue;
+      });
+    }
+  }
+
   List<Map<String, dynamic>> liveStocks = [];
 
   @override
@@ -55,15 +77,7 @@ class LiveStockPageState extends State<LiveStockPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetAllLiveStock().then((value) {
-      setState(() {
-        liveStocks = value;
-      });
-    });
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
+    GetAllLiveStock();
   }
 
   @override
@@ -74,7 +88,7 @@ class LiveStockPageState extends State<LiveStockPage> {
         child: CustomAppBar(),
       ),
       body: Container(
-          padding: EdgeInsets.only(left: 20, right: 20, top: 30),
+          padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
           child: Column(
             children: [
               SingleChildScrollView(
@@ -333,14 +347,6 @@ class LiveStockPageState extends State<LiveStockPage> {
               ),
             ],
           )),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTabChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
     );
   }
 
@@ -383,7 +389,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      context, 'Xóa thành công vật nuôi', true);
+                      context, 'Xóa thành công vật nuôi', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,

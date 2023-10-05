@@ -99,4 +99,24 @@ class LiveStockService {
       throw Exception('Failed to create liveStock');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) async {
+    final String getLiveStockUrl = '$baseUrl/LiveStock/Farm(${id})';
+
+    final http.Response response = await http.get(
+      Uri.parse(getLiveStockUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> liveStocks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return liveStocks;
+    } else {
+      throw Exception('Failed to get LiveStocks');
+    }
+  }
 }
