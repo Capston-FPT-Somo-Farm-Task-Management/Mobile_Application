@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class FieldService {
   Future<List<Map<String, dynamic>>> getFieldsbyZoneId(int zoneId) async {
-    final String getZonesUrl = '$baseUrl/Field/Zone($zoneId)';
+    final String getZonesUrl = '$baseUrl/Field/Active/Zone($zoneId)';
 
     final http.Response response = await http.get(
       Uri.parse(getZonesUrl),
