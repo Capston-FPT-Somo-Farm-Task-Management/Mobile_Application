@@ -11,15 +11,15 @@ import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../widgets/app_bar.dart';
 
-class AreakPage extends StatefulWidget {
+class AreaPage extends StatefulWidget {
   final int farmId;
-  const AreakPage({super.key, required this.farmId});
+  const AreaPage({super.key, required this.farmId});
 
   @override
-  AreakPageState createState() => AreakPageState();
+  AreaPageState createState() => AreaPageState();
 }
 
-class AreakPageState extends State<AreakPage> {
+class AreaPageState extends State<AreaPage> {
   final TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> areas = [];
   List<Map<String, dynamic>> filteredareaList = [];
@@ -35,10 +35,10 @@ class AreakPageState extends State<AreakPage> {
     await getAreas();
   }
 
-  void searchEmployees(String keyword) {
+  void searchAreas(String keyword) {
     setState(() {
       filteredareaList = areas
-          .where((task) => removeDiacritics(task['name'].toLowerCase())
+          .where((a) => removeDiacritics(a['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
@@ -97,7 +97,9 @@ class AreakPageState extends State<AreakPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateArea()),
+                                  builder: (context) => CreateArea(
+                                        farmId: widget.farmId,
+                                      )),
                             ).then((value) {
                               if (value != null) {
                                 getAreas();
@@ -135,7 +137,7 @@ class AreakPageState extends State<AreakPage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchEmployees(keyword);
+                          searchAreas(keyword);
                         },
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -146,54 +148,6 @@ class AreakPageState extends State<AreakPage> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   children: [
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //         border: Border.all(
-                  //           color: Colors.grey, // Màu đường viền
-                  //           width: 1.0, // Độ rộng của đường viền
-                  //         ),
-                  //         borderRadius: BorderRadius.circular(
-                  //             5.0), // Độ bo góc của đường viền
-                  //       ),
-                  //       child: DropdownButton<String>(
-                  //         isDense: true,
-                  //         alignment: Alignment.center,
-                  //         hint: Text(selectedFilter!),
-                  //         value:
-                  //             selectedFilter, // Giá trị đã chọn cho Dropdown 1
-                  //         onChanged: (newValue) {
-                  //           setState(() {
-                  //             selectedFilter =
-                  //                 newValue; // Cập nhật giá trị đã chọn cho Dropdown 1
-                  //             if (selectedFilter == "Tất cả") {
-                  //               filteredareaList = areas;
-                  //             }
-                  //             if (selectedFilter == "Active") {
-                  //               filteredareaList = areas
-                  //                   .where((t) => t['status'] == "Active")
-                  //                   .toList();
-                  //             }
-                  //             if (selectedFilter == "Inactive") {
-                  //               filteredareaList = areas
-                  //                   .where((t) => t['status'] == "Inactive")
-                  //                   .toList();
-                  //             }
-                  //           });
-                  //         },
-                  //         items: filters
-                  //             .map<DropdownMenuItem<String>>((String value) {
-                  //           return DropdownMenuItem<String>(
-                  //             value: value,
-                  //             child: Text(value),
-                  //           );
-                  //         }).toList(),
-                  //       ),
-                  //     )
-                  //   ],
-                  // )
                 ],
               ),
             ),
@@ -238,7 +192,7 @@ class AreakPageState extends State<AreakPage> {
                               return const SizedBox(height: 25);
                             },
                             itemBuilder: (context, index) {
-                              final employee = filteredareaList[index];
+                              final task = filteredareaList[index];
 
                               return GestureDetector(
                                 onTap: () {
@@ -246,12 +200,12 @@ class AreakPageState extends State<AreakPage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return EmployeeDetailsPopup(
-                                          employee: employee);
+                                          employee: task);
                                     },
                                   );
                                 },
                                 onLongPress: () {
-                                  _showBottomSheet(context, employee);
+                                  _showBottomSheet(context, task);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -260,8 +214,8 @@ class AreakPageState extends State<AreakPage> {
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        blurRadius: 7,
-                                        offset: Offset(4, 8), // Shadow position
+                                        blurRadius: 1,
+                                        offset: Offset(0, 6), // Shadow position
                                       ),
                                     ],
                                   ),
@@ -293,44 +247,41 @@ class AreakPageState extends State<AreakPage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        employee['name']
-                                                                    .length >
-                                                                20
-                                                            ? '${employee['name'].substring(0, 20)}...'
-                                                            : employee['name'],
+                                                        task['name'].length > 20
+                                                            ? '${task['name'].substring(0, 20)}...'
+                                                            : task['name'],
                                                         style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
                                                       ),
-                                                      // Container(
-                                                      //   decoration:
-                                                      //       BoxDecoration(
-                                                      //     color: employee[
-                                                      //                 'status'] ==
-                                                      //             "Inactive"
-                                                      //         ? Colors.red[400]
-                                                      //         : kPrimaryColor,
-                                                      //     borderRadius:
-                                                      //         BorderRadius
-                                                      //             .circular(10),
-                                                      //   ),
-                                                      //   padding:
-                                                      //       const EdgeInsets
-                                                      //           .all(10),
-                                                      //   child: Text(
-                                                      //     employee['status'],
-                                                      //     style:
-                                                      //         const TextStyle(
-                                                      //             fontSize: 14,
-                                                      //             fontWeight:
-                                                      //                 FontWeight
-                                                      //                     .bold,
-                                                      //             color: Colors
-                                                      //                 .white),
-                                                      //   ),
-                                                      // ),
+                                                      Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: task['status'] ==
+                                                                  "Inactive"
+                                                              ? Colors.red[400]
+                                                              : kPrimaryColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        child: Text(
+                                                          task['status'],
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                   const SizedBox(height: 10),
@@ -345,7 +296,7 @@ class AreakPageState extends State<AreakPage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Diện tích: ${employee['fArea']}",
+                                                        "Diện tích: ${task['fArea']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
@@ -362,33 +313,6 @@ class AreakPageState extends State<AreakPage> {
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors
-                                              .grey[400], // Đặt màu xám ở đây
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        height: 45,
-                                        // child: Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.spaceBetween,
-                                        //   children: [
-                                        //     Text(
-                                        //       'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
-                                        //       style:
-                                        //           const TextStyle(fontSize: 16),
-                                        //     ),
-                                        //   ],
-                                        // ),
-                                      )
                                     ],
                                   ),
                                 ),
