@@ -44,6 +44,31 @@ class LiveStockPageState extends State<LiveStockPage> {
     return LiveStockService().deleteLiveStock(id, status);
   }
 
+  Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
+    return LiveStockService().getLiveStockByFarmId(id);
+  }
+
+  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
+    return LiveStockService().getAllLiveStock();
+  }
+
+  Future<void> GetLiveStocks() async {
+    int? farmIdValue = await getFarmId();
+
+    setState(() {
+      farmId = farmIdValue;
+    });
+
+    if (farmId != null) {
+      List<Map<String, dynamic>> liveStocksValue =
+          await getLiveStockByFarmId(farmId!);
+
+      setState(() {
+        liveStocks = liveStocksValue;
+      });
+    }
+  }
+
   List<Map<String, dynamic>> liveStocks = [];
 
   @override
@@ -52,15 +77,7 @@ class LiveStockPageState extends State<LiveStockPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetAllLiveStock().then((value) {
-      setState(() {
-        liveStocks = value;
-      });
-    });
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
+    GetAllLiveStock();
   }
 
   @override
