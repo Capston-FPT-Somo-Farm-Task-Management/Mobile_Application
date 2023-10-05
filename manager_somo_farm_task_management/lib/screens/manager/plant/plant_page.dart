@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/models/plant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
@@ -13,7 +12,6 @@ import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
-import '../../../widgets/bottom_navigation_bar.dart';
 
 class PlantPage extends StatefulWidget {
   const PlantPage({super.key});
@@ -24,7 +22,6 @@ class PlantPage extends StatefulWidget {
 
 class PlantPageState extends State<PlantPage> {
   int? farmId;
-  int _currentIndex = 0;
 
   List<Map<String, dynamic>> plants = [];
   List<Map<String, dynamic>> ListPlants = [];
@@ -74,7 +71,8 @@ class PlantPageState extends State<PlantPage> {
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -328,14 +326,6 @@ class PlantPageState extends State<PlantPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTabChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
     );
   }
 
@@ -377,7 +367,7 @@ class PlantPageState extends State<PlantPage> {
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      context, 'Xóa thành công cây trồng', true);
+                      context, 'Xóa thành công cây trồng', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,
