@@ -7,7 +7,7 @@ class EmployeeService {
   Future<List<Map<String, dynamic>>> getEmployeesbyFarmIdAndTaskTypeId(
       int farmId, int taskTypeId) async {
     final String getZonesUrl =
-        '$baseUrl/Employee/TaskType($taskTypeId)/Farm($farmId)';
+        '$baseUrl/Employee/Active/TaskType($taskTypeId)/Farm($farmId)';
 
     final http.Response response = await http.get(
       Uri.parse(getZonesUrl),
