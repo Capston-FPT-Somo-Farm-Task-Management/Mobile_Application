@@ -356,7 +356,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
       });
     } else {
       SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin của vật nuôi', true);
+          'Vui lòng điền đầy đủ thông tin của vật nuôi', true);
     }
   }
 }

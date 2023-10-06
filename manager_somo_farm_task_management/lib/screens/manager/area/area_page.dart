@@ -102,7 +102,7 @@ class AreaPageState extends State<AreaPage> {
                               if (value != null) {
                                 getAreas();
                                 SnackbarShowNoti.showSnackbar(
-                                    context, 'Tạo khu vực thành công!', false);
+                                    'Tạo khu vực thành công!', false);
                               }
                             });
                           },
@@ -360,10 +360,10 @@ class AreaPageState extends State<AreaPage> {
                               if (value) {
                                 getAreas();
                                 Navigator.of(context).pop();
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Đổi trạng thái thành công!', false);
                               } else {
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Đổi trạng thái không thành công!', true);
                               }
                             });

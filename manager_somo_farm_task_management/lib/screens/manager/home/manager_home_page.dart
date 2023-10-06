@@ -302,10 +302,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                   _getTasksForSelectedDate(_selectedDate);
                                   Navigator.of(context).pop();
                                   SnackbarShowNoti.showSnackbar(
-                                      context, "Xóa thành công!", false);
+                                      "Xóa thành công!", false);
                                 } else {
                                   SnackbarShowNoti.showSnackbar(
-                                      context, "Xảy ra lỗi!", true);
+                                      "Xảy ra lỗi!", true);
                                 }
                               });
                             },

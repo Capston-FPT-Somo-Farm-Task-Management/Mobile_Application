@@ -119,7 +119,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                               if (value != null) {
                                 getEmployees();
                                 SnackbarShowNoti.showSnackbar(
-                                    context, 'Tạo nhân viên thành công', false);
+                                    'Tạo nhân viên thành công', false);
                               }
                             });
                           },
@@ -456,10 +456,10 @@ class EmployeekPageState extends State<EmployeekPage> {
                               if (value) {
                                 getEmployees();
                                 Navigator.of(context).pop();
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Đổi trạng thái thành công!', false);
                               } else {
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Đổi trạng thái không thành công!', true);
                               }
                             });

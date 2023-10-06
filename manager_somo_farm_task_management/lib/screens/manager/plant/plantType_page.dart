@@ -253,7 +253,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      context, 'Xóa thành công loại cây trồng', false);
+                      'Xóa thành công loại cây trồng', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,

@@ -121,7 +121,7 @@ class LoginPage extends StatelessWidget {
                       return value['data']['farmId'];
                     }).catchError((e) {
                       print(e);
-                      SnackbarShowNoti.showSnackbar(context, e, true);
+                      SnackbarShowNoti.showSnackbar(e, true);
                       return 0; // Trả về giá trị mặc định nếu có lỗi
                     });
 
@@ -134,7 +134,7 @@ class LoginPage extends StatelessWidget {
                     }
                   } catch (e) {
                     SnackbarShowNoti.showSnackbar(
-                        context, "Tài khoản hoặc mật khẩu không đúng!", true);
+                        "Tài khoản hoặc mật khẩu không đúng!", true);
                   }
                 },
                 child: Container(

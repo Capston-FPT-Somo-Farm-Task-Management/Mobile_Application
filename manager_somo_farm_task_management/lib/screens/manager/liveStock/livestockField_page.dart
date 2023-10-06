@@ -324,7 +324,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      context, 'Xóa thành công vật nuôi', false);
+                      'Xóa thành công vật nuôi', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,

@@ -115,8 +115,7 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
       });
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
-      SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin', true);
+      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
     }
   }
 }

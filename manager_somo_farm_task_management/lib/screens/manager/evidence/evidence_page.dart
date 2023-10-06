@@ -26,6 +26,18 @@ class _TaskEvidenceState extends State<TaskEvidence> {
           onPressed: () => Navigator.pop(context),
           color: kSecondColor, // Change to your preferred color
         ),
+        centerTitle: true,
+        title: Container(
+          margin: EdgeInsets.only(top: 10),
+          child: Text(
+            'Bằng chứng',
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.bold,
+              color: kPrimaryColor,
+            ),
+          ),
+        ),
         backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -33,13 +45,6 @@ class _TaskEvidenceState extends State<TaskEvidence> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                "Bằng chứng công việc",
-                style: headingStyle,
-              ),
-            ),
             buildTaskDetails(),
             const SizedBox(height: 20),
             Container(
@@ -80,21 +85,35 @@ class _TaskEvidenceState extends State<TaskEvidence> {
         children: [
           Center(
             child: Text(
-              "Tên công việc",
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              "Tam con bo",
+              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Người giám sát",
-                style: TextStyle(fontSize: 16.0),
+              Row(
+                children: [
+                  Icon(Icons.person_pin_circle),
+                  SizedBox(width: 5),
+                  Text(
+                    "Người giám sát: Nguyen Van Bo",
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ],
               ),
-              Text(
-                "Ngày nộp",
-                style: TextStyle(fontSize: 16.0),
+              SizedBox(height: 10.0),
+              Row(
+                children: [
+                  Icon(Icons.date_range),
+                  SizedBox(width: 5),
+                  Text(
+                    "Ngày nộp: 22/11/2001",
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ],
               ),
             ],
           ),
@@ -109,10 +128,10 @@ class _TaskEvidenceState extends State<TaskEvidence> {
             ),
             width: double.infinity,
             child: Container(
-              padding: EdgeInsets.all(5.0), // Adjust padding as needed
+              padding: EdgeInsets.all(10), // Adjust padding as needed
               child: Text(
                 "Mô tả về bằng chứng công việc",
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 18),
               ),
             ),
           ),

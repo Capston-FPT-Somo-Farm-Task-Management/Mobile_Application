@@ -127,7 +127,7 @@ class ZonePageState extends State<ZonePage> {
                               if (value != null) {
                                 getZones();
                                 SnackbarShowNoti.showSnackbar(
-                                    context, 'Tạo vùng thành công!', false);
+                                    'Tạo vùng thành công!', false);
                               }
                             });
                           },
@@ -449,10 +449,10 @@ class ZonePageState extends State<ZonePage> {
                               if (value) {
                                 getZones();
                                 Navigator.of(context).pop();
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Đổi trạng thái thành công!', false);
                               } else {
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Đổi trạng thái không thành công!', true);
                               }
                             });
