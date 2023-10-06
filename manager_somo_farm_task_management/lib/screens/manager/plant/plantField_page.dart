@@ -3,23 +3,22 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
-import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
-class LiveStockPage extends StatefulWidget {
-  const LiveStockPage({Key? key}) : super(key: key);
+class PlantFieldPage extends StatefulWidget {
+  const PlantFieldPage({Key? key}) : super(key: key);
 
   @override
-  LiveStockPageState createState() => LiveStockPageState();
+  PlantFieldPageState createState() => PlantFieldPageState();
 }
 
-class LiveStockPageState extends State<LiveStockPage> {
+class PlantFieldPageState extends State<PlantFieldPage> {
   int? farmId;
-  List<LiveStock> SearchliveStock = plantList;
+  List<LiveStock> SearchPlant = plantList;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -30,26 +29,18 @@ class LiveStockPageState extends State<LiveStockPage> {
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      SearchliveStock = plantList
+      SearchPlant = plantList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
-  Future<Map<String, dynamic>> deleteLiveStock(int id, String status) {
-    return LiveStockService().deleteLiveStock(id, status);
+  Future<List<Map<String, dynamic>>> getPlantFieldByFarmId(int id) {
+    return FieldService().getPlantFieldByFarmId(id);
   }
 
-  Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
-    return LiveStockService().getLiveStockByFarmId(id);
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
-  }
-
-  Future<void> GetLiveStocks() async {
+  Future<void> GetLiveStockFields() async {
     int? farmIdValue = await getFarmId();
 
     setState(() {
@@ -57,16 +48,15 @@ class LiveStockPageState extends State<LiveStockPage> {
     });
 
     if (farmId != null) {
-      List<Map<String, dynamic>> liveStocksValue =
-          await getLiveStockByFarmId(farmId!);
-
+      List<Map<String, dynamic>> plantsValue =
+          await getPlantFieldByFarmId(farmId!);
       setState(() {
-        liveStocks = liveStocksValue;
+        plants = plantsValue;
       });
     }
   }
 
-  List<Map<String, dynamic>> liveStocks = [];
+  List<Map<String, dynamic>> plants = [];
 
   @override
   void initState() {
@@ -74,7 +64,7 @@ class LiveStockPageState extends State<LiveStockPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetLiveStocks();
+    GetLiveStockFields();
   }
 
   @override
@@ -94,7 +84,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Vật nuôi",
+                      "Vườn cây",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -111,7 +101,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateLiveStock(
+                                  builder: (context) => CreatePlantField(
                                         farmId: farmId!,
                                       )),
                             );
@@ -125,7 +115,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo vật nuôi",
+                              "Tạo vườn cây",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -163,9 +153,9 @@ class LiveStockPageState extends State<LiveStockPage> {
             Expanded(
               flex: 2,
               child: ListView.builder(
-                itemCount: liveStocks.length,
+                itemCount: plants.length,
                 itemBuilder: (context, index) {
-                  Map<String, dynamic> liveStock = liveStocks[index];
+                  Map<String, dynamic> liveStock = plants[index];
 
                   if (liveStock['status'] == 'Inactive') {
                     return SizedBox.shrink();
@@ -174,12 +164,12 @@ class LiveStockPageState extends State<LiveStockPage> {
                     margin: EdgeInsets.only(bottom: 25),
                     child: GestureDetector(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return LiveStockDetailsPopup(liveStock: liveStock);
-                          },
-                        );
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (BuildContext context) {
+                        //     return LiveStockDetailsPopup(liveStock: liveStock);
+                        //   },
+                        // );
                       },
                       onLongPress: () {
                         _showBottomSheet(context, liveStock);
@@ -227,7 +217,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
-                                            'Giống ${liveStock['gender']}',
+                                            '${liveStock['status']}',
                                             style:
                                                 const TextStyle(fontSize: 16),
                                           ),
@@ -262,13 +252,6 @@ class LiveStockPageState extends State<LiveStockPage> {
                                   Expanded(
                                     child: Text(
                                       '${liveStock['zoneName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${liveStock['fieldName']}',
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
@@ -320,15 +303,15 @@ class LiveStockPageState extends State<LiveStockPage> {
                           onConfirm: () {
                             Navigator.of(context).pop();
                             setState(() {});
-                            liveStocks.remove(liveStock);
-                            deleteLiveStock(
-                                liveStock['id'], liveStock['status']);
+                            plants.remove(liveStock);
+                            // deleteLiveStock(
+                            //     liveStock['id'], liveStock['status']);
                           },
                           buttonConfirmText: "Xóa",
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
+                      context, 'Xóa thành công vật nuôi', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,

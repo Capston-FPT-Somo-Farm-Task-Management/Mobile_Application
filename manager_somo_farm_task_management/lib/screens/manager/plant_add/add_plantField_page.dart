@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 
 import '../../../componets/input_field.dart';
@@ -19,24 +22,50 @@ class CreatePlantField extends StatefulWidget {
 class CreatePlantFieldState extends State<CreatePlantField> {
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  List<String> crops = ["Sầu riêng", "Mít", "Cam", "Xoai"];
-  String _selectedCrop = "Mít";
+  final TextEditingController _noteAreaController = TextEditingController();
 
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
+  List<Map<String, dynamic>> filteredPlantType = [];
   String _selectedArea = "";
   String _selectedZone = "";
+  String _selectedPlanType = "";
+
+  String name = "";
+  int? status;
+  int? zoneId;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
-    return AreaService().getAreasByFarmId(widget.farmId);
-  }
-
-  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
-    return ZoneService().getZonesbyAreaId(areaId);
+    return AreaService().getAreasActiveByFarmId(widget.farmId);
   }
 
   Future<List<Map<String, dynamic>>> getZonesbyAreaPlantId(int areaId) {
     return ZoneService().getZonesbyAreaPlantId(areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() {
+    return HabitantTypeService().getPlantTypeFromHabitantType();
+  }
+
+  Future<Map<String, dynamic>> CreatePlantField(Map<String, dynamic> plant) {
+    return FieldService().CreateField(plant);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAreasbyFarmId().then((a) {
+      setState(() {
+        filteredArea = a;
+        _selectedArea = "Chọn";
+      });
+    });
+    getPlantTypeFromHabitantType().then((a) {
+      setState(() {
+        filteredPlantType = a;
+        _selectedPlanType = "Chọn";
+      });
+    });
   }
 
   @override
@@ -74,9 +103,10 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                 controller: _titleNameController,
               ),
               MyInputField(
-                title: "Loại cây trồng",
-                hint: _selectedCrop,
+                title: "Chọn loại cây trồng",
+                hint: _selectedPlanType,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -84,15 +114,17 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedCrop = newValue!;
+                      _selectedPlanType = newValue!['name'];
                     });
                   },
-                  items: crops.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filteredPlantType
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
@@ -101,6 +133,11 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                 title: "Số lượng cây trong vườn",
                 hint: "Nhập số lượng",
                 controller: _noteController,
+              ),
+              MyInputNumber(
+                title: "Nhập diện tích của vườn (mét vuông)",
+                hint: "Nhập diện tích",
+                controller: _noteAreaController,
               ),
               MyInputField(
                 title: "Khu vực",
@@ -152,6 +189,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedZone = newValue!['name'];
+                      zoneId = newValue['id'];
                     });
                   },
                   items: filteredZone
@@ -209,11 +247,19 @@ class CreatePlantFieldState extends State<CreatePlantField> {
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có") {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const PlantPage(),
-        ),
-      );
+      Map<String, dynamic> plant = {
+        'name': _titleNameController.text,
+        'status': 0,
+        'area': _noteAreaController.hashCode,
+        'zoneId': zoneId
+      };
+      CreatePlantField(plant).then((value) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PlantFieldPage(),
+          ),
+        );
+      });
     } else {
       SnackbarShowNoti.showSnackbar(
           'Vui lòng điền đầy đủ thông tin của cây trồng', true);

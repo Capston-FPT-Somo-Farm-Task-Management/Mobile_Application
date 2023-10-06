@@ -3,23 +3,23 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
-import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockType_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
-class LiveStockPage extends StatefulWidget {
-  const LiveStockPage({Key? key}) : super(key: key);
+class PlantTypePage extends StatefulWidget {
+  const PlantTypePage({Key? key}) : super(key: key);
 
   @override
-  LiveStockPageState createState() => LiveStockPageState();
+  PlantTypePageState createState() => PlantTypePageState();
 }
 
-class LiveStockPageState extends State<LiveStockPage> {
+class PlantTypePageState extends State<PlantTypePage> {
   int? farmId;
-  List<LiveStock> SearchliveStock = plantList;
+  List<LiveStock> Searchplant = plantList;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -30,51 +30,27 @@ class LiveStockPageState extends State<LiveStockPage> {
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      SearchliveStock = plantList
+      Searchplant = plantList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
-  Future<Map<String, dynamic>> deleteLiveStock(int id, String status) {
-    return LiveStockService().deleteLiveStock(id, status);
+  Future<List<Map<String, dynamic>>> GetAllPlantType() {
+    return HabitantTypeService().getPlantTypeFromHabitantType();
   }
 
-  Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
-    return LiveStockService().getLiveStockByFarmId(id);
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
-  }
-
-  Future<void> GetLiveStocks() async {
-    int? farmIdValue = await getFarmId();
-
-    setState(() {
-      farmId = farmIdValue;
-    });
-
-    if (farmId != null) {
-      List<Map<String, dynamic>> liveStocksValue =
-          await getLiveStockByFarmId(farmId!);
-
-      setState(() {
-        liveStocks = liveStocksValue;
-      });
-    }
-  }
-
-  List<Map<String, dynamic>> liveStocks = [];
+  List<Map<String, dynamic>> plants = [];
 
   @override
   void initState() {
     super.initState();
-    getFarmId().then((value) {
-      farmId = value;
+    GetAllPlantType().then((value) {
+      setState(() {
+        plants = value;
+      });
     });
-    GetLiveStocks();
   }
 
   @override
@@ -94,7 +70,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Vật nuôi",
+                      "Loại cây trồng",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -111,9 +87,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateLiveStock(
-                                        farmId: farmId!,
-                                      )),
+                                  builder: (context) => CreatePlantType()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -125,7 +99,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo vật nuôi",
+                              "Tạo loại cây trồng",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -163,26 +137,26 @@ class LiveStockPageState extends State<LiveStockPage> {
             Expanded(
               flex: 2,
               child: ListView.builder(
-                itemCount: liveStocks.length,
+                itemCount: plants.length,
                 itemBuilder: (context, index) {
-                  Map<String, dynamic> liveStock = liveStocks[index];
+                  Map<String, dynamic> liveStock = plants[index];
 
                   if (liveStock['status'] == 'Inactive') {
                     return SizedBox.shrink();
                   }
                   return Container(
-                    margin: EdgeInsets.only(bottom: 25),
+                    margin: EdgeInsets.only(bottom: 40),
                     child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return LiveStockDetailsPopup(liveStock: liveStock);
-                          },
-                        );
-                      },
+                      // onTap: () {
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (BuildContext context) {
+                      //       return LiveStockDetailsPopup(liveStock: liveStock);
+                      //     },
+                      //   );
+                      // },
                       onLongPress: () {
-                        _showBottomSheet(context, liveStock);
+                        // _showBottomSheet(context, liveStock);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -191,91 +165,42 @@ class LiveStockPageState extends State<LiveStockPage> {
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.grey,
-                              blurRadius: 7,
-                              offset: Offset(4, 8), // Shadow position
+                              blurRadius: 8,
+                              offset: Offset(2, 4), // Shadow position
                             ),
                           ],
                         ),
-                        child: Column(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey, // Màu của đường viền
-                                    width: 1.0, // Độ dày của đường viền
-                                  ),
-                                ),
-                                height: 110,
-                                width: double.infinity,
-                                child: Row(
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 27, left: 20),
+                          decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              border: Border.all(
+                                color: Colors.grey, // Màu của đường viền
+                                width: 0.5, // Độ dày của đường viền
+                              ),
+                              borderRadius: BorderRadius.circular(15)),
+                          height: 80,
+                          width: double.infinity,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            liveStock['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Giống ${liveStock['gender']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            '${liveStock['areaName']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ],
+                                    Text(
+                                      liveStock['name'],
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
-                                )),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400], // Đặt màu xám ở đây
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
                                 ),
                               ),
-                              height: 45,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${liveStock['zoneName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${liveStock['fieldName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -315,20 +240,20 @@ class LiveStockPageState extends State<LiveStockPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Xóa loại cây trồng",
+                          content: "Bạn có chắc muốn xóa loại cây này?",
                           onConfirm: () {
                             Navigator.of(context).pop();
                             setState(() {});
-                            liveStocks.remove(liveStock);
-                            deleteLiveStock(
-                                liveStock['id'], liveStock['status']);
+                            plants.remove(liveStock);
+                            // deleteLiveStock(
+                            //     liveStock['id'], liveStock['status']);
                           },
                           buttonConfirmText: "Xóa",
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
+                      context, 'Xóa thành công loại cây trồng', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,
