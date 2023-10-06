@@ -36,7 +36,6 @@ class ZonePageState extends State<ZonePage> {
   Future<void> _initializeData() async {
     await getZones();
     await getAreas();
-    isLoading = false;
   }
 
   void searchZones(String keyword) {
@@ -54,6 +53,7 @@ class ZonePageState extends State<ZonePage> {
         setState(() {
           zones = value;
           filteredZoneList = zones;
+          isLoading = false;
         });
       } else {
         throw Exception();
@@ -81,8 +81,8 @@ class ZonePageState extends State<ZonePage> {
     return ZoneService().getZonesbyAreaId(areaId);
   }
 
-  Future<bool> changeStatusEmployee(int id) async {
-    return EmployeeService().changeStatusEmployee(id);
+  Future<bool> changeStatusZone(int id) async {
+    return ZoneService().changeStatusZone(id);
   }
 
   @override
@@ -445,7 +445,7 @@ class ZonePageState extends State<ZonePage> {
                           title: "Đổi trạng thái",
                           content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
                           onConfirm: () {
-                            changeStatusEmployee(employee['id']).then((value) {
+                            changeStatusZone(employee['id']).then((value) {
                               if (value) {
                                 getZones();
                                 Navigator.of(context).pop();
