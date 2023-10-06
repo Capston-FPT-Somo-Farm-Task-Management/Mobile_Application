@@ -322,7 +322,7 @@ class CreatePlantState extends State<CreatePlant> {
       });
     } else {
       SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin của cây trồng', true);
+          'Vui lòng điền đầy đủ thông tin của cây trồng', true);
     }
   }
 }

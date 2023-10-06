@@ -349,8 +349,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar(
-            context, "Số điện thoại không hợp lệ!", true);
+        SnackbarShowNoti.showSnackbar("Số điện thoại không hợp lệ!", true);
       } else {
         Map<String, dynamic> employeekData = {
           "taskTypeId":
@@ -373,7 +372,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
           setState(() {
             isLoading = false;
           });
-          SnackbarShowNoti.showSnackbar(context, "Đã xảy ra lỗi!", true);
+          SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi!", true);
         });
       }
     } else {
@@ -381,7 +380,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
         isLoading = false;
       });
       SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin của nhân viên', true);
+          'Vui lòng điền đầy đủ thông tin của nhân viên', true);
     }
   }
 }

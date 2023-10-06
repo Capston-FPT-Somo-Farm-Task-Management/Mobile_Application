@@ -114,7 +114,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                             ).then((value) {
                               if (value != null) {
                                 getSupervisors();
-                                SnackbarShowNoti.showSnackbar(context,
+                                SnackbarShowNoti.showSnackbar(
                                     'Tạo người giám sát thành công!', false);
                               }
                             });

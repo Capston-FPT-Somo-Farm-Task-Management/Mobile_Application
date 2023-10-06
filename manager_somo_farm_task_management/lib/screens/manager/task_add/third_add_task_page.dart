@@ -381,8 +381,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar(
-            context, "Đã xảy ra lỗi khi tạo công việc!", true);
+        SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi khi tạo công việc!", true);
       });
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
       setState(() {
@@ -400,8 +399,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
         isLoading = false;
       });
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
-      SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin', true);
+      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
     }
   }
 
@@ -417,10 +415,10 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       return;
     }
     if (_selectedStartDate == null) {
-      SnackbarShowNoti.showSnackbar(context, "Chọn ngày thực hiện trước", true);
+      SnackbarShowNoti.showSnackbar("Chọn ngày thực hiện trước", true);
     } else if (_pickerDate.isBefore(_selectedStartDate!)) {
       SnackbarShowNoti.showSnackbar(
-          context, "Ngày kết thúc lặp lại phải lớn hơn ngày thực hiện", true);
+          "Ngày kết thúc lặp lại phải lớn hơn ngày thực hiện", true);
     } else {
       setState(() {
         _selectedDateRepeatUntil = _pickerDate;
@@ -454,13 +452,12 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
         );
 
         if (isStart == false && _selectedStartDate == null) {
-          SnackbarShowNoti.showSnackbar(
-              context, "Chọn ngày giờ thực hiện trước", true);
+          SnackbarShowNoti.showSnackbar("Chọn ngày giờ thực hiện trước", true);
         } else if (isStart == false &&
                 selectedDateTime.isBefore(_selectedStartDate!) ||
             isStart == false &&
                 selectedDateTime.isAtSameMomentAs(_selectedStartDate!)) {
-          SnackbarShowNoti.showSnackbar(context,
+          SnackbarShowNoti.showSnackbar(
               "Ngày giờ kết thúc phải lớn hơn ngày giờ thực hiện", true);
         } else {
           setState(() {

@@ -326,7 +326,7 @@ class PlantPageState extends State<PlantPage> {
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      context, 'Xóa thành công cây trồng', false);
+                      'Xóa thành công cây trồng', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,

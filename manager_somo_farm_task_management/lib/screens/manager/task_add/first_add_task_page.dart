@@ -348,7 +348,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
         ),
       );
     } else {
-      SnackbarShowNoti.showSnackbar(context, "Dữ liệu không hợp lệ", true);
+      SnackbarShowNoti.showSnackbar("Dữ liệu không hợp lệ", true);
     }
   }
 }

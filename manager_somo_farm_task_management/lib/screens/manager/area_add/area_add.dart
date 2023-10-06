@@ -127,14 +127,13 @@ class CreateAreaState extends State<CreateArea> {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar(context, "Đã xảy ra lỗi!", true);
+        SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi!", true);
       });
     } else {
       setState(() {
         isLoading = false;
       });
-      SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin!', true);
+      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin!', true);
     }
   }
 }
