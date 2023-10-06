@@ -7,6 +7,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/home/manager_h
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
 import 'package:manager_somo_farm_task_management/screens/other/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -184,7 +185,7 @@ class CustomAppBar extends StatelessWidget {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
                                                   builder: (context) =>
-                                                      AreakPage(
+                                                      AreaPage(
                                                     farmId: farmId!,
                                                   ),
                                                 ));
@@ -205,11 +206,14 @@ class CustomAppBar extends StatelessWidget {
                                             alignment: Alignment
                                                 .centerLeft, // Căn lề trái
                                             child: InkWell(
-                                              onTap: () {
+                                              onTap: () async {
+                                                int? farmId = await getFarmId();
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const TaskPage(),
+                                                      ZonePage(
+                                                    farmId: farmId!,
+                                                  ),
                                                 ));
                                               },
                                               child: const Row(children: [
