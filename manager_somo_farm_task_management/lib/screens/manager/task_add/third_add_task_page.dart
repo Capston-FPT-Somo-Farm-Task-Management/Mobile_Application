@@ -158,8 +158,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                       ),
                     ),
                     MyInputField(
-                      title: "Remind",
-                      hint: "$_selectedRemind minutes early",
+                      title: "Nhắc nhở",
+                      hint: "$_selectedRemind trước khi bắt đầu",
                       widget: DropdownButton(
                         underline: Container(height: 0),
                         icon: const Icon(
