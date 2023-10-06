@@ -3,26 +3,30 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/area_add/area_add.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/zone_add/zone_add_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
+import 'package:manager_somo_farm_task_management/services/employee_service.dart';
+import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../widgets/app_bar.dart';
 
-class AreaPage extends StatefulWidget {
+class ZonePage extends StatefulWidget {
   final int farmId;
-  const AreaPage({super.key, required this.farmId});
+  const ZonePage({super.key, required this.farmId});
 
   @override
-  AreaPageState createState() => AreaPageState();
+  ZonePageState createState() => ZonePageState();
 }
 
-class AreaPageState extends State<AreaPage> {
+class ZonePageState extends State<ZonePage> {
   final TextEditingController searchController = TextEditingController();
-  List<Map<String, dynamic>> areas = [];
-  List<Map<String, dynamic>> filteredareaList = [];
-  String? selectedFilter;
+  List<Map<String, dynamic>> zones = [];
+  List<Map<String, dynamic>> filteredZoneList = [];
+  String selectedFilter = "";
   bool isLoading = true;
+  List<Map<String, dynamic>> areaFilters = [];
   @override
   initState() {
     super.initState();
@@ -30,24 +34,25 @@ class AreaPageState extends State<AreaPage> {
   }
 
   Future<void> _initializeData() async {
+    await getZones();
     await getAreas();
   }
 
-  void searchAreas(String keyword) {
+  void searchZones(String keyword) {
     setState(() {
-      filteredareaList = areas
-          .where((a) => removeDiacritics(a['name'].toLowerCase())
+      filteredZoneList = zones
+          .where((z) => removeDiacritics(z['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
-  Future<void> getAreas() async {
-    AreaService().getAreasByFarmId(widget.farmId).then((value) {
+  Future<void> getZones() async {
+    ZoneService().getZonesbyFarmId(widget.farmId).then((value) {
       if (value.isNotEmpty) {
         setState(() {
-          areas = value;
-          filteredareaList = areas;
+          zones = value;
+          filteredZoneList = zones;
           isLoading = false;
         });
       } else {
@@ -56,8 +61,28 @@ class AreaPageState extends State<AreaPage> {
     });
   }
 
-  Future<bool> changeStatusArea(int id) async {
-    return AreaService().changeStatusArea(id);
+  Future<void> getAreas() async {
+    AreaService().getAreasByFarmId(widget.farmId).then((value) {
+      if (value.isNotEmpty) {
+        setState(() {
+          areaFilters = [
+            {"name": "Tất cả khu vực"},
+            ...value
+          ];
+          selectedFilter = areaFilters.first['name'];
+        });
+      } else {
+        throw Exception();
+      }
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
+    return ZoneService().getZonesbyAreaId(areaId);
+  }
+
+  Future<bool> changeStatusZone(int id) async {
+    return ZoneService().changeStatusZone(id);
   }
 
   @override
@@ -78,7 +103,7 @@ class AreaPageState extends State<AreaPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Khu vực",
+                      "Vùng",
                       style: TextStyle(
                         fontSize: 28, // Thay đổi kích thước phù hợp
                         fontWeight: FontWeight.bold,
@@ -95,14 +120,14 @@ class AreaPageState extends State<AreaPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateArea(
+                                  builder: (context) => CreateZone(
                                         farmId: widget.farmId,
                                       )),
                             ).then((value) {
                               if (value != null) {
-                                getAreas();
+                                getZones();
                                 SnackbarShowNoti.showSnackbar(
-                                    context, 'Tạo khu vực thành công!', false);
+                                    context, 'Tạo vùng thành công!', false);
                               }
                             });
                           },
@@ -115,7 +140,7 @@ class AreaPageState extends State<AreaPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Thêm khu vực",
+                              "Thêm vùng",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -135,7 +160,7 @@ class AreaPageState extends State<AreaPage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchAreas(keyword);
+                          searchZones(keyword);
                         },
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -146,6 +171,47 @@ class AreaPageState extends State<AreaPage> {
                     ),
                   ),
                   const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey, // Màu đường viền
+                            width: 1.0, // Độ rộng của đường viền
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              5.0), // Độ bo góc của đường viền
+                        ),
+                        child: DropdownButton<Map<String, dynamic>>(
+                          isDense: true,
+                          alignment: Alignment.center,
+                          hint: Text(selectedFilter),
+                          onChanged: (Map<String, dynamic>? newValue) {
+                            if (newValue!['name'] == "Tất cả khu vực") {
+                              getZones();
+                            } else {
+                              getZonesbyAreaId(newValue['id']).then((value) {
+                                setState(() {
+                                  filteredZoneList = value;
+                                  selectedFilter = newValue['name'];
+                                });
+                              });
+                            }
+                          },
+                          items: areaFilters
+                              .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                  (Map<String, dynamic> value) {
+                            return DropdownMenuItem<Map<String, dynamic>>(
+                              value: value,
+                              child: Text(value['name']),
+                            );
+                          }).toList(),
+                        ),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),
@@ -156,7 +222,7 @@ class AreaPageState extends State<AreaPage> {
                   ? Center(
                       child: CircularProgressIndicator(color: kPrimaryColor),
                     )
-                  : filteredareaList.isEmpty
+                  : filteredZoneList.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -171,7 +237,7 @@ class AreaPageState extends State<AreaPage> {
                                   height:
                                       16), // Khoảng cách giữa biểu tượng và văn bản
                               Text(
-                                "Không có khu vực nào",
+                                "Không có vùng nào",
                                 style: TextStyle(
                                   fontSize:
                                       20, // Kích thước văn bản có thể điều chỉnh
@@ -182,26 +248,26 @@ class AreaPageState extends State<AreaPage> {
                           ),
                         )
                       : RefreshIndicator(
-                          onRefresh: () => getAreas(),
+                          onRefresh: () => getZones(),
                           child: ListView.separated(
-                            itemCount: filteredareaList.length,
+                            itemCount: filteredZoneList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
                               return const SizedBox(height: 25);
                             },
                             itemBuilder: (context, index) {
-                              final task = filteredareaList[index];
+                              final task = filteredZoneList[index];
 
                               return GestureDetector(
-                                // onTap: () {
-                                //   showDialog(
-                                //     context: context,
-                                //     builder: (BuildContext context) {
-                                //       return EmployeeDetailsPopup(
-                                //           employee: task);
-                                //     },
-                                //   );
-                                // },
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return EmployeeDetailsPopup(
+                                          employee: task);
+                                    },
+                                  );
+                                },
                                 onLongPress: () {
                                   _showBottomSheet(context, task);
                                 },
@@ -294,7 +360,30 @@ class AreaPageState extends State<AreaPage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Diện tích: ${task['fArea']}",
+                                                        "Thuộc khu vực: ${task['areaName']}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.api,
+                                                        color: Colors.black,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        "Loại vùng: ${task['zoneTypeName']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
@@ -356,9 +445,9 @@ class AreaPageState extends State<AreaPage> {
                           title: "Đổi trạng thái",
                           content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
                           onConfirm: () {
-                            changeStatusArea(employee['id']).then((value) {
+                            changeStatusZone(employee['id']).then((value) {
                               if (value) {
-                                getAreas();
+                                getZones();
                                 Navigator.of(context).pop();
                                 SnackbarShowNoti.showSnackbar(context,
                                     'Đổi trạng thái thành công!', false);

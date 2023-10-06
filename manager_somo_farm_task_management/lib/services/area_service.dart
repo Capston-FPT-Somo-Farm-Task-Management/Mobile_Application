@@ -43,4 +43,37 @@ class AreaService {
       throw Exception('Failed to get area by farm ID');
     }
   }
+
+  Future<bool> createArea(Map<String, dynamic> areaData) async {
+    final String apiUrl = "$baseUrl/Area";
+    var body = jsonEncode(areaData);
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception("Failed to create area");
+    }
+  }
+
+  Future<bool> changeStatusArea(int areaId) async {
+    final String url = '$baseUrl/Area/Delete/$areaId';
+
+    final http.Response response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to change status');
+    }
+  }
 }

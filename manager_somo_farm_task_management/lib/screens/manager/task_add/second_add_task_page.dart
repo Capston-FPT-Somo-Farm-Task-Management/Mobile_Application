@@ -31,7 +31,7 @@ class SecondAddTaskPage extends StatefulWidget {
 
 class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   final TextEditingController _titleController = TextEditingController();
-  final QuillController _quillController = QuillController.basic();
+  final TextEditingController _desController = TextEditingController();
   String _selectedTaskType = "";
   int? _selectedTaskTypeId;
   Key _keyChange = UniqueKey();
@@ -94,7 +94,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
             });
           });
     _selectedTaskType = "Chọn";
-    MaterialService().getMaterial().then((value) {
+    MaterialService().getMaterialActive().then((value) {
       setState(() {
         materials = value;
       });
@@ -369,14 +369,10 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                       "Mô tả",
                       style: titileStyle,
                     ),
-                    QuillToolbar.basic(
-                      controller: _quillController,
-                      multiRowsDisplay: false,
-                      showSearchButton: false,
-                    ),
                     Container(
-                      height: 200, // Điều chỉnh chiều cao theo nhu cầu của bạn
+                      height: 150,
                       margin: const EdgeInsets.only(top: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.grey,
@@ -384,19 +380,23 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: QuillEditor(
-                        controller: _quillController, // Tạo một controller mới
-                        readOnly: false,
-                        autoFocus: false,
-                        expands: false, // Tắt tính năng mở rộng tự động
-                        padding: const EdgeInsets.all(
-                            8), // Điều chỉnh padding theo nhu cầu của bạn
-                        placeholder: "Nhập mô tả",
-                        focusNode: FocusNode(),
-                        scrollController: ScrollController(),
-                        scrollable: true,
-                        enableSelectionToolbar: true,
-                        // Các thuộc tính khác của QuillEditor có thể được cấu hình ở đây
+                      child: TextFormField(
+                        maxLines: null,
+                        autofocus: false,
+                        controller: _desController,
+                        style: subTitileStyle,
+                        decoration: InputDecoration(
+                          hintText: "Nhập mô tả",
+                          hintStyle: subTitileStyle,
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: kBackgroundColor, width: 0),
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: kBackgroundColor, width: 0),
+                          ),
+                        ),
                       ),
                     )
                   ],
@@ -461,7 +461,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
             supervisorId: _selectedSupervisorId!,
             materialIds:
                 selectedMaterials.map<int>((m) => m['id'] as int).toList(),
-            description: _quillController.document.toPlainText(),
+            description: _desController.text,
           ),
         ),
       );
