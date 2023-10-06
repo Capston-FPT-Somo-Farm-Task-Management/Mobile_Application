@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockType_page.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 
 import '../../../componets/input_field.dart';
 
@@ -14,6 +16,15 @@ class CreateLiveStockType extends StatefulWidget {
 
 class CreateLiveStockTypeState extends State<CreateLiveStockType> {
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _titleNumberController = TextEditingController();
+  String name = "";
+  int? status;
+  int? quantity;
+
+  Future<Map<String, dynamic>> CreateLiveStockType(
+      Map<String, dynamic> liveStock) {
+    return HabitantTypeService().CreateHabitantType(liveStock);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +59,11 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
                 title: "Tên loại vật nuôi",
                 hint: "Nhập tên loại",
                 controller: _titleController,
+              ),
+              MyInputNumber(
+                title: "Nhập số lượng",
+                hint: "Nhập số lượng",
+                controller: _titleNumberController,
               ),
               const SizedBox(height: 40),
               const Divider(
@@ -85,12 +101,18 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
 
   _validateDate() {
     if (_titleController.text.isNotEmpty) {
-      //add database
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const LiveStockPage(),
-        ),
-      );
+      Map<String, dynamic> liveStock = {
+        'name': _titleController.text,
+        'status': 1,
+        'quantity': _titleNumberController.hashCode,
+      };
+      CreateLiveStockType(liveStock).then((value) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LiveStockTypePage(),
+          ),
+        );
+      });
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar(

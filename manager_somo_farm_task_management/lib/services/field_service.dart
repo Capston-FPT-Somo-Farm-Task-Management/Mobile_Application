@@ -23,4 +23,62 @@ class FieldService {
       throw Exception('Failed to get fields by zone ID');
     }
   }
+
+  Future<Map<String, dynamic>> CreateField(Map<String, dynamic> field) async {
+    final String createField = '$baseUrl/Field';
+    var body = jsonEncode(field);
+    final response = await http.post(Uri.parse(createField),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> field =
+          Map<String, dynamic>.from(json.decode(response.body));
+      return field;
+    } else {
+      throw Exception('Failed to create field');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getPlantFieldByFarmId(int id) async {
+    final String getPlantFieldUrl = '$baseUrl/Field/Plant/Farm(${id})';
+
+    final http.Response response = await http.get(
+      Uri.parse(getPlantFieldUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> plantFields =
+          List<Map<String, dynamic>>.from(data['data']);
+      return plantFields;
+    } else {
+      throw Exception('Failed to get plant in field');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getLiveStockFieldByFarmId(int id) async {
+    final String getLivestockFieldUrl = '$baseUrl/Field/Livestock/Farm(${id})';
+
+    final http.Response response = await http.get(
+      Uri.parse(getLivestockFieldUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> livestockFields =
+          List<Map<String, dynamic>>.from(data['data']);
+      return livestockFields;
+    } else {
+      throw Exception('Failed to get livestock in field');
+    }
+  }
 }

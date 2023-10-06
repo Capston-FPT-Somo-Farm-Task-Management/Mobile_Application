@@ -41,7 +41,7 @@ class CreatePlantState extends State<CreatePlant> {
   int? height;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
-    return AreaService().getAreasByFarmId(widget.farmId);
+    return AreaService().getAreasActiveByFarmId(widget.farmId);
   }
 
   Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {

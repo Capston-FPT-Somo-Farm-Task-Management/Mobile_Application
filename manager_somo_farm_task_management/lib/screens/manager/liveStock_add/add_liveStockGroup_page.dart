@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 
 import '../../../componets/input_field.dart';
@@ -19,24 +22,35 @@ class CreateLiveStockGroup extends StatefulWidget {
 class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  List<String> liveStockType = ["Bò", "Heo", "Gà", "Vịt"];
-  String _selectedCrop = "Bò";
 
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
+  List<Map<String, dynamic>> filteredLiveStockType = [];
+
   String _selectedArea = "";
   String _selectedZone = "";
+  String _selectedLiveStockType = "";
+
+  String name = "";
+  int? status;
+  int? areaId;
+  int? zoneId;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
-    return AreaService().getAreasByFarmId(widget.farmId);
-  }
-
-  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
-    return ZoneService().getZonesbyAreaId(areaId);
+    return AreaService().getAreasActiveByFarmId(widget.farmId);
   }
 
   Future<List<Map<String, dynamic>>> getZonesbyAreaLivestockId(int areaId) {
     return ZoneService().getZonesbyAreaLivestockId(areaId);
+  }
+
+  Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType() {
+    return HabitantTypeService().getLiveStockTypeFromHabitantType();
+  }
+
+  Future<Map<String, dynamic>> CreateLiveStockGroup(
+      Map<String, dynamic> liveStock) {
+    return FieldService().CreateField(liveStock);
   }
 
   @override
@@ -46,6 +60,12 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
       setState(() {
         filteredArea = a;
         _selectedArea = "Chọn";
+      });
+    });
+    getLiveStockTypeFromHabitantType().then((a) {
+      setState(() {
+        filteredLiveStockType = a;
+        _selectedLiveStockType = "Chọn";
       });
     });
   }
@@ -85,9 +105,10 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                 controller: _titleNameController,
               ),
               MyInputField(
-                title: "Loại vật nuôi",
-                hint: _selectedCrop,
+                title: "Chọn loại vật nuôi",
+                hint: _selectedLiveStockType,
                 widget: DropdownButton(
+                  underline: Container(height: 0),
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
                     color: Colors.grey,
@@ -95,16 +116,17 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                   iconSize: 32,
                   elevation: 4,
                   style: subTitileStyle,
-                  onChanged: (String? newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      _selectedCrop = newValue!;
+                      _selectedLiveStockType = newValue!['name'];
                     });
                   },
-                  items: liveStockType
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: filteredLiveStockType
+                      .map<DropdownMenuItem<Map<String, dynamic>>>(
+                          (Map<String, dynamic> value) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value['name']),
                     );
                   }).toList(),
                 ),
@@ -129,6 +151,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedArea = newValue!['name'];
+                      areaId = newValue['id'];
                     });
                     // Lọc danh sách Zone tương ứng với Area đã chọn
                     getZonesbyAreaLivestockId(newValue!['id']).then((value) {
@@ -164,6 +187,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedZone = newValue!['name'];
+                      zoneId = newValue['id'];
                     });
                     // Lọc danh sách Filed tương ứng với Zone đã chọn
                   },
@@ -222,14 +246,22 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có") {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const LiveStockPage(),
-        ),
-      );
+      Map<String, dynamic> liveStock = {
+        'name': _titleNameController.text,
+        'status': 1,
+        'area': areaId,
+        'zoneId': zoneId
+      };
+      CreateLiveStockGroup(liveStock).then((value) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LiveStockFieldPage(),
+          ),
+        );
+      });
     } else {
       SnackbarShowNoti.showSnackbar(
-          context, 'Vui lòng điền đầy đủ thông tin của vật nuôi', true);
+          context, 'Vui lòng điền đầy đủ thông tin', true);
     }
   }
 }

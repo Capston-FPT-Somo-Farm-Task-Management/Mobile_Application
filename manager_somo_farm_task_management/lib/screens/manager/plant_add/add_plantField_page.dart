@@ -28,11 +28,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
   String _selectedZone = "";
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
-    return AreaService().getAreasByFarmId(widget.farmId);
-  }
-
-  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
-    return ZoneService().getZonesbyAreaId(areaId);
+    return AreaService().getAreasActiveByFarmId(widget.farmId);
   }
 
   Future<List<Map<String, dynamic>>> getZonesbyAreaPlantId(int areaId) {
