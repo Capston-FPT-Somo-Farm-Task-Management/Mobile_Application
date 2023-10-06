@@ -4,9 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/area_add/area_add.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
-import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../widgets/app_bar.dart';
@@ -58,8 +56,8 @@ class AreaPageState extends State<AreaPage> {
     });
   }
 
-  Future<bool> changeStatusEmployee(int id) async {
-    return EmployeeService().changeStatusEmployee(id);
+  Future<bool> changeStatusArea(int id) async {
+    return AreaService().changeStatusArea(id);
   }
 
   @override
@@ -195,15 +193,15 @@ class AreaPageState extends State<AreaPage> {
                               final task = filteredareaList[index];
 
                               return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return EmployeeDetailsPopup(
-                                          employee: task);
-                                    },
-                                  );
-                                },
+                                // onTap: () {
+                                //   showDialog(
+                                //     context: context,
+                                //     builder: (BuildContext context) {
+                                //       return EmployeeDetailsPopup(
+                                //           employee: task);
+                                //     },
+                                //   );
+                                // },
                                 onLongPress: () {
                                   _showBottomSheet(context, task);
                                 },
@@ -358,7 +356,7 @@ class AreaPageState extends State<AreaPage> {
                           title: "Đổi trạng thái",
                           content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
                           onConfirm: () {
-                            changeStatusEmployee(employee['id']).then((value) {
+                            changeStatusArea(employee['id']).then((value) {
                               if (value) {
                                 getAreas();
                                 Navigator.of(context).pop();
