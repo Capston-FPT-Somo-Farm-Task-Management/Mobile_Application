@@ -3,21 +3,21 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
-class LiveStockPage extends StatefulWidget {
-  const LiveStockPage({Key? key}) : super(key: key);
+class LiveStockFieldPage extends StatefulWidget {
+  const LiveStockFieldPage({Key? key}) : super(key: key);
 
   @override
-  LiveStockPageState createState() => LiveStockPageState();
+  LiveStockFieldPageState createState() => LiveStockFieldPageState();
 }
 
-class LiveStockPageState extends State<LiveStockPage> {
+class LiveStockFieldPageState extends State<LiveStockFieldPage> {
   int? farmId;
   List<LiveStock> SearchliveStock = plantList;
   final TextEditingController searchController = TextEditingController();
@@ -49,7 +49,11 @@ class LiveStockPageState extends State<LiveStockPage> {
     return LiveStockService().getAllLiveStock();
   }
 
-  Future<void> GetLiveStocks() async {
+  Future<List<Map<String, dynamic>>> getLiveStockFieldByFarmId(int id) {
+    return FieldService().getLiveStockFieldByFarmId(id);
+  }
+
+  Future<void> GetLiveStockFields() async {
     int? farmIdValue = await getFarmId();
 
     setState(() {
@@ -58,8 +62,7 @@ class LiveStockPageState extends State<LiveStockPage> {
 
     if (farmId != null) {
       List<Map<String, dynamic>> liveStocksValue =
-          await getLiveStockByFarmId(farmId!);
-
+          await getLiveStockFieldByFarmId(farmId!);
       setState(() {
         liveStocks = liveStocksValue;
       });
@@ -74,7 +77,7 @@ class LiveStockPageState extends State<LiveStockPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetLiveStocks();
+    GetLiveStockFields();
   }
 
   @override
@@ -94,7 +97,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Vật nuôi",
+                      "Chuồng của vật nuôi",
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -111,7 +114,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateLiveStock(
+                                  builder: (context) => CreateLiveStockGroup(
                                         farmId: farmId!,
                                       )),
                             );
@@ -125,7 +128,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo vật nuôi",
+                              "Tạo chuồng cho vật nuôi",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -174,12 +177,12 @@ class LiveStockPageState extends State<LiveStockPage> {
                     margin: EdgeInsets.only(bottom: 25),
                     child: GestureDetector(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return LiveStockDetailsPopup(liveStock: liveStock);
-                          },
-                        );
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (BuildContext context) {
+                        //     return LiveStockDetailsPopup(liveStock: liveStock);
+                        //   },
+                        // );
                       },
                       onLongPress: () {
                         _showBottomSheet(context, liveStock);
@@ -227,7 +230,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
-                                            'Giống ${liveStock['gender']}',
+                                            '${liveStock['status']}',
                                             style:
                                                 const TextStyle(fontSize: 16),
                                           ),
@@ -262,13 +265,6 @@ class LiveStockPageState extends State<LiveStockPage> {
                                   Expanded(
                                     child: Text(
                                       '${liveStock['zoneName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${liveStock['fieldName']}',
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ),

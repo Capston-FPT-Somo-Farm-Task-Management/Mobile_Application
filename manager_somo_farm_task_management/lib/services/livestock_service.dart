@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
 
 class LiveStockService {
   Future<List<Map<String, dynamic>>> getLiveStockExternalIdsByFieldId(
