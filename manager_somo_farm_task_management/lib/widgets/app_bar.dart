@@ -14,8 +14,9 @@ import 'package:manager_somo_farm_task_management/screens/manager/plant/plantTyp
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/supervisor/supervisor_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
-import 'package:manager_somo_farm_task_management/screens/other/login_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatefulWidget {
@@ -223,16 +224,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                         alignment: Alignment
                                                             .centerLeft, // Căn lề trái
                                                         child: InkWell(
-                                                          onTap: () async {
-                                                            int? farmId =
-                                                                await getFarmId();
+                                                          onTap: () {
                                                             Navigator.of(
                                                                     context)
                                                                 .push(
                                                                     MaterialPageRoute(
                                                               builder:
                                                                   (context) =>
-                                                                      AreakPage(
+                                                                      AreaPage(
                                                                 farmId: farmId!,
                                                               ),
                                                             ));
@@ -267,8 +266,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                     context)
                                                                 .push(
                                                                     MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const TaskPage(),
+                                                              builder:
+                                                                  (context) =>
+                                                                      ZonePage(
+                                                                farmId: farmId!,
+                                                              ),
                                                             ));
                                                           },
                                                           child: const Row(
@@ -740,7 +742,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 15),
+                                                    const SizedBox(height: 20),
                                                     Container(
                                                       padding: EdgeInsets.only(
                                                           left: padingForAll,
@@ -783,76 +785,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         child: InkWell(
-                                                          onTap: () {},
-                                                          child: const Row(
-                                                              children: [
-                                                                Icon(Icons
-                                                                    .person),
-                                                                SizedBox(
-                                                                    width: 15),
-                                                                Text(
-                                                                  "Cá nhân",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          20),
-                                                                ),
-                                                              ]),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 25),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: padingForAll,
-                                                          right: padingForAll),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: InkWell(
-                                                          onTap: () {},
-                                                          child: const Row(
-                                                              children: [
-                                                                Icon(Icons
-                                                                    .question_mark_rounded),
-                                                                SizedBox(
-                                                                    width: 15),
-                                                                Text(
-                                                                  "Thắc mắc",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          20),
-                                                                ),
-                                                              ]),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 25),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: padingForAll,
-                                                          right: padingForAll),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: InkWell(
                                                           onTap: () {
-                                                            Navigator
-                                                                .pushReplacement(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          LoginPage()),
-                                                            );
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                                    MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  SupervisorPage(),
+                                                            ));
                                                           },
                                                           child: const Row(
                                                               children: [
                                                                 Icon(Icons
-                                                                    .logout),
+                                                                    .supervisor_account),
                                                                 SizedBox(
                                                                     width: 15),
                                                                 Text(
-                                                                  "Đăng xuất",
+                                                                  "Người giám sát",
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           20),

@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
@@ -258,7 +259,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 _bottomSheetButton(
                   label: "Xem bằng chứng",
                   onTap: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TaskEvidence(),
+                      ),
+                    );
                   },
                   cls: kPrimaryColor,
                   context: context,
