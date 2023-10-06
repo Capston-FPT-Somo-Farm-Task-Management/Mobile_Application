@@ -15,9 +15,30 @@ class MaterialService {
     );
 
     if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
       final List<Map<String, dynamic>> materials =
-          List<Map<String, dynamic>>.from(json.decode(response.body));
+          List<Map<String, dynamic>>.from(data['data']);
       return materials;
+    } else {
+      throw Exception('Failed to get materials');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getMaterialActive() async {
+    final String getMaterialsUrl = '$baseUrl/Material/Active';
+
+    final http.Response response = await http.get(
+      Uri.parse(getMaterialsUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> ems =
+          List<Map<String, dynamic>>.from(data['data']);
+      return ems;
     } else {
       throw Exception('Failed to get materials');
     }
