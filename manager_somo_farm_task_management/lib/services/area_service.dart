@@ -59,4 +59,21 @@ class AreaService {
       throw Exception("Failed to create area");
     }
   }
+
+  Future<bool> changeStatusArea(int areaId) async {
+    final String url = '$baseUrl/Area/Delete/$areaId';
+
+    final http.Response response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to change status');
+    }
+  }
 }
