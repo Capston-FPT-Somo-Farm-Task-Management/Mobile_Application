@@ -26,6 +26,18 @@ class _TaskEvidenceState extends State<TaskEvidence> {
           onPressed: () => Navigator.pop(context),
           color: kSecondColor, // Change to your preferred color
         ),
+        centerTitle: true,
+        title: Container(
+          margin: EdgeInsets.only(top: 10),
+          child: Text(
+            'Bằng chứng',
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.bold,
+              color: kPrimaryColor,
+            ),
+          ),
+        ),
         backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -33,13 +45,6 @@ class _TaskEvidenceState extends State<TaskEvidence> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                "Bằng chứng",
-                style: headingStyle,
-              ),
-            ),
             buildTaskDetails(),
             const SizedBox(height: 20),
             Container(
