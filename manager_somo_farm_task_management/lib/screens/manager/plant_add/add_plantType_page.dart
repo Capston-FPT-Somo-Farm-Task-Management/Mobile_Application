@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plantType_page.dart';
+import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 
 import '../../../componets/input_field.dart';
 
@@ -14,6 +17,13 @@ class CreatePlantType extends StatefulWidget {
 
 class CreatePlantTypeState extends State<CreatePlantType> {
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _titleNumberController = TextEditingController();
+  String name = "";
+  int? status;
+  int? quantity;
+  Future<Map<String, dynamic>> CreatePlantType(Map<String, dynamic> plant) {
+    return HabitantTypeService().CreateHabitantType(plant);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +58,11 @@ class CreatePlantTypeState extends State<CreatePlantType> {
                 title: "Tên loại cây trồng",
                 hint: "Nhập tên loại",
                 controller: _titleController,
+              ),
+              MyInputNumber(
+                title: "Nhập số lượng",
+                hint: "Nhập số lượng",
+                controller: _titleNumberController,
               ),
               const SizedBox(height: 40),
               const Divider(
@@ -86,11 +101,18 @@ class CreatePlantTypeState extends State<CreatePlantType> {
   _validateDate() {
     if (_titleController.text.isNotEmpty) {
       //add database
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const LiveStockPage(),
-        ),
-      );
+      Map<String, dynamic> liveStock = {
+        'name': _titleController.text,
+        'status': 0,
+        'quantity': _titleNumberController.hashCode,
+      };
+      CreatePlantType(liveStock).then((value) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PlantTypePage(),
+          ),
+        );
+      });
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar(

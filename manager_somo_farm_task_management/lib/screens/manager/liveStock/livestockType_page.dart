@@ -19,7 +19,7 @@ class LiveStockTypePage extends StatefulWidget {
 
 class LiveStockTypePageState extends State<LiveStockTypePage> {
   int? farmId;
-  List<LiveStock> SearchliveStock = liveStockList;
+  List<LiveStock> SearchliveStock = plantList;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -30,7 +30,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      SearchliveStock = liveStockList
+      SearchliveStock = plantList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();

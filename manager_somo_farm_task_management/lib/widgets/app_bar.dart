@@ -9,6 +9,8 @@ import 'package:manager_somo_farm_task_management/screens/manager/liveStock/live
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockType_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
@@ -690,10 +692,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              CreatePlantField(
-                                                                            farmId:
-                                                                                farmId!,
-                                                                          ),
+                                                                              PlantFieldPage(),
                                                                         ),
                                                                       );
                                                                     },
@@ -721,7 +720,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              CreatePlantType(),
+                                                                              PlantTypePage(),
                                                                         ),
                                                                       );
                                                                     },

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
@@ -22,6 +21,7 @@ class CreateLiveStockGroup extends StatefulWidget {
 class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _noteAreaController = TextEditingController();
 
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
@@ -33,7 +33,6 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
 
   String name = "";
   int? status;
-  int? areaId;
   int? zoneId;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
@@ -136,6 +135,11 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                 hint: "Nhập số lượng",
                 controller: _noteController,
               ),
+              MyInputNumber(
+                title: "Diện tích của vườn cây (mét vuông)",
+                hint: "Nhập diện tích",
+                controller: _noteAreaController,
+              ),
               MyInputField(
                 title: "Khu vực",
                 hint: _selectedArea,
@@ -151,7 +155,6 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       _selectedArea = newValue!['name'];
-                      areaId = newValue['id'];
                     });
                     // Lọc danh sách Zone tương ứng với Area đã chọn
                     getZonesbyAreaLivestockId(newValue!['id']).then((value) {
@@ -249,7 +252,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
       Map<String, dynamic> liveStock = {
         'name': _titleNameController.text,
         'status': 1,
-        'area': areaId,
+        'area': _noteAreaController.hashCode,
         'zoneId': zoneId
       };
       CreateLiveStockGroup(liveStock).then((value) {

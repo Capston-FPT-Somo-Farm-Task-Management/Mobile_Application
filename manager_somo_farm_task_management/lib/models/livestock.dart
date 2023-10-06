@@ -13,7 +13,7 @@ class LiveStock {
       required this.createDate});
 }
 
-List<LiveStock> liveStockList = [
+List<LiveStock> plantList = [
   LiveStock(
       id: "SE150222",
       name: "Heo Thái Lan",
