@@ -47,16 +47,12 @@ class SettingsPage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: const Text('Profile'),
-                  onTap: () {
-                    // TODO: Implement profile settings
-                  },
+                  onTap: () {},
                 ),
                 ListTile(
                   leading: const Icon(Icons.lock),
                   title: const Text('Privacy'),
-                  onTap: () {
-                    // TODO: Implement privacy settings
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
@@ -78,16 +74,12 @@ class SettingsPage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.notifications),
                   title: const Text('Notifications'),
-                  onTap: () {
-                    // TODO: Implement notification settings
-                  },
+                  onTap: () {},
                 ),
                 ListTile(
                   leading: const Icon(Icons.language),
                   title: const Text('Language'),
-                  onTap: () {
-                    // TODO: Implement language settings
-                  },
+                  onTap: () {},
                 ),
                 ListTile(
                   leading: const Icon(Icons.output_outlined),

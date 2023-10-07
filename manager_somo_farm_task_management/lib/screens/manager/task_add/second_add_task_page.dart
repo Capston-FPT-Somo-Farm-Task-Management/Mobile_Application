@@ -4,7 +4,6 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_add/third_add_task_page.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:manager_somo_farm_task_management/services/member_service.dart';
@@ -443,8 +442,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
     if (_titleController.text.isNotEmpty &&
         selectedEmployees.isNotEmpty &&
         _selectedTaskTypeId != null &&
-        _selectedSupervisorId != null &&
-        selectedMaterials.isNotEmpty) {
+        _selectedSupervisorId != null) {
       //add database
       Navigator.of(context).push(
         MaterialPageRoute(

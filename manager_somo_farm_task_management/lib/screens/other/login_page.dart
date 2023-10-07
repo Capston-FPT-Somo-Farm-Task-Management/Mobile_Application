@@ -131,6 +131,8 @@ class LoginPage extends StatelessWidget {
                           builder: (context) => ManagerHomePage(farmId: farmId),
                         ),
                       );
+                      SnackbarShowNoti.showSnackbar(
+                          "Đăng nhập thành công!", false);
                     }
                   } catch (e) {
                     SnackbarShowNoti.showSnackbar(
