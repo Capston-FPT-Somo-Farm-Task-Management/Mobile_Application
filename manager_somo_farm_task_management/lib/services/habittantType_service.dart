@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockType_page.dart';
 
 class HabitantTypeService {
   Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() async {

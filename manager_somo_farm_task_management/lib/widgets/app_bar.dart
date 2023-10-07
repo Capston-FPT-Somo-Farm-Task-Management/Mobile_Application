@@ -7,13 +7,9 @@ import 'package:manager_somo_farm_task_management/screens/manager/home/manager_h
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/supervisor/supervisor_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';

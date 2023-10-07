@@ -6,7 +6,6 @@ import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone_add/zone_add_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
-import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
