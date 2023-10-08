@@ -62,19 +62,18 @@ class LiveStockService {
     }
   }
 
-  Future<Map<String, dynamic>> deleteLiveStock(int id, String status) async {
-    final String deleteLiveStockUrl = '$baseUrl/LiveStock/ChangeStatus/${id}';
-    var body = jsonEncode({"status": status});
-    final http.Response response = await http.put(Uri.parse(deleteLiveStockUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: body);
+  Future<bool> deleteLiveStock(int id) async {
+    final String deleteLiveStockUrl = '$baseUrl/LiveStock/Delete/${id}';
+
+    final http.Response response = await http.put(
+      Uri.parse(deleteLiveStockUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> liveStock =
-          Map<String, dynamic>.from(json.decode(response.body));
-      return liveStock;
+      return true;
     } else {
       throw Exception('Failed to delete livestock');
     }

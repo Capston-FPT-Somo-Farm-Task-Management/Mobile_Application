@@ -43,6 +43,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.tag,
@@ -113,30 +114,13 @@ class LiveStockDetailsPopup extends StatelessWidget {
             Row(
               children: [
                 const Icon(
-                  Icons.access_time,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['dateOfBirth']))}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
                   Icons.access_time_filled,
                   color: kSecondColor,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Ngày sinh: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
+                  'Ngày tạo vật nuôi: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
                   style: const TextStyle(
                     fontSize: 18,
                   ),

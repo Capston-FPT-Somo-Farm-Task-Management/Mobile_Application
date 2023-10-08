@@ -37,8 +37,8 @@ class LiveStockPageState extends State<LiveStockPage> {
     });
   }
 
-  Future<Map<String, dynamic>> deleteLiveStock(int id, String status) {
-    return LiveStockService().deleteLiveStock(id, status);
+  Future<bool> deleteLiveStock(int id) {
+    return LiveStockService().deleteLiveStock(id);
   }
 
   Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
@@ -167,9 +167,6 @@ class LiveStockPageState extends State<LiveStockPage> {
                 itemBuilder: (context, index) {
                   Map<String, dynamic> liveStock = liveStocks[index];
 
-                  if (liveStock['status'] == 'Inactive') {
-                    return SizedBox.shrink();
-                  }
                   return Container(
                     margin: EdgeInsets.only(bottom: 25),
                     child: GestureDetector(
@@ -207,7 +204,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                     width: 1.0, // Độ dày của đường viền
                                   ),
                                 ),
-                                height: 110,
+                                height: 120,
                                 width: double.infinity,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,14 +215,40 @@ class LiveStockPageState extends State<LiveStockPage> {
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(
-                                            liveStock['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                liveStock['name'],
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: liveStock['status'] ==
+                                                          "Inactive"
+                                                      ? Colors.red[400]
+                                                      : kPrimaryColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                child: Text(
+                                                  liveStock['status'],
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          const SizedBox(height: 10),
+                                          const SizedBox(height: 5),
                                           Text(
                                             'Giống ${liveStock['gender']}',
                                             style:
@@ -309,28 +332,34 @@ class LiveStockPageState extends State<LiveStockPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: liveStock['status'] == "Inactive"
+                    ? "Đổi sang Active"
+                    : "Đổi sang Inactive",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Thay đổi trạng thái con vật",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của con vật này?",
                           onConfirm: () {
-                            Navigator.of(context).pop();
-                            setState(() {});
-                            liveStocks.remove(liveStock);
-                            deleteLiveStock(
-                                liveStock['id'], liveStock['status']);
+                            setState(() {
+                              deleteLiveStock(liveStock['id']);
+                              GetLiveStocks();
+                              Navigator.of(context).pop();
+                              SnackbarShowNoti.showSnackbar(
+                                  'Đổi trạng thái thành công!', false);
+                              deleteLiveStock(liveStock['id']);
+                            });
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
                 },
-                cls: Colors.red[300]!,
+                cls: liveStock['status'] == "Inactive"
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),
