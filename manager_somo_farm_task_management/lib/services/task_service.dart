@@ -65,6 +65,29 @@ class TaskService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getTasksByUserIdDateStatus(
+      int userId, DateTime date, int status) async {
+    var dateTime = DateFormat('yyyy-MM-dd').format(date);
+    final String getTasksUrl =
+        '$baseUrl/FarmTask/Member($userId)/Status($status)/Date?date=$dateTime';
+
+    final http.Response response = await http.get(
+      Uri.parse(getTasksUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> tasks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return tasks;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
   Future<bool> createTask(Map<String, dynamic> taskData, int managerId) async {
     final String apiUrl = "$baseUrl/FarmTask?memberId=${managerId}";
     var body = jsonEncode(taskData);
@@ -77,7 +100,7 @@ class TaskService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception("Failed to create task");
+      throw Exception(response.body);
     }
   }
 
