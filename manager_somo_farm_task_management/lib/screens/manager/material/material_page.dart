@@ -1,70 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_add/employee_add.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
-import 'package:manager_somo_farm_task_management/services/supervisor_service.dart';
+import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
 
-class SupervisorPage extends StatefulWidget {
-  const SupervisorPage({super.key});
+class MaterialsPage extends StatefulWidget {
+  const MaterialsPage({super.key});
 
   @override
-  SupervisorPageState createState() => SupervisorPageState();
+  MaterialPageState createState() => MaterialPageState();
 }
 
-class SupervisorPageState extends State<SupervisorPage> {
-  int? farmId;
+class MaterialPageState extends State<MaterialsPage> {
   final TextEditingController searchController = TextEditingController();
-  List<Map<String, dynamic>> supervisors = [];
-  List<Map<String, dynamic>> filteredSupervisorList = [];
-  final List<String> filters = [
-    "Tất cả",
-    "Active",
-    "Inactive",
-  ];
+  List<Map<String, dynamic>> areas = [];
+  List<Map<String, dynamic>> filteredareaList = [];
   String? selectedFilter;
   bool isLoading = true;
   @override
   initState() {
     super.initState();
-    selectedFilter = filters[0];
     _initializeData();
   }
 
   Future<void> _initializeData() async {
-    await getFarmId();
-    await getSupervisors();
+    await getMaterials();
   }
 
-  Future<void> getFarmId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedFarmId = prefs.getInt('farmId');
+  void searchMaterials(String keyword) {
     setState(() {
-      farmId = storedFarmId;
-    });
-  }
-
-  void searchSupervisors(String keyword) {
-    setState(() {
-      filteredSupervisorList = supervisors
-          .where((task) => removeDiacritics(task['name'].toLowerCase())
+      filteredareaList = areas
+          .where((a) => removeDiacritics(a['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
-  Future<void> getSupervisors() async {
-    SupervisorService().getSupervisorsbyFarmId(farmId!).then((value) {
+  Future<void> getMaterials() async {
+    MaterialService().getMaterial().then((value) {
       if (value.isNotEmpty) {
         setState(() {
-          supervisors = value;
-          filteredSupervisorList = supervisors;
+          areas = value;
+          filteredareaList = areas;
           isLoading = false;
         });
       } else {
@@ -72,6 +51,10 @@ class SupervisorPageState extends State<SupervisorPage> {
       }
     });
   }
+
+  // Future<bool> changeStatusArea(int id) async {
+  //   return MaterialService().changeStatusArea(id);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +74,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Người giám sát",
+                      "Dụng cụ",
                       style: TextStyle(
                         fontSize: 28, // Thay đổi kích thước phù hợp
                         fontWeight: FontWeight.bold,
@@ -105,19 +88,19 @@ class SupervisorPageState extends State<SupervisorPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreateEmployee(
-                                        farmId: farmId!,
-                                      )),
-                            ).then((value) {
-                              if (value != null) {
-                                getSupervisors();
-                                SnackbarShowNoti.showSnackbar(
-                                    'Tạo người giám sát thành công!', false);
-                              }
-                            });
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => CreateArea(
+                            //             farmId: widget.farmId,
+                            //           )),
+                            // ).then((value) {
+                            //   if (value != null) {
+                            //     getAreas();
+                            //     SnackbarShowNoti.showSnackbar(
+                            //         'Tạo khu vực thành công!', false);
+                            //   }
+                            // });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
@@ -128,7 +111,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Thêm người giám sát",
+                              "Thêm dụng cụ",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -148,7 +131,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchSupervisors(keyword);
+                          searchMaterials(keyword);
                         },
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -159,54 +142,6 @@ class SupervisorPageState extends State<SupervisorPage> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey, // Màu đường viền
-                            width: 1.0, // Độ rộng của đường viền
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              5.0), // Độ bo góc của đường viền
-                        ),
-                        child: DropdownButton<String>(
-                          isDense: true,
-                          alignment: Alignment.center,
-                          hint: Text(selectedFilter!),
-                          value:
-                              selectedFilter, // Giá trị đã chọn cho Dropdown 1
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedFilter =
-                                  newValue; // Cập nhật giá trị đã chọn cho Dropdown 1
-                              if (selectedFilter == "Tất cả") {
-                                filteredSupervisorList = supervisors;
-                              }
-                              if (selectedFilter == "Active") {
-                                filteredSupervisorList = supervisors
-                                    .where((t) => t['status'] == "Active")
-                                    .toList();
-                              }
-                              if (selectedFilter == "Inactive") {
-                                filteredSupervisorList = supervisors
-                                    .where((t) => t['status'] == "Inactive")
-                                    .toList();
-                              }
-                            });
-                          },
-                          items: filters
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      )
-                    ],
-                  )
                 ],
               ),
             ),
@@ -217,7 +152,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                   ? Center(
                       child: CircularProgressIndicator(color: kPrimaryColor),
                     )
-                  : filteredSupervisorList.isEmpty
+                  : filteredareaList.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -232,7 +167,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                   height:
                                       16), // Khoảng cách giữa biểu tượng và văn bản
                               Text(
-                                "Không có người giám sát nào",
+                                "Không có dụng cụ nào",
                                 style: TextStyle(
                                   fontSize:
                                       20, // Kích thước văn bản có thể điều chỉnh
@@ -243,28 +178,28 @@ class SupervisorPageState extends State<SupervisorPage> {
                           ),
                         )
                       : RefreshIndicator(
-                          onRefresh: () => getSupervisors(),
+                          onRefresh: () => getMaterials(),
                           child: ListView.separated(
-                            itemCount: filteredSupervisorList.length,
+                            itemCount: filteredareaList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
                               return const SizedBox(height: 25);
                             },
                             itemBuilder: (context, index) {
-                              final employee = filteredSupervisorList[index];
+                              final task = filteredareaList[index];
 
                               return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return EmployeeDetailsPopup(
-                                          employee: employee);
-                                    },
-                                  );
-                                },
+                                // onTap: () {
+                                //   showDialog(
+                                //     context: context,
+                                //     builder: (BuildContext context) {
+                                //       return EmployeeDetailsPopup(
+                                //           employee: task);
+                                //     },
+                                //   );
+                                // },
                                 onLongPress: () {
-                                  _showBottomSheet(context, employee);
+                                  _showBottomSheet(context, task);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -273,8 +208,8 @@ class SupervisorPageState extends State<SupervisorPage> {
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        blurRadius: 7,
-                                        offset: Offset(4, 8), // Shadow position
+                                        blurRadius: 1,
+                                        offset: Offset(0, 6), // Shadow position
                                       ),
                                     ],
                                   ),
@@ -306,11 +241,9 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        employee['name']
-                                                                    .length >
-                                                                15
-                                                            ? '${employee['name'].substring(0, 15)}...'
-                                                            : employee['name'],
+                                                        task['name'].length > 20
+                                                            ? '${task['name'].substring(0, 20)}...'
+                                                            : task['name'],
                                                         style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight:
@@ -320,8 +253,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                       Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: employee[
-                                                                      'status'] ==
+                                                          color: task['status'] ==
                                                                   "Inactive"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
@@ -333,7 +265,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                             const EdgeInsets
                                                                 .all(10),
                                                         child: Text(
-                                                          employee['status'],
+                                                          task['status'],
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14,
@@ -347,85 +279,12 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                     ],
                                                   ),
                                                   const SizedBox(height: 10),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      const Icon(
-                                                        Icons.mail_outline,
-                                                        color: Colors.black,
-                                                        size: 18,
-                                                      ),
-                                                      const SizedBox(width: 4),
-                                                      Text(
-                                                        "Email: ${employee['email']}",
-                                                        style: GoogleFonts.lato(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontSize: 13,
-                                                                  color: Colors
-                                                                      .black),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      const Icon(
-                                                        Icons
-                                                            .phone_android_outlined,
-                                                        color: Colors.black,
-                                                        size: 18,
-                                                      ),
-                                                      const SizedBox(width: 4),
-                                                      Text(
-                                                        "Điện thoại: ${employee['phoneNumber']}",
-                                                        style: GoogleFonts.lato(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontSize: 13,
-                                                                  color: Colors
-                                                                      .black),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ],
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors
-                                              .grey[400], // Đặt màu xám ở đây
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        height: 45,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                          ],
-                                        ),
-                                      )
                                     ],
                                   ),
                                 ),
@@ -469,16 +328,16 @@ class SupervisorPageState extends State<SupervisorPage> {
                       builder: (BuildContext context1) {
                         return ConfirmDeleteDialog(
                           title: "Đổi trạng thái",
-                          content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
+                          content: "Bạn có chắc muốn đổi trạng thái dụng cụ?",
                           onConfirm: () {
-                            // changeStatusEmployee(employee['id']).then((value) {
+                            // changeStatusArea(employee['id']).then((value) {
                             //   if (value) {
-                            //     getSupervisors();
+                            //     getMaterials();
                             //     Navigator.of(context).pop();
-                            //     SnackbarShowNoti.showSnackbar(context,
+                            //     SnackbarShowNoti.showSnackbar(
                             //         'Đổi trạng thái thành công!', false);
                             //   } else {
-                            //     SnackbarShowNoti.showSnackbar(context,
+                            //     SnackbarShowNoti.showSnackbar(
                             //         'Đổi trạng thái không thành công!', true);
                             //   }
                             // });

@@ -308,6 +308,23 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.handyman_outlined,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Dụng cụ: ${task['materialName']}', 35),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
               children: [
                 const Icon(
                   Icons.priority_high,
