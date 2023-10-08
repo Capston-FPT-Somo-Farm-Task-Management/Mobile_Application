@@ -159,7 +159,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                     ),
                     MyInputField(
                       title: "Nhắc nhở",
-                      hint: "$_selectedRemind trước khi bắt đầu",
+                      hint: "$_selectedRemind phút trước khi bắt đầu",
                       widget: DropdownButton(
                         underline: Container(height: 0),
                         icon: const Icon(
@@ -376,6 +376,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                     )),
             (route) => false, // Xóa tất cả các route khỏi stack
           );
+          SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
         }
       }).catchError((e) {
         setState(() {
