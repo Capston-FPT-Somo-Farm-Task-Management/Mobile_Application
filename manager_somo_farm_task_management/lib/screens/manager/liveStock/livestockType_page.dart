@@ -37,10 +37,6 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
     });
   }
 
-  Future<Map<String, dynamic>> deleteLiveStock(int id, String status) {
-    return LiveStockService().deleteLiveStock(id, status);
-  }
-
   Future<List<Map<String, dynamic>>> GetAllLiveStockType() {
     return HabitantTypeService().getLiveStockTypeFromHabitantType();
   }
@@ -250,8 +246,6 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                             Navigator.of(context).pop();
                             setState(() {});
                             liveStocks.remove(liveStock);
-                            deleteLiveStock(
-                                liveStock['id'], liveStock['status']);
                           },
                           buttonConfirmText: "Xóa",
                         );

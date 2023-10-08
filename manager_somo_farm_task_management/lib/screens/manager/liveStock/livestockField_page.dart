@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
@@ -35,10 +37,6 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
-  }
-
-  Future<Map<String, dynamic>> deleteLiveStock(int id, String status) {
-    return LiveStockService().deleteLiveStock(id, status);
   }
 
   Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
@@ -210,7 +208,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                     width: 1.0, // Độ dày của đường viền
                                   ),
                                 ),
-                                height: 110,
+                                height: 120,
                                 width: double.infinity,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,12 +219,42 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(
-                                            liveStock['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                wrapWordsWithEllipsis(
+                                                    liveStock['name'], 26),
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      liveStock['isDelete'] ==
+                                                              true
+                                                          ? Colors.red[400]
+                                                          : kPrimaryColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                child: Text(
+                                                  liveStock['isDelete'] == false
+                                                      ? "Active"
+                                                      : "Inactive",
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
@@ -317,8 +345,6 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                             Navigator.of(context).pop();
                             setState(() {});
                             liveStocks.remove(liveStock);
-                            deleteLiveStock(
-                                liveStock['id'], liveStock['status']);
                           },
                           buttonConfirmText: "Xóa",
                         );
