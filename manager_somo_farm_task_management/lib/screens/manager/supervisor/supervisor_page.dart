@@ -317,33 +317,33 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                               FontWeight.bold,
                                                         ),
                                                       ),
-                                                      // Container(
-                                                      //   decoration:
-                                                      //       BoxDecoration(
-                                                      //     color: employee[
-                                                      //                 'status'] ==
-                                                      //             "Inactive"
-                                                      //         ? Colors.red[400]
-                                                      //         : kPrimaryColor,
-                                                      //     borderRadius:
-                                                      //         BorderRadius
-                                                      //             .circular(10),
-                                                      //   ),
-                                                      //   padding:
-                                                      //       const EdgeInsets
-                                                      //           .all(10),
-                                                      //   child: Text(
-                                                      //     employee['status'],
-                                                      //     style:
-                                                      //         const TextStyle(
-                                                      //             fontSize: 14,
-                                                      //             fontWeight:
-                                                      //                 FontWeight
-                                                      //                     .bold,
-                                                      //             color: Colors
-                                                      //                 .white),
-                                                      //   ),
-                                                      // ),
+                                                      Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: employee[
+                                                                      'status'] ==
+                                                                  "Inactive"
+                                                              ? Colors.red[400]
+                                                              : kPrimaryColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        child: Text(
+                                                          employee['status'],
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                   const SizedBox(height: 10),
