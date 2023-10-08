@@ -101,7 +101,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   },
                   child: Container(
                     width: 120,
-                    height: 60,
+                    height: 55,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: kPrimaryColor,
