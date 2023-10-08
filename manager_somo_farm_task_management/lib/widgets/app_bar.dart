@@ -7,6 +7,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/home/manager_h
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/material/material_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
@@ -798,6 +799,40 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                     width: 15),
                                                                 Text(
                                                                   "Người giám sát",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          20),
+                                                                ),
+                                                              ]),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 25),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: padingForAll,
+                                                          right: padingForAll),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                                    MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  MaterialsPage(),
+                                                            ));
+                                                          },
+                                                          child: const Row(
+                                                              children: [
+                                                                Icon(Icons
+                                                                    .handyman_outlined),
+                                                                SizedBox(
+                                                                    width: 15),
+                                                                Text(
+                                                                  "Dụng cụ",
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           20),
