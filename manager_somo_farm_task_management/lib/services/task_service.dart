@@ -66,8 +66,12 @@ class TaskService {
   }
 
   Future<List<Map<String, dynamic>>> getTasksByUserIdDateStatus(
-      int userId, DateTime date, int status) async {
-    var dateTime = DateFormat('yyyy-MM-dd').format(date);
+      int userId, DateTime? date, int status) async {
+    var dateTime = "";
+    if (date != null) {
+      dateTime = DateFormat('yyyy-MM-dd').format(date);
+    }
+
     final String getTasksUrl =
         '$baseUrl/FarmTask/Member($userId)/Status($status)/Date?date=$dateTime';
 
