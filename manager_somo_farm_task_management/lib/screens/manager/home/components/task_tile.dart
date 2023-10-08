@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 
 class TaskTile extends StatelessWidget {
@@ -10,11 +11,11 @@ class TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(bottom: 12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 5, 16),
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -81,7 +82,7 @@ class TaskTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Vị trí: ${task['fieldName']}",
+                      "Vị trí: ${task['fieldName'].length > 19 ? task['fieldName'].substring(0, 18) + '...' : task['fieldName']}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 15, color: Colors.grey[100]),
@@ -93,20 +94,23 @@ class TaskTile extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.only(left: 10),
             height: 60,
             width: 0.5,
             color: Colors.grey[200]!.withOpacity(0.7),
           ),
-          RotatedBox(
-            quarterTurns: 3,
-            child: Text(
-              task['status'],
-              style: GoogleFonts.lato(
-                textStyle: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+          GestureDetector(
+            onTap: () {},
+            child: RotatedBox(
+              quarterTurns: 0,
+              child: Container(
+                color: Colors.transparent,
+                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+                child: Icon(
+                  Icons.arrow_forward_ios_outlined,
+                  color: kBackgroundColor,
+                  size: 12,
+                ),
               ),
             ),
           ),

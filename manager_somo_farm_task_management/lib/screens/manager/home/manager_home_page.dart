@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
 import '../../../widgets/bottom_navigation_bar.dart';
+import 'package:flutter/cupertino.dart';
 
 class ManagerHomePage extends StatefulWidget {
   final int farmId;
@@ -28,6 +29,7 @@ class ManagerHomePage extends StatefulWidget {
 
 class ManagerHomePageState extends State<ManagerHomePage> {
   int _currentIndex = 0;
+  int groupValue = 0;
   DateTime _selectedDate = DateTime.now();
   List<Map<String, dynamic>> tasks = [];
   bool isLoading = true;
@@ -37,14 +39,15 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
     notificationService.initialNotification();
-    _getTasksForSelectedDate(DateTime.now());
+    _getTasksForSelectedDateAndStatus(DateTime.now(), 0);
   }
 
-  Future<void> _getTasksForSelectedDate(DateTime selectedDate) async {
+  Future<void> _getTasksForSelectedDateAndStatus(
+      DateTime selectedDate, int status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
-    List<Map<String, dynamic>> selectedDateTasks =
-        await TaskService().getTasksByUserIdAndDate(userId!, selectedDate);
+    List<Map<String, dynamic>> selectedDateTasks = await TaskService()
+        .getTasksByUserIdDateStatus(userId!, selectedDate, status);
     setState(() {
       tasks = selectedDateTasks;
       isLoading = false;
@@ -98,7 +101,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   },
                   child: Container(
                     width: 120,
-                    height: 60,
+                    height: 55,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: kPrimaryColor,
@@ -147,9 +150,34 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 setState(() {
                   _selectedDate = date;
                 });
-                _getTasksForSelectedDate(date);
+                _getTasksForSelectedDateAndStatus(date, groupValue);
               },
               locale: 'vi_VN',
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            child: CupertinoSegmentedControl<int>(
+              selectedColor: kSecondColor,
+              borderColor: kSecondColor,
+              pressedColor: Colors.blue[50],
+              children: {
+                0: Text('Chuẩn bị'),
+                1: Text('Đang làm'),
+                2: Text('Hoàn thành'),
+                3: Text('Không h.thành'),
+                // Thêm các option khác nếu cần
+              },
+              onValueChanged: (int newValue) {
+                // Xử lý sự kiện khi chọn option
+                // Đồng thời có thể gọi hàm để cập nhật danh sách nhiệm vụ
+                setState(() {
+                  groupValue = newValue;
+                });
+                _getTasksForSelectedDateAndStatus(_selectedDate, groupValue);
+              },
+              groupValue: groupValue,
             ),
           ),
           const SizedBox(height: 10),
@@ -187,7 +215,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             height:
                                 16), // Khoảng cách giữa biểu tượng và văn bản
                         Text(
-                          "Hôm nay không có công việc nào",
+                          "Không có công việc nào",
                           style: TextStyle(
                             fontSize:
                                 20, // Kích thước văn bản có thể điều chỉnh
@@ -198,7 +226,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                     ),
                   )
                 : RefreshIndicator(
-                    onRefresh: () => _getTasksForSelectedDate(_selectedDate),
+                    onRefresh: () => _getTasksForSelectedDateAndStatus(
+                        _selectedDate, groupValue),
                     child: ListView.builder(
                         itemCount: tasks.length,
                         itemBuilder: (_, index) {
@@ -299,7 +328,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             onConfirm: () {
                               changeTaskStatus(task['id'], 4).then((value) {
                                 if (value) {
-                                  _getTasksForSelectedDate(_selectedDate);
+                                  _getTasksForSelectedDateAndStatus(
+                                      _selectedDate, groupValue);
                                   Navigator.of(context).pop();
                                   SnackbarShowNoti.showSnackbar(
                                       "Xóa thành công!", false);

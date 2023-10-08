@@ -8,6 +8,7 @@ import 'package:manager_somo_farm_task_management/services/employee_service.dart
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:manager_somo_farm_task_management/services/member_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
+import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SecondAddTaskPage extends StatefulWidget {
@@ -202,6 +203,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                         child: ChipsInput(
                           suggestionsBoxMaxHeight: 200,
                           key: _keyChange,
+                          enabled: !hintEmployee.isEmpty,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: hintEmployee,
@@ -209,18 +211,18 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           initialValue: [],
                           findSuggestions: (String query) {
                             if (query.length != 0) {
-                              var lowercaseQuery = query.toLowerCase();
+                              var lowercaseQuery =
+                                  removeDiacritics(query.toLowerCase());
                               return filteredEmployees.where((e) {
-                                return e['name']
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
+                                return removeDiacritics(e['name'].toLowerCase())
+                                    .contains(lowercaseQuery);
                               }).toList(growable: false)
-                                ..sort((a, b) => a['name']
-                                    .toLowerCase()
-                                    .indexOf(lowercaseQuery)
-                                    .compareTo(b['name']
-                                        .toLowerCase()
-                                        .indexOf(lowercaseQuery)));
+                                ..sort((a, b) =>
+                                    removeDiacritics(a['name'].toLowerCase())
+                                        .indexOf(lowercaseQuery)
+                                        .compareTo(removeDiacritics(
+                                                b['name'].toLowerCase())
+                                            .indexOf(lowercaseQuery)));
                             } else {
                               return const <Map<String, dynamic>>[];
                             }
@@ -316,18 +318,18 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           initialValue: [],
                           findSuggestions: (String query) {
                             if (query.length != 0) {
-                              var lowercaseQuery = query.toLowerCase();
+                              var lowercaseQuery =
+                                  removeDiacritics(query.toLowerCase());
                               return materials.where((m) {
-                                return m['name']
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase());
+                                return removeDiacritics(m['name'].toLowerCase())
+                                    .contains(lowercaseQuery);
                               }).toList(growable: false)
-                                ..sort((a, b) => a['name']
-                                    .toLowerCase()
-                                    .indexOf(lowercaseQuery)
-                                    .compareTo(b['name']
-                                        .toLowerCase()
-                                        .indexOf(lowercaseQuery)));
+                                ..sort((a, b) =>
+                                    removeDiacritics(a['name'].toLowerCase())
+                                        .indexOf(lowercaseQuery)
+                                        .compareTo(removeDiacritics(
+                                                b['name'].toLowerCase())
+                                            .indexOf(lowercaseQuery)));
                             } else {
                               return const <Map<String, dynamic>>[];
                             }
