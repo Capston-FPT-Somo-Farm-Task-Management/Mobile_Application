@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -31,12 +32,13 @@ class TaskPageState extends State<TaskPage> {
 
   String? selectedFilter;
   String selectedDate = "";
-
+  DateTime? _selectedDate;
   int? farmId;
   final TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> tasks = [];
   List<Map<String, dynamic>> filteredTaskList = [];
   bool isLoading = true;
+  int groupValue = 0;
   @override
   initState() {
     super.initState();
@@ -44,7 +46,7 @@ class TaskPageState extends State<TaskPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    getTasks();
+    _getTasksForSelectedDateAndStatus(null, 0);
   }
 
   Future<bool> changeTaskStatus(int taskId, int newStatus) async {
@@ -66,29 +68,15 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
-  Future<void> getTasks() async {
+  Future<void> _getTasksForSelectedDateAndStatus(
+      DateTime? selectedDate, int status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
-    TaskService().getTaskActiveByUserId(userId!).then((value) {
-      if (value.isNotEmpty) {
-        setState(() {
-          tasks = value;
-          filteredTaskList = tasks;
-          selectedDate = "";
-          isLoading = false;
-        });
-      } else {
-        throw Exception();
-      }
-    });
-  }
-
-  Future<void> _getTasksForSelectedDate(DateTime selectedDate) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? userId = prefs.getInt('userId');
-    List<Map<String, dynamic>> selectedDateTasks =
-        await TaskService().getTasksByUserIdAndDate(userId!, selectedDate);
+    List<Map<String, dynamic>> selectedDateTasks = await TaskService()
+        .getTasksByUserIdDateStatus(userId!, selectedDate, status);
     setState(() {
+      tasks = selectedDateTasks;
+      isLoading = false;
       filteredTaskList = selectedDateTasks;
     });
   }
@@ -100,55 +88,51 @@ class TaskPageState extends State<TaskPage> {
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
-      body: Container(
-        padding:
-            const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
-        child: Column(
-          children: [
-            Column(
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+            child: Column(
               children: [
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Công việc",
-                    style: TextStyle(
-                      fontSize: 28, // Thay đổi kích thước phù hợp
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  // FirstAddTaskPage(farm: widget.farm),
-                                  ChooseHabitantPage(farmId: farmId!),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                          minimumSize: Size(120, 45),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Thêm việc",
-                            style: TextStyle(fontSize: 19),
-                          ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Công việc",
+                        style: TextStyle(
+                          fontSize: 28, // Thay đổi kích thước phù hợp
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 10), // Khoảng cách giữa hai nút
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                // FirstAddTaskPage(farm: widget.farm),
+                                ChooseHabitantPage(farmId: farmId!),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimaryColor,
+                        minimumSize: Size(120, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Thêm việc",
+                          style: TextStyle(fontSize: 19),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 15),
                 Container(
@@ -172,15 +156,36 @@ class TaskPageState extends State<TaskPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    if (!selectedDate.isEmpty)
+                      ElevatedButton(
+                        onPressed: () {
+                          _getTasksForSelectedDateAndStatus(null, groupValue);
+                          selectedDate = "";
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[400],
+                          minimumSize: Size(20, 23),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Xóa",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    SizedBox(width: 10),
                     Text(selectedDate),
                     IconButton(
                       icon: const Icon(Icons.calendar_month_outlined),
                       onPressed: () async {
-                        DateTime? _selectedDate = await showDatePicker(
+                        DateTime? _selected = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(1),
@@ -188,11 +193,14 @@ class TaskPageState extends State<TaskPage> {
                         );
 
                         setState(() {
-                          if (_selectedDate != null) {
-                            _getTasksForSelectedDate(_selectedDate);
+                          if (_selected != null) {
+                            _getTasksForSelectedDateAndStatus(
+                                _selected, groupValue);
                             selectedDate =
-                                DateFormat('dd/MM/yy').format(_selectedDate);
+                                DateFormat('dd/MM/yy').format(_selected);
+                            _selectedDate = _selected;
                           } else {
+                            _getTasksForSelectedDateAndStatus(null, groupValue);
                             setState(() {
                               selectedDate = "";
                               filteredTaskList = tasks;
@@ -202,103 +210,72 @@ class TaskPageState extends State<TaskPage> {
                       },
                     ),
                     const SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey, // Màu đường viền
-                          width: 1.0, // Độ rộng của đường viền
-                        ),
-                        borderRadius: BorderRadius.circular(
-                            5.0), // Độ bo góc của đường viền
-                      ),
-                      child: DropdownButton<String>(
-                        isDense: true,
-                        alignment: Alignment.center,
-                        hint: Text(selectedFilter!),
-                        value: selectedFilter, // Giá trị đã chọn cho Dropdown 1
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedFilter =
-                                newValue; // Cập nhật giá trị đã chọn cho Dropdown 1
-                            if (selectedFilter == "Tất cả") {
-                              // Nếu đã chọn "Tất cả", hiển thị tất cả các nhiệm vụ
-                              filteredTaskList = tasks;
-                              selectedDate = "";
-                            }
-                            if (selectedFilter == "Không hoàn thành") {
-                              filteredTaskList = tasks
-                                  .where(
-                                      (t) => t['status'] == "Không hoàn thành")
-                                  .toList();
-                              selectedDate = "";
-                            }
-                            if (selectedFilter == "Đang thực hiện") {
-                              filteredTaskList = tasks
-                                  .where((t) => t['status'] == "Đang thực hiện")
-                                  .toList();
-                              selectedDate = "";
-                            }
-                            if (selectedFilter == "Hoàn thành") {
-                              filteredTaskList = tasks
-                                  .where((t) => t['status'] == "Hoàn thành")
-                                  .toList();
-                              selectedDate = "";
-                            }
-                            if (selectedFilter == "Chuẩn bị") {
-                              filteredTaskList = tasks
-                                  .where((t) => t['status'] == "Chuẩn bị")
-                                  .toList();
-                              selectedDate = "";
-                            }
-                          });
-                        },
-                        items: filters
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    )
                   ],
                 )
               ],
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              flex: 3,
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(color: kPrimaryColor),
-                    )
-                  : filteredTaskList.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.no_backpack,
-                                size:
-                                    75, // Kích thước biểu tượng có thể điều chỉnh
-                                color: Colors.grey, // Màu của biểu tượng
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 5),
+            child: CupertinoSegmentedControl<int>(
+              selectedColor: kSecondColor,
+              borderColor: kSecondColor,
+              pressedColor: Colors.blue[50],
+              children: {
+                0: Text('Chuẩn bị'),
+                1: Text('Đang làm'),
+                2: Text('Hoàn thành'),
+                3: Text('Không h.thành'),
+                // Thêm các option khác nếu cần
+              },
+              onValueChanged: (int newValue) {
+                // Xử lý sự kiện khi chọn option
+                // Đồng thời có thể gọi hàm để cập nhật danh sách nhiệm vụ
+                setState(() {
+                  groupValue = newValue;
+                });
+                _getTasksForSelectedDateAndStatus(_selectedDate, groupValue);
+              },
+              groupValue: groupValue,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(color: kPrimaryColor),
+                  )
+                : filteredTaskList.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.no_backpack,
+                              size:
+                                  75, // Kích thước biểu tượng có thể điều chỉnh
+                              color: Colors.grey, // Màu của biểu tượng
+                            ),
+                            SizedBox(
+                                height:
+                                    16), // Khoảng cách giữa biểu tượng và văn bản
+                            Text(
+                              "Không có công việc nào",
+                              style: TextStyle(
+                                fontSize:
+                                    20, // Kích thước văn bản có thể điều chỉnh
+                                color: Colors.grey, // Màu văn bản
                               ),
-                              SizedBox(
-                                  height:
-                                      16), // Khoảng cách giữa biểu tượng và văn bản
-                              Text(
-                                "Không có công việc nào",
-                                style: TextStyle(
-                                  fontSize:
-                                      20, // Kích thước văn bản có thể điều chỉnh
-                                  color: Colors.grey, // Màu văn bản
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : RefreshIndicator(
-                          onRefresh: () => getTasks(),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: RefreshIndicator(
+                          onRefresh: () => _getTasksForSelectedDateAndStatus(
+                              _selectedDate, groupValue),
                           child: ListView.separated(
                             itemCount: filteredTaskList.length,
                             separatorBuilder:
@@ -501,9 +478,9 @@ class TaskPageState extends State<TaskPage> {
                             },
                           ),
                         ),
-            ),
-          ],
-        ),
+                      ),
+          ),
+        ],
       ),
     );
   }
@@ -573,7 +550,8 @@ class TaskPageState extends State<TaskPage> {
                             onConfirm: () {
                               changeTaskStatus(task['id'], 4).then((value) {
                                 if (value) {
-                                  getTasks();
+                                  _getTasksForSelectedDateAndStatus(
+                                      _selectedDate, groupValue);
                                   Navigator.of(context).pop();
                                   SnackbarShowNoti.showSnackbar(
                                       "Xóa thành công!", false);
