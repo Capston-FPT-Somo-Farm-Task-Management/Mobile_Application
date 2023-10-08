@@ -381,7 +381,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi khi tạo công việc!", true);
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
       setState(() {
