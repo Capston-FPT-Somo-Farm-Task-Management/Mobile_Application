@@ -17,7 +17,9 @@ class CreateArea extends StatefulWidget {
 class CreateAreaState extends State<CreateArea> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _fareaController = TextEditingController();
+  final TextEditingController _fareaCodeController = TextEditingController();
   bool isLoading = false;
+
   Future<bool> createArea(Map<String, dynamic> areaData) {
     return AreaService().createArea(areaData);
   }
@@ -61,6 +63,11 @@ class CreateAreaState extends State<CreateArea> {
                     Text(
                       "Thêm khu vực",
                       style: headingStyle,
+                    ),
+                    MyInputField(
+                      title: "Mã khu vực",
+                      hint: "Nhập mã khu vực",
+                      controller: _fareaCodeController,
                     ),
                     MyInputField(
                       title: "Tên khu vực",
@@ -112,6 +119,7 @@ class CreateAreaState extends State<CreateArea> {
     });
     if (_nameController.text.isNotEmpty && _fareaController.text.isNotEmpty) {
       Map<String, dynamic> areakData = {
+        "code": _fareaCodeController.text,
         "name": _nameController.text,
         "fArea": _fareaController.text,
         "farmId": widget.farmId,
@@ -127,7 +135,7 @@ class CreateAreaState extends State<CreateArea> {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi!", true);
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       setState(() {
