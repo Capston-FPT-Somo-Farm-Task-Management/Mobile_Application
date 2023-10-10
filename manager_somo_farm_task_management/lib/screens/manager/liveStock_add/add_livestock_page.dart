@@ -113,7 +113,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Id vật nuôi",
+                title: "Mã vật nuôi",
                 hint: "Nhập id vật nuôi",
                 controller: _titleIdController,
               ),

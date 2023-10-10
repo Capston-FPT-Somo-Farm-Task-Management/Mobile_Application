@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockType_page.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
@@ -15,14 +14,15 @@ class CreateLiveStockType extends StatefulWidget {
 }
 
 class CreateLiveStockTypeState extends State<CreateLiveStockType> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _titleNumberController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _originController = TextEditingController();
+  final TextEditingController _environmentController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   String name = "";
   int? status;
   int? quantity;
 
-  Future<Map<String, dynamic>> CreateLiveStockType(
-      Map<String, dynamic> liveStock) {
+  Future<bool> CreateLiveStockType(Map<String, dynamic> liveStock) {
     return HabitantTypeService().CreateHabitantType(liveStock);
   }
 
@@ -58,12 +58,22 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
               MyInputField(
                 title: "Tên loại vật nuôi",
                 hint: "Nhập tên loại",
-                controller: _titleController,
+                controller: _nameController,
               ),
-              MyInputNumber(
-                title: "Nhập số lượng",
-                hint: "Nhập số lượng",
-                controller: _titleNumberController,
+              MyInputField(
+                title: "Xuất xứ của loại vật nuôi",
+                hint: "Nhập xuất xứ",
+                controller: _originController,
+              ),
+              MyInputField(
+                title: "Môi trường sống của loại vật nuôi",
+                hint: "Nhập xuất xứ",
+                controller: _environmentController,
+              ),
+              MyInputField(
+                title: "Mô tả loại vật nuôi",
+                hint: "Nhập xuất xứ",
+                controller: _descriptionController,
               ),
               const SizedBox(height: 40),
               const Divider(
@@ -100,18 +110,24 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty) {
+    if (_nameController.text.isNotEmpty) {
       Map<String, dynamic> liveStock = {
-        'name': _titleController.text,
+        'name': _nameController.text,
+        'origin': _originController.text,
+        'environment': _environmentController.text,
+        'description': _descriptionController.text,
         'status': 1,
-        'quantity': _titleNumberController.hashCode,
       };
       CreateLiveStockType(liveStock).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LiveStockTypePage(),
-          ),
-        );
+        if (value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => LiveStockTypePage(),
+            ),
+          );
+        }
+      }).catchError((e) {
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ

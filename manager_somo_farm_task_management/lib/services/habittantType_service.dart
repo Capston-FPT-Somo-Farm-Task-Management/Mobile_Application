@@ -44,8 +44,7 @@ class HabitantTypeService {
     }
   }
 
-  Future<Map<String, dynamic>> CreateHabitantType(
-      Map<String, dynamic> habitantType) async {
+  Future<bool> CreateHabitantType(Map<String, dynamic> habitantType) async {
     final String createHabitantTypekUrl = '$baseUrl/HabitantType';
     var body = jsonEncode(habitantType);
     final response = await http.post(Uri.parse(createHabitantTypekUrl),
@@ -55,9 +54,7 @@ class HabitantTypeService {
         body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> liveStock =
-          Map<String, dynamic>.from(json.decode(response.body));
-      return liveStock;
+      return true;
     } else {
       throw Exception('Failed to create habitant type');
     }
