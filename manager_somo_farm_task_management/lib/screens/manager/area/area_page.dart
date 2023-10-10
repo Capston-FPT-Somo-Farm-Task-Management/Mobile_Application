@@ -44,11 +44,13 @@ class AreaPageState extends State<AreaPage> {
 
   Future<void> getAreas() async {
     AreaService().getAreasByFarmId(widget.farmId).then((value) {
+      setState(() {
+        isLoading = false;
+      });
       if (value.isNotEmpty) {
         setState(() {
           areas = value;
           filteredareaList = areas;
-          isLoading = false;
         });
       } else {
         throw Exception();

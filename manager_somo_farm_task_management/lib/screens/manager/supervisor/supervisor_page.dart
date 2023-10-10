@@ -61,11 +61,13 @@ class SupervisorPageState extends State<SupervisorPage> {
 
   Future<void> getSupervisors() async {
     SupervisorService().getSupervisorsbyFarmId(farmId!).then((value) {
+      setState(() {
+        isLoading = false;
+      });
       if (value.isNotEmpty) {
         setState(() {
           supervisors = value;
           filteredSupervisorList = supervisors;
-          isLoading = false;
         });
       } else {
         throw Exception();
