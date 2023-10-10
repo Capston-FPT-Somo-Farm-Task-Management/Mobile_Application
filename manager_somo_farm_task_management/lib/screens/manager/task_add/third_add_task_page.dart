@@ -6,6 +6,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/task_add/compo
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ThirdAddTaskPage extends StatefulWidget {
   final int fiedlId;
@@ -43,10 +44,10 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   int _selectedRemind = 0;
   List<int> remindList = [0, 5, 10, 15, 20];
   String _selectedRepeat = "Không";
-  List<String> repeatList = ["Không", "Hàng ngày", "Hàng tuần", "Hàng tháng"];
+  List<String> repeatList = ["Không", "Có"];
   String showInputFieldRepeat = "Không";
   List<int> repeatNumbers = [];
-  int _selectedRepeatNumber = 0;
+  List<DateTime> selectedDatesRepeat = [];
   List<String> priorities = [
     "Thấp nhất",
     "Thấp",
@@ -78,6 +79,18 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
 
   Future<bool> createTask(Map<String, dynamic> taskData, int managerId) {
     return TaskService().createTask(taskData, managerId);
+  }
+
+  String _formatDates(List<DateTime> dates) {
+    if (dates.isEmpty) {
+      return 'Không có ngày được chọn';
+    }
+
+    List<String> formattedDates = dates.map((date) {
+      return DateFormat('dd-MM-yyyy').format(date);
+    }).toList();
+
+    return formattedDates.join(', ');
   }
 
   @override
@@ -203,7 +216,6 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                               for (int i = 1; i <= 30; i++) {
                                 repeatNumbers.add(i);
                               }
-                              _selectedRepeatNumber = 1;
                             }
                           });
                         },
@@ -222,58 +234,51 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                       ),
                     ),
                     if (showInputFieldRepeat != "Không")
-                      MyInputField(
-                        title: "Lặp mỗi",
-                        hint: "$_selectedRepeatNumber",
-                        widget: DropdownButton(
-                          underline: Container(height: 0),
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.grey,
-                          ),
-                          iconSize: 32,
-                          elevation: 4,
-                          style: subTitileStyle,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedRepeatNumber = int.parse(newValue!);
-                            });
-                          },
-                          items: repeatNumbers
-                              .map<DropdownMenuItem<String>>((int value) {
-                            return DropdownMenuItem<String>(
-                              value: value.toString(),
-                              child: Text(value.toString()),
-                            );
-                          }).toList(),
-                          menuMaxHeight: 200,
-                        ),
-                      ),
-                    if (showInputFieldRepeat != "Không")
-                      Container(
-                        margin: const EdgeInsets.only(top: 7.0),
-                        child: Text(
-                          showInputFieldRepeat.split(' ').last,
-                          style: titileStyle,
-                        ),
-                      ),
-                    if (showInputFieldRepeat != "Không")
-                      MyInputField(
-                        title: "Lặp đến ngày",
-                        hint: _selectedDateRepeatUntil == null
-                            ? "dd/MM/yyy"
-                            : DateFormat('dd/MM/yyyy')
-                                .format(_selectedDateRepeatUntil!),
-                        widget: IconButton(
-                          icon: const Icon(
-                            Icons.calendar_today_outlined,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            _getDateFromUser();
-                          },
-                        ),
-                      ),
+                      _selectedStartDate == null
+                          ? Text(
+                              "Hãy chọn ngày giờ bắt đầu trước!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    "Chọn ngày lặp lại",
+                                    style: titileStyle,
+                                  ),
+                                ),
+                                TableCalendar(
+                                  locale: 'vi_VN',
+                                  rowHeight: 43,
+                                  headerStyle: HeaderStyle(
+                                    formatButtonVisible: false,
+                                    titleCentered: true,
+                                  ),
+                                  availableGestures: AvailableGestures.all,
+                                  firstDay: _selectedStartDate!
+                                      .add(Duration(days: 1)),
+                                  focusedDay: _selectedStartDate!
+                                      .add(Duration(days: 1)),
+                                  lastDay:
+                                      DateTime.now().add(Duration(days: 365)),
+                                  onDaySelected: (date, events) {
+                                    setState(() {
+                                      if (selectedDatesRepeat.contains(date)) {
+                                        selectedDatesRepeat.remove(date);
+                                      } else {
+                                        selectedDatesRepeat.add(date);
+                                      }
+                                    });
+                                  },
+                                ),
+                                SizedBox(height: 20),
+                                Text(
+                                    'Ngày được chọn: ${_formatDates(selectedDatesRepeat)}'),
+                              ],
+                            ),
                     MyInputField(
                       title: "Độ ưu tiên",
                       hint: _selectedPriority,
@@ -344,6 +349,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       Map<String, dynamic> taskData = {
         "employeeIds": widget.employeeIds,
         "materialIds": widget.materialIds,
+        // "dates":
         "farmTask": {
           "name": widget.taskName,
           "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
@@ -352,8 +358,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
               DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!),
           "description": widget.description,
           "priority": _selectedPriority,
-          "repeat": _selectedRepeat,
-          "iterations": _selectedRepeatNumber,
+          "repeat": _selectedRepeat == "Không" ? false : true,
           "receiverId": widget.supervisorId,
           "fieldId": widget.fiedlId,
           "taskTypeId": widget.taskTypeId,
