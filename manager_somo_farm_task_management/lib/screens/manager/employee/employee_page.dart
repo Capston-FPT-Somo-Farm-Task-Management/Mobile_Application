@@ -358,6 +358,29 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         MainAxisAlignment.start,
                                                     children: [
                                                       const Icon(
+                                                        Icons.tag,
+                                                        color: Colors.black,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        "Mã nhân viên: ${employee['code']}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const Icon(
                                                         Icons
                                                             .phone_android_outlined,
                                                         color: Colors.black,
