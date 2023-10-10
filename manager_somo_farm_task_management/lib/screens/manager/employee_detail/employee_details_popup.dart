@@ -46,6 +46,23 @@ class EmployeeDetailsPopup extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
+                  Icons.tag,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  wrapWords('Mã nhân viên: ${employee['code']}', 35),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
                   Icons.phone_android_rounded,
                   color: kSecondColor,
                 ),
