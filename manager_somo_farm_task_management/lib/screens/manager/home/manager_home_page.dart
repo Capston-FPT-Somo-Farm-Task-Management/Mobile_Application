@@ -33,6 +33,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   DateTime _selectedDate = DateTime.now();
   List<Map<String, dynamic>> tasks = [];
   bool isLoading = true;
+  bool isMoreLeft = false;
   @override
   void initState() {
     super.initState();
@@ -157,36 +158,73 @@ class ManagerHomePageState extends State<ManagerHomePage> {
           ),
           const SizedBox(height: 10),
           Container(
-            width: double.infinity,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  CupertinoSegmentedControl<int>(
-                    selectedColor: kSecondColor,
-                    borderColor: kSecondColor,
-                    pressedColor: Colors.blue[50],
-                    children: {
-                      5: Text("Từ chối"),
-                      0: Text('Chuẩn bị'),
-                      1: Text('Đang làm'),
-                      2: Text('Hoàn thành'),
-                      3: Text(' Không h.thành '),
+            alignment: Alignment.center,
+            child: !isMoreLeft
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CupertinoSegmentedControl<int>(
+                          selectedColor: kSecondColor,
+                          borderColor: kSecondColor,
+                          pressedColor: Colors.blue[50],
+                          children: {
+                            5: Text("Từ chối"),
+                            0: Text("Chuẩn bị"),
+                            1: Text("Đang làm"),
+                            2: Text(">>>")
+                            // Thêm các option khác nếu cần
+                          },
+                          onValueChanged: (int newValue) {
+                            if (newValue == 2)
+                              setState(() {
+                                isMoreLeft = true;
+                              });
 
-                      // Thêm các option khác nếu cần
-                    },
-                    onValueChanged: (int newValue) {
-                      setState(() {
-                        groupValue = newValue;
-                      });
-                      _getTasksForSelectedDateAndStatus(
-                          _selectedDate, groupValue);
-                    },
-                    groupValue: groupValue,
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                _selectedDate, groupValue);
+                          },
+                          groupValue: groupValue,
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CupertinoSegmentedControl<int>(
+                          selectedColor: kSecondColor,
+                          borderColor: kSecondColor,
+                          pressedColor: Colors.blue[50],
+                          children: {
+                            0: Text("<<<"),
+                            1: Text('Đang làm'),
+                            2: Text('Hoàn thành'),
+                            3: Text(' Không h.thành '),
+
+                            // Thêm các option khác nếu cần
+                          },
+                          onValueChanged: (int newValue) {
+                            if (newValue == 0)
+                              setState(() {
+                                isMoreLeft = false;
+                              });
+
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                _selectedDate, groupValue);
+                          },
+                          groupValue: groupValue,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
           ),
           const SizedBox(height: 10),
           _showTask(),
