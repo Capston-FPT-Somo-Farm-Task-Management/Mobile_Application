@@ -217,27 +217,34 @@ class TaskPageState extends State<TaskPage> {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 5),
-            child: CupertinoSegmentedControl<int>(
-              selectedColor: kSecondColor,
-              borderColor: kSecondColor,
-              pressedColor: Colors.blue[50],
-              children: {
-                0: Text('Chuẩn bị'),
-                1: Text('Đang làm'),
-                2: Text('Hoàn thành'),
-                3: Text('Không h.thành'),
-                // Thêm các option khác nếu cần
-              },
-              onValueChanged: (int newValue) {
-                // Xử lý sự kiện khi chọn option
-                // Đồng thời có thể gọi hàm để cập nhật danh sách nhiệm vụ
-                setState(() {
-                  groupValue = newValue;
-                });
-                _getTasksForSelectedDateAndStatus(_selectedDate, groupValue);
-              },
-              groupValue: groupValue,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  CupertinoSegmentedControl<int>(
+                    selectedColor: kSecondColor,
+                    borderColor: kSecondColor,
+                    pressedColor: Colors.blue[50],
+                    children: {
+                      5: Text("Từ chối"),
+                      0: Text('Chuẩn bị'),
+                      1: Text('Đang làm'),
+                      2: Text('Hoàn thành'),
+                      3: Text(' Không h.thành '),
+
+                      // Thêm các option khác nếu cần
+                    },
+                    onValueChanged: (int newValue) {
+                      setState(() {
+                        groupValue = newValue;
+                      });
+                      _getTasksForSelectedDateAndStatus(
+                          _selectedDate, groupValue);
+                    },
+                    groupValue: groupValue,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 10),

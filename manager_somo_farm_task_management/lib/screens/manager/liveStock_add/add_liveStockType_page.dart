@@ -110,7 +110,10 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
   }
 
   _validateDate() {
-    if (_nameController.text.isNotEmpty) {
+    if (_nameController.text.isNotEmpty &&
+        _originController.text.isNotEmpty &&
+        _environmentController.text.isNotEmpty &&
+        _descriptionController.text.isNotEmpty) {
       Map<String, dynamic> liveStock = {
         'name': _nameController.text,
         'origin': _originController.text,
