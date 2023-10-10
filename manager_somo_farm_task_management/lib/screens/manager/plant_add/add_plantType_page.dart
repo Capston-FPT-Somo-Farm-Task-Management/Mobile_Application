@@ -20,7 +20,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
   String name = "";
   int? status;
   int? quantity;
-  Future<Map<String, dynamic>> CreatePlantType(Map<String, dynamic> plant) {
+  Future<bool> CreatePlantType(Map<String, dynamic> plant) {
     return HabitantTypeService().CreateHabitantType(plant);
   }
 

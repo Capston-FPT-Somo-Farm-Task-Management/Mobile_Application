@@ -24,7 +24,7 @@ class FieldService {
     }
   }
 
-  Future<Map<String, dynamic>> CreateField(Map<String, dynamic> field) async {
+  Future<bool> CreateField(Map<String, dynamic> field) async {
     final String createField = '$baseUrl/Field';
     var body = jsonEncode(field);
     final response = await http.post(Uri.parse(createField),
@@ -34,11 +34,10 @@ class FieldService {
         body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> field =
-          Map<String, dynamic>.from(json.decode(response.body));
-      return field;
+      return true;
     } else {
-      throw Exception('Failed to create field');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 

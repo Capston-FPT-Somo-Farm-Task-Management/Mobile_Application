@@ -117,7 +117,9 @@ class CreateAreaState extends State<CreateArea> {
     setState(() {
       isLoading = true;
     });
-    if (_nameController.text.isNotEmpty && _fareaController.text.isNotEmpty) {
+    if (_nameController.text.isNotEmpty &&
+        _fareaController.text.isNotEmpty &&
+        _fareaCodeController.text.isNotEmpty) {
       Map<String, dynamic> areakData = {
         "code": _fareaCodeController.text,
         "name": _nameController.text,

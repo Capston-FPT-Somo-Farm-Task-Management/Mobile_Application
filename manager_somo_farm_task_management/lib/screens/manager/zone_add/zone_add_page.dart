@@ -18,7 +18,8 @@ class CreateZone extends StatefulWidget {
 
 class CreateZoneState extends State<CreateZone> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _fareaController = TextEditingController();
+  final TextEditingController _fZoneController = TextEditingController();
+  final TextEditingController _fZoneCodeController = TextEditingController();
   bool isLoading = false;
   String _selectedArea = "";
   int? _selectedAreaId;
@@ -96,6 +97,11 @@ class CreateZoneState extends State<CreateZone> {
                       style: headingStyle,
                     ),
                     MyInputField(
+                      title: "Mã vùng",
+                      hint: "Nhập mã vùng",
+                      controller: _fZoneCodeController,
+                    ),
+                    MyInputField(
                       title: "Tên vùng",
                       hint: "Nhập tên vùng",
                       controller: _nameController,
@@ -103,7 +109,7 @@ class CreateZoneState extends State<CreateZone> {
                     MyInputNumber(
                       title: "Diện tích (mét vuông)",
                       hint: "Nhập diện tích",
-                      controller: _fareaController,
+                      controller: _fZoneController,
                     ),
                     MyInputField(
                       title: "Loại vùng",
@@ -200,12 +206,14 @@ class CreateZoneState extends State<CreateZone> {
       isLoading = true;
     });
     if (_nameController.text.isNotEmpty &&
-        _fareaController.text.isNotEmpty &&
+        _fZoneController.text.isNotEmpty &&
+        _fZoneCodeController.text.isNotEmpty &&
         _selectedArea != "Chọn" &&
         _selectedZoneType != "Chọn") {
       Map<String, dynamic> zoneData = {
+        "code": _fZoneCodeController.text,
         "name": _nameController.text,
-        "farmArea": _fareaController.text,
+        "farmArea": _fZoneController.text,
         "zoneTypeId": _selectedZoneTypeId,
         "areaId": _selectedAreaId
       };
@@ -220,7 +228,7 @@ class CreateZoneState extends State<CreateZone> {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi!", true);
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       setState(() {

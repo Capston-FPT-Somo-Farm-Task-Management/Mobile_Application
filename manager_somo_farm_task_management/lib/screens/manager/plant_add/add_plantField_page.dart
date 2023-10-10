@@ -46,7 +46,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
     return HabitantTypeService().getPlantTypeFromHabitantType();
   }
 
-  Future<Map<String, dynamic>> CreatePlantField(Map<String, dynamic> plant) {
+  Future<bool> CreatePlantField(Map<String, dynamic> plant) {
     return FieldService().CreateField(plant);
   }
 

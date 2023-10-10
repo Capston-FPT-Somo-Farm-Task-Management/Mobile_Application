@@ -117,7 +117,8 @@ class ZoneService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception("Failed to create zone");
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
