@@ -25,7 +25,7 @@ class SupervisorService {
   }
 
   Future<bool> createSupervisor(Map<String, dynamic> supervisorData) async {
-    final String apiUrl = "$baseUrl/Employee";
+    final String apiUrl = "$baseUrl/Member";
     var body = jsonEncode(supervisorData);
     final response = await http.post(
       Uri.parse(apiUrl),
