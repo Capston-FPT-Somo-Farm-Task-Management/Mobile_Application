@@ -107,19 +107,19 @@ class SupervisorPageState extends State<SupervisorPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreateEmployee(
-                                        farmId: farmId!,
-                                      )),
-                            ).then((value) {
-                              if (value != null) {
-                                getSupervisors();
-                                SnackbarShowNoti.showSnackbar(
-                                    'Tạo người giám sát thành công!', false);
-                              }
-                            });
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => CreateEmployee(
+                            //             farmId: farmId!,
+                            //           )),
+                            // ).then((value) {
+                            //   if (value != null) {
+                            //     getSupervisors();
+                            //     SnackbarShowNoti.showSnackbar(
+                            //         'Tạo người giám sát thành công!', false);
+                            //   }
+                            // });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
