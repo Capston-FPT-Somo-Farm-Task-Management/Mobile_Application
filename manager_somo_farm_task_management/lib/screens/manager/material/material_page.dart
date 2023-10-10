@@ -40,11 +40,13 @@ class MaterialPageState extends State<MaterialsPage> {
 
   Future<void> getMaterials() async {
     MaterialService().getMaterial().then((value) {
+      setState(() {
+        isLoading = false;
+      });
       if (value.isNotEmpty) {
         setState(() {
           areas = value;
           filteredareaList = areas;
-          isLoading = false;
         });
       } else {
         throw Exception();

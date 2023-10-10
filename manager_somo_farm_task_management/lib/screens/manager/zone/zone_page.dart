@@ -48,6 +48,9 @@ class ZonePageState extends State<ZonePage> {
 
   Future<void> getZones() async {
     ZoneService().getZonesbyFarmId(widget.farmId).then((value) {
+      setState(() {
+        isLoading = false;
+      });
       if (value.isNotEmpty) {
         setState(() {
           zones = value;

@@ -61,11 +61,13 @@ class EmployeekPageState extends State<EmployeekPage> {
 
   Future<void> getEmployees() async {
     EmployeeService().getEmployeesbyFarmId(farmId!).then((value) {
+      setState(() {
+        isLoading = false;
+      });
       if (value.isNotEmpty) {
         setState(() {
           employees = value;
           filteredEmployeeList = employees;
-          isLoading = false;
         });
       } else {
         throw Exception();
