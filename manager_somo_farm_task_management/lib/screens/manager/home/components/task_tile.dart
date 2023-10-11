@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/sub_task/sub_task.dart';
 
 class TaskTile extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -100,7 +101,14 @@ class TaskTile extends StatelessWidget {
             color: Colors.grey[200]!.withOpacity(0.7),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      SubTaskPage(taskId: task['id'], taskName: task['name']),
+                ),
+              );
+            },
             child: RotatedBox(
               quarterTurns: 0,
               child: Container(
