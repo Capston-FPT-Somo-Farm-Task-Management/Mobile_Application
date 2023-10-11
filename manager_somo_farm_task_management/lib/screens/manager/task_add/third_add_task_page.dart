@@ -59,6 +59,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   int? farmId;
   int? userId;
   bool isLoading = false;
+  DateTime _focusedDay = DateTime.now();
   getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
@@ -91,6 +92,12 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     }).toList();
 
     return formattedDates.join(', ');
+  }
+
+  void _onDaySelected(DateTime focusedDay) {
+    setState(() {
+      _focusedDay = focusedDay;
+    });
   }
 
   @override
@@ -216,6 +223,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                               for (int i = 1; i <= 30; i++) {
                                 repeatNumbers.add(i);
                               }
+                            } else {
+                              selectedDatesRepeat.clear();
                             }
                           });
                         },
@@ -260,11 +269,11 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                                   availableGestures: AvailableGestures.all,
                                   firstDay: _selectedStartDate!
                                       .add(Duration(days: 1)),
-                                  focusedDay: _selectedStartDate!
-                                      .add(Duration(days: 1)),
+                                  focusedDay: _focusedDay,
                                   lastDay:
                                       DateTime.now().add(Duration(days: 365)),
                                   onDaySelected: (date, events) {
+                                    _onDaySelected(date);
                                     setState(() {
                                       if (selectedDatesRepeat.contains(date)) {
                                         selectedDatesRepeat.remove(date);
@@ -273,10 +282,36 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                                       }
                                     });
                                   },
+                                  calendarStyle: CalendarStyle(
+                                    selectedDecoration: BoxDecoration(
+                                      color: kPrimaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  selectedDayPredicate: (day) =>
+                                      selectedDatesRepeat.contains(day),
                                 ),
                                 SizedBox(height: 20),
-                                Text(
-                                    'Ngày được chọn: ${_formatDates(selectedDatesRepeat)}'),
+                                RichText(
+                                  text: TextSpan(
+                                    style: titileStyle,
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: 'Ngày được chọn: ',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 16),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            '${_formatDates(selectedDatesRepeat)}',
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                     MyInputField(
@@ -349,6 +384,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       Map<String, dynamic> taskData = {
         "employeeIds": widget.employeeIds,
         "materialIds": widget.materialIds,
+        "dates": selectedDatesRepeat,
         // "dates":
         "farmTask": {
           "name": widget.taskName,
@@ -362,7 +398,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           "receiverId": widget.supervisorId,
           "fieldId": widget.fiedlId,
           "taskTypeId": widget.taskTypeId,
-          "memberId": userId,
+          "managerId": userId,
           "otherId": widget.otherId,
           "plantId": widget.plantId,
           "liveStockId": widget.liveStockId,
@@ -379,7 +415,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                 builder: (BuildContext context) => ManagerHomePage(
                       farmId: farmId!,
                     )),
-            (route) => false, // Xóa tất cả các route khỏi stack
+            (route) => false,
           );
           SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
         }
@@ -406,29 +442,6 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       });
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
-    }
-  }
-
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 36525)),
-    );
-    if (_pickerDate == null) {
-      print("it's null or something is wrong");
-      return;
-    }
-    if (_selectedStartDate == null) {
-      SnackbarShowNoti.showSnackbar("Chọn ngày thực hiện trước", true);
-    } else if (_pickerDate.isBefore(_selectedStartDate!)) {
-      SnackbarShowNoti.showSnackbar(
-          "Ngày kết thúc lặp lại phải lớn hơn ngày thực hiện", true);
-    } else {
-      setState(() {
-        _selectedDateRepeatUntil = _pickerDate;
-      });
     }
   }
 
@@ -470,6 +483,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
             if (isStart) {
               _selectedStartDate = selectedDateTime;
               _selectedEndDate = null;
+              _focusedDay = _selectedStartDate!.add(Duration(days: 1));
             } else {
               _selectedEndDate = selectedDateTime;
             }
