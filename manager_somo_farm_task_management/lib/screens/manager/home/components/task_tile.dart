@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/sub_task/sub_task.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/sub_task/sub_task_page.dart';
 
 class TaskTile extends StatelessWidget {
   final Map<String, dynamic> task;
