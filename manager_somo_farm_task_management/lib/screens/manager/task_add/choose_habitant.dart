@@ -62,7 +62,6 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
             ///For Spacing
             const SizedBox(height: 16),
 
-            ///Container for remind
             Option(
               onTap: () {
                 Navigator.of(context).push(
