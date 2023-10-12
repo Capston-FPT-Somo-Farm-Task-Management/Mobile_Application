@@ -59,9 +59,11 @@ class Option extends StatelessWidget {
             ),
 
             const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios),
-              onPressed: () {},
+            Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Icon(
+                Icons.arrow_forward_ios,
+              ),
             )
           ],
         ),
