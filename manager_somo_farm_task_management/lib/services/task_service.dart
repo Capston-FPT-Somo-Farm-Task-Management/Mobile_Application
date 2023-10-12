@@ -58,7 +58,8 @@ class TaskService {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> task = json.decode(response.body);
+      final Map<String, dynamic> data = json.decode(response.body);
+      final Map<String, dynamic> task = Map<String, dynamic>.from(data['data']);
       return task;
     } else {
       throw Exception('Failed to get tasks by user ID');
