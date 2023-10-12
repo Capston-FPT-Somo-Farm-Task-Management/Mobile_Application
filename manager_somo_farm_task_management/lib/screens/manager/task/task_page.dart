@@ -162,23 +162,15 @@ class TaskPageState extends State<TaskPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (!selectedDate.isEmpty)
-                      ElevatedButton(
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           _getTasksForSelectedDateAndStatus(null, groupValue);
                           selectedDate = "";
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[400],
-                          minimumSize: Size(20, 23),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Xóa",
-                            style: TextStyle(fontSize: 14),
-                          ),
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: Colors.red,
+                          size: 20,
                         ),
                       ),
                     SizedBox(width: 10),
