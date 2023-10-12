@@ -60,7 +60,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   }
 
   Future<List<Map<String, dynamic>>> getSupervisorsbyFarmId(int farmId) {
-    return MemberService().getSupervisorsbyFarmId(farmId);
+    return MemberService().getSupervisorsActivebyFarmId(farmId);
   }
 
   Future<int?> getFarmId() async {
