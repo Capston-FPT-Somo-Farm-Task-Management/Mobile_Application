@@ -15,11 +15,11 @@ class CreatePlantType extends StatefulWidget {
 }
 
 class CreatePlantTypeState extends State<CreatePlantType> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _titleNumberController = TextEditingController();
-  String name = "";
-  int? status;
-  int? quantity;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _originController = TextEditingController();
+  final TextEditingController _environmentController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
   Future<bool> CreatePlantType(Map<String, dynamic> plant) {
     return HabitantTypeService().CreateHabitantType(plant);
   }
@@ -56,12 +56,22 @@ class CreatePlantTypeState extends State<CreatePlantType> {
               MyInputField(
                 title: "Tên loại cây trồng",
                 hint: "Nhập tên loại",
-                controller: _titleController,
+                controller: _nameController,
               ),
-              MyInputNumber(
-                title: "Nhập số lượng",
-                hint: "Nhập số lượng",
-                controller: _titleNumberController,
+              MyInputField(
+                title: "Xuất xứ của loại cây trồng",
+                hint: "Nhập xuất xứ",
+                controller: _originController,
+              ),
+              MyInputField(
+                title: "Môi trường sống của loại cây trồng",
+                hint: "Nhập môi trường sống",
+                controller: _environmentController,
+              ),
+              MyInputField(
+                title: "Mô tả loại cây trồng",
+                hint: "Nhập mô tả",
+                controller: _descriptionController,
               ),
               const SizedBox(height: 40),
               const Divider(
@@ -98,19 +108,27 @@ class CreatePlantTypeState extends State<CreatePlantType> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty) {
-      //add database
+    if (_nameController.text.isNotEmpty &&
+        _originController.text.isNotEmpty &&
+        _environmentController.text.isNotEmpty &&
+        _descriptionController.text.isNotEmpty) {
       Map<String, dynamic> liveStock = {
-        'name': _titleController.text,
+        'name': _nameController.text,
+        'origin': _originController.text,
+        'environment': _environmentController.text,
+        'description': _descriptionController.text,
         'status': 0,
-        'quantity': _titleNumberController.hashCode,
       };
       CreatePlantType(liveStock).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PlantTypePage(),
-          ),
-        );
+        if (value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => PlantTypePage(),
+            ),
+          );
+        }
+      }).catchError((e) {
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ

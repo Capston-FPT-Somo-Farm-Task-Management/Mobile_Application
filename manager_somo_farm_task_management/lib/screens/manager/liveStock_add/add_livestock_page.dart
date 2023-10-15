@@ -348,11 +348,11 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         'gender': gender,
       };
       CreateLiveStock(liveStock).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LiveStockPage(),
-          ),
-        );
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => LiveStockPage(),
+        //   ),
+        // );
       });
     } else {
       SnackbarShowNoti.showSnackbar(

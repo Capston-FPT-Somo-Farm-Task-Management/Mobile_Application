@@ -11,14 +11,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class LiveStockPage extends StatefulWidget {
-  const LiveStockPage({Key? key}) : super(key: key);
+  final int farmId;
+  const LiveStockPage({super.key, required this.farmId});
 
   @override
   LiveStockPageState createState() => LiveStockPageState();
 }
 
 class LiveStockPageState extends State<LiveStockPage> {
-  int? farmId;
+  bool isLoading = true;
   List<LiveStock> SearchliveStock = plantList;
   final TextEditingController searchController = TextEditingController();
 
@@ -49,32 +50,32 @@ class LiveStockPageState extends State<LiveStockPage> {
     return LiveStockService().getAllLiveStock();
   }
 
-  Future<void> GetLiveStocks() async {
-    int? farmIdValue = await getFarmId();
-
-    setState(() {
-      farmId = farmIdValue;
-    });
-
-    if (farmId != null) {
-      List<Map<String, dynamic>> liveStocksValue =
-          await getLiveStockByFarmId(farmId!);
-
-      setState(() {
-        liveStocks = liveStocksValue;
-      });
-    }
-  }
-
   List<Map<String, dynamic>> liveStocks = [];
 
-  @override
-  void initState() {
-    super.initState();
-    getFarmId().then((value) {
-      farmId = value;
+  Future<void> GetLiveStocks() async {
+    LiveStockService().getLiveStockByFarmId(widget.farmId).then((value) {
+      setState(() {
+        isLoading = false;
+      });
+      if (value.isNotEmpty) {
+        setState(() {
+          liveStocks = value;
+          isLoading = false;
+        });
+      } else {
+        throw Exception();
+      }
     });
-    GetLiveStocks();
+  }
+
+  Future<void> _initializeData() async {
+    await GetLiveStocks();
+  }
+
+  @override
+  initState() {
+    super.initState();
+    _initializeData();
   }
 
   @override
@@ -112,7 +113,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => CreateLiveStock(
-                                        farmId: farmId!,
+                                        farmId: widget.farmId,
                                       )),
                             );
                           },
@@ -162,148 +163,156 @@ class LiveStockPageState extends State<LiveStockPage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: ListView.builder(
-                itemCount: liveStocks.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> liveStock = liveStocks[index];
+              child: RefreshIndicator(
+                onRefresh: () => GetLiveStocks(),
+                child: ListView.builder(
+                  itemCount: liveStocks.length,
+                  itemBuilder: (context, index) {
+                    Map<String, dynamic> liveStock = liveStocks[index];
 
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 25),
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return LiveStockDetailsPopup(liveStock: liveStock);
-                          },
-                        );
-                      },
-                      onLongPress: () {
-                        _showBottomSheet(context, liveStock);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 7,
-                              offset: Offset(4, 8), // Shadow position
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 25),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return LiveStockDetailsPopup(
+                                  liveStock: liveStock);
+                            },
+                          );
+                        },
+                        onLongPress: () {
+                          _showBottomSheet(context, liveStock);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 7,
+                                offset: Offset(4, 8), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey, // Màu của đường viền
+                                      width: 1.0, // Độ dày của đường viền
+                                    ),
+                                  ),
+                                  height: 120,
+                                  width: double.infinity,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  liveStock['name'],
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        liveStock['status'] ==
+                                                                "Inactive"
+                                                            ? Colors.red[400]
+                                                            : kPrimaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Text(
+                                                    liveStock['status'],
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              'Giống ${liveStock['gender']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              '${liveStock['areaName']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Colors.grey[400], // Đặt màu xám ở đây
                                   border: Border.all(
-                                    color: Colors.grey, // Màu của đường viền
-                                    width: 1.0, // Độ dày của đường viền
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
                                   ),
                                 ),
-                                height: 120,
-                                width: double.infinity,
+                                height: 45,
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                liveStock['name'],
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: liveStock['status'] ==
-                                                          "Inactive"
-                                                      ? Colors.red[400]
-                                                      : kPrimaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                child: Text(
-                                                  liveStock['status'],
-                                                  style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Text(
-                                            'Giống ${liveStock['gender']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            '${liveStock['areaName']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ],
+                                      child: Text(
+                                        '${liveStock['zoneName']}',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        '${liveStock['fieldName']}',
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                     ),
                                   ],
-                                )),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400], // Đặt màu xám ở đây
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
                                 ),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
-                              height: 45,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${liveStock['zoneName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${liveStock['fieldName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],

@@ -70,11 +70,7 @@ class DrawerManager extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => LiveStockPage(),
-                  ));
-                },
+                onTap: () {},
                 child: const Row(children: [
                   Icon(FontAwesomeIcons.hippo),
                   SizedBox(width: 15),
