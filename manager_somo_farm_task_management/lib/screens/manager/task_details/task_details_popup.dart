@@ -266,7 +266,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Người quản lí: ${task['memberName']}', 35),
+                  wrapWords('Người quản lí: ${task['managerName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -283,7 +283,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Người giám sát: ${task['receiverName']}', 35),
+                  wrapWords('Người giám sát: ${task['supervisorName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -351,22 +351,6 @@ class TaskDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   wrapWords('Loại công việc: ${task['taskTypeName']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.repeat,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Iterations: ${task['iterations']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
