@@ -52,7 +52,7 @@ class CreatePlantState extends State<CreatePlant> {
   }
 
   Future<List<Map<String, dynamic>>> getFieldsbyZoneId(int zoneId) {
-    return FieldService().getFieldsbyZoneId(zoneId);
+    return FieldService().getFieldsActivebyZoneId(zoneId);
   }
 
   Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() {
