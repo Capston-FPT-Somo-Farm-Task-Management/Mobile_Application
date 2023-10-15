@@ -85,11 +85,7 @@ class DrawerManager extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PlantPage(),
-                  ));
-                },
+                onTap: () {},
                 child: const Row(children: [
                   Icon(FontAwesomeIcons.pagelines),
                   SizedBox(width: 15),

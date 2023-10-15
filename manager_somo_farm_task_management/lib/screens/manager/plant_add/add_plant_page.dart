@@ -313,11 +313,11 @@ class CreatePlantState extends State<CreatePlant> {
         'fieldId': fieldId
       };
       CreatePlant(plant).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PlantPage(),
-          ),
-        );
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => PlantPage(),
+        //   ),
+        // );
       });
     } else {
       SnackbarShowNoti.showSnackbar(
