@@ -401,7 +401,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                     MaterialPageRoute(
                                                                       builder:
                                                                           (context) =>
-                                                                              LiveStockPage(),
+                                                                              LiveStockPage(
+                                                                        farmId:
+                                                                            farmId!,
+                                                                      ),
                                                                     ),
                                                                   );
                                                                 },
@@ -584,7 +587,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                     MaterialPageRoute(
                                                                       builder:
                                                                           (context) =>
-                                                                              PlantPage(),
+                                                                              PlantPage(
+                                                                        farmId:
+                                                                            farmId!,
+                                                                      ),
                                                                     ),
                                                                   );
                                                                 },

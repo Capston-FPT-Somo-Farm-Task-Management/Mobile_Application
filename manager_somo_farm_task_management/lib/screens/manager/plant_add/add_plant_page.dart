@@ -21,9 +21,9 @@ class CreatePlant extends StatefulWidget {
 }
 
 class CreatePlantState extends State<CreatePlant> {
-  final TextEditingController _titleIdController = TextEditingController();
-  final TextEditingController _titleNameController = TextEditingController();
-  final TextEditingController _titleNumberController = TextEditingController();
+  final TextEditingController _plantCodeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _plantHeightController = TextEditingController();
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredField = [];
@@ -110,19 +110,19 @@ class CreatePlantState extends State<CreatePlant> {
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Id cây trồng",
-                hint: "Nhập Id cây trồng",
-                controller: _titleIdController,
+                title: "Mã cây trồng",
+                hint: "Nhập mã cây trồng",
+                controller: _plantCodeController,
               ),
               MyInputField(
                 title: "Tên cây trồng",
                 hint: "Nhập tên cây trồng",
-                controller: _titleNameController,
+                controller: _nameController,
               ),
               MyInputNumber(
                 title: "Độ cao dự kiến của cây trồng (mét)",
                 hint: "Nhập độ cao",
-                controller: _titleNumberController,
+                controller: _plantHeightController,
               ),
               MyInputField(
                 title: "Loại cây trồng",
@@ -296,9 +296,9 @@ class CreatePlantState extends State<CreatePlant> {
   }
 
   _validateDate() {
-    if (_titleIdController.text.isNotEmpty &&
-        _titleNameController.text.isNotEmpty &&
-        _titleNumberController.text.isNotEmpty &&
+    if (_plantCodeController.text.isNotEmpty &&
+        _nameController.text.isNotEmpty &&
+        _plantHeightController.text.isNotEmpty &&
         _selectedPlantType != "Chọn" &&
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
@@ -306,18 +306,18 @@ class CreatePlantState extends State<CreatePlant> {
         _selectedField != "Chưa có" &&
         _selectedField != "Chọn") {
       Map<String, dynamic> plant = {
-        'name': _titleNameController.text,
-        'externalId': _titleIdController.text,
-        'height': _titleNumberController.text,
+        'name': _nameController.text,
+        'externalId': _plantCodeController.text,
+        'height': _plantHeightController.text,
         'habitantTypeId': habitantTypeId,
         'fieldId': fieldId
       };
       CreatePlant(plant).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PlantPage(),
-          ),
-        );
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => PlantPage(),
+        //   ),
+        // );
       });
     } else {
       SnackbarShowNoti.showSnackbar(

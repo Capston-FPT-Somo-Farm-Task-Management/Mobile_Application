@@ -67,12 +67,12 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
               ),
               MyInputField(
                 title: "Môi trường sống của loại vật nuôi",
-                hint: "Nhập xuất xứ",
+                hint: "Nhập môi trường sống",
                 controller: _environmentController,
               ),
               MyInputField(
                 title: "Mô tả loại vật nuôi",
-                hint: "Nhập xuất xứ",
+                hint: "Nhập mô tả",
                 controller: _descriptionController,
               ),
               const SizedBox(height: 40),

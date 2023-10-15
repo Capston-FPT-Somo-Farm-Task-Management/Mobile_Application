@@ -13,15 +13,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class PlantPage extends StatefulWidget {
-  const PlantPage({super.key});
+  final int farmId;
+  const PlantPage({super.key, required this.farmId});
 
   @override
   PlantPageState createState() => PlantPageState();
 }
 
 class PlantPageState extends State<PlantPage> {
-  int? farmId;
-
+  bool isLoading = true;
   List<Map<String, dynamic>> plants = [];
   List<Map<String, dynamic>> ListPlants = [];
   final TextEditingController searchController = TextEditingController();
@@ -41,8 +41,8 @@ class PlantPageState extends State<PlantPage> {
     });
   }
 
-  Future<Map<String, dynamic>> deletePlant(int id, String status) {
-    return PlantService().deletePlant(id, status);
+  Future<bool> deletePlant(int id) {
+    return PlantService().deletePlant(id);
   }
 
   Future<List<Map<String, dynamic>>> getPlantByFarmId(int id) {
@@ -54,28 +54,29 @@ class PlantPageState extends State<PlantPage> {
   }
 
   Future<void> GetPlants() async {
-    int? farmIdValue = await getFarmId();
-
-    setState(() {
-      farmId = farmIdValue;
-    });
-
-    if (farmId != null) {
-      List<Map<String, dynamic>> plantsValue = await getPlantByFarmId(farmId!);
-
+    PlantService().getPlantByFarmId(widget.farmId).then((value) {
       setState(() {
-        plants = plantsValue;
+        isLoading = false;
       });
-    }
+      if (value.isNotEmpty) {
+        setState(() {
+          plants = value;
+          isLoading = false;
+        });
+      } else {
+        throw Exception();
+      }
+    });
+  }
+
+  Future<void> _initializeData() async {
+    await GetPlants();
   }
 
   @override
   void initState() {
     super.initState();
-    getFarmId().then((value) {
-      farmId = value;
-    });
-    GetPlants();
+    _initializeData();
   }
 
   @override
@@ -114,7 +115,7 @@ class PlantPageState extends State<PlantPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => CreatePlant(
-                                        farmId: farmId!,
+                                        farmId: widget.farmId,
                                       )),
                             );
                           },
@@ -163,124 +164,154 @@ class PlantPageState extends State<PlantPage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: ListView.builder(
-                itemCount: plants.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> plant = plants[index];
-                  if (plant['status'] == 'Inactive') {
-                    return SizedBox.shrink();
-                  }
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 25),
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return PlantDetailsPopup(plant: plant);
-                          },
-                        );
-                      },
-                      onLongPress: () {
-                        _showBottomSheet(context, plant);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 7,
-                              offset: Offset(4, 8), // Shadow position
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
+              child: RefreshIndicator(
+                onRefresh: () => GetPlants(),
+                child: ListView.builder(
+                  itemCount: plants.length,
+                  itemBuilder: (context, index) {
+                    Map<String, dynamic> plant = plants[index];
+
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 25),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PlantDetailsPopup(plant: plant);
+                            },
+                          );
+                        },
+                        onLongPress: () {
+                          _showBottomSheet(context, plant);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 7,
+                                offset: Offset(4, 8), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey, // Màu của đường viền
+                                      width: 1.0, // Độ dày của đường viền
+                                    ),
+                                  ),
+                                  height: 120,
+                                  width: double.infinity,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  plant['name'],
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: plant['status'] ==
+                                                            "Inactive"
+                                                        ? Colors.red[400]
+                                                        : kPrimaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Text(
+                                                    plant['status'],
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              '${plant['areaName']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Colors.grey[400], // Đặt màu xám ở đây
                                   border: Border.all(
-                                    color: Colors.grey, // Màu của đường viền
-                                    width: 1.0, // Độ dày của đường viền
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
                                   ),
                                 ),
-                                height: 105,
-                                width: double.infinity,
+                                height: 45,
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            plant['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            '${plant['areaName']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ],
+                                      child: Text(
+                                        '${plant['zoneName']}',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        '${plant['fieldName']}',
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                     ),
                                   ],
-                                )),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400], // Đặt màu xám ở đây
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
                                 ),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
-                              height: 45,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${plant['zoneName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${plant['fieldName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -309,27 +340,34 @@ class PlantPageState extends State<PlantPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: plant['status'] == "Inactive"
+                    ? "Đổi sang Active"
+                    : "Đổi sang Inactive",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa cây",
-                          content: "Bạn có chắc muốn xóa cây này?",
+                          title: "Thay đổi trạng thái con vật",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của con vật này?",
                           onConfirm: () {
-                            Navigator.of(context).pop();
-                            setState(() {});
-                            plants.remove(plant);
-                            deletePlant(plant['id'], plant['status']);
+                            setState(() {
+                              deletePlant(plant['id']);
+                              GetPlants();
+                              Navigator.of(context).pop();
+                              SnackbarShowNoti.showSnackbar(
+                                  'Đổi trạng thái thành công!', false);
+                              deletePlant(plant['id']);
+                            });
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công cây trồng', false);
                 },
-                cls: Colors.red[300]!,
+                cls: plant['status'] == "Inactive"
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),
