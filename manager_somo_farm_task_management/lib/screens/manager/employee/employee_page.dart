@@ -314,8 +314,8 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                       Text(
                                                         employee['name']
                                                                     .length >
-                                                                15
-                                                            ? '${employee['name'].substring(0, 15)}...'
+                                                                25
+                                                            ? '${employee['name'].substring(0, 22)}...'
                                                             : employee['name'],
                                                         style: const TextStyle(
                                                           fontSize: 20,
