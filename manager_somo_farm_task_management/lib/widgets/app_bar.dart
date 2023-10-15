@@ -224,6 +224,44 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                           onTap: () {
                                                             Navigator.of(
                                                                     context)
+                                                                .pushReplacement(
+                                                              MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ManagerHomePage(
+                                                                        farmId:
+                                                                            farmId!),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons.home),
+                                                                SizedBox(
+                                                                    width: 15),
+                                                                Text(
+                                                                  "Trang chủ",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          20),
+                                                                ),
+                                                              ]),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          top: padingForAll,
+                                                          left: padingForAll,
+                                                          right: padingForAll),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft, // Căn lề trái
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
                                                                 .push(
                                                                     MaterialPageRoute(
                                                               builder:
