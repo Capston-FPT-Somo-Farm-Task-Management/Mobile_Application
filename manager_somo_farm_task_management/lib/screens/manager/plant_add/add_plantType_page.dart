@@ -132,7 +132,8 @@ class CreatePlantTypeState extends State<CreatePlantType> {
       });
     } else {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
-      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+      SnackbarShowNoti.showSnackbar(
+          'Vui lòng điền đầy đủ thông tin của loại cây', true);
     }
   }
 }
