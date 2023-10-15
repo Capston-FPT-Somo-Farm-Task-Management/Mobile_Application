@@ -163,124 +163,128 @@ class PlantPageState extends State<PlantPage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: ListView.builder(
-                itemCount: plants.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> plant = plants[index];
-                  if (plant['status'] == 'Inactive') {
-                    return SizedBox.shrink();
-                  }
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 25),
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return PlantDetailsPopup(plant: plant);
-                          },
-                        );
-                      },
-                      onLongPress: () {
-                        _showBottomSheet(context, plant);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 7,
-                              offset: Offset(4, 8), // Shadow position
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
+              child: RefreshIndicator(
+                onRefresh: () => GetPlants(),
+                child: ListView.builder(
+                  itemCount: plants.length,
+                  itemBuilder: (context, index) {
+                    Map<String, dynamic> plant = plants[index];
+                    if (plant['status'] == 'Inactive') {
+                      return SizedBox.shrink();
+                    }
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 25),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PlantDetailsPopup(plant: plant);
+                            },
+                          );
+                        },
+                        onLongPress: () {
+                          _showBottomSheet(context, plant);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 7,
+                                offset: Offset(4, 8), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey, // Màu của đường viền
+                                      width: 1.0, // Độ dày của đường viền
+                                    ),
+                                  ),
+                                  height: 105,
+                                  width: double.infinity,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              plant['name'],
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              '${plant['areaName']}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Colors.grey[400], // Đặt màu xám ở đây
                                   border: Border.all(
-                                    color: Colors.grey, // Màu của đường viền
-                                    width: 1.0, // Độ dày của đường viền
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
                                   ),
                                 ),
-                                height: 105,
-                                width: double.infinity,
+                                height: 45,
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            plant['name'],
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            '${plant['areaName']}',
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ],
+                                      child: Text(
+                                        '${plant['zoneName']}',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        '${plant['fieldName']}',
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                     ),
                                   ],
-                                )),
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400], // Đặt màu xám ở đây
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.0,
                                 ),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
-                              height: 45,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${plant['zoneName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${plant['fieldName']}',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],

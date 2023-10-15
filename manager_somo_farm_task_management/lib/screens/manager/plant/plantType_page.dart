@@ -135,76 +135,80 @@ class PlantTypePageState extends State<PlantTypePage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: ListView.builder(
-                itemCount: plants.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> liveStock = plants[index];
+              child: RefreshIndicator(
+                onRefresh: () => GetAllPlantType(),
+                child: ListView.builder(
+                  itemCount: plants.length,
+                  itemBuilder: (context, index) {
+                    Map<String, dynamic> liveStock = plants[index];
 
-                  if (liveStock['status'] == 'Inactive') {
-                    return SizedBox.shrink();
-                  }
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 40),
-                    child: GestureDetector(
-                      // onTap: () {
-                      //   showDialog(
-                      //     context: context,
-                      //     builder: (BuildContext context) {
-                      //       return LiveStockDetailsPopup(liveStock: liveStock);
-                      //     },
-                      //   );
-                      // },
-                      onLongPress: () {
-                        // _showBottomSheet(context, liveStock);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 8,
-                              offset: Offset(2, 4), // Shadow position
-                            ),
-                          ],
-                        ),
+                    if (liveStock['status'] == 'Inactive') {
+                      return SizedBox.shrink();
+                    }
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 40),
+                      child: GestureDetector(
+                        // onTap: () {
+                        //   showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       return LiveStockDetailsPopup(liveStock: liveStock);
+                        //     },
+                        //   );
+                        // },
+                        onLongPress: () {
+                          // _showBottomSheet(context, liveStock);
+                        },
                         child: Container(
-                          padding: const EdgeInsets.only(top: 27, left: 20),
                           decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              border: Border.all(
-                                color: Colors.grey, // Màu của đường viền
-                                width: 0.5, // Độ dày của đường viền
-                              ),
-                              borderRadius: BorderRadius.circular(15)),
-                          height: 80,
-                          width: double.infinity,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      liveStock['name'],
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 8,
+                                offset: Offset(2, 4), // Shadow position
                               ),
                             ],
                           ),
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 27, left: 20),
+                            decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                border: Border.all(
+                                  color: Colors.grey, // Màu của đường viền
+                                  width: 0.5, // Độ dày của đường viền
+                                ),
+                                borderRadius: BorderRadius.circular(15)),
+                            height: 80,
+                            width: double.infinity,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        liveStock['name'],
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],
