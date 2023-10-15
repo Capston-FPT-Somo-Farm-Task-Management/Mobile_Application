@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -377,54 +377,64 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     setState(() {
       isLoading = true;
     });
-    if (_selectedStartDate != null &&
-        _selectedEndDate != null &&
-        _selectedRepeat == "Không") {
-      //add database
-      Map<String, dynamic> taskData = {
-        "employeeIds": widget.employeeIds,
-        "materialIds": widget.materialIds,
-        "dates": selectedDatesRepeat,
-        // "dates":
-        "farmTask": {
-          "name": widget.taskName,
-          "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-              .format(_selectedStartDate!),
-          "endDate":
-              DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!),
-          "description": widget.description,
-          "priority": _selectedPriority,
-          "repeat": _selectedRepeat == "Không" ? false : true,
-          "receiverId": widget.supervisorId,
-          "fieldId": widget.fiedlId,
-          "taskTypeId": widget.taskTypeId,
-          "managerId": userId,
-          "otherId": widget.otherId,
-          "plantId": widget.plantId,
-          "liveStockId": widget.liveStockId,
-          "remind": _selectedRemind,
-        }
-      };
-      createTask(taskData, userId!).then((value) {
-        if (value) {
-          setState(() {
-            isLoading = false;
-          });
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (BuildContext context) => ManagerHomePage(
-                      farmId: farmId!,
-                    )),
-            (route) => false,
-          );
-          SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
-        }
-      }).catchError((e) {
+    if (_selectedStartDate != null && _selectedEndDate != null) {
+      if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty) {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar(e.toString(), true);
-      });
+        SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+      } else {
+        List<String> formattedDates = selectedDatesRepeat.map((date) {
+          return DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(date);
+        }).toList();
+//add database
+        Map<String, dynamic> taskData = {
+          "employeeIds": widget.employeeIds,
+          "materialIds": widget.materialIds,
+          "dates": formattedDates,
+          // "dates":
+          "farmTask": {
+            "name": widget.taskName,
+            "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+                .format(_selectedStartDate!),
+            "endDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+                .format(_selectedEndDate!),
+            "description": widget.description,
+            "priority": _selectedPriority,
+            "isRepeat": _selectedRepeat == "Không" ? false : true,
+            "suppervisorId": widget.supervisorId,
+            "fieldId": widget.fiedlId,
+            "taskTypeId": widget.taskTypeId,
+            "managerId": userId,
+            "otherId": widget.otherId,
+            "plantId": widget.plantId,
+            "liveStockId": widget.liveStockId,
+            "remind": _selectedRemind,
+          }
+        };
+        print(taskData);
+        print(userId!);
+        createTask(taskData, userId!).then((value) {
+          if (value) {
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (BuildContext context) => ManagerHomePage(
+                        farmId: farmId!,
+                      )),
+              (route) => false,
+            );
+            SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
+          }
+        }).catchError((e) {
+          setState(() {
+            isLoading = false;
+          });
+          SnackbarShowNoti.showSnackbar(e.toString(), true);
+        });
+      }
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
       setState(() {
         isLoading = false;
