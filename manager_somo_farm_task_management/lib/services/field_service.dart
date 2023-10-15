@@ -4,7 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
 
 class FieldService {
-  Future<List<Map<String, dynamic>>> getFieldsbyZoneId(int zoneId) async {
+  Future<List<Map<String, dynamic>>> getFieldsActivebyZoneId(int zoneId) async {
     final String getZonesUrl = '$baseUrl/Field/Active/Zone($zoneId)';
 
     final http.Response response = await http.get(
