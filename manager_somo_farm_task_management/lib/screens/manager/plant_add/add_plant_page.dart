@@ -23,7 +23,7 @@ class CreatePlant extends StatefulWidget {
 class CreatePlantState extends State<CreatePlant> {
   final TextEditingController _plantCodeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _plantHeightController = TextEditingController();
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredField = [];
@@ -122,7 +122,7 @@ class CreatePlantState extends State<CreatePlant> {
               MyInputNumber(
                 title: "Độ cao dự kiến của cây trồng (mét)",
                 hint: "Nhập độ cao",
-                controller: _heightController,
+                controller: _plantHeightController,
               ),
               MyInputField(
                 title: "Loại cây trồng",
@@ -298,7 +298,7 @@ class CreatePlantState extends State<CreatePlant> {
   _validateDate() {
     if (_plantCodeController.text.isNotEmpty &&
         _nameController.text.isNotEmpty &&
-        _heightController.text.isNotEmpty &&
+        _plantHeightController.text.isNotEmpty &&
         _selectedPlantType != "Chọn" &&
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
@@ -308,7 +308,7 @@ class CreatePlantState extends State<CreatePlant> {
       Map<String, dynamic> plant = {
         'name': _nameController.text,
         'externalId': _plantCodeController.text,
-        'height': _heightController.text,
+        'height': _plantHeightController.text,
         'habitantTypeId': habitantTypeId,
         'fieldId': fieldId
       };
