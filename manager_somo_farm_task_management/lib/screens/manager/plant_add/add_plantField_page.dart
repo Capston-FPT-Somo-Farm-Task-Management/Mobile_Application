@@ -19,18 +19,16 @@ class CreatePlantField extends StatefulWidget {
 }
 
 class CreatePlantFieldState extends State<CreatePlantField> {
-  final TextEditingController _titleNameController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  final TextEditingController _noteAreaController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _areaController = TextEditingController();
+  final TextEditingController _fieldCodeController = TextEditingController();
 
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredPlantType = [];
   String _selectedArea = "";
   String _selectedZone = "";
-  String _selectedPlanType = "";
 
-  String name = "";
   int? status;
   int? zoneId;
 
@@ -57,12 +55,6 @@ class CreatePlantFieldState extends State<CreatePlantField> {
       setState(() {
         filteredArea = a;
         _selectedArea = "Chọn";
-      });
-    });
-    getPlantTypeFromHabitantType().then((a) {
-      setState(() {
-        filteredPlantType = a;
-        _selectedPlanType = "Chọn";
       });
     });
   }
@@ -97,46 +89,19 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Tên vườn",
-                hint: "Nhập tên vườn cây",
-                controller: _titleNameController,
+                title: "Mã vườn",
+                hint: "Nhập mã vườn cây",
+                controller: _fieldCodeController,
               ),
               MyInputField(
-                title: "Chọn loại cây trồng",
-                hint: _selectedPlanType,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedPlanType = newValue!['name'];
-                    });
-                  },
-                  items: filteredPlantType
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
-                ),
-              ),
-              MyInputNumber(
-                title: "Số lượng cây trong vườn",
-                hint: "Nhập số lượng",
-                controller: _noteController,
+                title: "Tên vườn",
+                hint: "Nhập tên vườn cây",
+                controller: _nameController,
               ),
               MyInputNumber(
                 title: "Nhập diện tích của vườn (mét vuông)",
                 hint: "Nhập diện tích",
-                controller: _noteAreaController,
+                controller: _areaController,
               ),
               MyInputField(
                 title: "Khu vực",
@@ -241,15 +206,17 @@ class CreatePlantFieldState extends State<CreatePlantField> {
   }
 
   _validateDate() {
-    if (_titleNameController.text.isNotEmpty &&
-        _noteController.text.isNotEmpty &&
+    if (_nameController.text.isNotEmpty &&
+        _areaController.text.isNotEmpty &&
+        _fieldCodeController.text.isNotEmpty &&
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có") {
       Map<String, dynamic> plant = {
-        'name': _titleNameController.text,
+        'code': _fieldCodeController.text,
+        'name': _nameController.text,
         'status': 0,
-        'area': _noteAreaController.hashCode,
+        'area': _areaController.text,
         'zoneId': zoneId
       };
       CreatePlantField(plant).then((value) {
