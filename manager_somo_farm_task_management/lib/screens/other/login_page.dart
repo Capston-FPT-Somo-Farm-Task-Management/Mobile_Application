@@ -1,16 +1,52 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
-import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
+import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:manager_somo_farm_task_management/services/login_services.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatelessWidget {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+  }
+
+  Future<bool> getDeviceToken(int userId) async {
+    await FirebaseMessaging.instance.getToken().then((value) {
+      print(value);
+      var data = {"connectionId": value, "memberId": userId};
+      return HubConnectionService().createConnection(data);
+    });
+    return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermission();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,10 +149,10 @@ class LoginPage extends StatelessWidget {
                     final result = await LoginService().Login(
                         _usernameController.text, _passwordController.text);
                     String role = result['role'];
-                    int id = result['id'];
+                    int userId = result['id'];
 
                     int farmId =
-                        await UserService().getUserById(id).then((value) {
+                        await UserService().getUserById(userId).then((value) {
                       prefs.setInt('farmId', value['data']['farmId']);
                       return value['data']['farmId'];
                     }).catchError((e) {
@@ -131,6 +167,7 @@ class LoginPage extends StatelessWidget {
                           builder: (context) => ManagerHomePage(farmId: farmId),
                         ),
                       );
+                      getDeviceToken(userId);
                       SnackbarShowNoti.showSnackbar(
                           "Đăng nhập thành công!", false);
                     }
@@ -158,21 +195,21 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30.0),
-              Center(
-                child: FloatingActionButton.extended(
-                  onPressed: () {
-                    AuthService().signInWithGoogle();
-                  },
-                  icon: Image.network(
-                    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png',
-                    height: 32,
-                    width: 32,
-                  ),
-                  label: const Text('Đăng nhập bằng Google'),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                ),
-              ),
+              // Center(
+              //   child: FloatingActionButton.extended(
+              //     onPressed: () {
+              //       AuthService().signInWithGoogle();
+              //     },
+              //     icon: Image.network(
+              //       'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png',
+              //       height: 32,
+              //       width: 32,
+              //     ),
+              //     label: const Text('Đăng nhập bằng Google'),
+              //     backgroundColor: Colors.white,
+              //     foregroundColor: Colors.black,
+              //   ),
+              // ),
             ],
           ),
         ),
