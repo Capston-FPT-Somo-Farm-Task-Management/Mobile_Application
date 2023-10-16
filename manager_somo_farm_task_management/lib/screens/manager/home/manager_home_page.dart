@@ -11,7 +11,6 @@ import 'package:manager_somo_farm_task_management/screens/manager/evidence/evide
 import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
-import 'package:manager_somo_farm_task_management/services/notification_services.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +38,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     super.initState();
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
-    notificationService.initialNotification();
     _getTasksForSelectedDateAndStatus(DateTime.now(), 0);
   }
 
@@ -59,7 +57,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     return TaskService().changeTaskStatus(taskId, newStatus);
   }
 
-  NotificationService notificationService = NotificationService();
   @override
   Widget build(BuildContext context) {
     // Tiếp tục với mã widget của bạn như trước
@@ -204,7 +201,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             0: Text("<<<"),
                             1: Text('Đang làm'),
                             2: Text('Hoàn thành'),
-                            3: Text(' Không h.thành '),
+                            3: Text(' Không h.thành ',
+                                textAlign: TextAlign.center),
 
                             // Thêm các option khác nếu cần
                           },
