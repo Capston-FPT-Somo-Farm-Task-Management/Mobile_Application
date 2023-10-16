@@ -53,21 +53,13 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasData || userId != null) {
-              //if(role == "Manager")
-              // Nếu đã đăng nhập bằng Firebase Auth hoặc có thông tin từ SharedPreferences
-              return ManagerHomePage(farmId: farmId!);
-            } else if (snapshot.hasError) {
-              return const Center(child: Text('Something went wrong!'));
-            } else {
-              return LoginPage();
-            }
-          }),
+      body: Center(
+        child: farmId == null
+            ? const CircularProgressIndicator()
+            : farmId == null
+                ? LoginPage()
+                : ManagerHomePage(farmId: farmId!),
+      ),
     );
   }
 }
