@@ -62,8 +62,10 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
               //if(role == "Manager")
               // Nếu đã đăng nhập bằng Firebase Auth hoặc có thông tin từ SharedPreferences
               return ManagerHomePage(farmId: farmId!);
-            } else {
+            } else if (snapshot.hasError) {
               return const Center(child: Text('Something went wrong!'));
+            } else {
+              return LoginPage();
             }
           }),
     );
