@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
 

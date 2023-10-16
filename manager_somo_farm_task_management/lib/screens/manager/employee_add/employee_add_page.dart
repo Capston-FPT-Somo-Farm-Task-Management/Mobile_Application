@@ -21,6 +21,7 @@ class CreateEmployee extends StatefulWidget {
 class CreateEmployeeState extends State<CreateEmployee> {
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
   List<Map<String, dynamic>> filteredProvinces = [];
   List<Map<String, dynamic>> filteredDistrict = [];
   List<Map<String, dynamic>> filteredWars = [];
@@ -103,6 +104,11 @@ class CreateEmployeeState extends State<CreateEmployee> {
                     Text(
                       "Thêm nhân viên",
                       style: headingStyle,
+                    ),
+                    MyInputField(
+                      title: "Mã nhân viên",
+                      hint: "Nhập mã nhân viên",
+                      controller: _codeController,
                     ),
                     MyInputField(
                       title: "Họ và tên",
@@ -338,6 +344,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
     });
     if (_fullnameController.text.isNotEmpty &&
         _phoneController.text.isNotEmpty &&
+        _codeController.text.isNotEmpty &&
         _selectedProvinces != null &&
         _selectedProvinces != "Chọn" &&
         _selectedDistrict != null &&
@@ -359,6 +366,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
             "phoneNumber": _phoneController.text,
             "address": "$_selectedWar, $_selectedDistrict, $_selectedProvinces",
             "farmId": widget.farmId,
+            "code": _codeController.text,
           }
         };
         createEmployee(employeekData).then((value) {
@@ -372,7 +380,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
           setState(() {
             isLoading = false;
           });
-          SnackbarShowNoti.showSnackbar("Đã xảy ra lỗi!", true);
+          SnackbarShowNoti.showSnackbar(e.toString(), true);
         });
       }
     } else {

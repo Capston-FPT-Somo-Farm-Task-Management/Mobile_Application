@@ -44,7 +44,7 @@ TextStyle get subTitileStyle {
     textStyle: const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w400,
-      color: Colors.black45,
+      color: Colors.black,
     ),
   );
 }

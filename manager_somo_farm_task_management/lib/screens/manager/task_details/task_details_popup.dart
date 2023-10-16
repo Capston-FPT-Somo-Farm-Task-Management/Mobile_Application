@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/task_update/task_update_page.dart';
 
 class TaskDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -31,11 +32,11 @@ class TaskDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              // Navigator.of(context).push(
-              //           MaterialPageRoute(
-              //             builder: (context) =>  FirstUpdateTaskPage(task: task),
-              //           ),
-              //         );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UpdateTaskPage(task: task),
+                ),
+              );
             },
           )
         ],
@@ -265,7 +266,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Người quản lí: ${task['memberName']}', 35),
+                  wrapWords('Người quản lí: ${task['managerName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -282,7 +283,7 @@ class TaskDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  wrapWords('Người giám sát: ${task['receiverName']}', 35),
+                  wrapWords('Người giám sát: ${task['supervisorName']}', 35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),
@@ -350,22 +351,6 @@ class TaskDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   wrapWords('Loại công việc: ${task['taskTypeName']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Icon(
-                  Icons.repeat,
-                  color: kSecondColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Iterations: ${task['iterations']}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),

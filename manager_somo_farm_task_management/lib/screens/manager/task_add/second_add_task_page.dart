@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/task_add/third_add_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
@@ -60,7 +60,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   }
 
   Future<List<Map<String, dynamic>>> getSupervisorsbyFarmId(int farmId) {
-    return MemberService().getSupervisorsbyFarmId(farmId);
+    return MemberService().getSupervisorsActivebyFarmId(farmId);
   }
 
   Future<int?> getFarmId() async {

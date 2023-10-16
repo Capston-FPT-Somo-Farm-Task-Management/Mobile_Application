@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_add/employee_add.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/employee_add/employee_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -314,8 +314,8 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                       Text(
                                                         employee['name']
                                                                     .length >
-                                                                15
-                                                            ? '${employee['name'].substring(0, 15)}...'
+                                                                25
+                                                            ? '${employee['name'].substring(0, 22)}...'
                                                             : employee['name'],
                                                         style: const TextStyle(
                                                           fontSize: 20,
@@ -348,6 +348,29 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                                           .bold,
                                                                   color: Colors
                                                                       .white),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.tag,
+                                                        color: Colors.black,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        "Mã nhân viên: ${employee['code']}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .black),
                                                         ),
                                                       ),
                                                     ],

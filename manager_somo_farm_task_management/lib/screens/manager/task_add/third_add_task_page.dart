@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_add/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ThirdAddTaskPage extends StatefulWidget {
   final int fiedlId;
@@ -43,10 +44,10 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   int _selectedRemind = 0;
   List<int> remindList = [0, 5, 10, 15, 20];
   String _selectedRepeat = "Không";
-  List<String> repeatList = ["Không", "Hàng ngày", "Hàng tuần", "Hàng tháng"];
+  List<String> repeatList = ["Không", "Có"];
   String showInputFieldRepeat = "Không";
   List<int> repeatNumbers = [];
-  int _selectedRepeatNumber = 0;
+  List<DateTime> selectedDatesRepeat = [];
   List<String> priorities = [
     "Thấp nhất",
     "Thấp",
@@ -58,6 +59,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   int? farmId;
   int? userId;
   bool isLoading = false;
+  DateTime _focusedDay = DateTime.now();
   getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
@@ -78,6 +80,24 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
 
   Future<bool> createTask(Map<String, dynamic> taskData, int managerId) {
     return TaskService().createTask(taskData, managerId);
+  }
+
+  String _formatDates(List<DateTime> dates) {
+    if (dates.isEmpty) {
+      return 'Không có ngày được chọn';
+    }
+
+    List<String> formattedDates = dates.map((date) {
+      return DateFormat('dd-MM-yyyy').format(date);
+    }).toList();
+
+    return formattedDates.join(', ');
+  }
+
+  void _onDaySelected(DateTime focusedDay) {
+    setState(() {
+      _focusedDay = focusedDay;
+    });
   }
 
   @override
@@ -203,7 +223,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                               for (int i = 1; i <= 30; i++) {
                                 repeatNumbers.add(i);
                               }
-                              _selectedRepeatNumber = 1;
+                            } else {
+                              selectedDatesRepeat.clear();
                             }
                           });
                         },
@@ -222,58 +243,77 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                       ),
                     ),
                     if (showInputFieldRepeat != "Không")
-                      MyInputField(
-                        title: "Lặp mỗi",
-                        hint: "$_selectedRepeatNumber",
-                        widget: DropdownButton(
-                          underline: Container(height: 0),
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.grey,
-                          ),
-                          iconSize: 32,
-                          elevation: 4,
-                          style: subTitileStyle,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedRepeatNumber = int.parse(newValue!);
-                            });
-                          },
-                          items: repeatNumbers
-                              .map<DropdownMenuItem<String>>((int value) {
-                            return DropdownMenuItem<String>(
-                              value: value.toString(),
-                              child: Text(value.toString()),
-                            );
-                          }).toList(),
-                          menuMaxHeight: 200,
-                        ),
-                      ),
-                    if (showInputFieldRepeat != "Không")
-                      Container(
-                        margin: const EdgeInsets.only(top: 7.0),
-                        child: Text(
-                          showInputFieldRepeat.split(' ').last,
-                          style: titileStyle,
-                        ),
-                      ),
-                    if (showInputFieldRepeat != "Không")
-                      MyInputField(
-                        title: "Lặp đến ngày",
-                        hint: _selectedDateRepeatUntil == null
-                            ? "dd/MM/yyy"
-                            : DateFormat('dd/MM/yyyy')
-                                .format(_selectedDateRepeatUntil!),
-                        widget: IconButton(
-                          icon: const Icon(
-                            Icons.calendar_today_outlined,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            _getDateFromUser();
-                          },
-                        ),
-                      ),
+                      _selectedStartDate == null
+                          ? Text(
+                              "Hãy chọn ngày giờ bắt đầu trước!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    "Chọn ngày lặp lại",
+                                    style: titileStyle,
+                                  ),
+                                ),
+                                TableCalendar(
+                                  locale: 'vi_VN',
+                                  rowHeight: 43,
+                                  headerStyle: HeaderStyle(
+                                    formatButtonVisible: false,
+                                    titleCentered: true,
+                                  ),
+                                  availableGestures: AvailableGestures.all,
+                                  firstDay: _selectedStartDate!
+                                      .add(Duration(days: 1)),
+                                  focusedDay: _focusedDay,
+                                  lastDay:
+                                      DateTime.now().add(Duration(days: 365)),
+                                  onDaySelected: (date, events) {
+                                    _onDaySelected(date);
+                                    setState(() {
+                                      if (selectedDatesRepeat.contains(date)) {
+                                        selectedDatesRepeat.remove(date);
+                                      } else {
+                                        selectedDatesRepeat.add(date);
+                                      }
+                                    });
+                                  },
+                                  calendarStyle: CalendarStyle(
+                                    selectedDecoration: BoxDecoration(
+                                      color: kPrimaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  selectedDayPredicate: (day) =>
+                                      selectedDatesRepeat.contains(day),
+                                ),
+                                SizedBox(height: 20),
+                                RichText(
+                                  text: TextSpan(
+                                    style: titileStyle,
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: 'Ngày được chọn: ',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 16),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            '${_formatDates(selectedDatesRepeat)}',
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                     MyInputField(
                       title: "Độ ưu tiên",
                       hint: _selectedPriority,
@@ -337,53 +377,64 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     setState(() {
       isLoading = true;
     });
-    if (_selectedStartDate != null &&
-        _selectedEndDate != null &&
-        _selectedRepeat == "Không") {
-      //add database
-      Map<String, dynamic> taskData = {
-        "employeeIds": widget.employeeIds,
-        "materialIds": widget.materialIds,
-        "farmTask": {
-          "name": widget.taskName,
-          "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-              .format(_selectedStartDate!),
-          "endDate":
-              DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!),
-          "description": widget.description,
-          "priority": _selectedPriority,
-          "repeat": _selectedRepeat,
-          "iterations": _selectedRepeatNumber,
-          "receiverId": widget.supervisorId,
-          "fieldId": widget.fiedlId,
-          "taskTypeId": widget.taskTypeId,
-          "memberId": userId,
-          "otherId": widget.otherId,
-          "plantId": widget.plantId,
-          "liveStockId": widget.liveStockId,
-          "remind": _selectedRemind,
-        }
-      };
-      createTask(taskData, userId!).then((value) {
-        if (value) {
-          setState(() {
-            isLoading = false;
-          });
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (BuildContext context) => ManagerHomePage(
-                      farmId: farmId!,
-                    )),
-            (route) => false, // Xóa tất cả các route khỏi stack
-          );
-          SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
-        }
-      }).catchError((e) {
+    if (_selectedStartDate != null && _selectedEndDate != null) {
+      if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty) {
         setState(() {
           isLoading = false;
         });
-        SnackbarShowNoti.showSnackbar(e.toString(), true);
-      });
+        SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+      } else {
+        List<String> formattedDates = selectedDatesRepeat.map((date) {
+          return DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(date);
+        }).toList();
+//add database
+        Map<String, dynamic> taskData = {
+          "employeeIds": widget.employeeIds,
+          "materialIds": widget.materialIds,
+          "dates": formattedDates,
+          // "dates":
+          "farmTask": {
+            "name": widget.taskName,
+            "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+                .format(_selectedStartDate!),
+            "endDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+                .format(_selectedEndDate!),
+            "description": widget.description,
+            "priority": _selectedPriority,
+            "isRepeat": _selectedRepeat == "Không" ? false : true,
+            "suppervisorId": widget.supervisorId,
+            "fieldId": widget.fiedlId,
+            "taskTypeId": widget.taskTypeId,
+            "managerId": userId,
+            "otherId": widget.otherId,
+            "plantId": widget.plantId,
+            "liveStockId": widget.liveStockId,
+            "remind": _selectedRemind,
+          }
+        };
+        print(taskData);
+        print(userId!);
+        createTask(taskData, userId!).then((value) {
+          if (value) {
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (BuildContext context) => ManagerHomePage(
+                        farmId: farmId!,
+                      )),
+              (route) => false,
+            );
+            SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
+          }
+        }).catchError((e) {
+          setState(() {
+            isLoading = false;
+          });
+          SnackbarShowNoti.showSnackbar(e.toString(), true);
+        });
+      }
     } else if (_selectedRepeat != "Không" && _selectedDateRepeatUntil != null) {
       setState(() {
         isLoading = false;
@@ -401,29 +452,6 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       });
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
-    }
-  }
-
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 36525)),
-    );
-    if (_pickerDate == null) {
-      print("it's null or something is wrong");
-      return;
-    }
-    if (_selectedStartDate == null) {
-      SnackbarShowNoti.showSnackbar("Chọn ngày thực hiện trước", true);
-    } else if (_pickerDate.isBefore(_selectedStartDate!)) {
-      SnackbarShowNoti.showSnackbar(
-          "Ngày kết thúc lặp lại phải lớn hơn ngày thực hiện", true);
-    } else {
-      setState(() {
-        _selectedDateRepeatUntil = _pickerDate;
-      });
     }
   }
 
@@ -465,6 +493,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
             if (isStart) {
               _selectedStartDate = selectedDateTime;
               _selectedEndDate = null;
+              _focusedDay = _selectedStartDate!.add(Duration(days: 1));
             } else {
               _selectedEndDate = selectedDateTime;
             }

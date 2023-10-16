@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_add/employee_add.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
-import 'package:manager_somo_farm_task_management/services/supervisor_service.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/supervisor_add/supervisor_add_page.dart';
+import 'package:manager_somo_farm_task_management/services/member_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,7 +60,7 @@ class SupervisorPageState extends State<SupervisorPage> {
   }
 
   Future<void> getSupervisors() async {
-    SupervisorService().getSupervisorsbyFarmId(farmId!).then((value) {
+    MemberService().getSupervisorsbyFarmId(farmId!).then((value) {
       setState(() {
         isLoading = false;
       });
@@ -110,7 +110,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateEmployee(
+                                  builder: (context) => CreateSupervisor(
                                         farmId: farmId!,
                                       )),
                             ).then((value) {
@@ -310,8 +310,8 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                       Text(
                                                         employee['name']
                                                                     .length >
-                                                                15
-                                                            ? '${employee['name'].substring(0, 15)}...'
+                                                                23
+                                                            ? '${employee['name'].substring(0, 20)}...'
                                                             : employee['name'],
                                                         style: const TextStyle(
                                                           fontSize: 20,

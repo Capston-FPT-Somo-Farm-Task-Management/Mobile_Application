@@ -39,6 +39,7 @@ class TaskPageState extends State<TaskPage> {
   List<Map<String, dynamic>> filteredTaskList = [];
   bool isLoading = true;
   int groupValue = 0;
+  bool isMoreLeft = false;
   @override
   initState() {
     super.initState();
@@ -161,23 +162,15 @@ class TaskPageState extends State<TaskPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (!selectedDate.isEmpty)
-                      ElevatedButton(
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           _getTasksForSelectedDateAndStatus(null, groupValue);
                           selectedDate = "";
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[400],
-                          minimumSize: Size(20, 23),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Xóa",
-                            style: TextStyle(fontSize: 14),
-                          ),
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: Colors.red,
+                          size: 20,
                         ),
                       ),
                     SizedBox(width: 10),
@@ -216,36 +209,73 @@ class TaskPageState extends State<TaskPage> {
             ),
           ),
           Container(
-            width: double.infinity,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  CupertinoSegmentedControl<int>(
-                    selectedColor: kSecondColor,
-                    borderColor: kSecondColor,
-                    pressedColor: Colors.blue[50],
-                    children: {
-                      5: Text("Từ chối"),
-                      0: Text('Chuẩn bị'),
-                      1: Text('Đang làm'),
-                      2: Text('Hoàn thành'),
-                      3: Text(' Không h.thành '),
+            alignment: Alignment.center,
+            child: !isMoreLeft
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CupertinoSegmentedControl<int>(
+                          selectedColor: kSecondColor,
+                          borderColor: kSecondColor,
+                          pressedColor: Colors.blue[50],
+                          children: {
+                            5: Text("Từ chối"),
+                            0: Text("Chuẩn bị"),
+                            1: Text("Đang làm"),
+                            2: Text(">>>")
+                            // Thêm các option khác nếu cần
+                          },
+                          onValueChanged: (int newValue) {
+                            if (newValue == 2)
+                              setState(() {
+                                isMoreLeft = true;
+                              });
 
-                      // Thêm các option khác nếu cần
-                    },
-                    onValueChanged: (int newValue) {
-                      setState(() {
-                        groupValue = newValue;
-                      });
-                      _getTasksForSelectedDateAndStatus(
-                          _selectedDate, groupValue);
-                    },
-                    groupValue: groupValue,
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                _selectedDate, groupValue);
+                          },
+                          groupValue: groupValue,
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CupertinoSegmentedControl<int>(
+                          selectedColor: kSecondColor,
+                          borderColor: kSecondColor,
+                          pressedColor: Colors.blue[50],
+                          children: {
+                            0: Text("<<<"),
+                            1: Text('Đang làm'),
+                            2: Text('Hoàn thành'),
+                            3: Text(' Không h.thành '),
+
+                            // Thêm các option khác nếu cần
+                          },
+                          onValueChanged: (int newValue) {
+                            if (newValue == 0)
+                              setState(() {
+                                isMoreLeft = false;
+                              });
+
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                _selectedDate, groupValue);
+                          },
+                          groupValue: groupValue,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -302,7 +332,8 @@ class TaskPageState extends State<TaskPage> {
                                   );
                                 },
                                 onLongPress: () {
-                                  _showBottomSheet(context, task);
+                                  _showBottomSheet(
+                                      context, task, _selectedDate);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -492,14 +523,21 @@ class TaskPageState extends State<TaskPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> task) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> task,
+      DateTime? _selectedDate) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
+        bool isRejected = task['status'] == "Từ chối";
+        bool isPreparing = task['status'] == "Chuẩn bị";
+        bool isExecuting = task['status'] == "Đang thực hiện";
+        bool isCompleted = task['status'] == "Hoàn thành";
+        bool isNotCompleted = task['status'] == "Không hoàn thành";
+
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task['status'] != "Hoàn thành"
-              ? MediaQuery.of(context).size.height * 0.24
+          height: isRejected
+              ? MediaQuery.of(context).size.height * 0.42
               : MediaQuery.of(context).size.height * 0.32,
           color: kBackgroundColor,
           child: Column(
@@ -513,9 +551,13 @@ class TaskPageState extends State<TaskPage> {
                 ),
               ),
               const Spacer(),
-              if (task['status'] == "Hoàn thành")
+              if (isRejected ||
+                  isPreparing ||
+                  isExecuting ||
+                  isCompleted ||
+                  isNotCompleted)
                 _bottomSheetButton(
-                  label: "Xem bằng chứng",
+                  label: "Xem báo cáo",
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -526,58 +568,50 @@ class TaskPageState extends State<TaskPage> {
                   cls: kPrimaryColor,
                   context: context,
                 ),
-              if (task['status'] == "Hoàn thành")
+              if (isRejected)
                 _bottomSheetButton(
-                  label: "Đánh giá",
+                  label: "Không chấp nhận",
                   onTap: () {
                     Navigator.of(context).pop();
                   },
                   cls: kPrimaryColor,
                   context: context,
                 ),
-              if (task['status'] == "Không hoàn thành")
+              if (isPreparing || isNotCompleted)
                 _bottomSheetButton(
-                  label: "Đánh giá",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (task['status'] == "Chuẩn bị")
-                _bottomSheetButton(
-                  label: "Xóa",
+                  label: "Hủy / Xóa",
                   onTap: () {
                     showDialog(
-                        context: context,
-                        builder: (BuildContext context1) {
-                          return ConfirmDeleteDialog(
-                            title: "Xóa công việc",
-                            content: "Bạn có chắc muốn xóa công việc này?",
-                            onConfirm: () {
-                              changeTaskStatus(task['id'], 4).then((value) {
-                                if (value) {
-                                  _getTasksForSelectedDateAndStatus(
-                                      _selectedDate, groupValue);
-                                  Navigator.of(context).pop();
-                                  SnackbarShowNoti.showSnackbar(
-                                      "Xóa thành công!", false);
-                                } else {
-                                  SnackbarShowNoti.showSnackbar(
-                                      "Xảy ra lỗi!", true);
-                                }
-                              });
-                            },
-                            buttonConfirmText: "Xóa",
-                          );
-                        });
+                      context: context,
+                      builder: (BuildContext context1) {
+                        return ConfirmDeleteDialog(
+                          title: "Xóa công việc",
+                          content: "Bạn có chắc muốn xóa công việc này?",
+                          onConfirm: () {
+                            changeTaskStatus(task['id'], 4).then((value) {
+                              if (value) {
+                                _getTasksForSelectedDateAndStatus(
+                                    _selectedDate, groupValue);
+                                Navigator.of(context).pop();
+                                SnackbarShowNoti.showSnackbar(
+                                    "Xóa thành công!", false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    "Xảy ra lỗi!", true);
+                              }
+                            });
+                          },
+                          buttonConfirmText: "Xóa",
+                        );
+                      },
+                    );
                   },
                   cls: Colors.red[300]!,
                   context: context,
                 ),
-              if (task['status'] == "Đang thực hiện")
+              if (isCompleted)
                 _bottomSheetButton(
-                  label: "Hoàn thành",
+                  label: "Đánh giá",
                   onTap: () {
                     Navigator.of(context).pop();
                   },

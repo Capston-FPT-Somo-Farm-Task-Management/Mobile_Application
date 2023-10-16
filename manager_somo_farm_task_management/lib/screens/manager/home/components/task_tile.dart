@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/sub_task/sub_task_page.dart';
 
 class TaskTile extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -30,8 +31,8 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      task['name'].length > 20
-                          ? '${task['name'].substring(0, 20)}...'
+                      task['name'].length > 25
+                          ? '${task['name'].substring(0, 22)}...'
                           : task['name'],
                       style: GoogleFonts.lato(
                         textStyle: const TextStyle(
@@ -75,7 +76,7 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Giám sát: ${task['receiverName']}",
+                      "Giám sát: ${task['supervisorName']}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 15, color: Colors.grey[100]),
@@ -100,7 +101,14 @@ class TaskTile extends StatelessWidget {
             color: Colors.grey[200]!.withOpacity(0.7),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      SubTaskPage(taskId: task['id'], taskName: task['name']),
+                ),
+              );
+            },
             child: RotatedBox(
               quarterTurns: 0,
               child: Container(

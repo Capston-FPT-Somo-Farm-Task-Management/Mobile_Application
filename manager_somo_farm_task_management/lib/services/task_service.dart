@@ -58,7 +58,8 @@ class TaskService {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> task = json.decode(response.body);
+      final Map<String, dynamic> data = json.decode(response.body);
+      final Map<String, dynamic> task = Map<String, dynamic>.from(data['data']);
       return task;
     } else {
       throw Exception('Failed to get tasks by user ID');
@@ -73,7 +74,7 @@ class TaskService {
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/Member($userId)/Status($status)/Date?date=$dateTime';
+        '$baseUrl/FarmTask/Manager($userId)/Status($status)/Date?date=$dateTime';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -104,7 +105,8 @@ class TaskService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception(response.body);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 

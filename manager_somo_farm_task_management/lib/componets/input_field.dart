@@ -45,7 +45,7 @@ class MyInputField extends StatelessWidget {
                     style: subTitileStyle,
                     decoration: InputDecoration(
                       hintText: hint,
-                      hintStyle: subTitileStyle,
+                      hintStyle: subTitileStyle.copyWith(color: kTextGreyColor),
                       focusedBorder: const UnderlineInputBorder(
                         borderSide:
                             BorderSide(color: kBackgroundColor, width: 0),
