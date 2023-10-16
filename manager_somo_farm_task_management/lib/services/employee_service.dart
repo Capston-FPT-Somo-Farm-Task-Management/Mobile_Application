@@ -22,7 +22,8 @@ class EmployeeService {
           List<Map<String, dynamic>>.from(data['data']);
       return zones;
     } else {
-      throw Exception('Failed to get fields by zone ID');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -42,7 +43,29 @@ class EmployeeService {
           List<Map<String, dynamic>>.from(data['data']);
       return ems;
     } else {
-      throw Exception('Failed to get ems by farm ID');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getEmployeesbyTaskId(int taskId) async {
+    final String url = '$baseUrl/Employee/Task($taskId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> ems =
+          List<Map<String, dynamic>>.from(data['data']);
+      return ems;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -76,7 +99,8 @@ class EmployeeService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Failed to change status');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 }
