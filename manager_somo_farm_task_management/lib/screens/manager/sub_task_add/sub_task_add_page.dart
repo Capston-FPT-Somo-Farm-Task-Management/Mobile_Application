@@ -1,7 +1,8 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/sub_task/sub_task_page.dart';
+import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
 
 import '../../../componets/input_field.dart';
@@ -19,17 +20,27 @@ class CreateSubTask extends StatefulWidget {
 class CreateSubTaskState extends State<CreateSubTask> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _desController = TextEditingController();
-  List<Map<String, dynamic>> supervisors = [];
-  String? _selectedEmployee = "Chọn";
-  int? _selectedEmployeeId;
+  List<Map<String, dynamic>> employees = [];
+  Map<String, dynamic>? employeeSelected;
   bool isLoading = false;
   Future<bool> createSubTask(Map<String, dynamic> subTaskData) {
     return SubTaskService().createSubTask(subTaskData);
   }
 
+  void getEmployees() async {
+    EmployeeService().getEmployeesbyTaskId(widget.taskId).then((value) {
+      setState(() {
+        employees = value;
+      });
+    }).catchError((e) {
+      print(e.toString());
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getEmployees();
   }
 
   @override
@@ -76,32 +87,48 @@ class CreateSubTaskState extends State<CreateSubTask> {
                 hint: "Nhập tên công việc con",
                 controller: _titleController,
               ),
-              MyInputField(
-                title: "Người thực hiện",
-                hint: _selectedEmployee!,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedEmployee = newValue!['name'];
-                      _selectedEmployeeId = newValue['id'];
-                    });
-                  },
-                  items: supervisors
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Người thực hiện",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      constraints: BoxConstraints(
+                        minHeight:
+                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButton2<Map<String, dynamic>>(
+                        isExpanded: true,
+                        underline: Container(height: 0),
+                        hint: Text("Chọn"),
+                        onChanged: (newValue) {
+                          setState(() {
+                            employeeSelected = newValue;
+                          });
+                        },
+                        items: employees
+                            .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                (Map<String, dynamic> value) {
+                          return DropdownMenuItem<Map<String, dynamic>>(
+                            value: value,
+                            child: Text(value['name']),
+                          );
+                        }).toList(),
+                      ),
+                    )
+                  ],
                 ),
               ),
               Container(
@@ -169,7 +196,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Tạo cây trồng",
+                      "Tạo công việc con",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
@@ -186,10 +213,10 @@ class CreateSubTaskState extends State<CreateSubTask> {
     setState(() {
       isLoading = true;
     });
-    if (_titleController.text.isNotEmpty && _selectedEmployeeId != null) {
+    if (_titleController.text.isNotEmpty && employeeSelected != null) {
       Map<String, dynamic> data = {
         'taskId': widget.taskId,
-        'employeeId': _selectedEmployeeId,
+        'employeeId': employeeSelected!['id'],
         'description': _desController.text,
         'name': _titleController.text,
       };
