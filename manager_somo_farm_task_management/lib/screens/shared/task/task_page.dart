@@ -6,8 +6,8 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_habitant.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';

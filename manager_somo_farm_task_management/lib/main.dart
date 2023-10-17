@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:manager_somo_farm_task_management/screens/other/check_keep_login.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/check_keep_login.dart';
 import 'package:manager_somo_farm_task_management/services/firebase_service.dart';
 
 Future main() async {

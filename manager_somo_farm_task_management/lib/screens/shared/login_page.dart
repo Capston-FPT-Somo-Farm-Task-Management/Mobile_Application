@@ -2,7 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:manager_somo_farm_task_management/services/login_services.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
@@ -158,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                         _usernameController.text, _passwordController.text);
                     String role = result['role'];
                     int userId = result['id'];
-
+                    prefs.setString('role', role);
                     int farmId =
                         await UserService().getUserById(userId).then((value) {
                       prefs.setInt('farmId', value['data']['farmId']);
@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                       return 0; // Trả về giá trị mặc định nếu có lỗi
                     });
 
-                    if (role == "Manager") {
+                    if (role == "Manager" || role == "Supervisor") {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => ManagerHomePage(farmId: farmId),
@@ -178,6 +178,9 @@ class _LoginPageState extends State<LoginPage> {
                       getDeviceToken(userId);
                       SnackbarShowNoti.showSnackbar(
                           "Đăng nhập thành công!", false);
+                    } else {
+                      SnackbarShowNoti.showSnackbar(
+                          "Vai trò không hợp lệ", false);
                     }
                   } catch (e) {
                     SnackbarShowNoti.showSnackbar(
