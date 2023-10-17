@@ -19,6 +19,7 @@ class ThirdAddTaskPage extends StatefulWidget {
   final int supervisorId;
   final List<int> materialIds;
   String? description;
+  final String role;
   ThirdAddTaskPage({
     super.key,
     required this.fiedlId,
@@ -31,6 +32,7 @@ class ThirdAddTaskPage extends StatefulWidget {
     required this.supervisorId,
     required this.materialIds,
     this.description,
+    required this.role,
   });
 
   @override
@@ -402,7 +404,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
             "description": widget.description,
             "priority": _selectedPriority,
             "isRepeat": _selectedRepeat == "Không" ? false : true,
-            "suppervisorId": widget.supervisorId,
+            "suppervisorId":
+                widget.role == "Manager" ? widget.supervisorId : userId,
             "fieldId": widget.fiedlId,
             "taskTypeId": widget.taskTypeId,
             "managerId": userId,
