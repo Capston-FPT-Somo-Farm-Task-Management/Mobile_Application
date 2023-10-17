@@ -3,7 +3,7 @@ import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_add/third_add_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/third_add_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:manager_somo_farm_task_management/services/member_service.dart';
@@ -45,6 +45,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   int? _selectedSupervisorId;
   List<Map<String, dynamic>> taskTypes = [];
   int farmId = -1;
+  String? role;
+  int? userId;
   Future<List<Map<String, dynamic>>> getListTaskTypeLivestocks() {
     return TaskTypeService().getListTaskTypeLivestock();
   }
@@ -69,9 +71,28 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
     return storedFarmId;
   }
 
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
+  }
+
+  Future<void> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedUserId = prefs.getInt('userId');
+
+    setState(() {
+      userId = storedUserId;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getUserId();
+    getRole();
     getFarmId().then((f) {
       setState(() {
         farmId = f!;
@@ -259,34 +280,36 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   "Hãy chọn loại công việc khác",
                   style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
                 ),
-              MyInputField(
-                title: "Người giám sát",
-                hint: _selectedSupervisor,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedSupervisor = newValue!['name'];
-                      _selectedSupervisorId = newValue['id'];
-                    });
-                  },
-                  items: supervisors
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
-                ),
-              ),
+              role == "Manager"
+                  ? MyInputField(
+                      title: "Người giám sát",
+                      hint: _selectedSupervisor,
+                      widget: DropdownButton(
+                        underline: Container(height: 0),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.grey,
+                        ),
+                        iconSize: 32,
+                        elevation: 4,
+                        style: subTitileStyle,
+                        onChanged: (Map<String, dynamic>? newValue) {
+                          setState(() {
+                            _selectedSupervisor = newValue!['name'];
+                            _selectedSupervisorId = newValue['id'];
+                          });
+                        },
+                        items: supervisors
+                            .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                (Map<String, dynamic> value) {
+                          return DropdownMenuItem<Map<String, dynamic>>(
+                            value: value,
+                            child: Text(value['name']),
+                          );
+                        }).toList(),
+                      ),
+                    )
+                  : Container(),
               Container(
                 margin: const EdgeInsets.only(top: 16),
                 child: Column(
@@ -441,33 +464,38 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
   }
 
   _validateDate() {
-    if (_titleController.text.isNotEmpty &&
-        selectedEmployees.isNotEmpty &&
-        _selectedTaskTypeId != null &&
-        _selectedSupervisorId != null) {
-      //add database
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ThirdAddTaskPage(
-            fiedlId: widget.fieldId,
-            otherId: widget.otherId,
-            plantId: widget.plantId,
-            liveStockId: widget.liveStockId,
-            taskName: _titleController.text,
-            taskTypeId: _selectedTaskTypeId!,
-            employeeIds: selectedEmployees
-                .map<int>((employee) => employee['id'] as int)
-                .toList(),
-            supervisorId: _selectedSupervisorId!,
-            materialIds:
-                selectedMaterials.map<int>((m) => m['id'] as int).toList(),
-            description: _desController.text,
-          ),
-        ),
-      );
-    } else {
+    if (_titleController.text.isEmpty ||
+        selectedEmployees.isEmpty ||
+        _selectedTaskTypeId == null) {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+      return;
     }
+
+    if (role == "Manager" && _selectedSupervisorId == null) {
+      SnackbarShowNoti.showSnackbar('Vui lòng chọn giám sát viên', true);
+      return;
+    }
+    //add database
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ThirdAddTaskPage(
+          fiedlId: widget.fieldId,
+          otherId: widget.otherId,
+          plantId: widget.plantId,
+          liveStockId: widget.liveStockId,
+          taskName: _titleController.text,
+          taskTypeId: _selectedTaskTypeId!,
+          employeeIds: selectedEmployees
+              .map<int>((employee) => employee['id'] as int)
+              .toList(),
+          supervisorId: role == "Manager" ? _selectedSupervisorId! : userId!,
+          materialIds:
+              selectedMaterials.map<int>((m) => m['id'] as int).toList(),
+          description: _desController.text,
+          role: role!,
+        ),
+      ),
+    );
   }
 }

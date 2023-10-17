@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/sub_task/sub_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 
 class TaskTile extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -76,7 +76,7 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Giám sát: ${task['supervisorName']}",
+                      "Giám sát: ${task['supervisorName'].length > 20 ? task['supervisorName'].substring(0, 18) + '...' : task['supervisorName']}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 15, color: Colors.grey[100]),

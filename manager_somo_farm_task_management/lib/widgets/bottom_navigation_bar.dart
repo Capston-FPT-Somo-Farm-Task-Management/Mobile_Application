@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
-import 'package:manager_somo_farm_task_management/screens/other/notification_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/notification_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../screens/other/settings_page.dart';
+import '../screens/shared/settings_page.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;

@@ -3,7 +3,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/farm.dart';
-import 'home/manager_home_page.dart';
+import '../shared/home/manager_home_page.dart';
 
 class FarmListPage extends StatelessWidget {
   const FarmListPage({super.key});
