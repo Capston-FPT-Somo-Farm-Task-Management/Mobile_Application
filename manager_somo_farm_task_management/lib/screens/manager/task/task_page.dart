@@ -450,7 +450,7 @@ class TaskPageState extends State<TaskPage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        "Giám sát: ${task['receiverName']}",
+                                                        "Giám sát: ${task['supervisorName']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
