@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
+import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets/bottom_navigation_bar.dart';
@@ -89,7 +90,9 @@ class SettingsPage extends StatelessWidget {
                     AuthService().logout();
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.clear();
+                    final tokenDevice = prefs.getString('tokenDevice');
+                    await HubConnectionService().deleteConnection(tokenDevice!);
+                    await prefs.clear();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => LoginPage()),

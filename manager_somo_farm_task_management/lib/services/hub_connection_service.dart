@@ -19,4 +19,20 @@ class HubConnectionService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> deleteConnection(String token) async {
+    final String url = '$baseUrl/HubConnection';
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode({"token": token}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

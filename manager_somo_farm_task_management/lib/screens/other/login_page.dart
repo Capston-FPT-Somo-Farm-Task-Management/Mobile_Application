@@ -37,9 +37,17 @@ class _LoginPageState extends State<LoginPage> {
     await FirebaseMessaging.instance.getToken().then((value) {
       print(value);
       var data = {"connectionId": value, "memberId": userId};
-      return HubConnectionService().createConnection(data);
+      HubConnectionService().createConnection(data).then((r) {
+        saveTokenDevice(value!);
+        return r;
+      });
     });
     return false;
+  }
+
+  Future<void> saveTokenDevice(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('tokenDevice', token);
   }
 
   @override
