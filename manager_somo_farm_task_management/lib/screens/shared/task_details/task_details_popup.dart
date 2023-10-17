@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_update/task_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 
 class TaskDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> task;

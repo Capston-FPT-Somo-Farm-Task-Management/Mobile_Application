@@ -79,8 +79,7 @@ class LiveStockService {
     }
   }
 
-  Future<Map<String, dynamic>> CreateLiveStock(
-      Map<String, dynamic> liveStock) async {
+  Future<bool> CreateLiveStock(Map<String, dynamic> liveStock) async {
     final String createLiveStockUrl = '$baseUrl/LiveStock';
     var body = jsonEncode(liveStock);
     final response = await http.post(Uri.parse(createLiveStockUrl),
@@ -90,11 +89,10 @@ class LiveStockService {
         body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> liveStock =
-          Map<String, dynamic>.from(json.decode(response.body));
-      return liveStock;
+      return true;
     } else {
-      throw Exception('Failed to create liveStock');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 

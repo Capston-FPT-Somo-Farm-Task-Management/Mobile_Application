@@ -62,7 +62,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return HabitantTypeService().getLiveStockTypeFromHabitantType();
   }
 
-  Future<Map<String, dynamic>> CreateLiveStock(Map<String, dynamic> liveStock) {
+  Future<bool> CreateLiveStock(Map<String, dynamic> liveStock) {
     return LiveStockService().CreateLiveStock(liveStock);
   }
 
@@ -348,11 +348,15 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         'gender': gender,
       };
       CreateLiveStock(liveStock).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LiveStockPage(farmId: widget.farmId),
-          ),
-        );
+        if (value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => LiveStockPage(farmId: widget.farmId),
+            ),
+          );
+        }
+      }).catchError((e) {
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       SnackbarShowNoti.showSnackbar(

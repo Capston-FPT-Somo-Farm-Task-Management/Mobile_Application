@@ -8,9 +8,9 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_add/choose_habitant.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/home/components/task_tile.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,12 +33,14 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   List<Map<String, dynamic>> tasks = [];
   bool isLoading = true;
   bool isMoreLeft = false;
+  String? role;
   @override
   void initState() {
     super.initState();
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
     _getTasksForSelectedDateAndStatus(DateTime.now(), 0);
+    getRole();
   }
 
   Future<void> _getTasksForSelectedDateAndStatus(
@@ -50,6 +52,14 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     setState(() {
       tasks = selectedDateTasks;
       isLoading = false;
+    });
+  }
+
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
     });
   }
 
@@ -106,8 +116,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                     ),
                     alignment: Alignment
                         .center, // Đặt alignment thành Alignment.center
-                    child: const Text(
-                      "+ Thêm việc",
+                    child: Text(
+                      role == "Manager" ? "+ Thêm việc" : "+ Báo cáo",
                       style: TextStyle(
                         color: kTextWhiteColor,
                       ),

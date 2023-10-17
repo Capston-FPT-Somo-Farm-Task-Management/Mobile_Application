@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/home/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -19,6 +19,7 @@ class ThirdAddTaskPage extends StatefulWidget {
   final int supervisorId;
   final List<int> materialIds;
   String? description;
+  final String role;
   ThirdAddTaskPage({
     super.key,
     required this.fiedlId,
@@ -31,6 +32,7 @@ class ThirdAddTaskPage extends StatefulWidget {
     required this.supervisorId,
     required this.materialIds,
     this.description,
+    required this.role,
   });
 
   @override
@@ -402,7 +404,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
             "description": widget.description,
             "priority": _selectedPriority,
             "isRepeat": _selectedRepeat == "Không" ? false : true,
-            "suppervisorId": widget.supervisorId,
+            "suppervisorId":
+                widget.role == "Manager" ? widget.supervisorId : userId,
             "fieldId": widget.fiedlId,
             "taskTypeId": widget.taskTypeId,
             "managerId": userId,

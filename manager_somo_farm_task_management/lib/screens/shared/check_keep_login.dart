@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../manager/home/manager_home_page.dart';
+import 'home/manager_home_page.dart';
 import 'login_page.dart';
 
 class CheckKeepLogin extends StatefulWidget {
