@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
@@ -347,11 +348,11 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         'gender': gender,
       };
       CreateLiveStock(liveStock).then((value) {
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (context) => LiveStockPage(),
-        //   ),
-        // );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LiveStockPage(farmId: widget.farmId),
+          ),
+        );
       });
     } else {
       SnackbarShowNoti.showSnackbar(
