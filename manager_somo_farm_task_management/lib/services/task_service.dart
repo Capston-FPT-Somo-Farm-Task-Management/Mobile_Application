@@ -66,7 +66,7 @@ class TaskService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getTasksByUserIdDateStatus(
+  Future<List<Map<String, dynamic>>> getTasksByManagerIdDateStatus(
       int userId, DateTime? date, int status) async {
     var dateTime = "";
     if (date != null) {
@@ -75,6 +75,33 @@ class TaskService {
 
     final String getTasksUrl =
         '$baseUrl/FarmTask/Manager($userId)/Status($status)/Date?date=$dateTime';
+
+    final http.Response response = await http.get(
+      Uri.parse(getTasksUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> tasks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return tasks;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getTasksBySupervisorIdDateStatus(
+      int userId, DateTime? date, int status) async {
+    var dateTime = "";
+    if (date != null) {
+      dateTime = DateFormat('yyyy-MM-dd').format(date);
+    }
+
+    final String getTasksUrl =
+        '$baseUrl/FarmTask/Supervisor($userId)/Status($status)/Date?date=$dateTime';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),

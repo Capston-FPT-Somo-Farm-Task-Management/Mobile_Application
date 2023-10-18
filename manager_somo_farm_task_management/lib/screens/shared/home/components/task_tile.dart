@@ -76,7 +76,7 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Giám sát: ${task['supervisorName'].length > 20 ? task['supervisorName'].substring(0, 18) + '...' : task['supervisorName']}",
+                      "Giám sát: ${task['supervisorName'].length > 20 ? task['supervisorName'].substring(0, 17) + '...' : task['supervisorName']}",
                       style: GoogleFonts.lato(
                         textStyle:
                             TextStyle(fontSize: 15, color: Colors.grey[100]),

@@ -47,4 +47,41 @@ class LoginService {
       throw Exception('Failed to log in');
     }
   }
+
+  Future<String?> refreshAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? refreshToken = prefs.getString('refreshToken');
+
+    if (refreshToken == null) {
+      // Xử lý khi không có refresh token
+      return null;
+    }
+
+    final String refreshUrl = '$baseUrl/RefreshToken';
+
+    final Map<String, String> body = {
+      'refreshToken': refreshToken,
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse(refreshUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final String newAccessToken = responseData['accessToken'];
+
+      // Cập nhật access token mới trong SharedPreferences
+      prefs.setString('accessToken', newAccessToken);
+
+      return newAccessToken;
+    } else {
+      // Xử lý khi refresh token không hợp lệ
+      return null;
+    }
+  }
 }

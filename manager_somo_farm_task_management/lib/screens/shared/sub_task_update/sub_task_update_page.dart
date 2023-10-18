@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
@@ -7,17 +6,21 @@ import 'package:manager_somo_farm_task_management/services/sub_task_service.dart
 
 import '../../../componets/input_field.dart';
 
-class CreateSubTask extends StatefulWidget {
+class UpdateSubTask extends StatefulWidget {
   final int taskId;
   final String taskName;
-  const CreateSubTask(
-      {super.key, required this.taskId, required this.taskName});
+  final Map<String, dynamic> subtask;
+  const UpdateSubTask(
+      {super.key,
+      required this.taskId,
+      required this.taskName,
+      required this.subtask});
 
   @override
-  CreateSubTaskState createState() => CreateSubTaskState();
+  UpdateSubTaskState createState() => UpdateSubTaskState();
 }
 
-class CreateSubTaskState extends State<CreateSubTask> {
+class UpdateSubTaskState extends State<UpdateSubTask> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _desController = TextEditingController();
   List<Map<String, dynamic>> employees = [];
@@ -28,11 +31,12 @@ class CreateSubTaskState extends State<CreateSubTask> {
   }
 
   void getEmployees() async {
-    EmployeeService()
-        .getEmployeesNoSubTaskbyTaskId(widget.taskId)
-        .then((value) {
+    EmployeeService().getEmployeesbyTaskId(widget.taskId).then((value) {
       setState(() {
         employees = value;
+        employeeSelected = employees
+            .where((element) => widget.subtask['employeeId'] == element['id'])
+            .firstOrNull;
         isLoading = false;
       });
     }).catchError((e) {
@@ -44,6 +48,8 @@ class CreateSubTaskState extends State<CreateSubTask> {
   void initState() {
     super.initState();
     getEmployees();
+    _titleController.text = widget.subtask['name'];
+    _desController.text = widget.subtask['description'];
   }
 
   @override
@@ -53,7 +59,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Tạo công việc con",
+          "Chỉnh sửa công việc con",
           style: TextStyle(
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
@@ -106,6 +112,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
                           ),
                           SizedBox(height: 5),
                           Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
                             constraints: BoxConstraints(
                               minHeight:
                                   50.0, // Đặt giá trị minHeight theo ý muốn của bạn
@@ -117,35 +124,25 @@ class CreateSubTaskState extends State<CreateSubTask> {
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: DropdownButton2<Map<String, dynamic>>(
-                              isExpanded: true,
-                              underline: Container(height: 0),
-                              hint: Text("Chọn"),
-                              value: employeeSelected,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  employeeSelected = newValue;
-                                });
-                              },
-                              items: employees
-                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                      (Map<String, dynamic> value) {
-                                return DropdownMenuItem<Map<String, dynamic>>(
-                                  value: value,
-                                  child: Text(value['name']),
-                                );
-                              }).toList(),
+                            child: TextFormField(
+                              initialValue: employeeSelected!['name'],
+                              enabled: false,
+                              style: subTitileStyle,
+                              decoration: InputDecoration(
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: kBackgroundColor, width: 0),
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: kBackgroundColor, width: 0),
+                                ),
+                              ),
                             ),
                           )
                         ],
                       ),
                     ),
-                    if (employees.isEmpty)
-                      Text(
-                        "Tất cả người thực hiện đều đã được giao việc con!",
-                        style: TextStyle(
-                            fontSize: 11, color: Colors.red, height: 2),
-                      ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
                       child: Column(
@@ -212,7 +209,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
                         ),
                         child: const Center(
                           child: Text(
-                            "Tạo công việc con",
+                            "Chỉnh sửa công việc con",
                             style: TextStyle(fontSize: 19),
                           ),
                         ),
@@ -243,7 +240,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
             isLoading = false;
           });
           Navigator.pop(context, "newSubtask");
-          SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
+          SnackbarShowNoti.showSnackbar('Cập nhật công việc thành công', false);
         }
       }).catchError((e) {
         setState(() {

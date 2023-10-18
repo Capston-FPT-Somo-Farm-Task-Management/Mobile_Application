@@ -74,7 +74,7 @@ class TaskPageState extends State<TaskPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
     List<Map<String, dynamic>> selectedDateTasks = await TaskService()
-        .getTasksByUserIdDateStatus(userId!, selectedDate, status);
+        .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
     setState(() {
       tasks = selectedDateTasks;
       isLoading = false;
