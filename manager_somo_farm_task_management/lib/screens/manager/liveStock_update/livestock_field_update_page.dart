@@ -5,43 +5,32 @@ import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
-import 'package:manager_somo_farm_task_management/services/field_service.dart';
-import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../componets/input_field.dart';
 
-class UpdateLiveStock extends StatefulWidget {
-  final Map<String, dynamic> livestock;
-  const UpdateLiveStock({super.key, required this.livestock});
+class UpdateLiveStockField extends StatefulWidget {
+  final Map<String, dynamic> livestockFied;
+  const UpdateLiveStockField({super.key, required this.livestockFied});
 
   @override
-  UpdateLiveStockState createState() => UpdateLiveStockState();
+  UpdateLiveStockFieldState createState() => UpdateLiveStockFieldState();
 }
 
-class UpdateLiveStockState extends State<UpdateLiveStock> {
+class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
   final TextEditingController _titleIdController = TextEditingController();
   final TextEditingController _titleNameController = TextEditingController();
-  final TextEditingController _titleNumberController = TextEditingController();
+  final TextEditingController _titleAreaController = TextEditingController();
 
-  List<String> filterGender = ["Đực", "Cái"];
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
-  List<Map<String, dynamic>> filteredField = [];
-  List<Map<String, dynamic>> filterLivestockType = [];
   Map<String, dynamic>? _selectedArea;
   Map<String, dynamic>? _selectedZone;
-  Map<String, dynamic>? _selectedField;
-  Map<String, dynamic>? _selectedLiveStockType;
-  String _selectedGender = "Đực";
 
   String name = "";
-  int? weight;
   bool gender = true;
-  int? habitantTypeId;
-  int? fieldId;
   int? farmId;
   int? id;
 
@@ -58,7 +47,7 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
       setState(() {
         filteredArea = value;
         _selectedArea = filteredArea
-            .where((element) => element['id'] == widget.livestock['areaId'])
+            .where((element) => element['id'] == widget.livestockFied['areaId'])
             .firstOrNull;
       });
     });
@@ -70,32 +59,9 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
         filteredZone = value;
         if (init)
           _selectedZone = filteredZone
-              .where((element) => element['id'] == widget.livestock['zoneId'])
+              .where(
+                  (element) => element['id'] == widget.livestockFied['zoneId'])
               .firstOrNull;
-      });
-    });
-  }
-
-  Future<void> getFields(int zoneId, bool init) async {
-    FieldService().getFieldsActivebyZoneId(zoneId).then((value) {
-      setState(() {
-        filteredField = value;
-        if (init)
-          _selectedField = filteredField
-              .where((element) => element['id'] == widget.livestock['fieldId'])
-              .firstOrNull;
-      });
-    });
-  }
-
-  Future<void> getHabitantTypes(int habitantTypeId, bool init) async {
-    HabitantTypeService().getLiveStockTypeFromHabitantType().then((value) {
-      setState(() {
-        filterLivestockType = value;
-        _selectedLiveStockType = filterLivestockType
-            .where((element) =>
-                element['id'] == widget.livestock['habitantTypeId'])
-            .firstOrNull;
       });
     });
   }
@@ -109,16 +75,12 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
     super.initState();
     getFarmId().then((_) {
       getAreas();
-      getZones(widget.livestock['areaId'], true);
-      getFields(widget.livestock['zoneId'], true);
-      getHabitantTypes(widget.livestock['habitantTypeId'], true);
+      getZones(widget.livestockFied['areaId'], true);
     });
-    _titleIdController.text = widget.livestock['externalId'];
-    _titleNameController.text = widget.livestock['name'];
-    _titleNumberController.hashCode == widget.livestock['weight'];
-    id = widget.livestock['id'];
-    habitantTypeId = widget.livestock['habitantTypeId'];
-    fieldId = widget.livestock['fieldId'];
+    _titleIdController.text = widget.livestockFied['code'];
+    _titleNameController.text = widget.livestockFied['name'];
+    _titleAreaController.text = widget.livestockFied['area'].toString();
+    id = widget.livestockFied['id'];
   }
 
   @override
@@ -147,102 +109,23 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Chỉnh sửa vật nuôi",
+                "Chỉnh sửa chuồng của vật nuôi",
                 style: headingStyle,
               ),
               MyInputField(
                 title: "Mã vật nuôi",
-                hint: "Nhập id vật nuôi",
+                hint: "Nhập mã vật nuôi",
                 controller: _titleIdController,
               ),
               MyInputField(
-                title: "Tên vật nuôi",
-                hint: "Nhập tên vật nuôi",
+                title: "Tên vật chuồng",
+                hint: "Nhập tên chuồng",
                 controller: _titleNameController,
               ),
-              MyInputField(
-                title: "Giới tính vật nuôi",
-                hint: _selectedGender,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  underline: Container(height: 0),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedGender = newValue!;
-                      if (_selectedGender == 'Đực') {
-                        gender = true;
-                      }
-                      if (_selectedGender == "Cái") {
-                        gender = false;
-                      }
-                    });
-                  },
-                  items: filterGender
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
               MyInputNumber(
-                title: "Khối lượng dự kiến của vật nuôi (kí)",
-                hint: "Nhập khối lượng của vật nuôi",
-                controller: _titleNumberController,
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Loại vật nuôi",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: _selectedLiveStockType,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedLiveStockType = newValue;
-                            if (newValue != null) {
-                              habitantTypeId = newValue['id'];
-                            }
-                          });
-                        },
-                        items: filterLivestockType
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
+                title: "Diện tích của chuồng (mét vuông)",
+                hint: "Nhập diện tích của chuồng",
+                controller: _titleAreaController,
               ),
               Container(
                 margin: const EdgeInsets.only(top: 16),
@@ -275,8 +158,6 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
                             _selectedArea = newValue;
                             _selectedZone = null;
                             getZones(newValue!['id'], false);
-                            _selectedField = null;
-                            getFields(newValue['id'], false);
                           });
                         },
                         items: filteredArea
@@ -321,8 +202,6 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
                         onChanged: (newValue) {
                           setState(() {
                             _selectedZone = newValue;
-                            _selectedField = null;
-                            getFields(newValue!['id'], false);
                           });
                         },
                         items: filteredZone
@@ -342,58 +221,6 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
                 Text(
                   "Hãy chọn khu vực khác",
                   style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
-                ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Chuồng",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: _selectedField,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedField = newValue;
-                            if (newValue != null) {
-                              fieldId = newValue['id'];
-                            }
-                          });
-                        },
-                        items: filteredField
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              if (_selectedField == "Chưa có")
-                Text(
-                  "Vùng bạn chọn chưa có chuồng! Hãy chọn vùng khác",
-                  style: TextStyle(fontSize: 14, color: Colors.red, height: 2),
                 ),
               const SizedBox(height: 40),
               const Divider(
@@ -432,16 +259,14 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
   _validateDate() {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
-        _titleNumberController.text.isNotEmpty) {
+        _titleAreaController.text.isNotEmpty) {
       Map<String, dynamic> liveStock = {
         'name': _titleNameController.text,
         'externalId': _titleIdController.text,
-        'weight': _titleNumberController.text,
-        'habitantTypeId': habitantTypeId,
-        'fieldId': fieldId,
+        'weight': _titleAreaController.text,
         'gender': gender,
       };
-      UpdateLiveStock(liveStock, widget.livestock['id']).then((value) {
+      UpdateLiveStock(liveStock, widget.livestockFied['id']).then((value) {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
