@@ -99,4 +99,21 @@ class FieldService {
       throw Exception('Failed to get field');
     }
   }
+
+  Future<bool> UpdateField(Map<String, dynamic> field, int id) async {
+    final String updateFieldUrl = '$baseUrl/Field/${id}';
+    var body = jsonEncode(field);
+    final response = await http.put(Uri.parse(updateFieldUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

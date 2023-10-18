@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
-import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
+import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,9 +30,10 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
   Map<String, dynamic>? _selectedZone;
 
   String name = "";
-  bool gender = true;
+  int? status;
   int? farmId;
   int? id;
+  int? zoneId;
 
   Future<void> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
@@ -66,8 +67,8 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     });
   }
 
-  Future<bool> UpdateLiveStock(Map<String, dynamic> liveStock, int id) {
-    return LiveStockService().UpdateLiveStock(liveStock, id);
+  Future<bool> UpdateField(Map<String, dynamic> field, int id) {
+    return FieldService().UpdateField(field, id);
   }
 
   @override
@@ -81,6 +82,7 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     _titleNameController.text = widget.livestockFied['name'];
     _titleAreaController.text = widget.livestockFied['area'].toString();
     id = widget.livestockFied['id'];
+    zoneId = widget.livestockFied['zoneId'];
   }
 
   @override
@@ -202,6 +204,9 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
                         onChanged: (newValue) {
                           setState(() {
                             _selectedZone = newValue;
+                            if (newValue != null) {
+                              zoneId = newValue['id'];
+                            }
                           });
                         },
                         items: filteredZone
@@ -260,17 +265,18 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
         _titleAreaController.text.isNotEmpty) {
-      Map<String, dynamic> liveStock = {
+      Map<String, dynamic> field = {
         'name': _titleNameController.text,
-        'externalId': _titleIdController.text,
-        'weight': _titleAreaController.text,
-        'gender': gender,
+        'code': _titleIdController.text,
+        'area': _titleAreaController.text,
+        'zoneId': zoneId,
+        'status': 1,
       };
-      UpdateLiveStock(liveStock, widget.livestockFied['id']).then((value) {
+      UpdateField(field, widget.livestockFied['id']).then((value) {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockPage(farmId: farmId!),
+              builder: (context) => LiveStockFieldPage(),
             ),
           );
         }

@@ -24,25 +24,6 @@ class LiveStockService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAllLiveStock() async {
-    final String getLiveStockUrl = '$baseUrl/LiveStock';
-
-    final http.Response response = await http.get(
-      Uri.parse(getLiveStockUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> liveStocks =
-          List<Map<String, dynamic>>.from(json.decode(response.body));
-      return liveStocks;
-    } else {
-      throw Exception('Failed to get LiveStocks');
-    }
-  }
-
   Future<Map<String, dynamic>> getLiveStockById(int id) async {
     final String getLiveStockUrl = '$baseUrl/LiveStock/&id';
 
