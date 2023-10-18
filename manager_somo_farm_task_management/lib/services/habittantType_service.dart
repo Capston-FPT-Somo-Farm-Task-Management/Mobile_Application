@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class HabitantTypeService {
   Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() async {
-    final String getPlantTypeUrl = '$baseUrl/HabitantType/PlantType';
+    final String getPlantTypeUrl = '$baseUrl/HabitantType/PlantType/Active';
 
     final http.Response response = await http.get(
       Uri.parse(getPlantTypeUrl),
@@ -25,7 +25,8 @@ class HabitantTypeService {
   }
 
   Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType() async {
-    final String getLLiveStockUrl = '$baseUrl/HabitantType/LivestockType';
+    final String getLLiveStockUrl =
+        '$baseUrl/HabitantType/LivestockType/Active';
 
     final http.Response response = await http.get(
       Uri.parse(getLLiveStockUrl),

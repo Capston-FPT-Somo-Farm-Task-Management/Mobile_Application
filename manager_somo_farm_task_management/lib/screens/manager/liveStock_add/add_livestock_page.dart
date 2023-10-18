@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
@@ -45,10 +46,6 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
   }
 
-  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
-    return ZoneService().getZonesbyAreaId(areaId);
-  }
-
   Future<List<Map<String, dynamic>>> getZonesbyAreaLivestockId(int areaId) {
     return ZoneService().getZonesbyAreaLivestockId(areaId);
   }
@@ -61,7 +58,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return HabitantTypeService().getLiveStockTypeFromHabitantType();
   }
 
-  Future<Map<String, dynamic>> CreateLiveStock(Map<String, dynamic> liveStock) {
+  Future<bool> CreateLiveStock(Map<String, dynamic> liveStock) {
     return LiveStockService().CreateLiveStock(liveStock);
   }
 
@@ -347,11 +344,15 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         'gender': gender,
       };
       CreateLiveStock(liveStock).then((value) {
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (context) => LiveStockPage(),
-        //   ),
-        // );
+        if (value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => LiveStockPage(farmId: widget.farmId),
+            ),
+          );
+        }
+      }).catchError((e) {
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       SnackbarShowNoti.showSnackbar(

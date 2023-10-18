@@ -80,4 +80,40 @@ class FieldService {
       throw Exception('Failed to get livestock in field');
     }
   }
+
+  Future<Map<String, dynamic>> getFieldById(int id) async {
+    final String getFieldUrl = '$baseUrl/Field/&id';
+
+    final http.Response response = await http.get(
+      Uri.parse(getFieldUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> field =
+          Map<String, dynamic>.from(json.decode(response.body));
+      return field;
+    } else {
+      throw Exception('Failed to get field');
+    }
+  }
+
+  Future<bool> UpdateField(Map<String, dynamic> field, int id) async {
+    final String updateFieldUrl = '$baseUrl/Field/${id}';
+    var body = jsonEncode(field);
+    final response = await http.put(Uri.parse(updateFieldUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
