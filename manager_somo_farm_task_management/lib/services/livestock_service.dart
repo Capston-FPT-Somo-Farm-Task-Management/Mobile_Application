@@ -115,4 +115,21 @@ class LiveStockService {
       throw Exception('Failed to get LiveStocks');
     }
   }
+
+  Future<bool> UpdateLiveStock(Map<String, dynamic> liveStock, int id) async {
+    final String updateLiveStockUrl = '$baseUrl/LiveStock/${id}';
+    var body = jsonEncode(liveStock);
+    final response = await http.put(Uri.parse(updateLiveStockUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

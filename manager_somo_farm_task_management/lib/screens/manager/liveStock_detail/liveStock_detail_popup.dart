@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_update/update_livestock_page.dart';
 
 class LiveStockDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> liveStock;
@@ -29,11 +30,11 @@ class LiveStockDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              // Navigator.of(context).push(
-              //           MaterialPageRoute(
-              //             builder: (context) =>  FirstUpdateTaskPage(task: task),
-              //           ),
-              //         );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UpdateLiveStock(livestock: liveStock),
+                ),
+              );
             },
           )
         ],

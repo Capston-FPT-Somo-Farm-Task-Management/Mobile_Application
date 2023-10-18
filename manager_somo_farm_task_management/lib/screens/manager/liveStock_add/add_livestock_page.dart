@@ -46,10 +46,6 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
   }
 
-  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
-    return ZoneService().getZonesbyAreaId(areaId);
-  }
-
   Future<List<Map<String, dynamic>>> getZonesbyAreaLivestockId(int areaId) {
     return ZoneService().getZonesbyAreaLivestockId(areaId);
   }
