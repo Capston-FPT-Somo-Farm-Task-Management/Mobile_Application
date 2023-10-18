@@ -69,6 +69,28 @@ class EmployeeService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getEmployeesNoSubTaskbyTaskId(
+      int taskId) async {
+    final String url = '$baseUrl/FarmSubTask/EmployeeNoSubtask($taskId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> ems =
+          List<Map<String, dynamic>>.from(data['data']);
+      return ems;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> createEmployee(Map<String, dynamic> employeeData) async {
     final String apiUrl = "$baseUrl/Employee";
     var body = jsonEncode(employeeData);
