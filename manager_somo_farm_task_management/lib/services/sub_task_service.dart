@@ -25,12 +25,28 @@ class SubTaskService {
   }
 
   Future<bool> createSubTask(Map<String, dynamic> taskData) async {
-    final String apiUrl = "$baseUrl/FarmSubTask?Task";
+    final String apiUrl = "$baseUrl/FarmSubTask/Task";
     var body = jsonEncode(taskData);
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
       body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> deleteSubTask(int taskId, int employeeId) async {
+    final String apiUrl =
+        "$baseUrl/FarmSubTask/Delete/Task(${taskId})/Employee(${employeeId})";
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
     );
 
     if (response.statusCode == 200) {

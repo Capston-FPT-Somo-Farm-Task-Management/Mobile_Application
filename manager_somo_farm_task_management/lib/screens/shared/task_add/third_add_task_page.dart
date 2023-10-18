@@ -408,7 +408,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                 widget.role == "Manager" ? widget.supervisorId : userId,
             "fieldId": widget.fiedlId,
             "taskTypeId": widget.taskTypeId,
-            "managerId": userId,
+            "managerId": widget.role == "Manager" ? userId : null,
             "otherId": widget.otherId,
             "plantId": widget.plantId,
             "liveStockId": widget.liveStockId,

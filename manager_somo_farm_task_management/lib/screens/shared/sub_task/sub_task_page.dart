@@ -3,9 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task_add/sub_task_add_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/sub_task_update/sub_task_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
@@ -179,14 +180,6 @@ class SubTaskPageState extends State<SubTaskPage> {
                               final task = filteredTaskList[index];
 
                               return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return TaskDetailsPopup(task: task);
-                                    },
-                                  );
-                                },
                                 onLongPress: () {
                                   _showBottomSheet(context, task);
                                 },
@@ -230,11 +223,8 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        task['taskName']
-                                                                    .length >
-                                                                25
-                                                            ? '${task['taskName'].substring(0, 22)}...'
-                                                            : task['taskName'],
+                                                        wrapWords(
+                                                            task['name'], 25),
                                                         style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight:
@@ -248,33 +238,32 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
-                                                      const Icon(
-                                                        Icons
-                                                            .access_time_rounded,
-                                                        color: Colors.black,
-                                                        size: 18,
-                                                      ),
-                                                      const SizedBox(width: 4),
                                                       Text(
-                                                        "${task['description']}",
+                                                        "Nhân viên: ${wrapWordsWithEllipsis(task['employeeName'], 25)}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 16,
                                                                   color: Colors
                                                                       .black),
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 20),
+                                                  const SizedBox(height: 10),
                                                   Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                        MainAxisAlignment.start,
                                                     children: [
+                                                      const Icon(
+                                                        Icons
+                                                            .info_outline_rounded,
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                      ),
+                                                      const SizedBox(width: 4),
                                                       Text(
-                                                        "Giám sát: ${task['name']}",
+                                                        "Mô tả:",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
@@ -285,44 +274,43 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                       ),
                                                     ],
                                                   ),
+                                                  const SizedBox(height: 5),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    height: 90,
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: Colors.black45,
+                                                        width: 1.0,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                    ),
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Text(
+                                                        task['description'] ==
+                                                                ""
+                                                            ? "Không có mô tả"
+                                                            : task[
+                                                                'description'],
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.black54,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors
-                                              .grey[400], // Đặt màu xám ở đây
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            bottomLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10),
-                                          ),
-                                        ),
-                                        height: 45,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Loại: ${task['taskTypeName']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            Text(
-                                              'Ưu tiên: ${task['priority']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                          ],
-                                        ),
-                                      )
                                     ],
                                   ),
                                 ),
@@ -337,15 +325,15 @@ class SubTaskPageState extends State<SubTaskPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> task) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> subTask) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      builder: (
+        BuildContext context,
+      ) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: task['status'] != "Hoàn thành"
-              ? MediaQuery.of(context).size.height * 0.24
-              : MediaQuery.of(context).size.height * 0.32,
+          height: MediaQuery.of(context).size.height * 0.30,
           color: kBackgroundColor,
           child: Column(
             children: [
@@ -358,78 +346,63 @@ class SubTaskPageState extends State<SubTaskPage> {
                 ),
               ),
               const Spacer(),
-              if (task['status'] == "Hoàn thành")
-                _bottomSheetButton(
-                  label: "Xem bằng chứng",
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TaskEvidence(),
+              _bottomSheetButton(
+                label: "Chỉnh sửa",
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .push(
+                    MaterialPageRoute(
+                      builder: (context) => UpdateSubTask(
+                        taskId: widget.taskId,
+                        taskName: widget.taskName,
+                        subtask: subTask,
                       ),
-                    );
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (task['status'] == "Hoàn thành")
-                _bottomSheetButton(
-                  label: "Đánh giá",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (task['status'] == "Không hoàn thành")
-                _bottomSheetButton(
-                  label: "Đánh giá",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (task['status'] == "Chuẩn bị")
-                _bottomSheetButton(
-                  label: "Xóa",
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context1) {
-                          return ConfirmDeleteDialog(
-                            title: "Xóa công việc",
-                            content: "Bạn có chắc muốn xóa công việc này?",
-                            onConfirm: () {
-                              // changeTaskStatus(task['id'], 4).then((value) {
-                              //   if (value) {
-                              //     _getTasksForSelectedDateAndStatus(
-                              //         _selectedDate, groupValue);
-                              //     Navigator.of(context).pop();
-                              //     SnackbarShowNoti.showSnackbar(
-                              //         "Xóa thành công!", false);
-                              //   } else {
-                              //     SnackbarShowNoti.showSnackbar(
-                              //         "Xảy ra lỗi!", true);
-                              //   }
-                              // });
-                            },
-                            buttonConfirmText: "Xóa",
-                          );
-                        });
-                  },
-                  cls: Colors.red[300]!,
-                  context: context,
-                ),
-              if (task['status'] == "Đang thực hiện")
-                _bottomSheetButton(
-                  label: "Hoàn thành",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              const SizedBox(height: 20),
+                    ),
+                  )
+                      .then((value) {
+                    if (value != null) {
+                      _getSubTask();
+                    }
+                  });
+                },
+                cls: kPrimaryColor,
+                context: context,
+              ),
+              _bottomSheetButton(
+                label: "Xóa",
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context1) {
+                      return ConfirmDeleteDialog(
+                        title: "Xóa công việc",
+                        content: "Bạn có chắc muốn xóa công việc này?",
+                        onConfirm: () {
+                          SubTaskService()
+                              .deleteSubTask(
+                                  subTask['taskId'], subTask['employeeId'])
+                              .then((value) {
+                            if (value) {
+                              _getSubTask();
+                              Navigator.of(context).pop();
+                              SnackbarShowNoti.showSnackbar(
+                                  "Xóa thành công!", false);
+                            }
+                          }).catchError((e) {
+                            Navigator.of(context).pop();
+                            SnackbarShowNoti.showSnackbar(e.toString(), true);
+                          });
+                        },
+                        buttonConfirmText: "Xóa",
+                      );
+                    },
+                  );
+                },
+                cls: Colors.red[300]!,
+                context: context,
+              ),
+              SizedBox(height: 30),
               _bottomSheetButton(
                 label: "Đóng",
                 onTap: () {

@@ -19,7 +19,8 @@ class AreaService {
           List<Map<String, dynamic>>.from(data['data']);
       return areas;
     } else {
-      throw Exception('Failed to get area by farm ID');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -39,7 +40,8 @@ class AreaService {
           List<Map<String, dynamic>>.from(data['data']);
       return areas;
     } else {
-      throw Exception('Failed to get area by farm ID');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -73,7 +75,8 @@ class AreaService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Failed to change status');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 }
