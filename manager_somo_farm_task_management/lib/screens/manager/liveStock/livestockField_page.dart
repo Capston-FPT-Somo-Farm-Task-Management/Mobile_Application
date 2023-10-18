@@ -43,10 +43,6 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
     return LiveStockService().getLiveStockByFarmId(id);
   }
 
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
-  }
-
   Future<List<Map<String, dynamic>>> getLiveStockFieldByFarmId(int id) {
     return FieldService().getLiveStockFieldByFarmId(id);
   }

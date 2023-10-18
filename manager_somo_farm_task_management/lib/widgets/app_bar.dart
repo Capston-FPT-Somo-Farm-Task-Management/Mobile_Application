@@ -557,7 +557,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                     child: const Row(
                                                                         children: [
                                                                           Text(
-                                                                            "Chuồng của vật nuôi",
+                                                                            "Chuồng",
                                                                             style:
                                                                                 TextStyle(fontSize: 20),
                                                                           ),
