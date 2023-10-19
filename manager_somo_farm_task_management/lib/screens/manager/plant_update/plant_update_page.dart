@@ -42,6 +42,7 @@ class UpdatePlantState extends State<UpdatePlant> {
   int? farmId;
   int? id;
   bool isLoading = true;
+  bool isUpdating = false;
 
   Future<void> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
@@ -127,6 +128,13 @@ class UpdatePlantState extends State<UpdatePlant> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (isUpdating) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -411,6 +419,9 @@ class UpdatePlantState extends State<UpdatePlant> {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
         _titleNumberController.text.isNotEmpty) {
+      setState(() {
+        isUpdating = true;
+      });
       Map<String, dynamic> plant = {
         'name': _titleNameController.text,
         'externalId': _titleIdController.text,
@@ -427,6 +438,9 @@ class UpdatePlantState extends State<UpdatePlant> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isUpdating = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
