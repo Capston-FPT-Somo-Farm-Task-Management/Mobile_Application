@@ -4,8 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
@@ -40,6 +43,7 @@ class TaskPageState extends State<TaskPage> {
   bool isLoading = true;
   int groupValue = 0;
   bool isMoreLeft = false;
+  String? role;
   @override
   initState() {
     super.initState();
@@ -47,7 +51,17 @@ class TaskPageState extends State<TaskPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    _getTasksForSelectedDateAndStatus(null, 0);
+    getRole().then((_) {
+      _getTasksForSelectedDateAndStatus(null, 0);
+    });
+  }
+
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
   }
 
   Future<bool> changeTaskStatus(int taskId, int newStatus) async {
@@ -69,12 +83,31 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
+  // Future<void> _getTasksForSelectedDateAndStatus(
+  //     DateTime? selectedDate, int status) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   int? userId = prefs.getInt('userId');
+  //   List<Map<String, dynamic>> selectedDateTasks = await TaskService()
+  //       .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+  //   setState(() {
+  //     tasks = selectedDateTasks;
+  //     isLoading = false;
+  //     filteredTaskList = selectedDateTasks;
+  //   });
+  // }
+
   Future<void> _getTasksForSelectedDateAndStatus(
       DateTime? selectedDate, int status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
-    List<Map<String, dynamic>> selectedDateTasks = await TaskService()
-        .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+    List<Map<String, dynamic>> selectedDateTasks;
+    if (role == "Manager") {
+      selectedDateTasks = await TaskService()
+          .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+    } else {
+      selectedDateTasks = await TaskService()
+          .getTasksBySupervisorIdDateStatus(userId!, selectedDate, status);
+    }
     setState(() {
       tasks = selectedDateTasks;
       isLoading = false;
@@ -369,56 +402,92 @@ class TaskPageState extends State<TaskPage> {
                                                     CrossAxisAlignment.start,
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        task['name'].length > 15
-                                                            ? '${task['name'].substring(0, 15)}...'
-                                                            : task['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: task['status'] ==
-                                                                  "Không hoàn thành"
-                                                              ? Colors.red[400]
-                                                              : task['status'] ==
-                                                                      "Chuẩn bị"
-                                                                  ? Colors.orange[
-                                                                      400]
-                                                                  : task['status'] ==
-                                                                          "Đang thực hiện"
-                                                                      ? kTextBlueColor
-                                                                      : kPrimaryColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10),
-                                                        child: Text(
-                                                          task['status'],
+                                                  Stack(children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          wrapWordsWithEllipsis(
+                                                              task['name'], 20),
                                                           style:
                                                               const TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Priority
+                                                                  .getBGClr(task[
+                                                                      'priority']),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .push(
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) => SubTaskPage(
+                                                                        taskId: task[
+                                                                            'id'],
+                                                                        taskName:
+                                                                            task['name']),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child: Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios,
+                                                                color: Colors
+                                                                    .grey[200],
+                                                                size: 15,
+                                                              ),
+                                                            )),
+                                                      ],
+                                                    ),
+                                                    if (role == "Manager" &&
+                                                            task['managerName'] ==
+                                                                null ||
+                                                        role == "Supervisor" &&
+                                                            task['managerName'] !=
+                                                                null)
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        alignment:
+                                                            Alignment.topRight,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 35),
+                                                        child: Tooltip(
+                                                          message: role ==
+                                                                  "Manager"
+                                                              ? 'Công việc do người giám sát tạo'
+                                                              : 'Công việc do người quản lí tạo',
+                                                          child: Icon(
+                                                            Icons
+                                                                .account_circle_rounded,
+                                                            color:
+                                                                Colors.black54,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
+                                                  ]),
                                                   const SizedBox(height: 10),
                                                   Row(
                                                     mainAxisAlignment:
@@ -480,8 +549,8 @@ class TaskPageState extends State<TaskPage> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors
-                                              .grey[400], // Đặt màu xám ở đây
+                                          color: Priority.getBGClr(task[
+                                              'priority']), // Đặt màu xám ở đây
                                           border: Border.all(
                                             color: Colors.grey,
                                             width: 1.0,
@@ -498,13 +567,15 @@ class TaskPageState extends State<TaskPage> {
                                           children: [
                                             Text(
                                               'Loại: ${task['taskTypeName']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey[200]),
                                             ),
                                             Text(
                                               'Ưu tiên: ${task['priority']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey[200]),
                                             ),
                                           ],
                                         ),
@@ -561,7 +632,7 @@ class TaskPageState extends State<TaskPage> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => TaskEvidence(),
+                        builder: (context) => TaskEvidenceDetails(task: task),
                       ),
                     );
                   },
