@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_update/plant_update_page.dart';
 
-class PlantDetailsPopup extends StatelessWidget {
+class PlantDetailPopup extends StatelessWidget {
   final Map<String, dynamic> plant;
 
-  const PlantDetailsPopup({required this.plant});
+  const PlantDetailPopup({required this.plant});
 
   @override
   Widget build(BuildContext context) {

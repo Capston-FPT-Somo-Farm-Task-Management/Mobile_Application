@@ -4,6 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_detail/plant_field_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -171,24 +172,24 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                 child: ListView.builder(
                   itemCount: plants.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> liveStock = plants[index];
+                    Map<String, dynamic> plant = plants[index];
 
-                    if (liveStock['status'] == 'Inactive') {
+                    if (plant['status'] == 'Inactive') {
                       return SizedBox.shrink();
                     }
                     return Container(
                       margin: EdgeInsets.only(bottom: 25),
                       child: GestureDetector(
                         onTap: () {
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (BuildContext context) {
-                          //     return LiveStockDetailsPopup(liveStock: liveStock);
-                          //   },
-                          // );
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PlantFieldDetailsPopup(plantField: plant);
+                            },
+                          );
                         },
                         onLongPress: () {
-                          _showBottomSheet(context, liveStock);
+                          _showBottomSheet(context, plant);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -226,7 +227,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
-                                              liveStock['name'],
+                                              plant['name'],
                                               style: const TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
@@ -234,13 +235,13 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              '${liveStock['status']}',
+                                              '${plant['code']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              '${liveStock['areaName']}',
+                                              '${plant['areaName']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
@@ -268,7 +269,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        '${liveStock['zoneName']}',
+                                        '${plant['zoneName']}',
                                         style: const TextStyle(fontSize: 16),
                                       ),
                                     ),

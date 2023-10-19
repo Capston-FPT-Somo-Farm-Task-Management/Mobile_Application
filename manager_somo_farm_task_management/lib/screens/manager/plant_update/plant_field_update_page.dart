@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
@@ -12,15 +11,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../componets/input_field.dart';
 
-class UpdateLiveStockField extends StatefulWidget {
-  final Map<String, dynamic> livestockFied;
-  const UpdateLiveStockField({super.key, required this.livestockFied});
+class UpdatePlantField extends StatefulWidget {
+  final Map<String, dynamic> plantFied;
+  const UpdatePlantField({super.key, required this.plantFied});
 
   @override
-  UpdateLiveStockFieldState createState() => UpdateLiveStockFieldState();
+  UpdatePlantFieldState createState() => UpdatePlantFieldState();
 }
 
-class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
+class UpdatePlantFieldState extends State<UpdatePlantField> {
   final TextEditingController _titleIdController = TextEditingController();
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _titleAreaController = TextEditingController();
@@ -35,6 +34,8 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
   int? farmId;
   int? id;
   int? zoneId;
+  bool isLoading = true;
+  bool isUpdating = false;
 
   Future<void> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
@@ -49,20 +50,19 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
       setState(() {
         filteredArea = value;
         _selectedArea = filteredArea
-            .where((element) => element['id'] == widget.livestockFied['areaId'])
+            .where((element) => element['id'] == widget.plantFied['areaId'])
             .firstOrNull;
       });
     });
   }
 
   Future<void> getZones(int areaId, bool init) async {
-    ZoneService().getZonesbyAreaLivestockId(areaId).then((value) {
+    ZoneService().getZonesbyAreaPlantId(areaId).then((value) {
       setState(() {
         filteredZone = value;
         if (init)
           _selectedZone = filteredZone
-              .where(
-                  (element) => element['id'] == widget.livestockFied['zoneId'])
+              .where((element) => element['id'] == widget.plantFied['zoneId'])
               .firstOrNull;
       });
     });
@@ -77,17 +77,36 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     super.initState();
     getFarmId().then((_) {
       getAreas();
-      getZones(widget.livestockFied['areaId'], true);
+      getZones(widget.plantFied['areaId'], true);
     });
-    _titleIdController.text = widget.livestockFied['code'];
-    _titleNameController.text = widget.livestockFied['name'];
-    _titleAreaController.text = widget.livestockFied['area'].toString();
-    id = widget.livestockFied['id'];
-    zoneId = widget.livestockFied['zoneId'];
+    _titleIdController.text = widget.plantFied['code'];
+    _titleNameController.text = widget.plantFied['name'];
+    _titleAreaController.text = widget.plantFied['area'].toString();
+    id = widget.plantFied['id'];
+    zoneId = widget.plantFied['zoneId'];
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (isUpdating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -112,22 +131,22 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Chỉnh sửa chuồng của vật nuôi",
+                "Chỉnh sửa vườn cây",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Mã chuồng",
-                hint: "Nhập mã chuồng",
+                title: "Mã vườn",
+                hint: "Nhập mã vườn",
                 controller: _titleIdController,
               ),
               MyInputField(
-                title: "Tên chuồng",
-                hint: "Nhập tên chuồng",
+                title: "Tên vườn",
+                hint: "Nhập tên vườn",
                 controller: _titleNameController,
               ),
               MyInputNumber(
-                title: "Diện tích của chuồng (mét vuông)",
-                hint: "Nhập diện tích của chuồng",
+                title: "Diện tích của vườn (mét vuông)",
+                hint: "Nhập diện tích của vườn",
                 controller: _titleAreaController,
               ),
               Container(
@@ -249,7 +268,7 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Chỉnh sửa chuồng",
+                      "Chỉnh sửa vườn",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
@@ -266,22 +285,28 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
         _titleAreaController.text.isNotEmpty) {
+      setState(() {
+        isLoading = true;
+      });
       Map<String, dynamic> field = {
         'name': _titleNameController.text,
         'code': _titleIdController.text,
         'area': _titleAreaController.text,
         'zoneId': zoneId,
-        'status': 1,
+        'status': 0,
       };
-      UpdateField(field, widget.livestockFied['id']).then((value) {
+      UpdateField(field, widget.plantFied['id']).then((value) {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockFieldPage(),
+              builder: (context) => PlantFieldPage(),
             ),
           );
         }
       }).catchError((e) {
+        setState(() {
+          isLoading = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
