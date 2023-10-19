@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
@@ -234,7 +235,8 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  liveStock['name'],
+                                                  wrapWordsWithEllipsis(
+                                                      liveStock['name'], 27),
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
