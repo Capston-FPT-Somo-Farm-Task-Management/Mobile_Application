@@ -5,7 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStockField_detail_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_field_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -22,6 +22,7 @@ class LiveStockFieldPage extends StatefulWidget {
 class LiveStockFieldPageState extends State<LiveStockFieldPage> {
   int? farmId;
   List<LiveStock> SearchliveStock = plantList;
+  bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -72,10 +73,22 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
       farmId = value;
     });
     GetLiveStockFields();
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),

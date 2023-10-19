@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_detail/plant_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,10 +76,22 @@ class PlantPageState extends State<PlantPage> {
   void initState() {
     super.initState();
     _initializeData();
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -178,7 +189,7 @@ class PlantPageState extends State<PlantPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return PlantDetailsPopup(plant: plant);
+                              return PlantDetailPopup(plant: plant);
                             },
                           );
                         },

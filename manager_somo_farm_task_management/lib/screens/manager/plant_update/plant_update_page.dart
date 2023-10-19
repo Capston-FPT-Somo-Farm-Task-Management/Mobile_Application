@@ -3,30 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
-import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
+import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../componets/input_field.dart';
 
-class UpdateLiveStock extends StatefulWidget {
-  final Map<String, dynamic> livestock;
-  const UpdateLiveStock({super.key, required this.livestock});
+class UpdatePlant extends StatefulWidget {
+  final Map<String, dynamic> plant;
+  const UpdatePlant({super.key, required this.plant});
 
   @override
-  UpdateLiveStockState createState() => UpdateLiveStockState();
+  UpdatePlantState createState() => UpdatePlantState();
 }
 
-class UpdateLiveStockState extends State<UpdateLiveStock> {
+class UpdatePlantState extends State<UpdatePlant> {
   final TextEditingController _titleIdController = TextEditingController();
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _titleNumberController = TextEditingController();
 
-  List<String> filterGender = ["Đực", "Cái"];
   List<Map<String, dynamic>> filteredArea = [];
   List<Map<String, dynamic>> filteredZone = [];
   List<Map<String, dynamic>> filteredField = [];
@@ -34,12 +33,10 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
   Map<String, dynamic>? _selectedArea;
   Map<String, dynamic>? _selectedZone;
   Map<String, dynamic>? _selectedField;
-  Map<String, dynamic>? _selectedLiveStockType;
-  String _selectedGender = "Đực";
+  Map<String, dynamic>? _selectedPlantType;
 
   String name = "";
-  int? weight;
-  bool gender = true;
+  int? height;
   int? habitantTypeId;
   int? fieldId;
   int? farmId;
@@ -60,19 +57,19 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
       setState(() {
         filteredArea = value;
         _selectedArea = filteredArea
-            .where((element) => element['id'] == widget.livestock['areaId'])
+            .where((element) => element['id'] == widget.plant['areaId'])
             .firstOrNull;
       });
     });
   }
 
   Future<void> getZones(int areaId, bool init) async {
-    ZoneService().getZonesbyAreaLivestockId(areaId).then((value) {
+    ZoneService().getZonesbyAreaPlantId(areaId).then((value) {
       setState(() {
         filteredZone = value;
         if (init)
           _selectedZone = filteredZone
-              .where((element) => element['id'] == widget.livestock['zoneId'])
+              .where((element) => element['id'] == widget.plant['zoneId'])
               .firstOrNull;
       });
     });
@@ -84,26 +81,25 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
         filteredField = value;
         if (init)
           _selectedField = filteredField
-              .where((element) => element['id'] == widget.livestock['fieldId'])
+              .where((element) => element['id'] == widget.plant['fieldId'])
               .firstOrNull;
       });
     });
   }
 
   Future<void> getHabitantTypes(int habitantTypeId, bool init) async {
-    HabitantTypeService().getLiveStockTypeFromHabitantType().then((value) {
+    HabitantTypeService().getPlantTypeFromHabitantType().then((value) {
       setState(() {
         filterLivestockType = value;
-        _selectedLiveStockType = filterLivestockType
-            .where((element) =>
-                element['id'] == widget.livestock['habitantTypeId'])
+        _selectedPlantType = filterLivestockType
+            .where((element) => element['id'] == widget.plant['habitantTypeId'])
             .firstOrNull;
       });
     });
   }
 
-  Future<bool> UpdateLiveStock(Map<String, dynamic> liveStock, int id) {
-    return LiveStockService().UpdateLiveStock(liveStock, id);
+  Future<bool> UpdatePlant(Map<String, dynamic> plant, int id) {
+    return PlantService().UpdatePlant(plant, id);
   }
 
   @override
@@ -111,16 +107,17 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
     super.initState();
     getFarmId().then((_) {
       getAreas();
-      getZones(widget.livestock['areaId'], true);
-      getFields(widget.livestock['zoneId'], true);
-      getHabitantTypes(widget.livestock['habitantTypeId'], true);
+      getZones(widget.plant['areaId'], true);
+      getFields(widget.plant['zoneId'], true);
+      getHabitantTypes(widget.plant['habitantTypeId'], true);
     });
-    _titleIdController.text = widget.livestock['externalId'];
-    _titleNameController.text = widget.livestock['name'];
-    _titleNumberController.text = widget.livestock['weight'].toString();
-    id = widget.livestock['id'];
-    habitantTypeId = widget.livestock['habitantTypeId'];
-    fieldId = widget.livestock['fieldId'];
+    _titleIdController.text = widget.plant['externalId'];
+    _titleNameController.text = widget.plant['name'];
+    _titleNumberController.text = widget.plant['height'].toString();
+    id = widget.plant['id'];
+    habitantTypeId = widget.plant['habitantTypeId'];
+    fieldId = widget.plant['fieldId'];
+
     Future.delayed(Duration(milliseconds: 700), () {
       setState(() {
         isLoading = false;
@@ -168,54 +165,22 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Chỉnh sửa vật nuôi",
+                "Chỉnh sửa cây trồng",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Mã vật nuôi",
-                hint: "Nhập mã vật nuôi",
+                title: "Mã cây trồng",
+                hint: "Nhập mã cây trồng",
                 controller: _titleIdController,
               ),
               MyInputField(
-                title: "Tên vật nuôi",
-                hint: "Nhập tên vật nuôi",
+                title: "Tên cây trồng",
+                hint: "Nhập tên cây trồng",
                 controller: _titleNameController,
               ),
-              MyInputField(
-                title: "Giới tính vật nuôi",
-                hint: _selectedGender,
-                widget: DropdownButton(
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  underline: Container(height: 0),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedGender = newValue!;
-                      if (_selectedGender == 'Đực') {
-                        gender = true;
-                      }
-                      if (_selectedGender == "Cái") {
-                        gender = false;
-                      }
-                    });
-                  },
-                  items: filterGender
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
               MyInputNumber(
-                title: "Khối lượng dự kiến của vật nuôi (kí)",
-                hint: "Nhập khối lượng của vật nuôi",
+                title: "Chiều cao dự kiến của cây trồng (mét)",
+                hint: "Nhập Chiều cao dự kiến của cây trồng",
                 controller: _titleNumberController,
               ),
               Container(
@@ -224,7 +189,7 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Loại vật nuôi",
+                      "Loại cây trồng",
                       style: titileStyle,
                     ),
                     SizedBox(height: 5),
@@ -243,10 +208,10 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
                       child: DropdownButton2<Map<String, dynamic>>(
                         isExpanded: true,
                         underline: Container(height: 0),
-                        value: _selectedLiveStockType,
+                        value: _selectedPlantType,
                         onChanged: (newValue) {
                           setState(() {
-                            _selectedLiveStockType = newValue;
+                            _selectedPlantType = newValue;
                             if (newValue != null) {
                               habitantTypeId = newValue['id'];
                             }
@@ -457,25 +422,24 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
       setState(() {
         isUpdating = true;
       });
-      Map<String, dynamic> liveStock = {
+      Map<String, dynamic> plant = {
         'name': _titleNameController.text,
         'externalId': _titleIdController.text,
-        'weight': _titleNumberController.text,
+        'height': _titleNumberController.text,
         'habitantTypeId': habitantTypeId,
         'fieldId': fieldId,
-        'gender': gender,
       };
-      UpdateLiveStock(liveStock, widget.livestock['id']).then((value) {
+      UpdatePlant(plant, widget.plant['id']).then((value) {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockPage(farmId: farmId!),
+              builder: (context) => PlantPage(farmId: farmId!),
             ),
           );
         }
       }).catchError((e) {
         setState(() {
-          isUpdating = true;
+          isUpdating = false;
         });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
