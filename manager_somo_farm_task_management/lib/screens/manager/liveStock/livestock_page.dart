@@ -72,10 +72,22 @@ class LiveStockPageState extends State<LiveStockPage> {
   initState() {
     super.initState();
     _initializeData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),

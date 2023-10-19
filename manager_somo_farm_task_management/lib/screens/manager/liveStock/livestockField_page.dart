@@ -22,6 +22,7 @@ class LiveStockFieldPage extends StatefulWidget {
 class LiveStockFieldPageState extends State<LiveStockFieldPage> {
   int? farmId;
   List<LiveStock> SearchliveStock = plantList;
+  bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -72,10 +73,22 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
       farmId = value;
     });
     GetLiveStockFields();
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
