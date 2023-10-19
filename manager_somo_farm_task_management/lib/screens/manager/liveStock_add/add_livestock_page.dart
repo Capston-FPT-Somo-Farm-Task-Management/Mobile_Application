@@ -41,6 +41,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
   bool gender = true;
   int? habitantTypeId;
   int? fieldId;
+  bool isUpdating = false;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
@@ -81,6 +82,13 @@ class CreateLiveStockState extends State<CreateLiveStock> {
 
   @override
   Widget build(BuildContext context) {
+    if (isUpdating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -335,6 +343,9 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         _selectedZone != "Chưa có" &&
         _selectedField != "Chưa có" &&
         _selectedField != "Chọn") {
+      setState(() {
+        isUpdating = true;
+      });
       Map<String, dynamic> liveStock = {
         'name': _titleNameController.text,
         'externalId': _titleIdController.text,
@@ -352,6 +363,9 @@ class CreateLiveStockState extends State<CreateLiveStock> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isUpdating = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
