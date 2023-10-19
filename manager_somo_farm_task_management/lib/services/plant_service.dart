@@ -90,7 +90,8 @@ class PlantService {
           Map<String, dynamic>.from(json.decode(response.body));
       return plant;
     } else {
-      throw Exception('Failed to create plant');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
