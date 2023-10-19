@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_update/plant_update_page.dart';
 
 class PlantDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> plant;
@@ -29,11 +30,11 @@ class PlantDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              // Navigator.of(context).push(
-              //           MaterialPageRoute(
-              //             builder: (context) =>  FirstUpdateTaskPage(task: task),
-              //           ),
-              //         );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UpdatePlant(plant: plant),
+                ),
+              );
             },
           )
         ],
