@@ -44,6 +44,8 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
   int? fieldId;
   int? farmId;
   int? id;
+  bool isLoading = true;
+  bool isUpdating = false;
 
   Future<void> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
@@ -119,10 +121,29 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
     id = widget.livestock['id'];
     habitantTypeId = widget.livestock['habitantTypeId'];
     fieldId = widget.livestock['fieldId'];
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (isUpdating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -433,6 +454,9 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
         _titleNumberController.text.isNotEmpty) {
+      setState(() {
+        isUpdating = true;
+      });
       Map<String, dynamic> liveStock = {
         'name': _titleNameController.text,
         'externalId': _titleIdController.text,
@@ -450,6 +474,9 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isUpdating = true;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
