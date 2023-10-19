@@ -379,6 +379,9 @@ class SubTaskPageState extends State<SubTaskPage> {
                         title: "Xóa công việc",
                         content: "Bạn có chắc muốn xóa công việc này?",
                         onConfirm: () {
+                          setState(() {
+                            isLoading = true;
+                          });
                           SubTaskService()
                               .deleteSubTask(
                                   subTask['taskId'], subTask['employeeId'])
