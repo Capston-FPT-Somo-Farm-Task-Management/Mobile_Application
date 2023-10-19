@@ -7,7 +7,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
@@ -125,7 +126,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                     alignment: Alignment
                         .center, // Đặt alignment thành Alignment.center
                     child: Text(
-                      role == "Manager" ? "+ Thêm việc" : "+ Báo cáo",
+                      "+ Thêm việc",
                       style: TextStyle(
                         color: kTextWhiteColor,
                       ),
@@ -313,7 +314,33 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                         _showBottomSheet(context, task,
                                             _selectedDate, role!);
                                       },
-                                      child: TaskTile(task),
+                                      child: Stack(
+                                        children: [
+                                          TaskTile(task),
+                                          if (role == "Manager" &&
+                                                  task['managerName'] == null ||
+                                              role == "Supervisor" &&
+                                                  task['managerName'] != null)
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              alignment: Alignment.topRight,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 15),
+                                              child: Tooltip(
+                                                message: role == "Manager"
+                                                    ? 'Công việc do người giám sát tạo'
+                                                    : 'Công việc do người quản lí tạo',
+                                                child: Icon(
+                                                  Icons.account_circle_rounded,
+                                                  color: Colors.grey[200],
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     )
                                   ],
                                 ),
@@ -363,7 +390,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => TaskEvidence(),
+                              builder: (context) =>
+                                  TaskEvidenceDetails(task: task),
                             ),
                           );
                         },
@@ -468,11 +496,13 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         isCompleted ||
                         isNotCompleted)
                       _bottomSheetButton(
-                        label: "Báo cáo",
+                        label: role == "Manager" ? "Xem báo cáo" : "Báo cáo",
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => TaskEvidence(),
+                              builder: (context) => EvidencePage(
+                                task: task,
+                              ),
                             ),
                           );
                         },
