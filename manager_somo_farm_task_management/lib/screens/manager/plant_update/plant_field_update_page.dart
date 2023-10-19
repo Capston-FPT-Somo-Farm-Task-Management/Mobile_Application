@@ -286,7 +286,7 @@ class UpdatePlantFieldState extends State<UpdatePlantField> {
         _titleNameController.text.isNotEmpty &&
         _titleAreaController.text.isNotEmpty) {
       setState(() {
-        isLoading = true;
+        isUpdating = true;
       });
       Map<String, dynamic> field = {
         'name': _titleNameController.text,
@@ -305,7 +305,7 @@ class UpdatePlantFieldState extends State<UpdatePlantField> {
         }
       }).catchError((e) {
         setState(() {
-          isLoading = false;
+          isUpdating = false;
         });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
