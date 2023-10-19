@@ -19,12 +19,21 @@ class CreatePlantTypeState extends State<CreatePlantType> {
   final TextEditingController _environmentController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
+  bool isUpdating = false;
+
   Future<bool> CreatePlantType(Map<String, dynamic> plant) {
     return HabitantTypeService().CreateHabitantType(plant);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isUpdating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -111,6 +120,9 @@ class CreatePlantTypeState extends State<CreatePlantType> {
         _originController.text.isNotEmpty &&
         _environmentController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty) {
+      setState(() {
+        isUpdating = true;
+      });
       Map<String, dynamic> liveStock = {
         'name': _nameController.text,
         'origin': _originController.text,
@@ -127,6 +139,9 @@ class CreatePlantTypeState extends State<CreatePlantType> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isUpdating = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
