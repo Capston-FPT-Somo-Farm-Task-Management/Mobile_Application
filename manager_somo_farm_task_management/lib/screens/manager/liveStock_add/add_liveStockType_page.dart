@@ -21,6 +21,7 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
   String name = "";
   int? status;
   int? quantity;
+  bool isCreating = false;
 
   Future<bool> CreateLiveStockType(Map<String, dynamic> liveStock) {
     return HabitantTypeService().CreateHabitantType(liveStock);
@@ -28,6 +29,13 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
 
   @override
   Widget build(BuildContext context) {
+    if (isCreating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -114,6 +122,9 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
         _originController.text.isNotEmpty &&
         _environmentController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty) {
+      setState(() {
+        isCreating = true;
+      });
       Map<String, dynamic> liveStock = {
         'name': _nameController.text,
         'origin': _originController.text,
@@ -130,6 +141,9 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isCreating = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
