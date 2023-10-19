@@ -31,7 +31,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
 
   int? status;
   int? zoneId;
-  bool isUpdating = false;
+  bool isCreating = false;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
@@ -62,7 +62,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
 
   @override
   Widget build(BuildContext context) {
-    if (isUpdating) {
+    if (isCreating) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -221,7 +221,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có") {
       setState(() {
-        isUpdating = true;
+        isCreating = true;
       });
       Map<String, dynamic> plant = {
         'code': _fieldCodeController.text,
@@ -238,7 +238,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
         );
       }).catchError((e) {
         setState(() {
-          isUpdating = false;
+          isCreating = false;
         });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });

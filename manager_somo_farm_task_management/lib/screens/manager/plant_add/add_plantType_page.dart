@@ -19,7 +19,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
   final TextEditingController _environmentController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  bool isUpdating = false;
+  bool isCreating = false;
 
   Future<bool> CreatePlantType(Map<String, dynamic> plant) {
     return HabitantTypeService().CreateHabitantType(plant);
@@ -27,7 +27,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
 
   @override
   Widget build(BuildContext context) {
-    if (isUpdating) {
+    if (isCreating) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -121,7 +121,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
         _environmentController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty) {
       setState(() {
-        isUpdating = true;
+        isCreating = true;
       });
       Map<String, dynamic> liveStock = {
         'name': _nameController.text,
@@ -140,7 +140,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
         }
       }).catchError((e) {
         setState(() {
-          isUpdating = false;
+          isCreating = false;
         });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
