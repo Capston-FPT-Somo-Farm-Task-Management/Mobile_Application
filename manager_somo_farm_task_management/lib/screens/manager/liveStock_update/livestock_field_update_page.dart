@@ -4,7 +4,6 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
@@ -35,6 +34,8 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
   int? farmId;
   int? id;
   int? zoneId;
+  bool isLoading = true;
+  bool isUpdating = false;
 
   Future<void> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
@@ -84,10 +85,29 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     _titleAreaController.text = widget.livestockFied['area'].toString();
     id = widget.livestockFied['id'];
     zoneId = widget.livestockFied['zoneId'];
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (isUpdating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -266,6 +286,9 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
     if (_titleIdController.text.isNotEmpty &&
         _titleNameController.text.isNotEmpty &&
         _titleAreaController.text.isNotEmpty) {
+      setState(() {
+        isUpdating = true;
+      });
       Map<String, dynamic> field = {
         'name': _titleNameController.text,
         'code': _titleIdController.text,
@@ -282,6 +305,9 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
           );
         }
       }).catchError((e) {
+        setState(() {
+          isUpdating = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
