@@ -90,7 +90,8 @@ class PlantFieldPageState extends State<PlantFieldPage> {
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        color: Colors.grey[200],
+        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -145,7 +146,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -178,7 +179,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                       return SizedBox.shrink();
                     }
                     return Container(
-                      margin: EdgeInsets.only(bottom: 25),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         onTap: () {
                           showDialog(
@@ -193,13 +194,12 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(15),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
-                                blurRadius: 7,
-                                offset: Offset(4, 8), // Shadow position
+                                blurRadius: 10,
+                                offset: Offset(1, 4), // Shadow position
                               ),
                             ],
                           ),
@@ -208,13 +208,11 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                               Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey, // Màu của đường viền
-                                      width: 1.0, // Độ dày của đường viền
-                                    ),
-                                  ),
-                                  height: 110,
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10))),
+                                  height: 115,
                                   width: double.infinity,
                                   child: Row(
                                     crossAxisAlignment:
@@ -226,16 +224,46 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                              plant['name'],
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  plant['name'],
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: plant['isDelete'] ==
+                                                            true
+                                                        ? Colors.red[400]
+                                                        : kPrimaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Text(
+                                                    plant['isDelete'] == false
+                                                        ? "Active"
+                                                        : "Inactive",
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              '${plant['code']}',
+                                              'Mã vườn: ${plant['code']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
@@ -253,11 +281,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[400], // Đặt màu xám ở đây
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
+                                  color: Colors.green[100], // Đặt màu xám ở đây
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),

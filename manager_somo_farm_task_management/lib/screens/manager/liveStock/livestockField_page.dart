@@ -179,10 +179,6 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                   itemCount: liveStocks.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> liveStock = liveStocks[index];
-
-                    if (liveStock['status'] == 'Inactive') {
-                      return SizedBox.shrink();
-                    }
                     return Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
