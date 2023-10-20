@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/components/evidence_card.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/components/media_picker.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/evidence_add_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class EvidencePage extends StatefulWidget {
   final Map<String, dynamic> task;
@@ -17,18 +19,76 @@ class EvidencePage extends StatefulWidget {
 class EvidencePageState extends State<EvidencePage> {
   bool isLoading = true;
   List<Map<String, dynamic>> evidences = [];
-  File? _image; // Biến để lưu trữ ảnh đã chọn
+  List<AssetEntity> selectedAssetList = [];
 
-  // Hàm này để chọn ảnh từ thư viện
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
+  Future pickAssets({
+    required int maxCount,
+    required RequestType requestType,
+  }) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MediaPicker(maxCount, requestType, selectedAssetList);
+        },
+      ),
+    );
+    if (result?.isNotEmpty ?? false) {
       setState(() {
-        _image = File(pickedFile.path);
+        selectedAssetList.addAll(result);
       });
     }
+  }
+
+  List<File> selectedFiles = [];
+
+  Future convertAssetsToFiles(List<AssetEntity> assetEntities) async {
+    for (var i = 0; i < assetEntities.length; i++) {
+      final File? file = await assetEntities[i].originFile;
+      setState(() {
+        selectedFiles.add(file!);
+      });
+    }
+  }
+
+  Widget buildAssetGridView(List<AssetEntity> selectedAssetList) {
+    return GridView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: selectedAssetList.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemBuilder: (context, index) {
+        AssetEntity assetEntity = selectedAssetList[index];
+        return buildAssetWidget(assetEntity);
+      },
+    );
+  }
+
+  Widget buildAssetWidget(AssetEntity assetEntity) {
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: AssetEntityImage(
+              assetEntity,
+              isOriginal: false,
+              thumbnailSize: const ThumbnailSize.square(1000),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> getEvdidence() async {
@@ -51,7 +111,13 @@ class EvidencePageState extends State<EvidencePage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showAddEvidenceDialog(); // Hiển thị popup khi nhấn nút
+          //_showAddEvidenceDialog(); // Hiển thị popup khi nhấn nút
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    CreateEvidencePage(taskId: widget.task['id'])),
+          );
         },
         tooltip: 'Thêm Báo Cáo',
         child: Icon(Icons.add),
@@ -95,28 +161,6 @@ class EvidencePageState extends State<EvidencePage> {
                   ),
                 ),
               ),
-              // Container(
-              //   color: Colors.white,
-              //   padding: EdgeInsets.symmetric(vertical: 5),
-              //   child: ListTile(
-              //     leading: Icon(
-              //       Icons.account_circle_sharp,
-              //       size: 45,
-              //     ),
-              //     title: GestureDetector(
-              //       onTap: () {
-              //         _showAddEvidenceDialog();
-              //       },
-              //       child: const TextField(
-              //         enabled: false,
-              //         decoration: InputDecoration(
-              //           hintText: "Tạo báo cáo ngay!",
-              //           border: InputBorder.none,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
               Container(
                 margin: EdgeInsets.only(bottom: 4),
                 decoration: BoxDecoration(
@@ -193,32 +237,31 @@ class EvidencePageState extends State<EvidencePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Thêm Báo Cáo'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: descriptionController,
-                  decoration: InputDecoration(labelText: 'Mô Tả'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(labelText: 'Mô Tả'),
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        pickAssets(
+                          maxCount: 20,
+                          requestType: RequestType.image,
+                        );
+                        setState(
+                            () {}); // Đảm bảo cập nhật giao diện khi _pickImages hoàn thành
+                      },
+                      child: Text('Chọn Ảnh'),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 16),
-                // Nút để chọn ảnh
-                ElevatedButton(
-                  onPressed: () {
-                    _pickImage(); // Gọi hàm chọn ảnh khi nhấn nút
-                  },
-                  child: Text('Chọn Ảnh'),
-                ),
-                // Hiển thị ảnh đã chọn (nếu có)
-                _image != null
-                    ? Image.file(
-                        _image!,
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(),
-              ],
-            ),
+              );
+            },
           ),
           actions: <Widget>[
             TextButton(
@@ -229,11 +272,7 @@ class EvidencePageState extends State<EvidencePage> {
             ),
             TextButton(
               onPressed: () {
-                // Xử lý lưu thông tin mô tả và ảnh
                 String description = descriptionController.text;
-                // Sử dụng _image cho việc xử lý ảnh
-
-                // Sau khi xử lý xong, đóng hộp thoại
                 Navigator.of(context).pop();
               },
               child: Text('Lưu'),
