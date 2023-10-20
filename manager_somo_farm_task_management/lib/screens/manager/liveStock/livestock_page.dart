@@ -361,13 +361,18 @@ class LiveStockPageState extends State<LiveStockPage> {
                           content:
                               "Bạn có chắc muốn thay đổi trạng thái của con vật này?",
                           onConfirm: () {
-                            setState(() {
-                              deleteLiveStock(liveStock['id']);
-                              GetLiveStocks();
-                              Navigator.of(context).pop();
-                              SnackbarShowNoti.showSnackbar(
-                                  'Đổi trạng thái thành công!', false);
+                            deleteLiveStock(liveStock['id']).then((value) {
+                              if (value) {
+                                GetLiveStocks();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Trong chuồng còn con vật! Không thể thay đổi trạng thái',
+                                    true);
+                              }
                             });
+                            Navigator.of(context).pop();
                           },
                           buttonConfirmText: "Thay đổi",
                         );

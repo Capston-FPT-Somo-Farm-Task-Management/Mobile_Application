@@ -354,18 +354,21 @@ class PlantPageState extends State<PlantPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Thay đổi trạng thái con vật",
+                          title: "Thay đổi trạng cây trồng",
                           content:
-                              "Bạn có chắc muốn thay đổi trạng thái của con vật này?",
+                              "Bạn có chắc muốn thay đổi trạng thái của cây trồng này?",
                           onConfirm: () {
-                            setState(() {
-                              deletePlant(plant['id']);
-                              GetPlants();
-                              Navigator.of(context).pop();
-                              SnackbarShowNoti.showSnackbar(
-                                  'Đổi trạng thái thành công!', false);
-                              deletePlant(plant['id']);
+                            deletePlant(plant['id']).then((value) {
+                              if (value) {
+                                GetPlants();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Không thể thay đổi trạng thái', true);
+                              }
                             });
+                            Navigator.of(context).pop();
                           },
                           buttonConfirmText: "Thay đổi",
                         );
