@@ -496,8 +496,9 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         isCompleted ||
                         isNotCompleted)
                       _bottomSheetButton(
-                        label: role == "Manager" ? "Xem báo cáo" : "Báo cáo",
+                        label: "Báo cáo",
                         onTap: () {
+                          Navigator.of(context).pop();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
