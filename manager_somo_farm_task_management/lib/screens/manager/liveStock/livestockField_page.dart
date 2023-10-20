@@ -95,7 +95,8 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        color: Colors.grey[200],
+        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -135,7 +136,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo chuồng cho vật nuôi",
+                              "Tạo chuồng",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -150,7 +151,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -183,7 +184,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                       return SizedBox.shrink();
                     }
                     return Container(
-                      margin: EdgeInsets.only(bottom: 25),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         onTap: () {
                           showDialog(
@@ -199,13 +200,12 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
                                 blurRadius: 7,
-                                offset: Offset(4, 8), // Shadow position
+                                offset: Offset(1, 4), // Shadow position
                               ),
                             ],
                           ),
@@ -215,10 +215,9 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey, // Màu của đường viền
-                                      width: 1.0, // Độ dày của đường viền
-                                    ),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10)),
                                   ),
                                   height: 120,
                                   width: double.infinity,
@@ -274,7 +273,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              '${liveStock['status']}',
+                                              'Mã chuồng: ${liveStock['code']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
@@ -292,11 +291,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[400], // Đặt màu xám ở đây
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
+                                  color: Colors.green[100], // Đặt màu xám ở đây
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),
