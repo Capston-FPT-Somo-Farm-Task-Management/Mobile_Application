@@ -43,7 +43,7 @@ class LiveStockService {
     }
   }
 
-  Future<bool> deleteLiveStock(int id) async {
+  Future<bool> DeleteLiveStock(int id) async {
     final String deleteLiveStockUrl = '$baseUrl/LiveStock/Delete/${id}';
 
     final http.Response response = await http.put(

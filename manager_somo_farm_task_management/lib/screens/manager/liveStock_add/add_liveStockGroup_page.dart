@@ -232,7 +232,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockFieldPage(),
+              builder: (context) => LiveStockFieldPage(farmId: widget.farmId),
             ),
           );
         }

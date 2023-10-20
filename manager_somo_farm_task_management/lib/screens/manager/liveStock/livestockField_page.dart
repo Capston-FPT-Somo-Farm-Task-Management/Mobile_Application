@@ -13,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class LiveStockFieldPage extends StatefulWidget {
-  const LiveStockFieldPage({Key? key}) : super(key: key);
+  final int farmId;
+  const LiveStockFieldPage({Key? key, required this.farmId}) : super(key: key);
 
   @override
   LiveStockFieldPageState createState() => LiveStockFieldPageState();
@@ -48,20 +49,29 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
     return FieldService().getLiveStockFieldByFarmId(id);
   }
 
+  Future<bool> deleteField(int id) {
+    return FieldService().DeleteField(id);
+  }
+
   Future<void> GetLiveStockFields() async {
-    int? farmIdValue = await getFarmId();
-
-    setState(() {
-      farmId = farmIdValue;
-    });
-
-    if (farmId != null) {
-      List<Map<String, dynamic>> liveStocksValue =
-          await getLiveStockFieldByFarmId(farmId!);
+    FieldService().getLiveStockFieldByFarmId(widget.farmId).then((value) {
       setState(() {
-        liveStocks = liveStocksValue;
+        isLoading = false;
       });
-    }
+      if (value.isNotEmpty) {
+        setState(() {
+          liveStocks = value;
+          isLoading = false;
+        });
+      } else {
+        throw Exception();
+      }
+    });
+  }
+
+  Future<void> _initializeData() async {
+    await getFarmId();
+    await GetLiveStockFields();
   }
 
   List<Map<String, dynamic>> liveStocks = [];
@@ -72,7 +82,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetLiveStockFields();
+    _initializeData();
     Future.delayed(Duration(milliseconds: 700), () {
       setState(() {
         isLoading = false;
@@ -341,26 +351,38 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: liveStock['isDelete'] == true
+                    ? "Đổi sang Active"
+                    : "Đổi sang Inactive",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Thay đổi trạng thái chuồng",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của chuồng này?",
                           onConfirm: () {
+                            deleteField(liveStock['id']).then((value) {
+                              if (value) {
+                                GetLiveStockFields();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Trong chuồng còn con vật! Không thể thay đổi trạng thái',
+                                    true);
+                              }
+                            });
                             Navigator.of(context).pop();
-                            setState(() {});
-                            liveStocks.remove(liveStock);
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
                 },
-                cls: Colors.red[300]!,
+                cls: liveStock['isDelete'] == true
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),

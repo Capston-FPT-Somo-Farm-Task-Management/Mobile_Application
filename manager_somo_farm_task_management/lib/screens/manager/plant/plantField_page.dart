@@ -11,7 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class PlantFieldPage extends StatefulWidget {
-  const PlantFieldPage({Key? key}) : super(key: key);
+  final farmId;
+  const PlantFieldPage({Key? key, this.farmId}) : super(key: key);
 
   @override
   PlantFieldPageState createState() => PlantFieldPageState();
@@ -39,24 +40,29 @@ class PlantFieldPageState extends State<PlantFieldPage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getPlantFieldByFarmId(int id) {
-    return FieldService().getPlantFieldByFarmId(id);
+  Future<bool> deleteField(int id) {
+    return FieldService().DeleteField(id);
   }
 
-  Future<void> GetLiveStockFields() async {
-    int? farmIdValue = await getFarmId();
-
-    setState(() {
-      farmId = farmIdValue;
-    });
-
-    if (farmId != null) {
-      List<Map<String, dynamic>> plantsValue =
-          await getPlantFieldByFarmId(farmId!);
+  Future<void> GetPlantFields() async {
+    FieldService().getPlantFieldByFarmId(widget.farmId).then((value) {
       setState(() {
-        plants = plantsValue;
+        isLoading = false;
       });
-    }
+      if (value.isNotEmpty) {
+        setState(() {
+          plants = value;
+          isLoading = false;
+        });
+      } else {
+        throw Exception();
+      }
+    });
+  }
+
+  Future<void> _initializeData() async {
+    await getFarmId();
+    await GetPlantFields();
   }
 
   List<Map<String, dynamic>> plants = [];
@@ -67,7 +73,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetLiveStockFields();
+    _initializeData();
     Future.delayed(Duration(milliseconds: 700), () {
       setState(() {
         isLoading = false;
@@ -169,7 +175,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
             Expanded(
               flex: 2,
               child: RefreshIndicator(
-                onRefresh: () => GetLiveStockFields(),
+                onRefresh: () => GetPlantFields(),
                 child: ListView.builder(
                   itemCount: plants.length,
                   itemBuilder: (context, index) {
@@ -315,7 +321,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> liveStock) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> plant) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -335,28 +341,38 @@ class PlantFieldPageState extends State<PlantFieldPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: plant['isDelete'] == true
+                    ? "Đổi sang Active"
+                    : "Đổi sang Inactive",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Thay đổi trạng thái vườn",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của vườn này?",
                           onConfirm: () {
+                            deleteField(plant['id']).then((value) {
+                              if (value) {
+                                GetPlantFields();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Trong vườn còn cây trồng! Không thể thay đổi trạng thái',
+                                    true);
+                              }
+                            });
                             Navigator.of(context).pop();
-                            setState(() {});
-                            plants.remove(liveStock);
-                            // deleteLiveStock(
-                            //     liveStock['id'], liveStock['status']);
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
                 },
-                cls: Colors.red[300]!,
+                cls: plant['isDelete'] == true
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),

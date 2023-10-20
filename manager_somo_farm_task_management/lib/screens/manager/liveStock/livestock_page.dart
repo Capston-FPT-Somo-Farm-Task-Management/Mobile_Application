@@ -40,7 +40,7 @@ class LiveStockPageState extends State<LiveStockPage> {
   }
 
   Future<bool> deleteLiveStock(int id) {
-    return LiveStockService().deleteLiveStock(id);
+    return LiveStockService().DeleteLiveStock(id);
   }
 
   Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
@@ -367,7 +367,6 @@ class LiveStockPageState extends State<LiveStockPage> {
                               Navigator.of(context).pop();
                               SnackbarShowNoti.showSnackbar(
                                   'Đổi trạng thái thành công!', false);
-                              deleteLiveStock(liveStock['id']);
                             });
                           },
                           buttonConfirmText: "Thay đổi",

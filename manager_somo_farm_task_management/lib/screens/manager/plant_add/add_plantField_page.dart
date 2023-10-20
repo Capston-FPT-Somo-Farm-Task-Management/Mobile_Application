@@ -233,7 +233,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
       CreatePlantField(plant).then((value) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => PlantFieldPage(),
+            builder: (context) => PlantFieldPage(farmId: widget.farmId),
           ),
         );
       }).catchError((e) {

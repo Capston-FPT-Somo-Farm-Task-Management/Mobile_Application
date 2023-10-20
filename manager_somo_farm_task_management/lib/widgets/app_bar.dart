@@ -550,7 +550,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              LiveStockFieldPage(),
+                                                                              LiveStockFieldPage(farmId: farmId!),
                                                                         ),
                                                                       );
                                                                     },
@@ -735,7 +735,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              PlantFieldPage(),
+                                                                              PlantFieldPage(farmId: farmId!),
                                                                         ),
                                                                       );
                                                                     },

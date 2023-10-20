@@ -300,7 +300,7 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockFieldPage(),
+              builder: (context) => LiveStockFieldPage(farmId: farmId!),
             ),
           );
         }
