@@ -7,6 +7,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
@@ -366,7 +367,7 @@ class TaskPageState extends State<TaskPage> {
                                 },
                                 onLongPress: () {
                                   _showBottomSheet(
-                                      context, task, _selectedDate);
+                                      context, task, _selectedDate, role!);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -595,116 +596,262 @@ class TaskPageState extends State<TaskPage> {
   }
 
   _showBottomSheet(BuildContext context, Map<String, dynamic> task,
-      DateTime? _selectedDate) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        bool isRejected = task['status'] == "Từ chối";
-        bool isPreparing = task['status'] == "Chuẩn bị";
-        bool isExecuting = task['status'] == "Đang thực hiện";
-        bool isCompleted = task['status'] == "Hoàn thành";
-        bool isNotCompleted = task['status'] == "Không hoàn thành";
+      DateTime? _selectedDate, String role) {
+    role == "Manager"
+        ? showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              bool isRejected = task['status'] == "Từ chối";
+              bool isPreparing = task['status'] == "Chuẩn bị";
+              bool isExecuting = task['status'] == "Đang thực hiện";
+              bool isCompleted = task['status'] == "Hoàn thành";
+              bool isNotCompleted = task['status'] == "Không hoàn thành";
 
-        return Container(
-          padding: const EdgeInsets.only(top: 4),
-          height: isRejected
-              ? MediaQuery.of(context).size.height * 0.42
-              : MediaQuery.of(context).size.height * 0.32,
-          color: kBackgroundColor,
-          child: Column(
-            children: [
-              Container(
-                height: 6,
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kTextGreyColor,
-                ),
-              ),
-              const Spacer(),
-              if (isRejected ||
-                  isPreparing ||
-                  isExecuting ||
-                  isCompleted ||
-                  isNotCompleted)
-                _bottomSheetButton(
-                  label: "Xem báo cáo",
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TaskEvidenceDetails(task: task),
+              return Container(
+                padding: const EdgeInsets.only(top: 4),
+                height: isRejected
+                    ? MediaQuery.of(context).size.height * 0.42
+                    : MediaQuery.of(context).size.height * 0.32,
+                color: kBackgroundColor,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 6,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kTextGreyColor,
                       ),
-                    );
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (isRejected)
-                _bottomSheetButton(
-                  label: "Không chấp nhận",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (isPreparing || isNotCompleted)
-                _bottomSheetButton(
-                  label: "Hủy / Xóa",
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context1) {
-                        return ConfirmDeleteDialog(
-                          title: "Xóa công việc",
-                          content: "Bạn có chắc muốn xóa công việc này?",
-                          onConfirm: () {
-                            changeTaskStatus(task['id'], 4).then((value) {
-                              if (value) {
-                                _getTasksForSelectedDateAndStatus(
-                                    _selectedDate, groupValue);
-                                Navigator.of(context).pop();
-                                SnackbarShowNoti.showSnackbar(
-                                    "Xóa thành công!", false);
-                              } else {
-                                SnackbarShowNoti.showSnackbar(
-                                    "Xảy ra lỗi!", true);
-                              }
-                            });
-                          },
-                          buttonConfirmText: "Xóa",
-                        );
+                    ),
+                    const Spacer(),
+                    if (isRejected ||
+                        isPreparing ||
+                        isExecuting ||
+                        isCompleted ||
+                        isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Xem báo cáo",
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TaskEvidenceDetails(task: task),
+                            ),
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Không chấp nhận",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isPreparing || isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Hủy / Xóa",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 4).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isCompleted)
+                      _bottomSheetButton(
+                        label: "Đánh giá",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    const SizedBox(height: 20),
+                    _bottomSheetButton(
+                      label: "Đóng",
+                      onTap: () {
+                        Navigator.of(context).pop();
                       },
-                    );
-                  },
-                  cls: Colors.red[300]!,
-                  context: context,
+                      cls: Colors.white,
+                      isClose: true,
+                      context: context,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-              if (isCompleted)
-                _bottomSheetButton(
-                  label: "Đánh giá",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
+              );
+            },
+          )
+        : showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              bool isRejected = task['status'] == "Từ chối";
+              bool isPreparing = task['status'] == "Chuẩn bị";
+              bool isExecuting = task['status'] == "Đang thực hiện";
+              bool isCompleted = task['status'] == "Hoàn thành";
+              bool isNotCompleted = task['status'] == "Không hoàn thành";
+
+              return Container(
+                padding: const EdgeInsets.only(top: 4),
+                height: isRejected
+                    ? MediaQuery.of(context).size.height * 0.42
+                    : MediaQuery.of(context).size.height * 0.32,
+                color: kBackgroundColor,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 6,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kTextGreyColor,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (isRejected ||
+                        isPreparing ||
+                        isExecuting ||
+                        isCompleted ||
+                        isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Báo cáo",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Hủy từ chối",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isPreparing && task['managerName'] == null)
+                      _bottomSheetButton(
+                        label: "Hủy / Xóa",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 4).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isPreparing && task['managerName'] != null)
+                      _bottomSheetButton(
+                        label: "Từ chối",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 4).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isCompleted)
+                      _bottomSheetButton(
+                        label: "Đánh giá",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    const SizedBox(height: 20),
+                    _bottomSheetButton(
+                      label: "Đóng",
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      cls: Colors.white,
+                      isClose: true,
+                      context: context,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-              const SizedBox(height: 20),
-              _bottomSheetButton(
-                label: "Đóng",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                cls: Colors.white,
-                isClose: true,
-                context: context,
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
   }
 
   _bottomSheetButton({
