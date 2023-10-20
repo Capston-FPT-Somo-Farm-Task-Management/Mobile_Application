@@ -74,7 +74,8 @@ class PlantTypePageState extends State<PlantTypePage> {
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        color: Colors.grey[200],
+        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -112,7 +113,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo loại cây trồng",
+                              "Tạo loại cây",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -127,7 +128,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -160,7 +161,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                       return SizedBox.shrink();
                     }
                     return Container(
-                      margin: EdgeInsets.only(bottom: 40),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         // onTap: () {
                         //   showDialog(
@@ -188,11 +189,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                           child: Container(
                             padding: const EdgeInsets.only(top: 27, left: 20),
                             decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                border: Border.all(
-                                  color: Colors.grey, // Màu của đường viền
-                                  width: 0.5, // Độ dày của đường viền
-                                ),
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(15)),
                             height: 80,
                             width: double.infinity,

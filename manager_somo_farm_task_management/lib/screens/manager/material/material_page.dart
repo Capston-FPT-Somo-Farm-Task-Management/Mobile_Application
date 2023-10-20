@@ -66,6 +66,7 @@ class MaterialPageState extends State<MaterialsPage> {
         child: CustomAppBar(),
       ),
       body: Container(
+        color: Colors.grey[200],
         padding:
             const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
         child: Column(
@@ -127,7 +128,7 @@ class MaterialPageState extends State<MaterialsPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -185,7 +186,7 @@ class MaterialPageState extends State<MaterialsPage> {
                             itemCount: filteredareaList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
-                              return const SizedBox(height: 25);
+                              return const SizedBox(height: 20);
                             },
                             itemBuilder: (context, index) {
                               final task = filteredareaList[index];
@@ -206,11 +207,11 @@ class MaterialPageState extends State<MaterialsPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Colors.teal,
-                                    borderRadius: BorderRadius.circular(25),
+                                    borderRadius: BorderRadius.circular(20),
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        blurRadius: 1,
+                                        blurRadius: 10,
                                         offset: Offset(0, 6), // Shadow position
                                       ),
                                     ],
@@ -221,11 +222,8 @@ class MaterialPageState extends State<MaterialsPage> {
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors
-                                                .grey, // Màu của đường viền
-                                            width: 1.0, // Độ dày của đường viền
-                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
                                         ),
                                         child: Row(
                                           crossAxisAlignment:

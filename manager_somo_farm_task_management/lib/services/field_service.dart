@@ -116,4 +116,21 @@ class FieldService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> DeleteField(int id) async {
+    final String deleteLiveStockUrl = '$baseUrl/Field/Delete/${id}';
+
+    final http.Response response = await http.put(
+      Uri.parse(deleteLiveStockUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

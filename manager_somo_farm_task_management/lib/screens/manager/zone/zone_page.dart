@@ -95,6 +95,7 @@ class ZonePageState extends State<ZonePage> {
         child: CustomAppBar(),
       ),
       body: Container(
+        color: Colors.grey[200],
         padding:
             const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
         child: Column(
@@ -156,7 +157,7 @@ class ZonePageState extends State<ZonePage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -179,13 +180,9 @@ class ZonePageState extends State<ZonePage> {
                       const SizedBox(width: 10),
                       Container(
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey, // Màu đường viền
-                            width: 1.0, // Độ rộng của đường viền
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              5.0), // Độ bo góc của đường viền
-                        ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5.0),
+                            border: Border.all(color: Colors.grey)),
                         child: DropdownButton<Map<String, dynamic>>(
                           isDense: true,
                           alignment: Alignment.center,
@@ -255,7 +252,7 @@ class ZonePageState extends State<ZonePage> {
                             itemCount: filteredZoneList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
-                              return const SizedBox(height: 25);
+                              return const SizedBox(height: 20);
                             },
                             itemBuilder: (context, index) {
                               final task = filteredZoneList[index];
@@ -275,12 +272,11 @@ class ZonePageState extends State<ZonePage> {
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.teal,
-                                    borderRadius: BorderRadius.circular(25),
+                                    borderRadius: BorderRadius.circular(15),
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        blurRadius: 1,
+                                        blurRadius: 8,
                                         offset: Offset(0, 6), // Shadow position
                                       ),
                                     ],
@@ -290,13 +286,9 @@ class ZonePageState extends State<ZonePage> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors
-                                                .grey, // Màu của đường viền
-                                            width: 1.0, // Độ dày của đường viền
-                                          ),
-                                        ),
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10))),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
