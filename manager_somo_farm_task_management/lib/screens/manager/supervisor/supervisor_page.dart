@@ -83,8 +83,9 @@ class SupervisorPageState extends State<SupervisorPage> {
         child: CustomAppBar(),
       ),
       body: Container(
+        color: Colors.grey[200],
         padding:
-            const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+            const EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -144,7 +145,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -166,6 +167,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
+                          color: Colors.white,
                           border: Border.all(
                             color: Colors.grey, // Màu đường viền
                             width: 1.0, // Độ rộng của đường viền
@@ -250,7 +252,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                             itemCount: filteredSupervisorList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
-                              return const SizedBox(height: 25);
+                              return const SizedBox(height: 20);
                             },
                             itemBuilder: (context, index) {
                               final employee = filteredSupervisorList[index];
@@ -271,12 +273,12 @@ class SupervisorPageState extends State<SupervisorPage> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Colors.teal,
-                                    borderRadius: BorderRadius.circular(25),
+                                    borderRadius: BorderRadius.circular(20),
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        blurRadius: 7,
-                                        offset: Offset(4, 8), // Shadow position
+                                        blurRadius: 10,
+                                        offset: Offset(1, 4), // Shadow position
                                       ),
                                     ],
                                   ),
@@ -285,13 +287,10 @@ class SupervisorPageState extends State<SupervisorPage> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors
-                                                .grey, // Màu của đường viền
-                                            width: 1.0, // Độ dày của đường viền
-                                          ),
-                                        ),
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10))),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -404,12 +403,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors
-                                              .grey[400], // Đặt màu xám ở đây
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: 1.0,
-                                          ),
+                                          color: Colors.green[100],
                                           borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(10),
                                             bottomRight: Radius.circular(10),
