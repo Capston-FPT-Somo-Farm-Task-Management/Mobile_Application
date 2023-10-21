@@ -22,15 +22,15 @@ class EvidenceCard extends StatefulWidget {
 }
 
 class _EvidenceCardState extends State<EvidenceCard> {
-  List<dynamic> urlImages = [];
+  //List<dynamic> urlImages = [];
   bool isExpanded = false;
   int currentPage = 0;
   PageController _pageController = PageController();
   @override
   void initState() {
     super.initState();
-    if (widget.evidence['urlImage'] != null)
-      urlImages = widget.evidence['urlImage'];
+    // if (widget.evidence['urlImage'] != null)
+    //   urlImages = widget.evidence['urlImage'];
   }
 
   @override
@@ -74,7 +74,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          widget.evidence['submitDate'],
+                          widget.evidence['time'],
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 13,
@@ -103,7 +103,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
                                   SnackbarShowNoti.showSnackbar(
                                       "Xóa thành công!", false);
                                 }
-                              }).then((value) {
+                              }).catchError((e) {
                                 SnackbarShowNoti.showSnackbar(
                                     "Xảy ra lỗi!", true);
                               });
@@ -182,29 +182,30 @@ class _EvidenceCardState extends State<EvidenceCard> {
               ),
             ),
           ),
-          if (urlImages.isNotEmpty) ...[
+          if (widget.evidence['urlImage'].isNotEmpty) ...[
             SizedBox(height: 8.0),
             Container(
               constraints: BoxConstraints(maxHeight: 230.0),
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: urlImages.length,
+                itemCount: widget.evidence['urlImage'].length,
                 onPageChanged: (int page) {
                   setState(() {
                     currentPage = page;
                   });
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  return buildEvidenceImage(urlImages[index], index);
+                  return buildEvidenceImage(
+                      widget.evidence['urlImage'][index], index);
                 },
               ),
             ),
             SizedBox(height: 8.0),
-            if (urlImages.length > 1) ...[
+            if (widget.evidence['urlImage'].length > 1) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  urlImages.length,
+                  widget.evidence['urlImage'].length,
                   (index) => Container(
                     margin: EdgeInsets.symmetric(horizontal: 4.0),
                     width: 8.0,
@@ -230,7 +231,8 @@ class _EvidenceCardState extends State<EvidenceCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => buildPhotoViewGallery(urlImages, index),
+            builder: (context) =>
+                buildPhotoViewGallery(widget.evidence['urlImage'], index),
           ),
         );
       },
