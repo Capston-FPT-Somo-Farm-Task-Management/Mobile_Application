@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_update/livestock_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_update/livestock_field_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_update/plant_field_update_page.dart';
 
-class LiveStockDetailsPopup extends StatelessWidget {
-  final Map<String, dynamic> liveStock;
-  const LiveStockDetailsPopup({required this.liveStock});
+class PlantFieldDetailsPopup extends StatelessWidget {
+  final Map<String, dynamic> plantField;
+  const PlantFieldDetailsPopup({required this.plantField});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            liveStock['name'],
+            wrapWords(plantField['name'], 10),
             style: const TextStyle(
               color: kPrimaryColor,
               fontSize: 30,
@@ -32,7 +32,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => UpdateLiveStock(livestock: liveStock),
+                  builder: (context) => UpdatePlantField(plantFied: plantField),
                 ),
               );
             },
@@ -53,7 +53,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  wrapWords('Mã động vật: ${liveStock['externalId']}', 30),
+                  wrapWords('Mã vườn: ${plantField['code']}', 30),
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -64,64 +64,13 @@ class LiveStockDetailsPopup extends StatelessWidget {
             Row(
               children: [
                 const Icon(
-                  FontAwesomeIcons.paw,
+                  FontAwesomeIcons.chartArea,
                   color: kSecondColor,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  wrapWords('Loại: ${liveStock['habitantTypeName']}', 30),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.venusMars,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Giới tính: ${liveStock['gender']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.weightScale,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Cân nặng: ${liveStock['weight']} kg',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 45),
-            Row(
-              children: [
-                const Icon(
-                  Icons.access_time_filled,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Ngày tạo vật nuôi: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
+                  'Diện tích: ${plantField['area']} mét vuông',
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -138,7 +87,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Khu vực: ${liveStock['areaName']}',
+                  'Khu vực: ${plantField['areaName']}',
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -155,24 +104,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Vùng: ${liveStock['zoneName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.horseHead,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Khu đất: ${liveStock['fieldName']}',
+                  'Vùng: ${plantField['zoneName']}',
                   style: const TextStyle(
                     fontSize: 18,
                   ),

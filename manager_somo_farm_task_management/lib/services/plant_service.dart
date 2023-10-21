@@ -90,7 +90,8 @@ class PlantService {
           Map<String, dynamic>.from(json.decode(response.body));
       return plant;
     } else {
-      throw Exception('Failed to create plant');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -111,6 +112,23 @@ class PlantService {
       return plants;
     } else {
       throw Exception('Failed to get plant');
+    }
+  }
+
+  Future<bool> UpdatePlant(Map<String, dynamic> plant, int id) async {
+    final String updatePlantUrl = '$baseUrl/Plant/${id}';
+    var body = jsonEncode(plant);
+    final response = await http.put(Uri.parse(updatePlantUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 }

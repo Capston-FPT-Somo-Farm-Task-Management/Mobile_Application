@@ -3,9 +3,9 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockGroup_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_field_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -13,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class LiveStockFieldPage extends StatefulWidget {
-  const LiveStockFieldPage({Key? key}) : super(key: key);
+  final int farmId;
+  const LiveStockFieldPage({Key? key, required this.farmId}) : super(key: key);
 
   @override
   LiveStockFieldPageState createState() => LiveStockFieldPageState();
@@ -22,6 +23,7 @@ class LiveStockFieldPage extends StatefulWidget {
 class LiveStockFieldPageState extends State<LiveStockFieldPage> {
   int? farmId;
   List<LiveStock> SearchliveStock = plantList;
+  bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -43,28 +45,33 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
     return LiveStockService().getLiveStockByFarmId(id);
   }
 
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
-  }
-
   Future<List<Map<String, dynamic>>> getLiveStockFieldByFarmId(int id) {
     return FieldService().getLiveStockFieldByFarmId(id);
   }
 
+  Future<bool> deleteField(int id) {
+    return FieldService().DeleteField(id);
+  }
+
   Future<void> GetLiveStockFields() async {
-    int? farmIdValue = await getFarmId();
-
-    setState(() {
-      farmId = farmIdValue;
-    });
-
-    if (farmId != null) {
-      List<Map<String, dynamic>> liveStocksValue =
-          await getLiveStockFieldByFarmId(farmId!);
+    FieldService().getLiveStockFieldByFarmId(widget.farmId).then((value) {
       setState(() {
-        liveStocks = liveStocksValue;
+        isLoading = false;
       });
-    }
+      if (value.isNotEmpty) {
+        setState(() {
+          liveStocks = value;
+          isLoading = false;
+        });
+      } else {
+        throw Exception();
+      }
+    });
+  }
+
+  Future<void> _initializeData() async {
+    await getFarmId();
+    await GetLiveStockFields();
   }
 
   List<Map<String, dynamic>> liveStocks = [];
@@ -75,18 +82,31 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    GetLiveStockFields();
+    _initializeData();
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        color: Colors.grey[200],
+        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -126,7 +146,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo chuồng cho vật nuôi",
+                              "Tạo chuồng",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -141,7 +161,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -169,33 +189,29 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                   itemCount: liveStocks.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> liveStock = liveStocks[index];
-
-                    if (liveStock['status'] == 'Inactive') {
-                      return SizedBox.shrink();
-                    }
                     return Container(
-                      margin: EdgeInsets.only(bottom: 25),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         onTap: () {
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (BuildContext context) {
-                          //     return LiveStockDetailsPopup(liveStock: liveStock);
-                          //   },
-                          // );
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return LiveStockFieldDetailsPopup(
+                                  liveStockField: liveStock);
+                            },
+                          );
                         },
                         onLongPress: () {
                           _showBottomSheet(context, liveStock);
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
                                 blurRadius: 7,
-                                offset: Offset(4, 8), // Shadow position
+                                offset: Offset(1, 4), // Shadow position
                               ),
                             ],
                           ),
@@ -205,10 +221,9 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey, // Màu của đường viền
-                                      width: 1.0, // Độ dày của đường viền
-                                    ),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10)),
                                   ),
                                   height: 120,
                                   width: double.infinity,
@@ -264,7 +279,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                             ),
                                             const SizedBox(height: 10),
                                             Text(
-                                              '${liveStock['status']}',
+                                              'Mã chuồng: ${liveStock['code']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
@@ -282,11 +297,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[400], // Đặt màu xám ở đây
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
+                                  color: Colors.green[100], // Đặt màu xám ở đây
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),
@@ -340,26 +351,38 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: liveStock['isDelete'] == true
+                    ? "Đổi sang Active"
+                    : "Đổi sang Inactive",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Thay đổi trạng thái chuồng",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của chuồng này?",
                           onConfirm: () {
+                            deleteField(liveStock['id']).then((value) {
+                              if (value) {
+                                GetLiveStockFields();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Trong chuồng còn con vật! Không thể thay đổi trạng thái',
+                                    true);
+                              }
+                            });
                             Navigator.of(context).pop();
-                            setState(() {});
-                            liveStocks.remove(liveStock);
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
                 },
-                cls: Colors.red[300]!,
+                cls: liveStock['isDelete'] == true
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),

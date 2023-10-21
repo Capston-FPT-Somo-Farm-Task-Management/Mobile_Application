@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
@@ -39,15 +40,11 @@ class LiveStockPageState extends State<LiveStockPage> {
   }
 
   Future<bool> deleteLiveStock(int id) {
-    return LiveStockService().deleteLiveStock(id);
+    return LiveStockService().DeleteLiveStock(id);
   }
 
   Future<List<Map<String, dynamic>>> getLiveStockByFarmId(int id) {
     return LiveStockService().getLiveStockByFarmId(id);
-  }
-
-  Future<List<Map<String, dynamic>>> GetAllLiveStock() {
-    return LiveStockService().getAllLiveStock();
   }
 
   List<Map<String, dynamic>> liveStocks = [];
@@ -76,17 +73,30 @@ class LiveStockPageState extends State<LiveStockPage> {
   initState() {
     super.initState();
     _initializeData();
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        color: Colors.grey[200],
+        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -141,7 +151,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -171,7 +181,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                     Map<String, dynamic> liveStock = liveStocks[index];
 
                     return Container(
-                      margin: EdgeInsets.only(bottom: 25),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         onTap: () {
                           showDialog(
@@ -187,13 +197,12 @@ class LiveStockPageState extends State<LiveStockPage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
-                                blurRadius: 7,
-                                offset: Offset(4, 8), // Shadow position
+                                blurRadius: 10,
+                                offset: Offset(1, 2), // Shadow position
                               ),
                             ],
                           ),
@@ -202,13 +211,11 @@ class LiveStockPageState extends State<LiveStockPage> {
                               Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey, // Màu của đường viền
-                                      width: 1.0, // Độ dày của đường viền
-                                    ),
-                                  ),
-                                  height: 120,
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10))),
+                                  height: 110,
                                   width: double.infinity,
                                   child: Row(
                                     crossAxisAlignment:
@@ -226,7 +233,8 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  liveStock['name'],
+                                                  wrapWordsWithEllipsis(
+                                                      liveStock['name'], 27),
                                                   style: const TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -258,7 +266,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                             ),
                                             const SizedBox(height: 5),
                                             Text(
-                                              'Giống ${liveStock['gender']}',
+                                              'Mã vật nuôi: ${liveStock['externalId']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
@@ -276,11 +284,11 @@ class LiveStockPageState extends State<LiveStockPage> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[400], // Đặt màu xám ở đây
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
+                                  color: Colors.green[100], // Đặt màu xám ở đây
+                                  // border: Border.all(
+                                  //   color: Colors.grey,
+                                  //   width: 1.0,
+                                  // ),
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),
@@ -353,14 +361,18 @@ class LiveStockPageState extends State<LiveStockPage> {
                           content:
                               "Bạn có chắc muốn thay đổi trạng thái của con vật này?",
                           onConfirm: () {
-                            setState(() {
-                              deleteLiveStock(liveStock['id']);
-                              GetLiveStocks();
-                              Navigator.of(context).pop();
-                              SnackbarShowNoti.showSnackbar(
-                                  'Đổi trạng thái thành công!', false);
-                              deleteLiveStock(liveStock['id']);
+                            deleteLiveStock(liveStock['id']).then((value) {
+                              if (value) {
+                                GetLiveStocks();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Trong chuồng còn con vật! Không thể thay đổi trạng thái',
+                                    true);
+                              }
                             });
+                            Navigator.of(context).pop();
                           },
                           buttonConfirmText: "Thay đổi",
                         );

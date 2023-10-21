@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
@@ -40,13 +41,10 @@ class CreateLiveStockState extends State<CreateLiveStock> {
   bool gender = true;
   int? habitantTypeId;
   int? fieldId;
+  bool isCreating = false;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
-  }
-
-  Future<List<Map<String, dynamic>>> getZonesbyAreaId(int areaId) {
-    return ZoneService().getZonesbyAreaId(areaId);
   }
 
   Future<List<Map<String, dynamic>>> getZonesbyAreaLivestockId(int areaId) {
@@ -61,7 +59,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return HabitantTypeService().getLiveStockTypeFromHabitantType();
   }
 
-  Future<Map<String, dynamic>> CreateLiveStock(Map<String, dynamic> liveStock) {
+  Future<bool> CreateLiveStock(Map<String, dynamic> liveStock) {
     return LiveStockService().CreateLiveStock(liveStock);
   }
 
@@ -84,6 +82,13 @@ class CreateLiveStockState extends State<CreateLiveStock> {
 
   @override
   Widget build(BuildContext context) {
+    if (isCreating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -338,6 +343,9 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         _selectedZone != "Chưa có" &&
         _selectedField != "Chưa có" &&
         _selectedField != "Chọn") {
+      setState(() {
+        isCreating = true;
+      });
       Map<String, dynamic> liveStock = {
         'name': _titleNameController.text,
         'externalId': _titleIdController.text,
@@ -347,11 +355,18 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         'gender': gender,
       };
       CreateLiveStock(liveStock).then((value) {
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (context) => LiveStockPage(),
-        //   ),
-        // );
+        if (value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => LiveStockPage(farmId: widget.farmId),
+            ),
+          );
+        }
+      }).catchError((e) {
+        setState(() {
+          isCreating = false;
+        });
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       SnackbarShowNoti.showSnackbar(

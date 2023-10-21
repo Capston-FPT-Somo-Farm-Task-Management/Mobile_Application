@@ -32,6 +32,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
   String name = "";
   int? status;
   int? zoneId;
+  bool isCreating = false;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
@@ -58,6 +59,13 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
 
   @override
   Widget build(BuildContext context) {
+    if (isCreating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -210,6 +218,9 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có") {
+      setState(() {
+        isCreating = true;
+      });
       Map<String, dynamic> liveStock = {
         'code': _fieldCodeController.text,
         'name': _nameController.text,
@@ -221,11 +232,14 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockFieldPage(),
+              builder: (context) => LiveStockFieldPage(farmId: widget.farmId),
             ),
           );
         }
       }).catchError((e) {
+        setState(() {
+          isCreating = false;
+        });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {

@@ -550,14 +550,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              LiveStockFieldPage(),
+                                                                              LiveStockFieldPage(farmId: farmId!),
                                                                         ),
                                                                       );
                                                                     },
                                                                     child: const Row(
                                                                         children: [
                                                                           Text(
-                                                                            "Chuồng của vật nuôi",
+                                                                            "Chuồng",
                                                                             style:
                                                                                 TextStyle(fontSize: 20),
                                                                           ),
@@ -735,7 +735,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              PlantFieldPage(),
+                                                                              PlantFieldPage(farmId: farmId!),
                                                                         ),
                                                                       );
                                                                     },

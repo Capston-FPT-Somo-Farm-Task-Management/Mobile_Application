@@ -19,6 +19,7 @@ class LiveStockTypePage extends StatefulWidget {
 class LiveStockTypePageState extends State<LiveStockTypePage> {
   int? farmId;
   List<LiveStock> SearchliveStock = plantList;
+  bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
   Future<int?> getFarmId() async {
@@ -50,17 +51,30 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
         liveStocks = value;
       });
     });
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
       body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+        color: Colors.grey[200],
+        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -113,7 +127,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -146,7 +160,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                       return SizedBox.shrink();
                     }
                     return Container(
-                      margin: EdgeInsets.only(bottom: 40),
+                      margin: EdgeInsets.only(bottom: 20),
                       child: GestureDetector(
                         // onTap: () {
                         //   showDialog(
@@ -161,8 +175,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
@@ -174,11 +187,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                           child: Container(
                             padding: const EdgeInsets.only(top: 27, left: 20),
                             decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                border: Border.all(
-                                  color: Colors.grey, // Màu của đường viền
-                                  width: 0.5, // Độ dày của đường viền
-                                ),
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(15)),
                             height: 80,
                             width: double.infinity,

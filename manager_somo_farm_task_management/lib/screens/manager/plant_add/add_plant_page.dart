@@ -38,6 +38,7 @@ class CreatePlantState extends State<CreatePlant> {
   int? habitantTypeId;
   int? fieldId;
   int? height;
+  bool isCreating = false;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
@@ -82,6 +83,13 @@ class CreatePlantState extends State<CreatePlant> {
 
   @override
   Widget build(BuildContext context) {
+    if (isCreating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -305,6 +313,9 @@ class CreatePlantState extends State<CreatePlant> {
         _selectedZone != "Chưa có" &&
         _selectedField != "Chưa có" &&
         _selectedField != "Chọn") {
+      setState(() {
+        isCreating = true;
+      });
       Map<String, dynamic> plant = {
         'name': _nameController.text,
         'externalId': _plantCodeController.text,
@@ -313,11 +324,16 @@ class CreatePlantState extends State<CreatePlant> {
         'fieldId': fieldId
       };
       CreatePlant(plant).then((value) {
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (context) => PlantPage(),
-        //   ),
-        // );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => PlantPage(farmId: widget.farmId),
+          ),
+        );
+      }).catchError((e) {
+        setState(() {
+          isCreating = false;
+        });
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
       SnackbarShowNoti.showSnackbar(

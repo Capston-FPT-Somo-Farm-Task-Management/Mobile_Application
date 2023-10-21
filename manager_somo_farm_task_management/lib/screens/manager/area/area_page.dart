@@ -4,6 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/area_add/area_add.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/area_detail/area_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
@@ -70,6 +71,7 @@ class AreaPageState extends State<AreaPage> {
         child: CustomAppBar(),
       ),
       body: Container(
+        color: Colors.grey[200],
         padding:
             const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
         child: Column(
@@ -131,7 +133,7 @@ class AreaPageState extends State<AreaPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -192,29 +194,27 @@ class AreaPageState extends State<AreaPage> {
                               return const SizedBox(height: 25);
                             },
                             itemBuilder: (context, index) {
-                              final task = filteredareaList[index];
+                              final area = filteredareaList[index];
 
                               return GestureDetector(
-                                // onTap: () {
-                                //   showDialog(
-                                //     context: context,
-                                //     builder: (BuildContext context) {
-                                //       return EmployeeDetailsPopup(
-                                //           employee: task);
-                                //     },
-                                //   );
-                                // },
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AreaDetail(area: area);
+                                    },
+                                  );
+                                },
                                 onLongPress: () {
-                                  _showBottomSheet(context, task);
+                                  _showBottomSheet(context, area);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.teal,
-                                    borderRadius: BorderRadius.circular(25),
+                                    borderRadius: BorderRadius.circular(15),
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Colors.grey,
-                                        blurRadius: 1,
+                                        blurRadius: 10,
                                         offset: Offset(0, 6), // Shadow position
                                       ),
                                     ],
@@ -224,13 +224,9 @@ class AreaPageState extends State<AreaPage> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors
-                                                .grey, // Màu của đường viền
-                                            width: 1.0, // Độ dày của đường viền
-                                          ),
-                                        ),
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10))),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -246,20 +242,35 @@ class AreaPageState extends State<AreaPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        task['name'].length > 20
-                                                            ? '${task['name'].substring(0, 20)}...'
-                                                            : task['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            '${area['code']} - ',
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Text(
+                                                            area['name'].length >
+                                                                    20
+                                                                ? '${area['name'].substring(0, 20)}...'
+                                                                : area['name'],
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: task['status'] ==
+                                                          color: area['status'] ==
                                                                   "Inactive"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
@@ -271,7 +282,7 @@ class AreaPageState extends State<AreaPage> {
                                                             const EdgeInsets
                                                                 .all(10),
                                                         child: Text(
-                                                          task['status'],
+                                                          area['status'],
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14,
@@ -296,7 +307,7 @@ class AreaPageState extends State<AreaPage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Diện tích: ${task['fArea']}",
+                                                        "Diện tích: ${area['fArea']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(

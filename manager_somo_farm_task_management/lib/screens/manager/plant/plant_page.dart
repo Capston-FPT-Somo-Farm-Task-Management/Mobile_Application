@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_details/plant_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/plant_detail/plant_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,18 +76,31 @@ class PlantPageState extends State<PlantPage> {
   void initState() {
     super.initState();
     _initializeData();
+    Future.delayed(Duration(milliseconds: 700), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
       body: Container(
+        color: Colors.grey[200],
         padding:
-            const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 20),
+            const EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
@@ -142,7 +154,7 @@ class PlantPageState extends State<PlantPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -172,13 +184,13 @@ class PlantPageState extends State<PlantPage> {
                     Map<String, dynamic> plant = plants[index];
 
                     return Container(
-                      margin: EdgeInsets.only(bottom: 25),
+                      margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return PlantDetailsPopup(plant: plant);
+                              return PlantDetailPopup(plant: plant);
                             },
                           );
                         },
@@ -188,12 +200,12 @@ class PlantPageState extends State<PlantPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
-                                blurRadius: 7,
-                                offset: Offset(4, 8), // Shadow position
+                                blurRadius: 10,
+                                offset: Offset(1, 4), // Shadow position
                               ),
                             ],
                           ),
@@ -202,12 +214,10 @@ class PlantPageState extends State<PlantPage> {
                               Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey, // Màu của đường viền
-                                      width: 1.0, // Độ dày của đường viền
-                                    ),
-                                  ),
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10))),
                                   height: 120,
                                   width: double.infinity,
                                   child: Row(
@@ -275,11 +285,7 @@ class PlantPageState extends State<PlantPage> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[400], // Đặt màu xám ở đây
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
+                                  color: Colors.green[100], // Đặt màu xám ở đây
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10),
@@ -348,18 +354,21 @@ class PlantPageState extends State<PlantPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Thay đổi trạng thái con vật",
+                          title: "Thay đổi trạng cây trồng",
                           content:
-                              "Bạn có chắc muốn thay đổi trạng thái của con vật này?",
+                              "Bạn có chắc muốn thay đổi trạng thái của cây trồng này?",
                           onConfirm: () {
-                            setState(() {
-                              deletePlant(plant['id']);
-                              GetPlants();
-                              Navigator.of(context).pop();
-                              SnackbarShowNoti.showSnackbar(
-                                  'Đổi trạng thái thành công!', false);
-                              deletePlant(plant['id']);
+                            deletePlant(plant['id']).then((value) {
+                              if (value) {
+                                GetPlants();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Không thể thay đổi trạng thái', true);
+                              }
                             });
+                            Navigator.of(context).pop();
                           },
                           buttonConfirmText: "Thay đổi",
                         );

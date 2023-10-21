@@ -24,25 +24,6 @@ class LiveStockService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getAllLiveStock() async {
-    final String getLiveStockUrl = '$baseUrl/LiveStock';
-
-    final http.Response response = await http.get(
-      Uri.parse(getLiveStockUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<Map<String, dynamic>> liveStocks =
-          List<Map<String, dynamic>>.from(json.decode(response.body));
-      return liveStocks;
-    } else {
-      throw Exception('Failed to get LiveStocks');
-    }
-  }
-
   Future<Map<String, dynamic>> getLiveStockById(int id) async {
     final String getLiveStockUrl = '$baseUrl/LiveStock/&id';
 
@@ -62,7 +43,7 @@ class LiveStockService {
     }
   }
 
-  Future<bool> deleteLiveStock(int id) async {
+  Future<bool> DeleteLiveStock(int id) async {
     final String deleteLiveStockUrl = '$baseUrl/LiveStock/Delete/${id}';
 
     final http.Response response = await http.put(
@@ -79,8 +60,7 @@ class LiveStockService {
     }
   }
 
-  Future<Map<String, dynamic>> CreateLiveStock(
-      Map<String, dynamic> liveStock) async {
+  Future<bool> CreateLiveStock(Map<String, dynamic> liveStock) async {
     final String createLiveStockUrl = '$baseUrl/LiveStock';
     var body = jsonEncode(liveStock);
     final response = await http.post(Uri.parse(createLiveStockUrl),
@@ -90,11 +70,10 @@ class LiveStockService {
         body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> liveStock =
-          Map<String, dynamic>.from(json.decode(response.body));
-      return liveStock;
+      return true;
     } else {
-      throw Exception('Failed to create liveStock');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -115,6 +94,23 @@ class LiveStockService {
       return liveStocks;
     } else {
       throw Exception('Failed to get LiveStocks');
+    }
+  }
+
+  Future<bool> UpdateLiveStock(Map<String, dynamic> liveStock, int id) async {
+    final String updateLiveStockUrl = '$baseUrl/LiveStock/${id}';
+    var body = jsonEncode(liveStock);
+    final response = await http.put(Uri.parse(updateLiveStockUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 }

@@ -31,6 +31,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
 
   int? status;
   int? zoneId;
+  bool isCreating = false;
 
   Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
     return AreaService().getAreasActiveByFarmId(widget.farmId);
@@ -61,6 +62,13 @@ class CreatePlantFieldState extends State<CreatePlantField> {
 
   @override
   Widget build(BuildContext context) {
+    if (isCreating) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -192,7 +200,7 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Tạo cây trồng",
+                      "Tạo vườn cây",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
@@ -212,6 +220,9 @@ class CreatePlantFieldState extends State<CreatePlantField> {
         _selectedArea != "Chọn" &&
         _selectedZone != "Chọn" &&
         _selectedZone != "Chưa có") {
+      setState(() {
+        isCreating = true;
+      });
       Map<String, dynamic> plant = {
         'code': _fieldCodeController.text,
         'name': _nameController.text,
@@ -222,13 +233,17 @@ class CreatePlantFieldState extends State<CreatePlantField> {
       CreatePlantField(plant).then((value) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => PlantFieldPage(),
+            builder: (context) => PlantFieldPage(farmId: widget.farmId),
           ),
         );
+      }).catchError((e) {
+        setState(() {
+          isCreating = false;
+        });
+        SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {
-      SnackbarShowNoti.showSnackbar(
-          'Vui lòng điền đầy đủ thông tin của cây trồng', true);
+      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
     }
   }
 }
