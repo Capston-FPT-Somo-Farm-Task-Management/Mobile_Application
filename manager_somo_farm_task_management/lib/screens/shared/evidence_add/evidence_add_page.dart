@@ -31,22 +31,6 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
     });
   }
 
-  Widget buildAssetGridView() {
-    return Expanded(
-      child: GridView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: selectedAssetList.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemBuilder: (context, index) {
-          AssetEntity assetEntity = selectedAssetList[index];
-          return buildAssetWidget(assetEntity);
-        },
-      ),
-    );
-  }
-
   Widget buildAssetWidget(AssetEntity assetEntity) {
     return Stack(
       children: [
@@ -146,7 +130,35 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                 ),
               ),
             ),
-            //if (selectedAssetList.isNotEmpty) buildAssetGridView(),
+            if (selectedAssetList.length == 1)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Expanded(
+                  child: buildAssetWidget(selectedAssetList[0]),
+                ),
+              ),
+            if (selectedAssetList.length == 2)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Row(
+                  children: [
+                    // Cột 1 của Hàng đầu chiếm 50%
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 1, bottom: 1),
+                        child: buildAssetWidget(selectedAssetList[0]),
+                      ),
+                    ),
+                    // Cột 2 của Hàng đầu chiếm 50%
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 1, bottom: 1),
+                        child: buildAssetWidget(selectedAssetList[1]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             if (selectedAssetList.length == 3)
               Container(
                 height: MediaQuery.of(context).size.height * 0.4,
@@ -206,19 +218,20 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.only(bottom: 1),
+                                padding:
+                                    const EdgeInsets.only(bottom: 1, left: 1),
                                 child: buildAssetWidget(selectedAssetList[1]),
                               ),
                             ),
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.only(top: 1),
+                                padding: const EdgeInsets.only(top: 1, left: 1),
                                 child: buildAssetWidget(selectedAssetList[2]),
                               ),
                             ),
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.only(top: 1),
+                                padding: const EdgeInsets.only(top: 1, left: 1),
                                 child: buildAssetWidget(selectedAssetList[3]),
                               ),
                             ),
@@ -241,11 +254,19 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                         children: [
                           // Cột 1 của Hàng đầu chiếm 50%
                           Expanded(
-                            child: buildAssetWidget(selectedAssetList[0]),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 1, bottom: 1),
+                              child: buildAssetWidget(selectedAssetList[0]),
+                            ),
                           ),
                           // Cột 2 của Hàng đầu chiếm 50%
                           Expanded(
-                            child: buildAssetWidget(selectedAssetList[1]),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 1, bottom: 1),
+                              child: buildAssetWidget(selectedAssetList[1]),
+                            ),
                           ),
                         ],
                       ),
@@ -257,15 +278,109 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                         children: [
                           // Cột 1 của Hàng thứ hai chiếm 33.33%
                           Expanded(
-                            child: buildAssetWidget(selectedAssetList[2]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 1, top: 1),
+                              child: buildAssetWidget(selectedAssetList[2]),
+                            ),
                           ),
                           // Cột 2 của Hàng thứ hai chiếm 33.33%
                           Expanded(
-                            child: buildAssetWidget(selectedAssetList[3]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 1, right: 1, top: 1),
+                              child: buildAssetWidget(selectedAssetList[3]),
+                            ),
                           ),
                           // Cột 3 của Hàng thứ hai chiếm 33.33%
                           Expanded(
-                            child: buildAssetWidget(selectedAssetList[4]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 1, top: 1),
+                              child: buildAssetWidget(selectedAssetList[4]),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (selectedAssetList.length > 5)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  children: [
+                    // Hàng đầu chiếm 70%
+                    Expanded(
+                      flex: 6,
+                      child: Row(
+                        children: [
+                          // Cột 1 của Hàng đầu chiếm 50%
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 1, bottom: 1),
+                              child: buildAssetWidget(selectedAssetList[0]),
+                            ),
+                          ),
+                          // Cột 2 của Hàng đầu chiếm 50%
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 1, bottom: 1),
+                              child: buildAssetWidget(selectedAssetList[1]),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Hàng thứ hai chiếm 30%
+                    Expanded(
+                      flex: 4,
+                      child: Row(
+                        children: [
+                          // Cột 1 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 1, top: 1),
+                              child: buildAssetWidget(selectedAssetList[2]),
+                            ),
+                          ),
+                          // Cột 2 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 1, right: 1, top: 1),
+                              child: buildAssetWidget(selectedAssetList[3]),
+                            ),
+                          ),
+                          // Cột 3 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 1, top: 1),
+                              child: Stack(
+                                children: [
+                                  ColorFiltered(
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black.withOpacity(
+                                          0.3), // Điều chỉnh độ mờ ở đây
+                                      BlendMode.srcOver,
+                                    ),
+                                    child:
+                                        buildAssetWidget(selectedAssetList[4]),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "+ ${selectedAssetList.length - 5}",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
