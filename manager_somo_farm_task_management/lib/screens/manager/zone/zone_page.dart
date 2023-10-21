@@ -5,6 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone_add/zone_add_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/zone_detail/zone_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -255,20 +256,19 @@ class ZonePageState extends State<ZonePage> {
                               return const SizedBox(height: 20);
                             },
                             itemBuilder: (context, index) {
-                              final task = filteredZoneList[index];
+                              final zone = filteredZoneList[index];
 
                               return GestureDetector(
                                 onTap: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return EmployeeDetailsPopup(
-                                          employee: task);
+                                      return ZoneDetail(zone: zone);
                                     },
                                   );
                                 },
                                 onLongPress: () {
-                                  _showBottomSheet(context, task);
+                                  _showBottomSheet(context, zone);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -304,20 +304,35 @@ class ZonePageState extends State<ZonePage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        task['name'].length > 20
-                                                            ? '${task['name'].substring(0, 20)}...'
-                                                            : task['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            '${zone['code']} - ',
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Text(
+                                                            zone['name'].length >
+                                                                    20
+                                                                ? '${zone['name'].substring(0, 20)}...'
+                                                                : zone['name'],
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: task['status'] ==
+                                                          color: zone['status'] ==
                                                                   "Inactive"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
@@ -329,7 +344,7 @@ class ZonePageState extends State<ZonePage> {
                                                             const EdgeInsets
                                                                 .all(10),
                                                         child: Text(
-                                                          task['status'],
+                                                          zone['status'],
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14,
@@ -354,7 +369,7 @@ class ZonePageState extends State<ZonePage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Thuộc khu vực: ${task['areaName']}",
+                                                        "Thuộc khu vực: ${zone['areaName']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
@@ -377,7 +392,7 @@ class ZonePageState extends State<ZonePage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Loại vùng: ${task['zoneTypeName']}",
+                                                        "Loại vùng: ${zone['zoneTypeName']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(

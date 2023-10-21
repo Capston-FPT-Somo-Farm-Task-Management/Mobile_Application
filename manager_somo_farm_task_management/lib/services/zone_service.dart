@@ -138,4 +138,21 @@ class ZoneService {
       throw Exception('Failed to change status');
     }
   }
+
+  Future<bool> UpdateZone(Map<String, dynamic> zone, int id) async {
+    final String updateZoneUrl = '$baseUrl/Zone/${id}';
+    var body = jsonEncode(zone);
+    final response = await http.put(Uri.parse(updateZoneUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

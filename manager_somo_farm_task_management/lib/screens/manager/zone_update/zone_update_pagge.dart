@@ -3,42 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
-import 'package:manager_somo_farm_task_management/services/field_service.dart';
-import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
-import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
+import 'package:manager_somo_farm_task_management/services/zone_type_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../componets/input_field.dart';
 
-class UpdatePlant extends StatefulWidget {
-  final Map<String, dynamic> plant;
-  const UpdatePlant({super.key, required this.plant});
+class UpdateZone extends StatefulWidget {
+  final Map<String, dynamic> zone;
+  const UpdateZone({super.key, required this.zone});
 
   @override
-  UpdatePlantState createState() => UpdatePlantState();
+  UpdateZoneState createState() => UpdateZoneState();
 }
 
-class UpdatePlantState extends State<UpdatePlant> {
+class UpdateZoneState extends State<UpdateZone> {
   final TextEditingController _titleIdController = TextEditingController();
   final TextEditingController _titleNameController = TextEditingController();
   final TextEditingController _titleNumberController = TextEditingController();
 
   List<Map<String, dynamic>> filteredArea = [];
-  List<Map<String, dynamic>> filteredZone = [];
-  List<Map<String, dynamic>> filteredField = [];
-  List<Map<String, dynamic>> filterPlantType = [];
+  List<Map<String, dynamic>> filterZoneType = [];
   Map<String, dynamic>? _selectedArea;
-  Map<String, dynamic>? _selectedZone;
-  Map<String, dynamic>? _selectedField;
-  Map<String, dynamic>? _selectedPlantType;
+  Map<String, dynamic>? _selectedZoneType;
 
   String name = "";
   int? height;
-  int? habitantTypeId;
-  int? fieldId;
+  int? zoneTypeId;
+  int? areaId;
   int? farmId;
   int? id;
   bool isLoading = true;
@@ -57,49 +51,25 @@ class UpdatePlantState extends State<UpdatePlant> {
       setState(() {
         filteredArea = value;
         _selectedArea = filteredArea
-            .where((element) => element['id'] == widget.plant['areaId'])
+            .where((element) => element['id'] == widget.zone['areaId'])
             .firstOrNull;
       });
     });
   }
 
-  Future<void> getZones(int areaId, bool init) async {
-    ZoneService().getZonesbyAreaPlantId(areaId).then((value) {
+  Future<void> getZoneTypes(int habitantTypeId, bool init) async {
+    ZoneTypeService().getZonesType().then((value) {
       setState(() {
-        filteredZone = value;
-        if (init)
-          _selectedZone = filteredZone
-              .where((element) => element['id'] == widget.plant['zoneId'])
-              .firstOrNull;
-      });
-    });
-  }
-
-  Future<void> getFields(int zoneId, bool init) async {
-    FieldService().getFieldsActivebyZoneId(zoneId).then((value) {
-      setState(() {
-        filteredField = value;
-        if (init)
-          _selectedField = filteredField
-              .where((element) => element['id'] == widget.plant['fieldId'])
-              .firstOrNull;
-      });
-    });
-  }
-
-  Future<void> getHabitantTypes(int habitantTypeId, bool init) async {
-    HabitantTypeService().getPlantTypeFromHabitantType().then((value) {
-      setState(() {
-        filterPlantType = value;
-        _selectedPlantType = filterPlantType
-            .where((element) => element['id'] == widget.plant['habitantTypeId'])
+        filterZoneType = value;
+        _selectedZoneType = filterZoneType
+            .where((element) => element['id'] == widget.zone['habitantTypeId'])
             .firstOrNull;
       });
     });
   }
 
-  Future<bool> UpdatePlant(Map<String, dynamic> plant, int id) {
-    return PlantService().UpdatePlant(plant, id);
+  Future<bool> UpdateZone(Map<String, dynamic> zone, int id) {
+    return ZoneService().UpdateZone(zone, id);
   }
 
   @override
@@ -107,16 +77,14 @@ class UpdatePlantState extends State<UpdatePlant> {
     super.initState();
     getFarmId().then((_) {
       getAreas();
-      getZones(widget.plant['areaId'], true);
-      getFields(widget.plant['zoneId'], true);
-      getHabitantTypes(widget.plant['habitantTypeId'], true);
+      getZoneTypes(widget.zone['zoneTypeId'], true);
     });
-    _titleIdController.text = widget.plant['externalId'];
-    _titleNameController.text = widget.plant['name'];
-    _titleNumberController.text = widget.plant['height'].toString();
-    id = widget.plant['id'];
-    habitantTypeId = widget.plant['habitantTypeId'];
-    fieldId = widget.plant['fieldId'];
+    _titleIdController.text = widget.zone['code'];
+    _titleNameController.text = widget.zone['name'];
+    _titleNumberController.text = widget.zone['farmArea'].toString();
+    id = widget.zone['id'];
+    zoneTypeId = widget.zone['habitantTypeId'];
+    areaId = widget.zone['areaId'];
 
     Future.delayed(Duration(milliseconds: 700), () {
       setState(() {
@@ -165,22 +133,22 @@ class UpdatePlantState extends State<UpdatePlant> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Chỉnh sửa cây trồng",
+                "Chỉnh sửa vùng",
                 style: headingStyle,
               ),
               MyInputField(
-                title: "Mã cây trồng",
-                hint: "Nhập mã cây trồng",
+                title: "Mã vùng",
+                hint: "Nhập mã vùng",
                 controller: _titleIdController,
               ),
               MyInputField(
-                title: "Tên cây trồng",
-                hint: "Nhập tên cây trồng",
+                title: "Tên vùng",
+                hint: "Nhập tên vùng",
                 controller: _titleNameController,
               ),
               MyInputNumber(
-                title: "Chiều cao dự kiến của cây trồng (mét)",
-                hint: "Nhập Chiều cao dự kiến của cây trồng",
+                title: "Diện tích của vùng",
+                hint: "Nhập diện tích của vùng",
                 controller: _titleNumberController,
               ),
               Container(
@@ -189,7 +157,7 @@ class UpdatePlantState extends State<UpdatePlant> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Loại cây trồng",
+                      "Loại vùng",
                       style: titileStyle,
                     ),
                     SizedBox(height: 5),
@@ -208,16 +176,16 @@ class UpdatePlantState extends State<UpdatePlant> {
                       child: DropdownButton2<Map<String, dynamic>>(
                         isExpanded: true,
                         underline: Container(height: 0),
-                        value: _selectedPlantType,
+                        value: _selectedZoneType,
                         onChanged: (newValue) {
                           setState(() {
-                            _selectedPlantType = newValue;
+                            _selectedZoneType = newValue;
                             if (newValue != null) {
-                              habitantTypeId = newValue['id'];
+                              zoneTypeId = newValue['id'];
                             }
                           });
                         },
-                        items: filterPlantType
+                        items: filterZoneType
                             .map<DropdownMenuItem<Map<String, dynamic>>>(
                                 (Map<String, dynamic> value) {
                           return DropdownMenuItem<Map<String, dynamic>>(
@@ -259,10 +227,9 @@ class UpdatePlantState extends State<UpdatePlant> {
                         onChanged: (newValue) {
                           setState(() {
                             _selectedArea = newValue;
-                            _selectedZone = null;
-                            getZones(newValue!['id'], false);
-                            _selectedField = null;
-                            getFields(newValue['id'], false);
+                            if (newValue != null) {
+                              areaId = newValue['id'];
+                            }
                           });
                         },
                         items: filteredArea
@@ -278,109 +245,6 @@ class UpdatePlantState extends State<UpdatePlant> {
                   ],
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Vùng",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: _selectedZone,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedZone = newValue;
-                            _selectedField = null;
-                            getFields(newValue!['id'], false);
-                          });
-                        },
-                        items: filteredZone
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              if (filteredZone.isEmpty)
-                Text(
-                  "Hãy chọn khu vực khác",
-                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
-                ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Chuồng",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: _selectedField,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedField = newValue;
-                            if (newValue != null) {
-                              fieldId = newValue['id'];
-                            }
-                          });
-                        },
-                        items: filteredField
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              if (_selectedField == "Chưa có")
-                Text(
-                  "Vùng bạn chọn chưa có chuồng! Hãy chọn vùng khác",
-                  style: TextStyle(fontSize: 14, color: Colors.red, height: 2),
-                ),
               const SizedBox(height: 40),
               const Divider(
                 color: Colors.grey, // Đặt màu xám
@@ -402,7 +266,7 @@ class UpdatePlantState extends State<UpdatePlant> {
                   ),
                   child: const Center(
                     child: Text(
-                      "Chỉnh sửa vật nuôi",
+                      "Chỉnh sửa vùng",
                       style: TextStyle(fontSize: 19),
                     ),
                   ),
@@ -424,16 +288,16 @@ class UpdatePlantState extends State<UpdatePlant> {
       });
       Map<String, dynamic> plant = {
         'name': _titleNameController.text,
-        'externalId': _titleIdController.text,
-        'height': _titleNumberController.text,
-        'habitantTypeId': habitantTypeId,
-        'fieldId': fieldId,
+        'code': _titleIdController.text,
+        'farmArea': _titleNumberController.text,
+        'zoneTypeId': zoneTypeId,
+        'areaId': areaId,
       };
-      UpdatePlant(plant, widget.plant['id']).then((value) {
+      UpdateZone(plant, widget.zone['id']).then((value) {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => PlantPage(farmId: farmId!),
+              builder: (context) => ZonePage(farmId: farmId!),
             ),
           );
         }
