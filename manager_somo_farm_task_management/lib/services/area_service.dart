@@ -79,4 +79,21 @@ class AreaService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> UpdateArea(Map<String, dynamic> area, int id) async {
+    final String updateAreaUrl = '$baseUrl/Area/${id}';
+    var body = jsonEncode(area);
+    final response = await http.put(Uri.parse(updateAreaUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
