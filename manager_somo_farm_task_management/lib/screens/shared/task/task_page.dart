@@ -4,8 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
@@ -40,6 +44,7 @@ class TaskPageState extends State<TaskPage> {
   bool isLoading = true;
   int groupValue = 0;
   bool isMoreLeft = false;
+  String? role;
   @override
   initState() {
     super.initState();
@@ -47,7 +52,17 @@ class TaskPageState extends State<TaskPage> {
     getFarmId().then((value) {
       farmId = value;
     });
-    _getTasksForSelectedDateAndStatus(null, 0);
+    getRole().then((_) {
+      _getTasksForSelectedDateAndStatus(null, 0);
+    });
+  }
+
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
   }
 
   Future<bool> changeTaskStatus(int taskId, int newStatus) async {
@@ -69,12 +84,31 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
+  // Future<void> _getTasksForSelectedDateAndStatus(
+  //     DateTime? selectedDate, int status) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   int? userId = prefs.getInt('userId');
+  //   List<Map<String, dynamic>> selectedDateTasks = await TaskService()
+  //       .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+  //   setState(() {
+  //     tasks = selectedDateTasks;
+  //     isLoading = false;
+  //     filteredTaskList = selectedDateTasks;
+  //   });
+  // }
+
   Future<void> _getTasksForSelectedDateAndStatus(
       DateTime? selectedDate, int status) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
-    List<Map<String, dynamic>> selectedDateTasks = await TaskService()
-        .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+    List<Map<String, dynamic>> selectedDateTasks;
+    if (role == "Manager") {
+      selectedDateTasks = await TaskService()
+          .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+    } else {
+      selectedDateTasks = await TaskService()
+          .getTasksBySupervisorIdDateStatus(userId!, selectedDate, status);
+    }
     setState(() {
       tasks = selectedDateTasks;
       isLoading = false;
@@ -89,299 +123,295 @@ class TaskPageState extends State<TaskPage> {
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
-      body: Container(
-        color: Colors.grey[200],
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Công việc",
-                          style: TextStyle(
-                            fontSize: 28, // Thay đổi kích thước phù hợp
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  // FirstAddTaskPage(farm: widget.farm),
-                                  ChooseHabitantPage(farmId: farmId!),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                          minimumSize: Size(120, 45),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Thêm việc",
-                            style: TextStyle(fontSize: 19),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-                  Container(
-                    height: 42,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: (keyword) {
-                          searchTasks(keyword);
-                        },
-                        decoration: const InputDecoration(
-                          hintText: "Tìm kiếm...",
-                          border: InputBorder.none,
-                          icon: Icon(Icons.search),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Công việc",
+                        style: TextStyle(
+                          fontSize: 28, // Thay đổi kích thước phù hợp
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (!selectedDate.isEmpty)
-                        GestureDetector(
-                          onTap: () {
-                            _getTasksForSelectedDateAndStatus(null, groupValue);
-                            selectedDate = "";
-                          },
-                          child: Icon(
-                            Icons.delete_forever,
-                            color: Colors.red,
-                            size: 20,
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                // FirstAddTaskPage(farm: widget.farm),
+                                ChooseHabitantPage(farmId: farmId!),
                           ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimaryColor,
+                        minimumSize: Size(120, 45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      SizedBox(width: 10),
-                      Text(selectedDate),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_month_outlined),
-                        onPressed: () async {
-                          DateTime? _selected = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1),
-                            lastDate: DateTime(9000),
-                          );
-
-                          setState(() {
-                            if (_selected != null) {
-                              _getTasksForSelectedDateAndStatus(
-                                  _selected, groupValue);
-                              selectedDate =
-                                  DateFormat('dd/MM/yy').format(_selected);
-                              _selectedDate = _selected;
-                            } else {
-                              _getTasksForSelectedDateAndStatus(
-                                  null, groupValue);
-                              setState(() {
-                                selectedDate = "";
-                                filteredTaskList = tasks;
-                              });
-                            }
-                          });
-                        },
                       ),
-                      const SizedBox(width: 10),
+                      child: const Center(
+                        child: Text(
+                          "Thêm việc",
+                          style: TextStyle(fontSize: 19),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Container(
+                  height: 42,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (keyword) {
+                        searchTasks(keyword);
+                      },
+                      decoration: const InputDecoration(
+                        hintText: "Tìm kiếm...",
+                        border: InputBorder.none,
+                        icon: Icon(Icons.search),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (!selectedDate.isEmpty)
+                      GestureDetector(
+                        onTap: () {
+                          _getTasksForSelectedDateAndStatus(null, groupValue);
+                          selectedDate = "";
+                        },
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: Colors.red,
+                          size: 20,
+                        ),
+                      ),
+                    SizedBox(width: 10),
+                    Text(selectedDate),
+                    IconButton(
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      onPressed: () async {
+                        DateTime? _selected = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1),
+                          lastDate: DateTime(9000),
+                        );
+
+                        setState(() {
+                          if (_selected != null) {
+                            _getTasksForSelectedDateAndStatus(
+                                _selected, groupValue);
+                            selectedDate =
+                                DateFormat('dd/MM/yy').format(_selected);
+                            _selectedDate = _selected;
+                          } else {
+                            _getTasksForSelectedDateAndStatus(null, groupValue);
+                            setState(() {
+                              selectedDate = "";
+                              filteredTaskList = tasks;
+                            });
+                          }
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                )
+              ],
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            child: !isMoreLeft
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CupertinoSegmentedControl<int>(
+                          selectedColor: kSecondColor,
+                          borderColor: kSecondColor,
+                          pressedColor: Colors.blue[50],
+                          children: {
+                            5: Text("Từ chối"),
+                            0: Text("Chuẩn bị"),
+                            1: Text("Đang làm"),
+                            2: Text(">>>")
+                            // Thêm các option khác nếu cần
+                          },
+                          onValueChanged: (int newValue) {
+                            if (newValue == 2)
+                              setState(() {
+                                isMoreLeft = true;
+                              });
+
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                _selectedDate, groupValue);
+                          },
+                          groupValue: groupValue,
+                        ),
+                      ),
                     ],
                   )
-                ],
-              ),
-            ),
-            Container(
-              color: Colors.grey[200],
-              alignment: Alignment.center,
-              child: !isMoreLeft
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CupertinoSegmentedControl<int>(
-                            selectedColor: kSecondColor,
-                            borderColor: kSecondColor,
-                            pressedColor: Colors.blue[50],
-                            children: {
-                              5: Text("Từ chối"),
-                              0: Text("Chuẩn bị"),
-                              1: Text("Đang làm"),
-                              2: Text(">>>")
-                              // Thêm các option khác nếu cần
-                            },
-                            onValueChanged: (int newValue) {
-                              if (newValue == 2)
-                                setState(() {
-                                  isMoreLeft = true;
-                                });
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CupertinoSegmentedControl<int>(
+                          selectedColor: kSecondColor,
+                          borderColor: kSecondColor,
+                          pressedColor: Colors.blue[50],
+                          children: {
+                            0: Text("<<<"),
+                            1: Text('Đang làm'),
+                            2: Text('Hoàn thành'),
+                            3: Text(' Không h.thành '),
 
+                            // Thêm các option khác nếu cần
+                          },
+                          onValueChanged: (int newValue) {
+                            if (newValue == 0)
                               setState(() {
-                                groupValue = newValue;
+                                isMoreLeft = false;
                               });
-                              _getTasksForSelectedDateAndStatus(
-                                  _selectedDate, groupValue);
-                            },
-                            groupValue: groupValue,
-                          ),
+
+                            setState(() {
+                              groupValue = newValue;
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                _selectedDate, groupValue);
+                          },
+                          groupValue: groupValue,
                         ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CupertinoSegmentedControl<int>(
-                            selectedColor: kSecondColor,
-                            borderColor: kSecondColor,
-                            pressedColor: Colors.blue[50],
-                            children: {
-                              0: Text("<<<"),
-                              1: Text('Đang làm'),
-                              2: Text('Hoàn thành'),
-                              3: Text(' Không h.thành '),
-
-                              // Thêm các option khác nếu cần
-                            },
-                            onValueChanged: (int newValue) {
-                              if (newValue == 0)
-                                setState(() {
-                                  isMoreLeft = false;
-                                });
-
-                              setState(() {
-                                groupValue = newValue;
-                              });
-                              _getTasksForSelectedDateAndStatus(
-                                  _selectedDate, groupValue);
-                            },
-                            groupValue: groupValue,
-                          ),
+                      ),
+                    ],
+                  ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(color: kPrimaryColor),
+                  )
+                : filteredTaskList.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.no_backpack,
+                              size:
+                                  75, // Kích thước biểu tượng có thể điều chỉnh
+                              color: Colors.grey, // Màu của biểu tượng
+                            ),
+                            SizedBox(
+                                height:
+                                    16), // Khoảng cách giữa biểu tượng và văn bản
+                            Text(
+                              "Không có công việc nào",
+                              style: TextStyle(
+                                fontSize:
+                                    20, // Kích thước văn bản có thể điều chỉnh
+                                color: Colors.grey, // Màu văn bản
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(color: kPrimaryColor),
-                    )
-                  : filteredTaskList.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.no_backpack,
-                                size:
-                                    75, // Kích thước biểu tượng có thể điều chỉnh
-                                color: Colors.grey, // Màu của biểu tượng
-                              ),
-                              SizedBox(
-                                  height:
-                                      16), // Khoảng cách giữa biểu tượng và văn bản
-                              Text(
-                                "Không có công việc nào",
-                                style: TextStyle(
-                                  fontSize:
-                                      20, // Kích thước văn bản có thể điều chỉnh
-                                  color: Colors.grey, // Màu văn bản
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          child: RefreshIndicator(
-                            onRefresh: () => _getTasksForSelectedDateAndStatus(
-                                _selectedDate, groupValue),
-                            child: ListView.separated(
-                              itemCount: filteredTaskList.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return const SizedBox(height: 20);
-                              },
-                              itemBuilder: (context, index) {
-                                final task = filteredTaskList[index];
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: RefreshIndicator(
+                          onRefresh: () => _getTasksForSelectedDateAndStatus(
+                              _selectedDate, groupValue),
+                          child: ListView.separated(
+                            itemCount: filteredTaskList.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const SizedBox(height: 25);
+                            },
+                            itemBuilder: (context, index) {
+                              final task = filteredTaskList[index];
 
-                                return GestureDetector(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return TaskDetailsPopup(task: task);
-                                      },
-                                    );
-                                  },
-                                  onLongPress: () {
-                                    _showBottomSheet(
-                                        context, task, _selectedDate);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(25),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 10,
-                                          offset:
-                                              Offset(4, 8), // Shadow position
+                              return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return TaskDetailsPopup(task: task);
+                                    },
+                                  );
+                                },
+                                onLongPress: () {
+                                  _showBottomSheet(
+                                      context, task, _selectedDate, role!);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.teal,
+                                    borderRadius: BorderRadius.circular(25),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 7,
+                                        offset: Offset(4, 8), // Shadow position
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                            color: Colors
+                                                .grey, // Màu của đường viền
+                                            width: 1.0, // Độ dày của đường viền
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight:
-                                                      Radius.circular(10))),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Stack(children: [
                                                     Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          task['name'].length >
-                                                                  15
-                                                              ? '${task['name'].substring(0, 15)}...'
-                                                              : task['name'],
+                                                          wrapWordsWithEllipsis(
+                                                              task['name'], 20),
                                                           style:
                                                               const TextStyle(
                                                             fontSize: 20,
@@ -390,263 +420,438 @@ class TaskPageState extends State<TaskPage> {
                                                           ),
                                                         ),
                                                         Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: task['status'] ==
-                                                                    "Không hoàn thành"
-                                                                ? Colors
-                                                                    .red[400]
-                                                                : task['status'] ==
-                                                                        "Chuẩn bị"
-                                                                    ? Colors.orange[
-                                                                        400]
-                                                                    : task['status'] ==
-                                                                            "Đang thực hiện"
-                                                                        ? kTextBlueColor
-                                                                        : kPrimaryColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10),
-                                                          child: Text(
-                                                            task['status'],
-                                                            style: const TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Priority
+                                                                  .getBGClr(task[
+                                                                      'priority']),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .push(
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) => SubTaskPage(
+                                                                        taskId: task[
+                                                                            'id'],
+                                                                        taskName:
+                                                                            task['name']),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              child: Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios,
                                                                 color: Colors
-                                                                    .white),
-                                                          ),
-                                                        ),
+                                                                    .grey[200],
+                                                                size: 15,
+                                                              ),
+                                                            )),
                                                       ],
                                                     ),
-                                                    const SizedBox(height: 10),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const Icon(
-                                                          Icons
-                                                              .access_time_rounded,
-                                                          color: Colors.black,
-                                                          size: 18,
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 4),
-                                                        Text(
-                                                          "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    color: Colors
-                                                                        .black),
+                                                    if (role == "Manager" &&
+                                                            task['managerName'] ==
+                                                                null ||
+                                                        role == "Supervisor" &&
+                                                            task['managerName'] !=
+                                                                null)
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        alignment:
+                                                            Alignment.topRight,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 35),
+                                                        child: Tooltip(
+                                                          message: role ==
+                                                                  "Manager"
+                                                              ? 'Công việc do người giám sát tạo'
+                                                              : 'Công việc do người quản lí tạo',
+                                                          child: Icon(
+                                                            Icons
+                                                                .account_circle_rounded,
+                                                            color:
+                                                                Colors.black54,
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 20),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          "Giám sát: ${task['supervisorName']}",
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
+                                                      ),
+                                                  ]),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons
+                                                            .access_time_rounded,
+                                                        color: Colors.black,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .black),
                                                         ),
-                                                        Text(
-                                                          "Vị trí: ${task['fieldName']}",
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "Giám sát: ${task['supervisorName']}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .black),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
+                                                      ),
+                                                      Text(
+                                                        "Vị trí: ${task['fieldName']}",
+                                                        style: GoogleFonts.lato(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Priority.getBGClr(task[
+                                              'priority']), // Đặt màu xám ở đây
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius: const BorderRadius.only(
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
                                           ),
                                         ),
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.green[
-                                                100], // Đặt màu xám ở đây
-
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              bottomLeft: Radius.circular(10),
-                                              bottomRight: Radius.circular(10),
+                                        height: 45,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Loại: ${task['taskTypeName']}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey[200]),
                                             ),
-                                          ),
-                                          height: 45,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Loại: ${task['taskTypeName']}',
-                                                style: const TextStyle(
-                                                    fontSize: 16),
-                                              ),
-                                              Text(
-                                                'Ưu tiên: ${task['priority']}',
-                                                style: const TextStyle(
-                                                    fontSize: 16),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                            Text(
+                                              'Ưu tiên: ${task['priority']}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey[200]),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
                           ),
                         ),
-            ),
-          ],
-        ),
+                      ),
+          ),
+        ],
       ),
     );
   }
 
   _showBottomSheet(BuildContext context, Map<String, dynamic> task,
-      DateTime? _selectedDate) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        bool isRejected = task['status'] == "Từ chối";
-        bool isPreparing = task['status'] == "Chuẩn bị";
-        bool isExecuting = task['status'] == "Đang thực hiện";
-        bool isCompleted = task['status'] == "Hoàn thành";
-        bool isNotCompleted = task['status'] == "Không hoàn thành";
+      DateTime? _selectedDate, String role) {
+    role == "Manager"
+        ? showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              bool isRejected = task['status'] == "Từ chối";
+              bool isPreparing = task['status'] == "Chuẩn bị";
+              bool isExecuting = task['status'] == "Đang thực hiện";
+              bool isCompleted = task['status'] == "Hoàn thành";
+              bool isNotCompleted = task['status'] == "Không hoàn thành";
 
-        return Container(
-          padding: const EdgeInsets.only(top: 4),
-          height: isRejected
-              ? MediaQuery.of(context).size.height * 0.42
-              : MediaQuery.of(context).size.height * 0.32,
-          color: kBackgroundColor,
-          child: Column(
-            children: [
-              Container(
-                height: 6,
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kTextGreyColor,
-                ),
-              ),
-              const Spacer(),
-              if (isRejected ||
-                  isPreparing ||
-                  isExecuting ||
-                  isCompleted ||
-                  isNotCompleted)
-                _bottomSheetButton(
-                  label: "Xem báo cáo",
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TaskEvidence(),
+              return Container(
+                padding: const EdgeInsets.only(top: 4),
+                height: isRejected
+                    ? MediaQuery.of(context).size.height * 0.42
+                    : MediaQuery.of(context).size.height * 0.32,
+                color: kBackgroundColor,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 6,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kTextGreyColor,
                       ),
-                    );
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (isRejected)
-                _bottomSheetButton(
-                  label: "Không chấp nhận",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
-                ),
-              if (isPreparing || isNotCompleted)
-                _bottomSheetButton(
-                  label: "Hủy / Xóa",
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context1) {
-                        return ConfirmDeleteDialog(
-                          title: "Xóa công việc",
-                          content: "Bạn có chắc muốn xóa công việc này?",
-                          onConfirm: () {
-                            changeTaskStatus(task['id'], 4).then((value) {
-                              if (value) {
-                                _getTasksForSelectedDateAndStatus(
-                                    _selectedDate, groupValue);
-                                Navigator.of(context).pop();
-                                SnackbarShowNoti.showSnackbar(
-                                    "Xóa thành công!", false);
-                              } else {
-                                SnackbarShowNoti.showSnackbar(
-                                    "Xảy ra lỗi!", true);
-                              }
-                            });
-                          },
-                          buttonConfirmText: "Xóa",
-                        );
+                    ),
+                    const Spacer(),
+                    if (isRejected ||
+                        isPreparing ||
+                        isExecuting ||
+                        isCompleted ||
+                        isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Xem báo cáo",
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  TaskEvidenceDetails(task: task),
+                            ),
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Không chấp nhận",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isPreparing || isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Hủy / Xóa",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 4).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isCompleted)
+                      _bottomSheetButton(
+                        label: "Đánh giá",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    const SizedBox(height: 20),
+                    _bottomSheetButton(
+                      label: "Đóng",
+                      onTap: () {
+                        Navigator.of(context).pop();
                       },
-                    );
-                  },
-                  cls: Colors.red[300]!,
-                  context: context,
+                      cls: Colors.white,
+                      isClose: true,
+                      context: context,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-              if (isCompleted)
-                _bottomSheetButton(
-                  label: "Đánh giá",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
+              );
+            },
+          )
+        : showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              bool isRejected = task['status'] == "Từ chối";
+              bool isPreparing = task['status'] == "Chuẩn bị";
+              bool isExecuting = task['status'] == "Đang thực hiện";
+              bool isCompleted = task['status'] == "Hoàn thành";
+              bool isNotCompleted = task['status'] == "Không hoàn thành";
+
+              return Container(
+                padding: const EdgeInsets.only(top: 4),
+                height: isRejected
+                    ? MediaQuery.of(context).size.height * 0.42
+                    : MediaQuery.of(context).size.height * 0.32,
+                color: kBackgroundColor,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 6,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kTextGreyColor,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (isRejected ||
+                        isPreparing ||
+                        isExecuting ||
+                        isCompleted ||
+                        isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Báo cáo",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Hủy từ chối",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isPreparing && task['managerName'] == null)
+                      _bottomSheetButton(
+                        label: "Hủy / Xóa",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 4).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isPreparing && task['managerName'] != null)
+                      _bottomSheetButton(
+                        label: "Từ chối",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 4).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isCompleted)
+                      _bottomSheetButton(
+                        label: "Đánh giá",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    const SizedBox(height: 20),
+                    _bottomSheetButton(
+                      label: "Đóng",
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      cls: Colors.white,
+                      isClose: true,
+                      context: context,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-              const SizedBox(height: 20),
-              _bottomSheetButton(
-                label: "Đóng",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                cls: Colors.white,
-                isClose: true,
-                context: context,
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
   }
 
   _bottomSheetButton({

@@ -3,12 +3,17 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-class TaskEvidence extends StatefulWidget {
+class TaskEvidenceDetails extends StatefulWidget {
+  final Map<String, dynamic> task;
+
+  const TaskEvidenceDetails({super.key, required this.task});
   @override
-  _TaskEvidenceState createState() => _TaskEvidenceState();
+  _TaskEvidenceDetailsState createState() => _TaskEvidenceDetailsState();
 }
 
-class _TaskEvidenceState extends State<TaskEvidence> {
+class _TaskEvidenceDetailsState extends State<TaskEvidenceDetails> {
+  Map<String, dynamic>? evidence;
+
   List<String> images = [
     "https://file.hstatic.net/200000348921/file/huy_anh_9075c4480af44edba330a1964e597bfd_grande.jpg",
     "https://ben.com.vn/tin-tuc/wp-content/uploads/2021/10/hinh-nen-dep-dien-thoai.jpg",
@@ -30,7 +35,7 @@ class _TaskEvidenceState extends State<TaskEvidence> {
         title: Container(
           margin: EdgeInsets.only(top: 10),
           child: Text(
-            'Bằng chứng',
+            'Báo cáo công việc',
             style: TextStyle(
               fontSize: 25.0,
               fontWeight: FontWeight.bold,
@@ -79,7 +84,7 @@ class _TaskEvidenceState extends State<TaskEvidence> {
   Widget buildTaskDetails() {
     return Container(
       padding: EdgeInsets.all(16.0),
-      margin: EdgeInsets.only(top: 30),
+      margin: EdgeInsets.only(top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
