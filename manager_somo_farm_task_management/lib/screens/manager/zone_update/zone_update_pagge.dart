@@ -57,12 +57,12 @@ class UpdateZoneState extends State<UpdateZone> {
     });
   }
 
-  Future<void> getZoneTypes(int habitantTypeId, bool init) async {
+  Future<void> getZoneTypes(int zoneTypeId, bool init) async {
     ZoneTypeService().getZonesType().then((value) {
       setState(() {
         filterZoneType = value;
         _selectedZoneType = filterZoneType
-            .where((element) => element['id'] == widget.zone['habitantTypeId'])
+            .where((element) => element['id'] == widget.zone['zoneTypeId'])
             .firstOrNull;
       });
     });
@@ -83,7 +83,7 @@ class UpdateZoneState extends State<UpdateZone> {
     _titleNameController.text = widget.zone['name'];
     _titleNumberController.text = widget.zone['farmArea'].toString();
     id = widget.zone['id'];
-    zoneTypeId = widget.zone['habitantTypeId'];
+    zoneTypeId = widget.zone['zoneTypeId'];
     areaId = widget.zone['areaId'];
 
     Future.delayed(Duration(milliseconds: 700), () {
@@ -237,7 +237,7 @@ class UpdateZoneState extends State<UpdateZone> {
                                 (Map<String, dynamic> value) {
                           return DropdownMenuItem<Map<String, dynamic>>(
                             value: value,
-                            child: Text(value['name']),
+                            child: Text(value['nameCode']),
                           );
                         }).toList(),
                       ),
