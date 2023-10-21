@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/components/evidence_card.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/evidence/components/media_picker.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/evidence_add_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -20,76 +17,6 @@ class EvidencePageState extends State<EvidencePage> {
   bool isLoading = true;
   List<Map<String, dynamic>> evidences = [];
   List<AssetEntity> selectedAssetList = [];
-
-  Future pickAssets({
-    required int maxCount,
-    required RequestType requestType,
-  }) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return MediaPicker(maxCount, requestType, selectedAssetList);
-        },
-      ),
-    );
-    if (result?.isNotEmpty ?? false) {
-      setState(() {
-        selectedAssetList.addAll(result);
-      });
-    }
-  }
-
-  List<File> selectedFiles = [];
-
-  Future convertAssetsToFiles(List<AssetEntity> assetEntities) async {
-    for (var i = 0; i < assetEntities.length; i++) {
-      final File? file = await assetEntities[i].originFile;
-      setState(() {
-        selectedFiles.add(file!);
-      });
-    }
-  }
-
-  Widget buildAssetGridView(List<AssetEntity> selectedAssetList) {
-    return GridView.builder(
-      physics: const BouncingScrollPhysics(),
-      itemCount: selectedAssetList.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemBuilder: (context, index) {
-        AssetEntity assetEntity = selectedAssetList[index];
-        return buildAssetWidget(assetEntity);
-      },
-    );
-  }
-
-  Widget buildAssetWidget(AssetEntity assetEntity) {
-    return Padding(
-      padding: const EdgeInsets.all(2),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: AssetEntityImage(
-              assetEntity,
-              isOriginal: false,
-              thumbnailSize: const ThumbnailSize.square(1000),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Future<void> getEvdidence() async {
     EvidenceService().getEvidencebyTaskId(widget.task['id']).then((value) {
@@ -110,14 +37,18 @@ class EvidencePageState extends State<EvidencePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        backgroundColor: kPrimaryColor,
         onPressed: () {
-          //_showAddEvidenceDialog(); // Hiển thị popup khi nhấn nút
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
                     CreateEvidencePage(taskId: widget.task['id'])),
-          );
+          ).then((value) {
+            if (value != null) {
+              getEvdidence();
+            }
+          });
         },
         tooltip: 'Thêm Báo Cáo',
         child: Icon(Icons.add),
@@ -226,60 +157,6 @@ class EvidencePageState extends State<EvidencePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Future<void> _showAddEvidenceDialog() async {
-    TextEditingController descriptionController = TextEditingController();
-
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Thêm Báo Cáo'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    TextField(
-                      controller: descriptionController,
-                      decoration: InputDecoration(labelText: 'Mô Tả'),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        pickAssets(
-                          maxCount: 20,
-                          requestType: RequestType.image,
-                        );
-                        setState(
-                            () {}); // Đảm bảo cập nhật giao diện khi _pickImages hoàn thành
-                      },
-                      child: Text('Chọn Ảnh'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Hủy'),
-            ),
-            TextButton(
-              onPressed: () {
-                String description = descriptionController.text;
-                Navigator.of(context).pop();
-              },
-              child: Text('Lưu'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
