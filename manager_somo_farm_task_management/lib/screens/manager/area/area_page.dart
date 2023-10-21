@@ -242,15 +242,30 @@ class AreaPageState extends State<AreaPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        area['name'].length > 20
-                                                            ? '${area['name'].substring(0, 20)}...'
-                                                            : area['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            '${area['code']} - ',
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Text(
+                                                            area['name'].length >
+                                                                    20
+                                                                ? '${area['name'].substring(0, 20)}...'
+                                                                : area['name'],
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Container(
                                                         decoration:
