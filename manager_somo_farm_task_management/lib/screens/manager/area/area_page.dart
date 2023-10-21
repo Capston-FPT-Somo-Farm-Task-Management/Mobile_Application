@@ -4,6 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/area_add/area_add.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/area_detail/area_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
@@ -193,20 +194,19 @@ class AreaPageState extends State<AreaPage> {
                               return const SizedBox(height: 25);
                             },
                             itemBuilder: (context, index) {
-                              final task = filteredareaList[index];
+                              final area = filteredareaList[index];
 
                               return GestureDetector(
-                                // onTap: () {
-                                //   showDialog(
-                                //     context: context,
-                                //     builder: (BuildContext context) {
-                                //       return EmployeeDetailsPopup(
-                                //           employee: task);
-                                //     },
-                                //   );
-                                // },
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AreaDetail(area: area);
+                                    },
+                                  );
+                                },
                                 onLongPress: () {
-                                  _showBottomSheet(context, task);
+                                  _showBottomSheet(context, area);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -242,20 +242,35 @@ class AreaPageState extends State<AreaPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        task['name'].length > 20
-                                                            ? '${task['name'].substring(0, 20)}...'
-                                                            : task['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            '${area['code']} - ',
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Text(
+                                                            area['name'].length >
+                                                                    20
+                                                                ? '${area['name'].substring(0, 20)}...'
+                                                                : area['name'],
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: task['status'] ==
+                                                          color: area['status'] ==
                                                                   "Inactive"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
@@ -267,7 +282,7 @@ class AreaPageState extends State<AreaPage> {
                                                             const EdgeInsets
                                                                 .all(10),
                                                         child: Text(
-                                                          task['status'],
+                                                          area['status'],
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14,
@@ -292,7 +307,7 @@ class AreaPageState extends State<AreaPage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Diện tích: ${task['fArea']}",
+                                                        "Diện tích: ${area['fArea']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(

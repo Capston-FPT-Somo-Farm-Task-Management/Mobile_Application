@@ -229,7 +229,7 @@ class CreateSupervisorState extends State<CreateSupervisor> {
                         ],
                       ),
                     ),
-                    if (password!.isNotEmpty &&
+                    if (password != null &&
                         confirmPassword!.isNotEmpty &&
                         password != confirmPassword)
                       Text(
