@@ -3,11 +3,17 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  print('Title: ${message.notification?.title ?? 'No title'}');
+  print('Body: ${message.notification?.body ?? 'No body'}');
+  print('Payload: ${message.data}');
+}
+
 class FirebaseService {
   final _firebaseMessaging = FirebaseMessaging.instance;
 
   final _androidChannel = const AndroidNotificationChannel(
-    '2',
+    'high_importance_notifications',
     'High Importance Notifications',
     description: "This channel is used for importance notifications",
     importance: Importance.defaultImportance,
@@ -18,12 +24,6 @@ class FirebaseService {
     //FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     initPushNotifications();
     initLocalNotifications();
-  }
-
-  Future<void> handleBackgroundMessage(RemoteMessage message) async {
-    print('Title: ${message.notification?.title ?? 'No title'}');
-    print('Body: ${message.notification?.body ?? 'No body'}');
-    print('Payload: ${message.data}');
   }
 
   void handleMessage(RemoteMessage? message) {
@@ -40,7 +40,7 @@ class FirebaseService {
 
     FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
-    //FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     FirebaseMessaging.onMessage.listen((event) {
       final notification = event.notification;
       if (notification == null) return;
