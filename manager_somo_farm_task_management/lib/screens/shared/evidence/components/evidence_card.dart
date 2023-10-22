@@ -3,6 +3,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_update/evidence_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -112,6 +113,19 @@ class _EvidenceCardState extends State<EvidenceCard> {
                           );
                         },
                       );
+                    }
+                    if (value == 'Edit') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateEvidencePage(
+                              evidence: widget.evidence,
+                            );
+                          },
+                        ),
+                      );
+                      widget.updateEvidence();
                     }
                   },
                   itemBuilder: (BuildContext context) {

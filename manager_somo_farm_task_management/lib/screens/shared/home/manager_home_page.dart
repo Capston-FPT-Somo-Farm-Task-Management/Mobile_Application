@@ -477,7 +477,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
                     ? MediaQuery.of(context).size.height * 0.42
-                    : MediaQuery.of(context).size.height * 0.32,
+                    : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
                 child: Column(
                   children: [
@@ -515,6 +515,39 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         label: "Hủy từ chối",
                         onTap: () {
                           Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isPreparing)
+                      _bottomSheetButton(
+                        label: "Đang thực hiện",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Đang thực hiện"',
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 1).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -576,6 +609,71 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                   });
                                 },
                                 buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isExecuting)
+                      _bottomSheetButton(
+                        label: "Hoàn thành",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content: 'Chuyển công việc sang "Hoàn thành"',
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 2).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isExecuting)
+                      _bottomSheetButton(
+                        label: "Không hoàn thành",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Không hoàn thành"',
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 3).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
                               );
                             },
                           );
