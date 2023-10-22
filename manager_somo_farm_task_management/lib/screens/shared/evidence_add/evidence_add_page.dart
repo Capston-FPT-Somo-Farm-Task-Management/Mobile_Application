@@ -36,8 +36,12 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
     );
     setState(() {
       if (result != null) selectedAssetList = result;
-      if (selectedAssetList.isNotEmpty) isCreateButtonEnabled = true;
-      if (selectedAssetList.isEmpty) isCreateButtonEnabled = false;
+      if (selectedAssetList.isNotEmpty &&
+          _descriptionController.text.trim().isNotEmpty)
+        isCreateButtonEnabled = true;
+      if (selectedAssetList.isEmpty ||
+          _descriptionController.text.trim().isEmpty)
+        isCreateButtonEnabled = false;
     });
   }
 
@@ -64,8 +68,12 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
         );
         setState(() {
           if (result != null) selectedAssetList = result;
-          if (selectedAssetList.isNotEmpty) isCreateButtonEnabled = true;
-          if (selectedAssetList.isEmpty) isCreateButtonEnabled = false;
+          if (selectedAssetList.isNotEmpty &&
+              _descriptionController.text.isNotEmpty)
+            isCreateButtonEnabled = true;
+          if (selectedAssetList.isEmpty ||
+              _descriptionController.text.trim().isEmpty)
+            isCreateButtonEnabled = false;
         });
       },
       child: Stack(
@@ -166,7 +174,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                         ),
                       ),
                     ),
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.center,
                     height: 40,
                     padding: const EdgeInsets.only(top: 4),
                     child: Container(
@@ -191,11 +199,12 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                       controller: _descriptionController,
                       style: subTitileStyle.copyWith(fontSize: 17),
                       onChanged: (value) {
-                        if (value.isNotEmpty)
+                        if (value.trim().isNotEmpty &&
+                            selectedAssetList.isNotEmpty)
                           setState(() {
                             isCreateButtonEnabled = true;
                           });
-                        if (value.isEmpty && selectedAssetList.isEmpty)
+                        if (value.trim().isEmpty || selectedAssetList.isEmpty)
                           setState(() {
                             isCreateButtonEnabled = false;
                           });
