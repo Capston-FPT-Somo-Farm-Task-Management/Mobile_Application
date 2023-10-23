@@ -16,7 +16,6 @@ import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
-import '../../../widgets/bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 
 class ManagerHomePage extends StatefulWidget {
@@ -28,7 +27,6 @@ class ManagerHomePage extends StatefulWidget {
 }
 
 class ManagerHomePageState extends State<ManagerHomePage> {
-  int _currentIndex = 0;
   int groupValue = 0;
   DateTime _selectedDate = DateTime.now();
   List<Map<String, dynamic>> tasks = [];
@@ -246,14 +244,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
           const SizedBox(height: 10),
           _showTask(),
         ],
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTabChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
       ),
     );
   }

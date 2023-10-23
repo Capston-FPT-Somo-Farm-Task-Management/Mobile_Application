@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'home/manager_home_page.dart';
 import 'login_page.dart';
 
 class CheckKeepLogin extends StatefulWidget {
@@ -57,7 +57,7 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
             ? const CircularProgressIndicator()
             : farmId == null
                 ? LoginPage()
-                : ManagerHomePage(farmId: farmId!),
+                : BottomNavBar(farmId: farmId!),
       ),
     );
   }
