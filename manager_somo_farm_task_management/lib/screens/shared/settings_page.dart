@@ -3,8 +3,6 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/services/google_authentication_service.dart';
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../widgets/bottom_navigation_bar.dart';
 import 'login_page.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -103,10 +101,6 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: 3,
-        onTabChanged: (index) {},
       ),
     );
   }
