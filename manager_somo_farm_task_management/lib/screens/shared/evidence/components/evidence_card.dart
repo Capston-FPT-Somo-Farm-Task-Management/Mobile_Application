@@ -120,7 +120,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
                         MaterialPageRoute(
                           builder: (context) {
                             return UpdateEvidencePage(
-                              evidence: widget.evidence,
+                              evidenceId: widget.evidence['id'],
                             );
                           },
                         ),
