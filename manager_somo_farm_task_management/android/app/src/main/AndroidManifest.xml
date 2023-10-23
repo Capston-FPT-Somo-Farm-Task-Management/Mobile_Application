@@ -5,7 +5,8 @@
     <application
         android:label="Somo Farm Task Management"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         
         <activity
             android:name=".MainActivity"
@@ -33,5 +34,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
+
     </application>
 </manifest>

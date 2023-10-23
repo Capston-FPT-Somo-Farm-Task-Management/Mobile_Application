@@ -30,24 +30,28 @@ class TaskTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      task['name'].length > 25
-                          ? '${task['name'].substring(0, 22)}...'
-                          : task['name'],
-                      style: GoogleFonts.lato(
-                        textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                    Flexible(
+                      child: Text(
+                        task['name'],
+                        style: GoogleFonts.lato(
+                          textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      task['priority'],
-                      style: GoogleFonts.lato(
-                        textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                    Flexible(
+                      child: Text(
+                        task['priority'],
+                        style: GoogleFonts.lato(
+                          textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     )
                   ],
@@ -62,11 +66,14 @@ class TaskTile extends StatelessWidget {
                       size: 18,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      "${DateFormat('HH:mm aa  dd/MM').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm aa dd/MM').format(DateTime.parse(task['endDate']))}",
-                      style: GoogleFonts.lato(
-                        textStyle:
-                            TextStyle(fontSize: 13, color: Colors.grey[100]),
+                    Flexible(
+                      child: Text(
+                        "${DateFormat('HH:mm aa  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm aa dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                        style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(fontSize: 13, color: Colors.grey[100]),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -75,18 +82,24 @@ class TaskTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Giám sát: ${task['supervisorName'].length > 20 ? task['supervisorName'].substring(0, 17) + '...' : task['supervisorName']}",
-                      style: GoogleFonts.lato(
-                        textStyle:
-                            TextStyle(fontSize: 15, color: Colors.grey[100]),
+                    Flexible(
+                      child: Text(
+                        "Giám sát: ${task['supervisorName']}",
+                        style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(fontSize: 15, color: Colors.grey[100]),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      "Vị trí: ${task['fieldName'].length > 19 ? task['fieldName'].substring(0, 18) + '...' : task['fieldName']}",
-                      style: GoogleFonts.lato(
-                        textStyle:
-                            TextStyle(fontSize: 15, color: Colors.grey[100]),
+                    Flexible(
+                      child: Text(
+                        "Vị trí: ${task['fieldName']}",
+                        style: GoogleFonts.lato(
+                          textStyle:
+                              TextStyle(fontSize: 15, color: Colors.grey[100]),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
