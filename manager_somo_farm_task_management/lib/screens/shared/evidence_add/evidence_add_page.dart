@@ -103,59 +103,65 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Icon(Icons.close_sharp, color: kSecondColor)),
-        title: Text('Tạo báo cáo', style: TextStyle(color: kPrimaryColor)),
-        centerTitle: true,
-        actions: [
-          GestureDetector(
-            onTap: isCreateButtonEnabled
-                ? () {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    convertAssetsToFiles(selectedAssetList).then((_) {
-                      EvidenceService()
-                          .createEvidence(widget.taskId,
-                              _descriptionController.text, selectedFiles)
-                          .then((value) {
-                        if (value) {
-                          SnackbarShowNoti.showSnackbar(
-                              'Tạo báo cáo thành công!', false);
+      appBar: isLoading
+          ? null
+          : AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(Icons.close_sharp, color: kSecondColor)),
+              title:
+                  Text('Tạo báo cáo', style: TextStyle(color: kPrimaryColor)),
+              centerTitle: true,
+              actions: [
+                GestureDetector(
+                  onTap: isCreateButtonEnabled
+                      ? () {
                           setState(() {
-                            isLoading = false;
+                            isLoading = true;
                           });
-                          Navigator.pop(context, "newEvidence");
+                          convertAssetsToFiles(selectedAssetList).then((_) {
+                            EvidenceService()
+                                .createEvidence(widget.taskId,
+                                    _descriptionController.text, selectedFiles)
+                                .then((value) {
+                              if (value) {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo báo cáo thành công!', false);
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.pop(context, "newEvidence");
+                              }
+                            }).catchError((e) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              SnackbarShowNoti.showSnackbar(
+                                  e.toString(), false);
+                            });
+                          });
                         }
-                      }).catchError((e) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        SnackbarShowNoti.showSnackbar(e.toString(), false);
-                      });
-                    });
-                  }
-                : null,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: isCreateButtonEnabled ? kPrimaryColor : Colors.black26,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(7),
+                      : null,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: isCreateButtonEnabled
+                          ? kPrimaryColor
+                          : Colors.black26,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(7),
+                      ),
+                    ),
+                    child: Center(child: Text("Tạo")),
+                  ),
                 ),
-              ),
-              child: Center(child: Text("Tạo")),
+              ],
             ),
-          ),
-        ],
-      ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(color: kPrimaryColor),

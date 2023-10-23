@@ -238,10 +238,6 @@ class _NotificationPageState extends State<NotificationPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
-        onTabChanged: (index) {},
-      ),
     );
   }
 

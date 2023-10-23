@@ -9,25 +9,34 @@ import 'package:manager_somo_farm_task_management/services/evidence_service.dart
 import 'package:photo_manager/photo_manager.dart';
 
 class UpdateEvidencePage extends StatefulWidget {
-  final Map<String, dynamic> evidence;
+  final int evidenceId;
 
-  const UpdateEvidencePage({super.key, required this.evidence});
+  const UpdateEvidencePage({required this.evidenceId});
   @override
   _UpdateEvidencePageState createState() => _UpdateEvidencePageState();
 }
 
 class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
+  Map<String, dynamic>? evidence;
   TextEditingController _descriptionController = TextEditingController();
   List<AssetEntity> selectedAssetList = [];
   List<dynamic> urlImages = [];
   bool isCreateButtonEnabled = false;
   List<File> selectedFiles = [];
-  bool isLoading = false;
+  bool isLoading = true;
+  int? totalListFirst;
   @override
   void initState() {
     super.initState();
-    _descriptionController.text = widget.evidence['description'];
-    urlImages = widget.evidence['urlImage'];
+    EvidenceService().getEvidencebyId(widget.evidenceId).then((value) {
+      setState(() {
+        evidence = value;
+        _descriptionController.text = evidence!['description'];
+        urlImages = evidence!['urlImage'];
+        totalListFirst = evidence!['urlImage'].length;
+        isLoading = false;
+      });
+    });
   }
 
   int totalLengthImage() {
@@ -56,8 +65,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
       if (selectedAssetList.isEmpty ||
           _descriptionController.text.trim().isEmpty)
         isCreateButtonEnabled = false;
-      if (_descriptionController.text.trim() ==
-              widget.evidence['description'] &&
+      if (_descriptionController.text.trim() == evidence!['description'] &&
           selectedAssetList.isEmpty) isCreateButtonEnabled = false;
     });
   }
@@ -94,9 +102,9 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
           if (selectedAssetList.isEmpty && urlImages.isEmpty ||
               _descriptionController.text.trim().isEmpty)
             isCreateButtonEnabled = false;
-          if (_descriptionController.text.trim() ==
-                  widget.evidence['description'] &&
-              selectedAssetList.isEmpty) isCreateButtonEnabled = false;
+          if (_descriptionController.text.trim() == evidence!['description'] &&
+              selectedAssetList.isEmpty &&
+              urlImages.length == totalListFirst) isCreateButtonEnabled = false;
         });
       },
       child: Stack(
@@ -144,11 +152,9 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
           if (selectedAssetList.isEmpty && urlImages.isEmpty ||
               _descriptionController.text.trim().isEmpty)
             isCreateButtonEnabled = false;
-          if (_descriptionController.text.trim() ==
-                  widget.evidence['description'] &&
+          if (_descriptionController.text.trim() == evidence!['description'] &&
               selectedAssetList.isEmpty &&
-              urlImages.length == widget.evidence['urlImage'].length)
-            isCreateButtonEnabled = false;
+              urlImages.length == totalListFirst) isCreateButtonEnabled = false;
         });
       },
       child: Stack(
@@ -176,60 +182,69 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Icon(Icons.close_sharp, color: kSecondColor)),
-        title:
-            Text('Chỉnh sửa báo cáo', style: TextStyle(color: kPrimaryColor)),
-        centerTitle: true,
-        actions: [
-          GestureDetector(
-            onTap: isCreateButtonEnabled
-                ? () {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    convertAssetsToFiles(selectedAssetList).then((_) {
-                      EvidenceService()
-                          .createEvidence(widget.evidence['taskId'],
-                              _descriptionController.text, selectedFiles)
-                          .then((value) {
-                        if (value) {
-                          SnackbarShowNoti.showSnackbar(
-                              'Tạo báo cáo thành công!', false);
+      appBar: isLoading
+          ? null
+          : AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(Icons.close_sharp, color: kSecondColor)),
+              title: Text('Chỉnh sửa báo cáo',
+                  style: TextStyle(color: kPrimaryColor)),
+              centerTitle: true,
+              actions: [
+                GestureDetector(
+                  onTap: isCreateButtonEnabled
+                      ? () {
                           setState(() {
-                            isLoading = false;
+                            isLoading = true;
                           });
-                          Navigator.pop(context, "newEvidence");
+                          convertAssetsToFiles(selectedAssetList).then((_) {
+                            EvidenceService()
+                                .updateEvidenceById(
+                                    widget.evidenceId,
+                                    evidence!['taskId'],
+                                    _descriptionController.text,
+                                    urlImages,
+                                    selectedFiles)
+                                .then((value) {
+                              if (value) {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Chỉnh sửa báo cáo thành công!', false);
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.pop(context, "newEvidence");
+                              }
+                            }).catchError((e) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              SnackbarShowNoti.showSnackbar(
+                                  e.toString(), false);
+                            });
+                          });
                         }
-                      }).catchError((e) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        SnackbarShowNoti.showSnackbar(e.toString(), false);
-                      });
-                    });
-                  }
-                : null,
-            child: Container(
-              margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: isCreateButtonEnabled ? kPrimaryColor : Colors.black26,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(7),
+                      : null,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: isCreateButtonEnabled
+                          ? kPrimaryColor
+                          : Colors.black26,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(7),
+                      ),
+                    ),
+                    child: Center(child: Text("Lưu")),
+                  ),
                 ),
-              ),
-              child: Center(child: Text("Lưu")),
+              ],
             ),
-          ),
-        ],
-      ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(color: kPrimaryColor),
@@ -284,10 +299,9 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                           setState(() {
                             isCreateButtonEnabled = false;
                           });
-                        if (value.trim() == widget.evidence['description'] &&
+                        if (value.trim() == evidence!['description'] &&
                             selectedAssetList.isEmpty &&
-                            urlImages.length ==
-                                widget.evidence['urlImage'].length)
+                            urlImages.length == totalListFirst)
                           setState(() {
                             isCreateButtonEnabled = false;
                           });
@@ -1298,7 +1312,29 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             ),
                                           );
                                           setState(() {
-                                            selectedAssetList = result;
+                                            if (result != null) {
+                                              selectedAssetList =
+                                                  result['assets'];
+                                              urlImages = result['urls'];
+                                            }
+                                            if (selectedAssetList.isNotEmpty ||
+                                                urlImages.isNotEmpty &&
+                                                    _descriptionController
+                                                        .text.isNotEmpty)
+                                              isCreateButtonEnabled = true;
+                                            if (selectedAssetList.isEmpty &&
+                                                    urlImages.isEmpty ||
+                                                _descriptionController.text
+                                                    .trim()
+                                                    .isEmpty)
+                                              isCreateButtonEnabled = false;
+                                            if (_descriptionController.text
+                                                        .trim() ==
+                                                    evidence!['description'] &&
+                                                selectedAssetList.isEmpty &&
+                                                urlImages.length ==
+                                                    totalListFirst)
+                                              isCreateButtonEnabled = false;
                                           });
                                         },
                                         child: Stack(
@@ -1404,7 +1440,29 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             ),
                                           );
                                           setState(() {
-                                            selectedAssetList = result;
+                                            if (result != null) {
+                                              selectedAssetList =
+                                                  result['assets'];
+                                              urlImages = result['urls'];
+                                            }
+                                            if (selectedAssetList.isNotEmpty ||
+                                                urlImages.isNotEmpty &&
+                                                    _descriptionController
+                                                        .text.isNotEmpty)
+                                              isCreateButtonEnabled = true;
+                                            if (selectedAssetList.isEmpty &&
+                                                    urlImages.isEmpty ||
+                                                _descriptionController.text
+                                                    .trim()
+                                                    .isEmpty)
+                                              isCreateButtonEnabled = false;
+                                            if (_descriptionController.text
+                                                        .trim() ==
+                                                    evidence!['description'] &&
+                                                selectedAssetList.isEmpty &&
+                                                urlImages.length ==
+                                                    totalListFirst)
+                                              isCreateButtonEnabled = false;
                                           });
                                         },
                                         child: Stack(
@@ -1510,7 +1568,29 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             ),
                                           );
                                           setState(() {
-                                            selectedAssetList = result;
+                                            if (result != null) {
+                                              selectedAssetList =
+                                                  result['assets'];
+                                              urlImages = result['urls'];
+                                            }
+                                            if (selectedAssetList.isNotEmpty ||
+                                                urlImages.isNotEmpty &&
+                                                    _descriptionController
+                                                        .text.isNotEmpty)
+                                              isCreateButtonEnabled = true;
+                                            if (selectedAssetList.isEmpty &&
+                                                    urlImages.isEmpty ||
+                                                _descriptionController.text
+                                                    .trim()
+                                                    .isEmpty)
+                                              isCreateButtonEnabled = false;
+                                            if (_descriptionController.text
+                                                        .trim() ==
+                                                    evidence!['description'] &&
+                                                selectedAssetList.isEmpty &&
+                                                urlImages.length ==
+                                                    totalListFirst)
+                                              isCreateButtonEnabled = false;
                                           });
                                         },
                                         child: Stack(
@@ -1616,7 +1696,29 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             ),
                                           );
                                           setState(() {
-                                            selectedAssetList = result;
+                                            if (result != null) {
+                                              selectedAssetList =
+                                                  result['assets'];
+                                              urlImages = result['urls'];
+                                            }
+                                            if (selectedAssetList.isNotEmpty ||
+                                                urlImages.isNotEmpty &&
+                                                    _descriptionController
+                                                        .text.isNotEmpty)
+                                              isCreateButtonEnabled = true;
+                                            if (selectedAssetList.isEmpty &&
+                                                    urlImages.isEmpty ||
+                                                _descriptionController.text
+                                                    .trim()
+                                                    .isEmpty)
+                                              isCreateButtonEnabled = false;
+                                            if (_descriptionController.text
+                                                        .trim() ==
+                                                    evidence!['description'] &&
+                                                selectedAssetList.isEmpty &&
+                                                urlImages.length ==
+                                                    totalListFirst)
+                                              isCreateButtonEnabled = false;
                                           });
                                         },
                                         child: Stack(
@@ -1722,7 +1824,29 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             ),
                                           );
                                           setState(() {
-                                            selectedAssetList = result;
+                                            if (result != null) {
+                                              selectedAssetList =
+                                                  result['assets'];
+                                              urlImages = result['urls'];
+                                            }
+                                            if (selectedAssetList.isNotEmpty ||
+                                                urlImages.isNotEmpty &&
+                                                    _descriptionController
+                                                        .text.isNotEmpty)
+                                              isCreateButtonEnabled = true;
+                                            if (selectedAssetList.isEmpty &&
+                                                    urlImages.isEmpty ||
+                                                _descriptionController.text
+                                                    .trim()
+                                                    .isEmpty)
+                                              isCreateButtonEnabled = false;
+                                            if (_descriptionController.text
+                                                        .trim() ==
+                                                    evidence!['description'] &&
+                                                selectedAssetList.isEmpty &&
+                                                urlImages.length ==
+                                                    totalListFirst)
+                                              isCreateButtonEnabled = false;
                                           });
                                         },
                                         child: Stack(
@@ -1828,7 +1952,29 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             ),
                                           );
                                           setState(() {
-                                            selectedAssetList = result;
+                                            if (result != null) {
+                                              selectedAssetList =
+                                                  result['assets'];
+                                              urlImages = result['urls'];
+                                            }
+                                            if (selectedAssetList.isNotEmpty ||
+                                                urlImages.isNotEmpty &&
+                                                    _descriptionController
+                                                        .text.isNotEmpty)
+                                              isCreateButtonEnabled = true;
+                                            if (selectedAssetList.isEmpty &&
+                                                    urlImages.isEmpty ||
+                                                _descriptionController.text
+                                                    .trim()
+                                                    .isEmpty)
+                                              isCreateButtonEnabled = false;
+                                            if (_descriptionController.text
+                                                        .trim() ==
+                                                    evidence!['description'] &&
+                                                selectedAssetList.isEmpty &&
+                                                urlImages.length ==
+                                                    totalListFirst)
+                                              isCreateButtonEnabled = false;
                                           });
                                         },
                                         child: Stack(
