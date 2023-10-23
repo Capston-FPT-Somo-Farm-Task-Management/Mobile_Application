@@ -69,7 +69,7 @@ class TaskDetailsPopup extends StatelessWidget {
             const SizedBox(height: 16),
             if (task['otherName'] != null)
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.person_outline,
@@ -86,7 +86,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             if (task['plantName'] != null)
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.home,
@@ -104,7 +104,7 @@ class TaskDetailsPopup extends StatelessWidget {
             if (task['plantName'] != null) const SizedBox(height: 16),
             if (task['plantName'] != null)
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.tag,
@@ -121,7 +121,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             if (task['liveStockName'] != null)
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.home,
@@ -139,7 +139,7 @@ class TaskDetailsPopup extends StatelessWidget {
             if (task['liveStockName'] != null) const SizedBox(height: 16),
             if (task['liveStockName'] != null)
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.tag,
@@ -156,7 +156,7 @@ class TaskDetailsPopup extends StatelessWidget {
               ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   FontAwesomeIcons.mapLocationDot,
@@ -173,7 +173,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   FontAwesomeIcons.borderNone,
@@ -190,7 +190,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.business,
@@ -207,7 +207,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.access_time,
@@ -224,7 +224,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.calendar_today,
@@ -241,7 +241,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.calendar_today,
@@ -258,7 +258,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.supervised_user_circle,
@@ -275,7 +275,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.person,
@@ -309,7 +309,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.handyman_outlined,
@@ -342,7 +342,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.work,
@@ -359,7 +359,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.notifications,
@@ -393,7 +393,7 @@ class TaskDetailsPopup extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.check_circle,
