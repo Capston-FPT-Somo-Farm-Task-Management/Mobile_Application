@@ -124,8 +124,9 @@ class _EvidenceCardState extends State<EvidenceCard> {
                             );
                           },
                         ),
-                      );
-                      widget.updateEvidence();
+                      ).then((value) {
+                        if (value != null) widget.updateEvidence();
+                      });
                     }
                   },
                   itemBuilder: (BuildContext context) {
