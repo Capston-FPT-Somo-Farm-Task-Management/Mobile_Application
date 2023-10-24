@@ -395,8 +395,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ViewRejectionReasonPopup(taskId: task['id']),
+                              builder: (context) => ViewRejectionReasonPopup(
+                                taskId: task['id'],
+                                role: role,
+                              ),
                             ),
                           );
                         },
@@ -409,7 +411,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        cls: kPrimaryColor,
+                        cls: Colors.red[300]!,
                         context: context,
                       ),
                     if (isPreparing || isNotCompleted)
@@ -495,8 +497,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       ),
                     ),
                     const Spacer(),
-                    if (isRejected ||
-                        isPreparing ||
+                    if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
                         isNotCompleted)
@@ -517,11 +518,51 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       ),
                     if (isRejected)
                       _bottomSheetButton(
-                        label: "Hủy từ chối",
+                        label: "Xem báo cáo",
                         onTap: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ViewRejectionReasonPopup(
+                                taskId: task['id'],
+                                role: role,
+                              ),
+                            ),
+                          );
                         },
                         cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Hủy từ chối",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Hủy từ chối",
+                                content:
+                                    'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 0).then((value) {
+                                    if (value) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          _selectedDate, groupValue);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
                         context: context,
                       ),
                     if (isPreparing)
@@ -593,31 +634,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (BuildContext context1) {
-                          //     return ConfirmDeleteDialog(
-                          //       title: "Từ chối công việc",
-                          //       content:
-                          //           "Bạn có chắc muốn từ chối công việc này?",
-                          //       onConfirm: () {
-                          //         // changeTaskStatus(task['id'], 4).then((value) {
-                          //         //   if (value) {
-                          //         //     _getTasksForSelectedDateAndStatus(
-                          //         //         _selectedDate, groupValue);
-                          //         //     Navigator.of(context).pop();
-                          //         //     SnackbarShowNoti.showSnackbar(
-                          //         //         "Đã từ chối!", false);
-                          //         //   } else {
-                          //         //     SnackbarShowNoti.showSnackbar(
-                          //         //         "Xảy ra lỗi!", true);
-                          //         //   }
-                          //         // });
-                          //       },
-                          //       buttonConfirmText: "Có",
-                          //     );
-                          //   },
-                          // );
                           Navigator.of(context).pop();
                           showDialog(
                             context: context,
