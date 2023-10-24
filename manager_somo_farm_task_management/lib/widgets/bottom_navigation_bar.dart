@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/notification_page.dart';
+import 'package:manager_somo_farm_task_management/services/notificantion_service.dart';
 import '../screens/shared/settings_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   final int farmId;
-
-  const BottomNavBar({super.key, required this.farmId});
+  final int memberId;
+  const BottomNavBar({super.key, required this.farmId, required this.memberId});
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
@@ -19,11 +20,22 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   void initState() {
     super.initState();
+    getCountNewNoti();
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       // Xử lý thông báo khi có
       setState(() {
         // Tăng số lượng thông báo
         notificationCount++;
+      });
+    });
+  }
+
+  void getCountNewNoti() {
+    NotiService()
+        .getCountNewNotificationByMemberId(widget.memberId)
+        .then((value) {
+      setState(() {
+        notificationCount = value['data'];
       });
     });
   }
