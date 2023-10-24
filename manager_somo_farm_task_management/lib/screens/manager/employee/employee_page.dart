@@ -309,16 +309,17 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        employee['name']
-                                                                    .length >
-                                                                25
-                                                            ? '${employee['name'].substring(0, 22)}...'
-                                                            : employee['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                      Flexible(
+                                                        child: Text(
+                                                          "${employee['name']}",
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ),
                                                       Container(
