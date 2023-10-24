@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
 
-class NotificationService {
+class NotiService {
   Future<Map<String, dynamic>> getCountNewNotificationByMemberId(
       int memberId) async {
     final String getAreasUrl =
