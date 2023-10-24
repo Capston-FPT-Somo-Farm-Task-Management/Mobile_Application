@@ -309,16 +309,17 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        employee['name']
-                                                                    .length >
-                                                                25
-                                                            ? '${employee['name'].substring(0, 22)}...'
-                                                            : employee['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                      Flexible(
+                                                        child: Text(
+                                                          "${employee['name']}",
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ),
                                                       Container(
@@ -417,10 +418,13 @@ class EmployeekPageState extends State<EmployeekPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
+                                            Flexible(
+                                              child: Text(
+                                                'Địa chỉ: ${employee['address']}',
+                                                style: const TextStyle(
+                                                    fontSize: 16),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ],
                                         ),
