@@ -232,6 +232,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
+                                                //Add Fixble
                                                 Text(
                                                   wrapWordsWithEllipsis(
                                                       liveStock['name'], 27),
