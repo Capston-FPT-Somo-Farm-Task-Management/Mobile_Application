@@ -217,70 +217,84 @@ class LiveStockPageState extends State<LiveStockPage> {
                                           topRight: Radius.circular(10))),
                                   height: 110,
                                   width: double.infinity,
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                //Add Fixble
-                                                Text(
-                                                  wrapWordsWithEllipsis(
-                                                      liveStock['name'], 27),
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        liveStock['status'] ==
-                                                                "Inactive"
-                                                            ? Colors.red[400]
-                                                            : kPrimaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  child: Text(
-                                                    liveStock['status'],
-                                                    style: const TextStyle(
-                                                        fontSize: 14,
+                                  child: Flexible(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      liveStock['name'],
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Colors.white),
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
                                                   ),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          liveStock['status'] ==
+                                                                  "Inactive"
+                                                              ? Colors.red[400]
+                                                              : kPrimaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(
+                                                      liveStock['status'],
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 5),
+                                              Flexible(
+                                                child: Text(
+                                                  'Mã vật nuôi: ${liveStock['externalId']}',
+                                                  style: const TextStyle(
+                                                      fontSize: 16),
                                                 ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'Mã vật nuôi: ${liveStock['externalId']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              '${liveStock['areaName']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                          ],
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Flexible(
+                                                child: Text(
+                                                  '${liveStock['areaName']}',
+                                                  style: const TextStyle(
+                                                      fontSize: 16),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   )),
                               Container(
                                 padding: const EdgeInsets.all(10),
