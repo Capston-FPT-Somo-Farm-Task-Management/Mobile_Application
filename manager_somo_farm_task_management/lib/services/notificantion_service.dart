@@ -3,8 +3,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
 
 class NotiService {
-  Future<Map<String, dynamic>> getCountNewNotificationByMemberId(
-      int memberId) async {
+  Future<int> getCountNewNotificationByMemberId(int memberId) async {
     final String getAreasUrl =
         '$baseUrl/Notification/New/Member($memberId)/Count';
 
@@ -17,8 +16,8 @@ class NotiService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      final Map<String, dynamic> e = Map<String, dynamic>.from(data['data']);
-      return e;
+      final int count = data['data'] as int;
+      return count;
     } else {
       final Map<String, dynamic> data = json.decode(response.body);
       return Future.error(data['message']);
