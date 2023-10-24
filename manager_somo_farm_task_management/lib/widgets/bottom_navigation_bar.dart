@@ -35,7 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         .getCountNewNotificationByMemberId(widget.memberId)
         .then((value) {
       setState(() {
-        notificationCount = value['data'];
+        notificationCount = value;
       });
     });
   }
