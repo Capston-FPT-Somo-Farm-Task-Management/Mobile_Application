@@ -12,6 +12,8 @@ import 'package:manager_somo_farm_task_management/screens/shared/evidence_detail
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -370,8 +372,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       ),
                     ),
                     const Spacer(),
-                    if (isRejected ||
-                        isPreparing ||
+                    if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
                         isNotCompleted)
@@ -382,6 +383,20 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             MaterialPageRoute(
                               builder: (context) =>
                                   TaskEvidenceDetails(task: task),
+                            ),
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Xem báo cáo",
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ViewRejectionReasonPopup(taskId: task['id']),
                             ),
                           );
                         },
@@ -578,30 +593,45 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (BuildContext context1) {
+                          //     return ConfirmDeleteDialog(
+                          //       title: "Từ chối công việc",
+                          //       content:
+                          //           "Bạn có chắc muốn từ chối công việc này?",
+                          //       onConfirm: () {
+                          //         // changeTaskStatus(task['id'], 4).then((value) {
+                          //         //   if (value) {
+                          //         //     _getTasksForSelectedDateAndStatus(
+                          //         //         _selectedDate, groupValue);
+                          //         //     Navigator.of(context).pop();
+                          //         //     SnackbarShowNoti.showSnackbar(
+                          //         //         "Đã từ chối!", false);
+                          //         //   } else {
+                          //         //     SnackbarShowNoti.showSnackbar(
+                          //         //         "Xảy ra lỗi!", true);
+                          //         //   }
+                          //         // });
+                          //       },
+                          //       buttonConfirmText: "Có",
+                          //     );
+                          //   },
+                          // );
+                          Navigator.of(context).pop();
                           showDialog(
                             context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Xóa công việc",
-                                content: "Bạn có chắc muốn xóa công việc này?",
-                                onConfirm: () {
-                                  changeTaskStatus(task['id'], 4).then((value) {
-                                    if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
-                                      Navigator.of(context).pop();
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xóa thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
-                                  });
-                                },
-                                buttonConfirmText: "Xóa",
+                            builder: (BuildContext context) {
+                              return RejectionReasonPopup(
+                                taskId: task['id'],
                               );
                             },
-                          );
+                          ).then((value) {
+                            if (value != null) {
+                              _getTasksForSelectedDateAndStatus(
+                                  _selectedDate, groupValue);
+                            }
+                          });
                         },
                         cls: Colors.red[300]!,
                         context: context,
