@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
@@ -14,10 +15,17 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int myCurrentIndex = 0;
-
+  int notificationCount = 0;
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      // Xử lý thông báo khi có
+      setState(() {
+        // Tăng số lượng thông báo
+        notificationCount++;
+      });
+    });
   }
 
   @override
@@ -73,11 +81,37 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   });
                 }),
             IconButton(
-                icon: Icon(
-                  Icons.notifications_rounded,
-                  size: _getCurrentTabSize(2),
-                  color: _getCurrentTabColor(2),
-                ),
+                icon: Stack(children: [
+                  Icon(
+                    Icons.notifications_rounded,
+                    size: _getCurrentTabSize(2),
+                    color: _getCurrentTabColor(2),
+                  ),
+                  notificationCount > 0
+                      ? Positioned(
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              '$notificationCount',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
+                ]),
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 2;
