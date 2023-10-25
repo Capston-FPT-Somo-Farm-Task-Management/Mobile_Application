@@ -1,62 +1,194 @@
 import 'package:flutter/material.dart';
+import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
 
-class ViewRejectionReasonPopup extends StatelessWidget {
+class ViewRejectionReasonPopup extends StatefulWidget {
   final int taskId;
   final String role;
 
   ViewRejectionReasonPopup({required this.taskId, required this.role});
+
+  @override
+  State<ViewRejectionReasonPopup> createState() =>
+      _ViewRejectionReasonPopupState();
+}
+
+class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
   String rejectionReason = "";
+  bool isLoading = true;
   Future<void> getEvdidence() async {
-    EvidenceService().getEvidencebyTaskId(taskId).then((value) {
-      rejectionReason = value[0]['description'];
+    EvidenceService().getEvidencebyTaskId(widget.taskId).then((value) {
+      setState(() {
+        rejectionReason = value[0]['description'];
+        isLoading = false;
+      });
     });
+  }
+
+  Future<bool> cancelRejectTaskStatus(int taskId) async {
+    setState(() {
+      isLoading = true;
+    });
+    return TaskService().cancelRejectTaskStatus(taskId);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getEvdidence();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text("Lý do từ chối"),
-      content: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(rejectionReason),
-            SizedBox(height: 20),
-            if (role == "Manager")
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return isLoading
+        ? Center(
+            child: CircularProgressIndicator(color: kPrimaryColor),
+          )
+        : AlertDialog(
+            title: Text("Lý do từ chối"),
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryColor, // Màu cho nút Hủy
+                  Container(
+                    height: 150,
+                    margin: const EdgeInsets.only(top: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    onPressed: () {
-                      // Thực hiện hành động khi người dùng chấp nhận
-                      Navigator.of(context).pop();
-                      // Add code xử lý khi chấp nhận
-                    },
-                    child: Text("Chấp nhận"),
-                  ),
-                  SizedBox(width: 20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[300], // Màu cho nút Hủy
+                    child: TextFormField(
+                      enabled: false,
+                      maxLines: null,
+                      autofocus: false,
+                      style: subTitileStyle,
+                      decoration: InputDecoration(
+                        hintText: rejectionReason,
+                        hintStyle: subTitileStyle,
+                        border: InputBorder.none, // Ẩn border ở đây
+                      ),
                     ),
-                    onPressed: () {
-                      // Thực hiện hành động khi người dùng không chấp nhận
-                      Navigator.of(context).pop();
-                      // Add code xử lý khi không chấp nhận
-                    },
-                    child: Text("Không chấp nhận"),
                   ),
+                  SizedBox(height: 20),
+                  if (widget.role == "Manager")
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryColor, // Màu cho nút Hủy
+                          ),
+                          onPressed: () {
+                            // Thực hiện hành động khi người dùng chấp nhận
+                            Navigator.of(context).pop();
+                            // Add code xử lý khi chấp nhận
+                          },
+                          child: Text("Chấp nhận"),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red[300], // Màu cho nút Hủy
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context1) {
+                                return ConfirmDeleteDialog(
+                                  title: "Hủy từ chối",
+                                  content:
+                                      'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                  onConfirm: () {
+                                    cancelRejectTaskStatus(widget.taskId)
+                                        .then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        Navigator.of(context).pop("ok");
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Hủy thành công!", false);
+                                      } else {
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Xảy ra lỗi!", true);
+                                      }
+                                    });
+                                  },
+                                  buttonConfirmText: "Đồng ý",
+                                );
+                              },
+                            );
+                          },
+                          child: Text("Không chấp nhận"),
+                        ),
+                      ],
+                    ),
+                  if (widget.role != "Manager")
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red[300], // Màu cho nút Hủy
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context1) {
+                                return ConfirmDeleteDialog(
+                                  title: "Hủy từ chối",
+                                  content:
+                                      'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                  onConfirm: () {
+                                    cancelRejectTaskStatus(widget.taskId)
+                                        .then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        Navigator.of(context).pop("ok");
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Hủy thành công!", false);
+                                      } else {
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Xảy ra lỗi!", true);
+                                      }
+                                    });
+                                  },
+                                  buttonConfirmText: "Đồng ý",
+                                );
+                              },
+                            );
+                          },
+                          child: Text("Hủy từ chối"),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey, // Màu cho nút Hủy
+                          ),
+                          onPressed: () {
+                            // Thực hiện hành động khi người dùng không chấp nhận
+                            Navigator.of(context).pop();
+                            // Add code xử lý khi không chấp nhận
+                          },
+                          child: Text(
+                            "Đóng",
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
