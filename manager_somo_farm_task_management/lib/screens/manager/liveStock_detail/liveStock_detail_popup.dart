@@ -17,7 +17,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            liveStock['name'],
+            wrapWords(liveStock['name'], 20),
             style: const TextStyle(
               color: kPrimaryColor,
               fontSize: 30,

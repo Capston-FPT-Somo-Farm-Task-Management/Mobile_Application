@@ -242,30 +242,34 @@ class AreaPageState extends State<AreaPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            '${area['code']} - ',
-                                                            style: TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          Text(
-                                                            area['name'].length >
-                                                                    20
-                                                                ? '${area['name'].substring(0, 20)}...'
-                                                                : area['name'],
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                      Flexible(
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              '${area['code']} - ',
+                                                              style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
                                                             ),
-                                                          ),
-                                                        ],
+                                                            Flexible(
+                                                              child: Text(
+                                                                '${area['name']}',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                       Container(
                                                         decoration:
