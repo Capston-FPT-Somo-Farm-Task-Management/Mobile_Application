@@ -183,4 +183,27 @@ class TaskService {
       return false;
     }
   }
+
+  Future<bool> cancelRejectTaskStatus(int taskId) async {
+    try {
+      final String apiUrl = "$baseUrl/FarmTask/Task($taskId)/Refuse";
+
+      final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Future.error(data['message']);
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
 }
