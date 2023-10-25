@@ -11,7 +11,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/evidence/eviden
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -361,11 +361,11 @@ class TaskPageState extends State<TaskPage> {
 
                                 return GestureDetector(
                                   onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return TaskDetailsPopup(task: task);
-                                      },
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            TaskDetailsPage(taskId: task['id']),
+                                      ),
                                     );
                                   },
                                   onLongPress: () {
