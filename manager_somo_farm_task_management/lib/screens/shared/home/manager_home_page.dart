@@ -8,10 +8,9 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
@@ -35,20 +34,19 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   bool isLoading = true;
   bool isMoreLeft = false;
   String? role;
+  int? userId;
   @override
   void initState() {
     super.initState();
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
-    getRole().then((_) {
+    getRoleAndUserId().then((_) {
       _getTasksForSelectedDateAndStatus(DateTime.now(), 0);
     });
   }
 
   Future<void> _getTasksForSelectedDateAndStatus(
       DateTime selectedDate, int status) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? userId = prefs.getInt('userId');
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService()
@@ -64,16 +62,22 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     });
   }
 
-  Future<void> getRole() async {
+  Future<void> getRoleAndUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? roleStored = prefs.getString('role');
+    int? userIdStored = prefs.getInt('userId');
     setState(() {
       role = roleStored;
+      userId = userIdStored;
     });
   }
 
   Future<bool> changeTaskStatus(int taskId, int newStatus) async {
     return TaskService().changeTaskStatus(taskId, newStatus);
+  }
+
+  Future<bool> cancelRejectTaskStatus(int taskId) async {
+    return TaskService().cancelRejectTaskStatus(taskId);
   }
 
   @override
@@ -166,6 +170,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
               onDateChange: (date) {
                 setState(() {
                   _selectedDate = date;
+                  isLoading = true;
                 });
                 _getTasksForSelectedDateAndStatus(date, groupValue);
               },
@@ -199,6 +204,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
 
                             setState(() {
                               groupValue = newValue;
+                              isLoading = true;
                             });
                             _getTasksForSelectedDateAndStatus(
                                 _selectedDate, groupValue);
@@ -232,6 +238,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               });
 
                             setState(() {
+                              isLoading = true;
                               groupValue = newValue;
                             });
                             _getTasksForSelectedDateAndStatus(
@@ -295,11 +302,18 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return TaskDetailsPopup(task: task);
-                                          },
+                                        // showDialog(
+                                        //   context: context,
+                                        //   builder: (BuildContext context) {
+                                        //     return TaskDetailsPopup(task: task);
+                                        //   },
+                                        // );
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TaskDetailsPage(
+                                                    taskId: task['id']),
+                                          ),
                                         );
                                       },
                                       onLongPress: () {
@@ -379,10 +393,12 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Xem báo cáo",
                         onTap: () {
+                          Navigator.of(context).pop();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  TaskEvidenceDetails(task: task),
+                              builder: (context) => EvidencePage(
+                                task: task,
+                              ),
                             ),
                           );
                         },
@@ -393,13 +409,15 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Xem báo cáo",
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ViewRejectionReasonPopup(
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ViewRejectionReasonPopup(
                                 taskId: task['id'],
                                 role: role,
-                              ),
-                            ),
+                              );
+                            },
                           );
                         },
                         cls: kPrimaryColor,
@@ -483,7 +501,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.42
+                    ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
                 child: Column(
@@ -520,14 +538,22 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Xem báo cáo",
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ViewRejectionReasonPopup(
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ViewRejectionReasonPopup(
                                 taskId: task['id'],
                                 role: role,
-                              ),
-                            ),
-                          );
+                              );
+                            },
+                          ).then((value) => {
+                                if (value != null)
+                                  {
+                                    _getTasksForSelectedDateAndStatus(
+                                        _selectedDate, groupValue)
+                                  }
+                              });
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -544,11 +570,12 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 content:
                                     'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                 onConfirm: () {
-                                  changeTaskStatus(task['id'], 0).then((value) {
+                                  Navigator.of(context).pop();
+                                  cancelRejectTaskStatus(task['id'])
+                                      .then((value) {
                                     if (value) {
                                       _getTasksForSelectedDateAndStatus(
                                           _selectedDate, groupValue);
-                                      Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
                                     } else {
