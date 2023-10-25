@@ -23,4 +23,126 @@ class NotiService {
       return Future.error(data['message']);
     }
   }
+
+  Future<List<Map<String, dynamic>>> getAllNotificationByMemberId(
+      int memberId) async {
+    final String getAreasUrl = '$baseUrl/Notification/Member($memberId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> n =
+          List<Map<String, dynamic>>.from(data['data']);
+      return n;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getIsReadNotificationByMemberId(
+      int memberId) async {
+    final String getAreasUrl = '$baseUrl/Notification/Read/Member$memberId';
+
+    final http.Response response = await http.get(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> n =
+          List<Map<String, dynamic>>.from(data['data']);
+      return n;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getNotSeenNotificationByMemberId(
+      int memberId) async {
+    final String getAreasUrl = '$baseUrl/Notification/NotSeen/Member$memberId';
+
+    final http.Response response = await http.get(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> n =
+          List<Map<String, dynamic>>.from(data['data']);
+      return n;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> makeAllNotiIsOld(int memberId) async {
+    final String getAreasUrl =
+        '$baseUrl/Notification/IsNew/MemberId($memberId)';
+
+    final http.Response response = await http.put(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> isReadNoti(int notiId) async {
+    final String getAreasUrl = '$baseUrl/Notification/IsRead($notiId)';
+
+    final http.Response response = await http.put(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> makeAllNotiIsRead(int memberId) async {
+    final String getAreasUrl =
+        '$baseUrl/Notification/All/IsRead/Member($memberId)';
+
+    final http.Response response = await http.put(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
