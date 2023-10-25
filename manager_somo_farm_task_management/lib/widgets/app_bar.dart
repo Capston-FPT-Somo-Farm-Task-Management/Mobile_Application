@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/area/area_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee/employee_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestock_page.dart';
@@ -14,6 +13,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_pa
 import 'package:manager_somo_farm_task_management/screens/manager/supervisor/supervisor_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
+import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatefulWidget {
@@ -61,7 +61,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onTap: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => ManagerHomePage(farmId: farmId!),
+                        builder: (context) => BottomNavBar(farmId: farmId!),
                       ),
                     );
                   },
@@ -227,7 +227,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                 .pushReplacement(
                                                               MaterialPageRoute(
                                                                 builder: (context) =>
-                                                                    ManagerHomePage(
+                                                                    BottomNavBar(
                                                                         farmId:
                                                                             farmId!),
                                                               ),

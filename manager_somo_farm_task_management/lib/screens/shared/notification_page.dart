@@ -1,18 +1,85 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/models/notification.dart';
-import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
+import 'package:manager_somo_farm_task_management/services/notificantion_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
+class _NotificationPageState extends State<NotificationPage>
+    with WidgetsBindingObserver {
+  bool isLoading = true;
   bool showUnreadOnly = false;
-  List<Notifications> filteredNoti = notificationList;
   List<String> optionsNoti = ["Đánh dấu chưa đọc", "Xóa thông báo"];
+  List<Map<String, dynamic>> filteredNoti = [];
+  int? userId;
+  Future<void> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userIdStored = prefs.getInt('userId');
+    setState(() {
+      userId = userIdStored;
+    });
+  }
+
+  void getNotSeenNoti() {
+    NotiService().getNotSeenNotificationByMemberId(userId!).then((value) {
+      setState(() {
+        filteredNoti = value;
+        isLoading = false;
+      });
+    });
+  }
+
+  void getAllNoti() {
+    NotiService().getAllNotificationByMemberId(userId!).then((value) {
+      setState(() {
+        filteredNoti = value;
+        isLoading = false;
+      });
+    });
+  }
+
+  void initData() {
+    getUserId().then((_) {
+      NotiService().getAllNotificationByMemberId(userId!).then((value) {
+        setState(() {
+          filteredNoti = value;
+          isLoading = false;
+        });
+      });
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Gọi hàm cập nhật số lượng thông báo khi ứng dụng được khôi phục
+      showUnreadOnly ? getNotSeenNoti() : getAllNoti();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      showUnreadOnly ? getNotSeenNoti() : getAllNoti();
+    });
+    WidgetsBinding.instance.addObserver(this);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,194 +114,250 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Column(
           children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showUnreadOnly = false;
-                      filteredNoti = notificationList;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      color:
-                          showUnreadOnly ? Colors.transparent : kPrimaryColor,
-                    ),
-                    alignment: Alignment
-                        .center, // Đặt alignment thành Alignment.center
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Text(
-                        "Tất cả",
-                        style: TextStyle(
-                          color:
-                              showUnreadOnly ? kPrimaryColor : kTextWhiteColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showUnreadOnly = false;
+                        isLoading = true;
+                        getAllNoti();
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        color:
+                            showUnreadOnly ? Colors.transparent : kPrimaryColor,
+                      ),
+                      alignment: Alignment
+                          .center, // Đặt alignment thành Alignment.center
+                      child: Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Text(
+                          "Tất cả",
+                          style: TextStyle(
+                            color: showUnreadOnly
+                                ? kPrimaryColor
+                                : kTextWhiteColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      showUnreadOnly = true;
-                      filteredNoti = notificationList
-                          .where((m) => m.isRead == false)
-                          .toList();
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color:
-                          !showUnreadOnly ? Colors.transparent : kPrimaryColor,
-                    ),
-                    alignment: Alignment
-                        .center, // Đặt alignment thành Alignment.center
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Text(
-                        "Chưa đọc",
-                        style: TextStyle(
-                          color:
-                              !showUnreadOnly ? kPrimaryColor : kTextWhiteColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showUnreadOnly = true;
+                        isLoading = true;
+                        getNotSeenNoti();
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: !showUnreadOnly
+                            ? Colors.transparent
+                            : kPrimaryColor,
+                      ),
+                      alignment: Alignment
+                          .center, // Đặt alignment thành Alignment.center
+                      child: Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Text(
+                          "Chưa đọc",
+                          style: TextStyle(
+                            color: !showUnreadOnly
+                                ? kPrimaryColor
+                                : kTextWhiteColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Expanded(
-                child: filteredNoti.isEmpty
+                child: isLoading
                     ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.notifications_off,
-                              size:
-                                  80, // Kích thước biểu tượng có thể điều chỉnh
-                              color: Colors.grey, // Màu của biểu tượng
-                            ),
-                            SizedBox(
-                                height:
-                                    16), // Khoảng cách giữa biểu tượng và văn bản
-                            Text(
-                              "Bạn không có thông báo nào",
-                              style: TextStyle(
-                                fontSize:
-                                    18, // Kích thước văn bản có thể điều chỉnh
-                                color: Colors.grey, // Màu văn bản
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: CircularProgressIndicator(color: kPrimaryColor),
                       )
-                    : ListView.builder(
-                        itemCount: filteredNoti.length,
-                        itemExtent: 90,
-                        itemBuilder: (_, index) {
-                          Notifications noti = filteredNoti[index];
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            child: SlideAnimation(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (!noti.isRead) {
-                                      noti.isRead = true;
-                                    }
-                                  });
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ListTile(
-                                      leading: Icon(
-                                        noti.isRead
-                                            ? Icons.notifications
-                                            : Icons.notifications_on_rounded,
-                                        color: noti.isRead
-                                            ? Colors.black54
-                                            : Colors.black,
-                                      ),
-                                      title: RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: noti.sender,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 17,
-                                                color: noti.isRead
-                                                    ? Colors.black54
-                                                    : Colors
-                                                        .black, // Màu cho đoạn text đầu tiên
-                                              ),
+                    : filteredNoti.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.notifications_off,
+                                  size:
+                                      80, // Kích thước biểu tượng có thể điều chỉnh
+                                  color: Colors.grey, // Màu của biểu tượng
+                                ),
+                                SizedBox(
+                                    height:
+                                        16), // Khoảng cách giữa biểu tượng và văn bản
+                                Text(
+                                  "Bạn không có thông báo nào",
+                                  style: TextStyle(
+                                    fontSize:
+                                        18, // Kích thước văn bản có thể điều chỉnh
+                                    color: Colors.grey, // Màu văn bản
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : RefreshIndicator(
+                            onRefresh: () async {
+                              if (showUnreadOnly) {
+                                getNotSeenNoti();
+                              } else {
+                                getAllNoti();
+                              }
+                              // Add a return statement or throw an error here if needed.
+                            },
+                            child: ListView.builder(
+                                itemCount: filteredNoti.length,
+                                itemExtent: 90,
+                                itemBuilder: (_, index) {
+                                  Map<String, dynamic> noti =
+                                      filteredNoti[index];
+                                  bool isRead = noti['isRead'] ?? false;
+                                  String message = noti['message'];
+                                  return AnimationConfiguration.staggeredList(
+                                    position: index,
+                                    child: SlideAnimation(
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TaskDetailsPage(
+                                                      taskId: noti['taskId']),
                                             ),
-                                            TextSpan(
-                                              text:
-                                                  " ${noti.content.toLowerCase()}.",
-                                              style: TextStyle(
-                                                fontSize: 17,
-                                                color: noti.isRead
-                                                    ? Colors.black54
-                                                    : Colors
-                                                        .black, // Màu cho đoạn text thứ hai
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        "2 tuan truoc",
-                                        style: TextStyle(
-                                          height: 2,
-                                          color: noti.isRead
-                                              ? Colors.grey
-                                              : Colors.grey[700],
-                                        ),
-                                      ),
-                                      trailing: PopupMenuButton<String>(
-                                        icon: Icon(
-                                          Icons.more_horiz,
-                                          color: noti.isRead
-                                              ? Colors.grey
-                                              : Colors.grey[700],
-                                        ),
-                                        onSelected: (String selected) {},
-                                        itemBuilder: (BuildContext context) {
-                                          return [
-                                            PopupMenuItem<String>(
-                                              value: 'delete',
-                                              child: Text('Xóa thông báo'),
-                                            ),
-                                            PopupMenuItem<String>(
-                                              value: 'markAsUnread',
-                                              child: Text('Đánh dấu chưa đọc'),
-                                            ),
-                                          ];
+                                          );
+                                          NotiService()
+                                              .isReadNoti(noti['id'])
+                                              .then((value) {
+                                            showUnreadOnly
+                                                ? getNotSeenNoti()
+                                                : getAllNoti();
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
                                         },
+                                        child: Container(
+                                          color: isRead
+                                              ? Colors.white
+                                              : Color.fromARGB(
+                                                  255, 209, 222, 233),
+                                          child: Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ListTile(
+                                                  leading: Icon(
+                                                    Icons.notifications,
+                                                    color: Colors.black,
+                                                  ),
+                                                  title: message.contains("'")
+                                                      ? RichText(
+                                                          text: TextSpan(
+                                                            style: DefaultTextStyle
+                                                                    .of(context)
+                                                                .style
+                                                                .copyWith(
+                                                                    fontSize:
+                                                                        16),
+                                                            children: [
+                                                              TextSpan(
+                                                                text: message
+                                                                    .substring(
+                                                                        0,
+                                                                        message.indexOf("'") +
+                                                                            1),
+                                                              ),
+                                                              TextSpan(
+                                                                text: message
+                                                                    .substring(
+                                                                  message.indexOf(
+                                                                          "'") +
+                                                                      1,
+                                                                  message
+                                                                      .lastIndexOf(
+                                                                          "'"),
+                                                                ),
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              TextSpan(
+                                                                text: message
+                                                                    .substring(message
+                                                                        .lastIndexOf(
+                                                                            "'")),
+                                                                // Không cần style ở đây vì đã được thiết lập ở style chung
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      : Text(noti['message']),
+                                                  subtitle: Text(
+                                                    noti['time'],
+                                                    style: TextStyle(
+                                                      height: 2,
+                                                      color: Colors.grey[700],
+                                                    ),
+                                                  ),
+                                                  trailing:
+                                                      PopupMenuButton<String>(
+                                                    icon: Icon(
+                                                      Icons.more_horiz,
+                                                      color: Colors.grey[700],
+                                                    ),
+                                                    onSelected:
+                                                        (String selected) {},
+                                                    itemBuilder:
+                                                        (BuildContext context) {
+                                                      return [
+                                                        PopupMenuItem<String>(
+                                                          value: 'delete',
+                                                          child: Text(
+                                                              'Xóa thông báo'),
+                                                        ),
+                                                        PopupMenuItem<String>(
+                                                          value: 'markAsUnread',
+                                                          child: Text(
+                                                              'Đánh dấu chưa đọc'),
+                                                        ),
+                                                      ];
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        })),
+                                  );
+                                }),
+                          )),
           ],
         ),
       ),
@@ -247,7 +370,7 @@ class _NotificationPageState extends State<NotificationPage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: MediaQuery.of(context).size.height * 0.20,
+          height: MediaQuery.of(context).size.height * 0.18,
           color: kBackgroundColor,
           child: Column(
             children: [
@@ -263,6 +386,17 @@ class _NotificationPageState extends State<NotificationPage> {
               _bottomSheetButton(
                 label: "Đánh dấu đã đọc tất cả",
                 onTap: () {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  NotiService().makeAllNotiIsRead(userId!).then((value) {
+                    if (value) {
+                      showUnreadOnly ? getNotSeenNoti() : getAllNoti();
+                    }
+                    setState(() {
+                      isLoading = false;
+                    });
+                  });
                   Navigator.of(context).pop();
                 },
                 cls: kPrimaryColor,
