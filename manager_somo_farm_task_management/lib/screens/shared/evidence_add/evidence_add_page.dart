@@ -193,7 +193,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                           );
                           setState(() {});
                         },
-                        child: Icon(Icons.add_a_photo, size: 30),
+                        child: Icon(Icons.add_photo_alternate, size: 30),
                       ),
                     ),
                   ),
