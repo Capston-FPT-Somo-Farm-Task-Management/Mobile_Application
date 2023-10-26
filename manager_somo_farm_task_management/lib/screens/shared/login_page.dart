@@ -6,6 +6,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/home/manager_ho
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:manager_somo_farm_task_management/services/login_services.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
+import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -189,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    ManagerHomePage(farmId: farmId),
+                                    BottomNavBar(farmId: farmId),
                               ),
                             );
                             getDeviceToken(userId);
