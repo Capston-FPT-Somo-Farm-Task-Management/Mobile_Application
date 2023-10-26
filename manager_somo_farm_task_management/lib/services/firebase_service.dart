@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:manager_somo_farm_task_management/main.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
   print('Title: ${message.notification?.title ?? 'No title'}');
@@ -28,6 +31,14 @@ class FirebaseService {
 
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
+    if (message.data['taskId'] == null) return;
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (context) => TaskDetailsPage(
+          taskId: int.parse(message.data['taskId'] ?? '0'),
+        ),
+      ),
+    );
   }
 
   Future initPushNotifications() async {
@@ -64,10 +75,15 @@ class FirebaseService {
     const settings = InitializationSettings(android: android, iOS: ios);
     await _localNotifications.initialize(
       settings,
-      //   onSelectNotification: (payload) {
-      // final message = RemoteMessage().fromMap(jsonDecode(payload));
-      // handleMessage(message);
-      //}
+      onSelectNotification: (payload) async {
+        final decodedPayload = jsonDecode(payload!);
+        final message = RemoteMessage(
+          data: decodedPayload["data"],
+          notification:
+              null, // You may need to set the notification property based on your payload structure
+        );
+        handleMessage(message);
+      },
     );
 
     final platform = _localNotifications.resolvePlatformSpecificImplementation<

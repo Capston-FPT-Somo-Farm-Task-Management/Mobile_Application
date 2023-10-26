@@ -11,7 +11,9 @@ import 'package:manager_somo_farm_task_management/screens/shared/evidence/eviden
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -372,7 +374,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.42
+                    ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.32,
                 color: kBackgroundColor,
                 child: Column(
@@ -414,10 +416,26 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             context: context,
                             builder: (BuildContext context1) {
                               return ViewRejectionReasonPopup(
-                                taskId: task['id'],
+                                task: task,
                                 role: role,
                               );
                             },
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Chỉnh sửa",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => UpdateTaskPage(
+                                task: task,
+                              ),
+                            ),
                           );
                         },
                         cls: kPrimaryColor,
@@ -500,7 +518,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected
+                height: isRejected || isCompleted || isNotCompleted
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
@@ -543,7 +561,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             context: context,
                             builder: (BuildContext context1) {
                               return ViewRejectionReasonPopup(
-                                taskId: task['id'],
+                                task: task,
                                 role: role,
                               );
                             },
@@ -744,11 +762,19 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isCompleted)
+                    if (isCompleted || isNotCompleted)
                       _bottomSheetButton(
-                        label: "Đánh giá",
+                        label: "Chấm công",
                         onTap: () {
                           Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => TimeKeepingInTask(
+                                taskId: task['id'],
+                                taskName: task['name'],
+                              ),
+                            ),
+                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
