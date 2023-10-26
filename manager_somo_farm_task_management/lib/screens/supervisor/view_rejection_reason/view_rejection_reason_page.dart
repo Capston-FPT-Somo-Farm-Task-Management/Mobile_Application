@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 
 class ViewRejectionReasonPopup extends StatefulWidget {
-  final int taskId;
+  final Map<String, dynamic> task;
   final String role;
 
-  ViewRejectionReasonPopup({required this.taskId, required this.role});
+  ViewRejectionReasonPopup({required this.role, required this.task});
 
   @override
   State<ViewRejectionReasonPopup> createState() =>
@@ -20,7 +21,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
   String rejectionReason = "";
   bool isLoading = true;
   Future<void> getEvdidence() async {
-    EvidenceService().getEvidencebyTaskId(widget.taskId).then((value) {
+    EvidenceService().getEvidencebyTaskId(widget.task['id']).then((value) {
       setState(() {
         rejectionReason = value[0]['description'];
         isLoading = false;
@@ -88,10 +89,15 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                           ),
                           onPressed: () {
                             // Thực hiện hành động khi người dùng chấp nhận
-                            Navigator.of(context).pop();
-                            // Add code xử lý khi chấp nhận
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => UpdateTaskPage(
+                                  task: widget.task,
+                                ),
+                              ),
+                            );
                           },
-                          child: Text("Chấp nhận"),
+                          child: Text("Chỉnh sửa"),
                         ),
                         SizedBox(width: 20),
                         ElevatedButton(
@@ -107,7 +113,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                                   content:
                                       'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                   onConfirm: () {
-                                    cancelRejectTaskStatus(widget.taskId)
+                                    cancelRejectTaskStatus(widget.task['id'])
                                         .then((value) {
                                       if (value) {
                                         setState(() {
@@ -148,7 +154,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                                   content:
                                       'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                   onConfirm: () {
-                                    cancelRejectTaskStatus(widget.taskId)
+                                    cancelRejectTaskStatus(widget.task['id'])
                                         .then((value) {
                                       if (value) {
                                         setState(() {
