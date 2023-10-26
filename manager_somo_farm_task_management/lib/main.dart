@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/check_keep_login.dart';
 import 'package:manager_somo_farm_task_management/services/firebase_service.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -15,10 +16,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Somo Farm Task Management',
       home: CheckKeepLogin(),
+      routes: {},
     );
   }
 }
