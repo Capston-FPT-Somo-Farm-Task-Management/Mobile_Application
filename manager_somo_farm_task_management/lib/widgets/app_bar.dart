@@ -56,7 +56,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           child: Row(
             children: [
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: InkWell(
                   onTap: () {
                     Navigator.of(context).pushReplacement(
@@ -99,84 +99,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20.0),
-                                ),
-                              ),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.8, // Điều chỉnh chiều cao tối đa của bottom sheet
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(16.0),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const SizedBox(height: 20),
-                                            Align(
-                                              alignment: Alignment
-                                                  .centerLeft, // Căn lề trái
-                                              child: InkWell(
-                                                onTap: () {},
-                                                child: const Row(children: [
-                                                  Icon(Icons.check_circle),
-                                                  SizedBox(width: 15),
-                                                  Text(
-                                                    "Task",
-                                                    style:
-                                                        TextStyle(fontSize: 20),
-                                                  ),
-                                                ]),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 25),
-                                            Align(
-                                              alignment: Alignment
-                                                  .centerLeft, // Căn lề trái
-                                              child: InkWell(
-                                                onTap: () {},
-                                                child: const Row(children: [
-                                                  Icon(Icons.note_add),
-                                                  SizedBox(width: 15),
-                                                  Text(
-                                                    "Note",
-                                                    style:
-                                                        TextStyle(fontSize: 20),
-                                                  ),
-                                                ]),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          });
-                        },
-                        child: const Icon(
-                          Icons.add_circle,
-                          size: 30,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10.0,
-                      ),
                       InkWell(
                         onTap: () {
                           showModalBottomSheet(

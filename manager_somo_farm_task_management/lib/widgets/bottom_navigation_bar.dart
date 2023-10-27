@@ -1,6 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/Introducing_farm_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/notification_page.dart';
 import 'package:manager_somo_farm_task_management/services/notificantion_service.dart';
@@ -69,7 +71,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       ManagerHomePage(
         farmId: widget.farmId,
       ),
-      NotificationPage(),
+      IntroducingFarmPage(),
       NotificationPage(),
       SettingsPage(),
     ];
@@ -106,8 +108,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                 }),
             IconButton(
                 icon: Icon(
-                  Icons.chat_sharp,
-                  size: _getCurrentTabSize(1),
+                  FontAwesomeIcons.warehouse,
+                  // size: _getCurrentTabSize(1),
+                  size: 18,
                   color: _getCurrentTabColor(1),
                 ),
                 onPressed: () {
