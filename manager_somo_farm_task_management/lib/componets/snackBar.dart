@@ -9,9 +9,9 @@ class SnackbarShowNoti {
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       textColor: isWarning ? Colors.red : kPrimaryColor,
-      fontSize: 15.0,
+      fontSize: 17.0,
       webBgColor: "linear-gradient(to right, $kPrimaryColor, ${Colors.white})",
     );
   }
