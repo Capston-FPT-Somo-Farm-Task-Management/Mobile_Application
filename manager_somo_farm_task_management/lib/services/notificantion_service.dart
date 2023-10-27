@@ -25,8 +25,9 @@ class NotiService {
   }
 
   Future<List<Map<String, dynamic>>> getAllNotificationByMemberId(
-      int memberId) async {
-    final String getAreasUrl = '$baseUrl/Notification/Member($memberId)';
+      int index, int pageSize, int memberId) async {
+    final String getAreasUrl =
+        '$baseUrl/Notification/PageIndex($index)/PageSize($pageSize)/Member($memberId)';
 
     final http.Response response = await http.get(
       Uri.parse(getAreasUrl),
@@ -69,8 +70,9 @@ class NotiService {
   }
 
   Future<List<Map<String, dynamic>>> getNotSeenNotificationByMemberId(
-      int memberId) async {
-    final String getAreasUrl = '$baseUrl/Notification/NotSeen/Member$memberId';
+      int index, int sizePage, int memberId) async {
+    final String getAreasUrl =
+        '$baseUrl/Notification/PageIndex($index)/PageSize($sizePage)/NotSeen/Member$memberId';
 
     final http.Response response = await http.get(
       Uri.parse(getAreasUrl),

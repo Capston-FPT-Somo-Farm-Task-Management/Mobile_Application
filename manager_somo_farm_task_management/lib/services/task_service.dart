@@ -67,14 +67,14 @@ class TaskService {
   }
 
   Future<List<Map<String, dynamic>>> getTasksByManagerIdDateStatus(
-      int userId, DateTime? date, int status) async {
+      int index, int pagesize, int userId, DateTime? date, int status) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/Manager($userId)/Status($status)/Date?date=$dateTime';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -94,14 +94,14 @@ class TaskService {
   }
 
   Future<List<Map<String, dynamic>>> getTasksBySupervisorIdDateStatus(
-      int userId, DateTime? date, int status) async {
+      int index, int pagesize, int userId, DateTime? date, int status) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/Supervisor($userId)/Status($status)/Date?date=$dateTime';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),

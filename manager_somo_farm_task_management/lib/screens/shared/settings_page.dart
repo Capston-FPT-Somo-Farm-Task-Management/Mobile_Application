@@ -25,7 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Container(
                 margin: EdgeInsets.only(top: 10),
                 child: Text(
-                  'Settings',
+                  'Cài đặt',
                   style: TextStyle(
                     fontSize: 25.0,
                     fontWeight: FontWeight.bold,
@@ -48,7 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Account Settings',
+                        'Tài khoản',
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
@@ -57,12 +57,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       const SizedBox(height: 16.0),
                       ListTile(
                         leading: const Icon(Icons.person),
-                        title: const Text('Profile'),
+                        title: const Text('Thông tin cá nhân'),
                         onTap: () {},
                       ),
                       ListTile(
                         leading: const Icon(Icons.lock),
-                        title: const Text('Privacy'),
+                        title: const Text('Đổi mật khẩu'),
                         onTap: () {},
                       ),
                     ],
@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'General Settings',
+                        'Cài đặt chung',
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
@@ -83,18 +83,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       const SizedBox(height: 16.0),
                       ListTile(
-                        leading: const Icon(Icons.notifications),
-                        title: const Text('Notifications'),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.language),
-                        title: const Text('Language'),
-                        onTap: () {},
-                      ),
-                      ListTile(
                         leading: const Icon(Icons.output_outlined),
-                        title: const Text('Log out'),
+                        title: const Text('Đăng xuất'),
                         onTap: () async {
                           // Điều hướng đến trang LoginPage
                           setState(() {

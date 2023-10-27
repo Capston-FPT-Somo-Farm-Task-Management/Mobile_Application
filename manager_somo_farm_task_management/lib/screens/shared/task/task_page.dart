@@ -8,10 +8,13 @@ import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/evidence_details/evidence_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,6 +48,34 @@ class TaskPageState extends State<TaskPage> {
   int groupValue = 0;
   bool isMoreLeft = false;
   String? role;
+  int page = 1;
+  bool isLoadingMore = false;
+  final scrollController = ScrollController();
+  Future<void> _scrollListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      setState(() {
+        isLoadingMore = true;
+      });
+      page = page + 1;
+      await _getTasksForSelectedDateAndStatus(
+          page, 10, _selectedDate, groupValue, false);
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
+  }
+
+  Future<bool> cancelRejectTaskStatus(int taskId) async {
+    return TaskService().cancelRejectTaskStatus(taskId);
+  }
+
+  void removeTask(int taskId) {
+    setState(() {
+      tasks.removeWhere((task) => task['id'] == taskId);
+    });
+  }
+
   @override
   initState() {
     super.initState();
@@ -53,7 +84,10 @@ class TaskPageState extends State<TaskPage> {
       farmId = value;
     });
     getRole().then((_) {
-      _getTasksForSelectedDateAndStatus(null, 0);
+      _getTasksForSelectedDateAndStatus(page, 10, null, 0, true);
+    });
+    scrollController.addListener(() {
+      _scrollListener();
     });
   }
 
@@ -84,36 +118,31 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
-  // Future<void> _getTasksForSelectedDateAndStatus(
-  //     DateTime? selectedDate, int status) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   int? userId = prefs.getInt('userId');
-  //   List<Map<String, dynamic>> selectedDateTasks = await TaskService()
-  //       .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
-  //   setState(() {
-  //     tasks = selectedDateTasks;
-  //     isLoading = false;
-  //     filteredTaskList = selectedDateTasks;
-  //   });
-  // }
-
-  Future<void> _getTasksForSelectedDateAndStatus(
-      DateTime? selectedDate, int status) async {
+  Future<void> _getTasksForSelectedDateAndStatus(int index, int pageSize,
+      DateTime? selectedDate, int status, bool reset) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
-      selectedDateTasks = await TaskService()
-          .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+      selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
+          index, pageSize, userId!, selectedDate, status);
     } else {
-      selectedDateTasks = await TaskService()
-          .getTasksBySupervisorIdDateStatus(userId!, selectedDate, status);
+      selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
+          index, pageSize, userId!, selectedDate, status);
     }
-    setState(() {
-      tasks = selectedDateTasks;
-      isLoading = false;
-      filteredTaskList = selectedDateTasks;
-    });
+    if (reset) {
+      setState(() {
+        tasks = selectedDateTasks;
+        isLoading = false;
+        filteredTaskList = tasks;
+      });
+    } else {
+      setState(() {
+        tasks = tasks + selectedDateTasks;
+        isLoading = false;
+        filteredTaskList = tasks;
+      });
+    }
   }
 
   @override
@@ -200,8 +229,13 @@ class TaskPageState extends State<TaskPage> {
                       if (!selectedDate.isEmpty)
                         GestureDetector(
                           onTap: () {
-                            _getTasksForSelectedDateAndStatus(null, groupValue);
-                            selectedDate = "";
+                            setState(() {
+                              isLoading = true;
+                              _selectedDate = null;
+                              selectedDate = "";
+                            });
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, null, groupValue, true);
                           },
                           child: Icon(
                             Icons.delete_forever,
@@ -224,13 +258,13 @@ class TaskPageState extends State<TaskPage> {
                           setState(() {
                             if (_selected != null) {
                               _getTasksForSelectedDateAndStatus(
-                                  _selected, groupValue);
+                                  1, 10, _selected, groupValue, true);
                               selectedDate =
                                   DateFormat('dd/MM/yy').format(_selected);
                               _selectedDate = _selected;
                             } else {
                               _getTasksForSelectedDateAndStatus(
-                                  null, groupValue);
+                                  1, 10, null, groupValue, true);
                               setState(() {
                                 selectedDate = "";
                                 filteredTaskList = tasks;
@@ -264,6 +298,9 @@ class TaskPageState extends State<TaskPage> {
                               // Thêm các option khác nếu cần
                             },
                             onValueChanged: (int newValue) {
+                              setState(() {
+                                isLoading = true;
+                              });
                               if (newValue == 2)
                                 setState(() {
                                   isMoreLeft = true;
@@ -273,7 +310,7 @@ class TaskPageState extends State<TaskPage> {
                                 groupValue = newValue;
                               });
                               _getTasksForSelectedDateAndStatus(
-                                  _selectedDate, groupValue);
+                                  1, 10, _selectedDate, groupValue, true);
                             },
                             groupValue: groupValue,
                           ),
@@ -297,6 +334,9 @@ class TaskPageState extends State<TaskPage> {
                               // Thêm các option khác nếu cần
                             },
                             onValueChanged: (int newValue) {
+                              setState(() {
+                                isLoading = true;
+                              });
                               if (newValue == 0)
                                 setState(() {
                                   isMoreLeft = false;
@@ -306,7 +346,7 @@ class TaskPageState extends State<TaskPage> {
                                 groupValue = newValue;
                               });
                               _getTasksForSelectedDateAndStatus(
-                                  _selectedDate, groupValue);
+                                  1, 10, _selectedDate, groupValue, true);
                             },
                             groupValue: groupValue,
                           ),
@@ -349,253 +389,270 @@ class TaskPageState extends State<TaskPage> {
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: RefreshIndicator(
                             onRefresh: () => _getTasksForSelectedDateAndStatus(
-                                _selectedDate, groupValue),
+                                1, 10, _selectedDate, groupValue, true),
                             child: ListView.separated(
-                              itemCount: filteredTaskList.length,
+                              controller: scrollController,
+                              itemCount: isLoadingMore
+                                  ? filteredTaskList.length + 1
+                                  : filteredTaskList.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
                                 return const SizedBox(height: 20);
                               },
                               itemBuilder: (context, index) {
-                                final task = filteredTaskList[index];
+                                if (index < filteredTaskList.length) {
+                                  final task = filteredTaskList[index];
 
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            TaskDetailsPage(taskId: task['id']),
-                                      ),
-                                    );
-                                  },
-                                  onLongPress: () {
-                                    _showBottomSheet(
-                                        context, task, _selectedDate, role!);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 10,
-                                          offset:
-                                              Offset(1, 4), // Shadow position
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => TaskDetailsPage(
+                                              taskId: task['id']),
                                         ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight:
-                                                      Radius.circular(10))),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Stack(children: [
+                                      );
+                                    },
+                                    onLongPress: () {
+                                      _showBottomSheet(
+                                          context, task, _selectedDate, role!);
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 10,
+                                            offset:
+                                                Offset(1, 4), // Shadow position
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(10),
+                                                    topRight:
+                                                        Radius.circular(10))),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Stack(children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              wrapWordsWithEllipsis(
+                                                                  task['name'],
+                                                                  20),
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Priority
+                                                                      .getBGClr(
+                                                                          task[
+                                                                              'priority']),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5),
+                                                                ),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(5),
+                                                                child:
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .push(
+                                                                      MaterialPageRoute(
+                                                                        builder: (context) => SubTaskPage(
+                                                                            taskId:
+                                                                                task['id'],
+                                                                            taskName: task['name']),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .arrow_forward_ios,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        200],
+                                                                    size: 15,
+                                                                  ),
+                                                                )),
+                                                          ],
+                                                        ),
+                                                        if (role == "Manager" &&
+                                                                task['managerName'] ==
+                                                                    null ||
+                                                            role == "Supervisor" &&
+                                                                task['managerName'] !=
+                                                                    null)
+                                                          Container(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        35),
+                                                            child: Tooltip(
+                                                              message: role ==
+                                                                      "Manager"
+                                                                  ? 'Công việc do người giám sát tạo'
+                                                                  : 'Công việc do người quản lí tạo',
+                                                              child: Icon(
+                                                                Icons
+                                                                    .account_circle_rounded,
+                                                                color: Colors
+                                                                    .black54,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ]),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons
+                                                                .access_time_rounded,
+                                                            color: Colors.black,
+                                                            size: 18,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text(
+                                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: Colors
+                                                                          .black),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 20),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
                                                           Text(
-                                                            wrapWordsWithEllipsis(
-                                                                task['name'],
-                                                                20),
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                            "Giám sát: ${task['supervisorName']}",
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black),
                                                             ),
                                                           ),
-                                                          Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Priority
-                                                                    .getBGClr(task[
-                                                                        'priority']),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5),
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .push(
-                                                                    MaterialPageRoute(
-                                                                      builder: (context) => SubTaskPage(
-                                                                          taskId: task[
-                                                                              'id'],
-                                                                          taskName:
-                                                                              task['name']),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      200],
-                                                                  size: 15,
-                                                                ),
-                                                              )),
+                                                          Text(
+                                                            "Vị trí: ${task['fieldName']}",
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black),
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
-                                                      if (role == "Manager" &&
-                                                              task['managerName'] ==
-                                                                  null ||
-                                                          role == "Supervisor" &&
-                                                              task['managerName'] !=
-                                                                  null)
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          alignment: Alignment
-                                                              .topRight,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      35),
-                                                          child: Tooltip(
-                                                            message: role ==
-                                                                    "Manager"
-                                                                ? 'Công việc do người giám sát tạo'
-                                                                : 'Công việc do người quản lí tạo',
-                                                            child: Icon(
-                                                              Icons
-                                                                  .account_circle_rounded,
-                                                              color: Colors
-                                                                  .black54,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                    ]),
-                                                    const SizedBox(height: 10),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const Icon(
-                                                          Icons
-                                                              .access_time_rounded,
-                                                          color: Colors.black,
-                                                          size: 18,
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 4),
-                                                        Text(
-                                                          "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 20),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          "Giám sát: ${task['supervisorName']}",
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          "Vị trí: ${task['fieldName']}",
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            textStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: Priority.getBGClr(task[
-                                                'priority']), // Đặt màu xám ở đây
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              bottomLeft: Radius.circular(10),
-                                              bottomRight: Radius.circular(10),
+                                              ],
                                             ),
                                           ),
-                                          height: 45,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Loại: ${task['taskTypeName']}',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.grey[200]),
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: Priority.getBGClr(task[
+                                                  'priority']), // Đặt màu xám ở đây
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                bottomLeft: Radius.circular(10),
+                                                bottomRight:
+                                                    Radius.circular(10),
                                               ),
-                                              Text(
-                                                'Ưu tiên: ${task['priority']}',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.grey[200]),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
+                                            ),
+                                            height: 45,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Loại: ${task['taskTypeName']}',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.grey[200]),
+                                                ),
+                                                Text(
+                                                  'Ưu tiên: ${task['priority']}',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.grey[200]),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                        color: kPrimaryColor),
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -622,7 +679,7 @@ class TaskPageState extends State<TaskPage> {
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.42
+                    ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.32,
                 color: kBackgroundColor,
                 child: Column(
@@ -636,18 +693,53 @@ class TaskPageState extends State<TaskPage> {
                       ),
                     ),
                     const Spacer(),
-                    if (isRejected ||
-                        isPreparing ||
+                    if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
                         isNotCompleted)
                       _bottomSheetButton(
                         label: "Xem báo cáo",
                         onTap: () {
+                          Navigator.of(context).pop();
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  TaskEvidenceDetails(task: task),
+                              builder: (context) => EvidencePage(
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Xem báo cáo",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ViewRejectionReasonPopup(
+                                task: task,
+                                role: role,
+                              );
+                            },
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Chỉnh sửa",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => UpdateTaskPage(
+                                task: task,
+                              ),
                             ),
                           );
                         },
@@ -660,7 +752,7 @@ class TaskPageState extends State<TaskPage> {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        cls: kPrimaryColor,
+                        cls: Colors.red[300]!,
                         context: context,
                       ),
                     if (isPreparing || isNotCompleted)
@@ -676,8 +768,7 @@ class TaskPageState extends State<TaskPage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 4).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Xóa thành công!", false);
@@ -731,9 +822,9 @@ class TaskPageState extends State<TaskPage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.42
-                    : MediaQuery.of(context).size.height * 0.32,
+                height: isRejected || isCompleted || isNotCompleted
+                    ? MediaQuery.of(context).size.height * 0.30
+                    : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
                 child: Column(
                   children: [
@@ -746,8 +837,7 @@ class TaskPageState extends State<TaskPage> {
                       ),
                     ),
                     const Spacer(),
-                    if (isRejected ||
-                        isPreparing ||
+                    if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
                         isNotCompleted)
@@ -768,9 +858,85 @@ class TaskPageState extends State<TaskPage> {
                       ),
                     if (isRejected)
                       _bottomSheetButton(
-                        label: "Hủy từ chối",
+                        label: "Xem báo cáo",
                         onTap: () {
                           Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ViewRejectionReasonPopup(
+                                task: task,
+                                role: role,
+                              );
+                            },
+                          ).then((value) => {
+                                if (value != null) {removeTask(task['id'])}
+                              });
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isRejected)
+                      _bottomSheetButton(
+                        label: "Hủy từ chối",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Hủy từ chối",
+                                content:
+                                    'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                onConfirm: () {
+                                  Navigator.of(context).pop();
+                                  cancelRejectTaskStatus(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      removeTask(task['id']);
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isPreparing)
+                      _bottomSheetButton(
+                        label: "Đang thực hiện",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Đang thực hiện"',
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 1).then((value) {
+                                    if (value) {
+                                      removeTask(task['id']);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -788,8 +954,7 @@ class TaskPageState extends State<TaskPage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 4).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Xóa thành công!", false);
@@ -811,27 +976,79 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RejectionReasonPopup(
+                                taskId: task['id'],
+                              );
+                            },
+                          ).then((value) {
+                            if (value != null) {
+                              removeTask(task['id']);
+                            }
+                          });
+                        },
+                        cls: Colors.red[300]!,
+                        context: context,
+                      ),
+                    if (isExecuting)
+                      _bottomSheetButton(
+                        label: "Hoàn thành",
+                        onTap: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context1) {
                               return ConfirmDeleteDialog(
-                                title: "Xóa công việc",
-                                content: "Bạn có chắc muốn xóa công việc này?",
+                                title: "Đổi trạng thái",
+                                content: 'Chuyển công việc sang "Hoàn thành"',
                                 onConfirm: () {
-                                  changeTaskStatus(task['id'], 4).then((value) {
+                                  changeTaskStatus(task['id'], 2).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
-                                          "Xóa thành công!", false);
+                                          "Đổi thành công!", false);
                                     } else {
                                       SnackbarShowNoti.showSnackbar(
                                           "Xảy ra lỗi!", true);
                                     }
                                   });
                                 },
-                                buttonConfirmText: "Xóa",
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isExecuting)
+                      _bottomSheetButton(
+                        label: "Không hoàn thành",
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Không hoàn thành"',
+                                onConfirm: () {
+                                  changeTaskStatus(task['id'], 3).then((value) {
+                                    if (value) {
+                                      removeTask(task['id']);
+                                      Navigator.of(context).pop();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
                               );
                             },
                           );
@@ -839,11 +1056,19 @@ class TaskPageState extends State<TaskPage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isCompleted)
+                    if (isCompleted || isNotCompleted)
                       _bottomSheetButton(
-                        label: "Đánh giá",
+                        label: "Chấm công",
                         onTap: () {
                           Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => TimeKeepingInTask(
+                                taskId: task['id'],
+                                taskName: task['name'],
+                              ),
+                            ),
+                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
