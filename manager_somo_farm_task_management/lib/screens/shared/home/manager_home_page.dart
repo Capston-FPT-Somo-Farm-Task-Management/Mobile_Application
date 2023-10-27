@@ -37,31 +37,65 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   bool isMoreLeft = false;
   String? role;
   int? userId;
+  bool isLoadingMore = false;
+  int page = 1;
+  final scrollController = ScrollController();
+  Future<void> _scrollListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      setState(() {
+        isLoadingMore = true;
+      });
+      page = page + 1;
+      await _getTasksForSelectedDateAndStatus(
+          page, 10, _selectedDate, groupValue, false);
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
+  }
+
+  void removeTask(int taskId) {
+    setState(() {
+      tasks.removeWhere((task) => task['id'] == taskId);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
     initializeDateFormatting('vi_VN', null);
     getRoleAndUserId().then((_) {
-      _getTasksForSelectedDateAndStatus(DateTime.now(), 0);
+      _getTasksForSelectedDateAndStatus(1, 10, DateTime.now(), 0, true);
+    });
+
+    scrollController.addListener(() {
+      _scrollListener();
     });
   }
 
-  Future<void> _getTasksForSelectedDateAndStatus(
-      DateTime selectedDate, int status) async {
+  Future<void> _getTasksForSelectedDateAndStatus(int index, int pageSize,
+      DateTime selectedDate, int status, bool reset) async {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
-      selectedDateTasks = await TaskService()
-          .getTasksByManagerIdDateStatus(userId!, selectedDate, status);
+      selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
+          index, pageSize, userId!, selectedDate, status);
     } else {
-      selectedDateTasks = await TaskService()
-          .getTasksBySupervisorIdDateStatus(userId!, selectedDate, status);
+      selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
+          index, pageSize, userId!, selectedDate, status);
     }
-
-    setState(() {
-      tasks = selectedDateTasks;
-      isLoading = false;
-    });
+    if (reset) {
+      setState(() {
+        tasks = selectedDateTasks;
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        tasks = tasks + selectedDateTasks;
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> getRoleAndUserId() async {
@@ -174,7 +208,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   _selectedDate = date;
                   isLoading = true;
                 });
-                _getTasksForSelectedDateAndStatus(date, groupValue);
+                _getTasksForSelectedDateAndStatus(
+                    1, 10, date, groupValue, true);
               },
               locale: 'vi_VN',
             ),
@@ -209,7 +244,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               isLoading = true;
                             });
                             _getTasksForSelectedDateAndStatus(
-                                _selectedDate, groupValue);
+                                1, 10, _selectedDate, groupValue, true);
                           },
                           groupValue: groupValue,
                         ),
@@ -244,7 +279,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               groupValue = newValue;
                             });
                             _getTasksForSelectedDateAndStatus(
-                                _selectedDate, groupValue);
+                                1, 10, _selectedDate, groupValue, true);
                           },
                           groupValue: groupValue,
                         ),
@@ -291,70 +326,81 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   )
                 : RefreshIndicator(
                     onRefresh: () => _getTasksForSelectedDateAndStatus(
-                        _selectedDate, groupValue),
+                        1, 10, _selectedDate, groupValue, true),
                     child: ListView.builder(
-                        itemCount: tasks.length,
+                        itemCount:
+                            isLoadingMore ? tasks.length + 1 : tasks.length,
+                        controller: scrollController,
                         itemBuilder: (_, index) {
-                          Map<String, dynamic> task = tasks[index];
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            child: SlideAnimation(
-                              child: FadeInAnimation(
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        // showDialog(
-                                        //   context: context,
-                                        //   builder: (BuildContext context) {
-                                        //     return TaskDetailsPopup(task: task);
-                                        //   },
-                                        // );
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                TaskDetailsPage(
-                                                    taskId: task['id']),
-                                          ),
-                                        );
-                                      },
-                                      onLongPress: () {
-                                        _showBottomSheet(context, task,
-                                            _selectedDate, role!);
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          TaskTile(task),
-                                          if (role == "Manager" &&
-                                                  task['managerName'] == null ||
-                                              role == "Supervisor" &&
-                                                  task['managerName'] != null)
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              alignment: Alignment.topRight,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 15),
-                                              child: Tooltip(
-                                                message: role == "Manager"
-                                                    ? 'Công việc do người giám sát tạo'
-                                                    : 'Công việc do người quản lí tạo',
-                                                child: Icon(
-                                                  Icons.account_circle_rounded,
-                                                  color: Colors.grey[200],
+                          if (index < tasks.length) {
+                            Map<String, dynamic> task = tasks[index];
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              child: SlideAnimation(
+                                child: FadeInAnimation(
+                                  child: Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          // showDialog(
+                                          //   context: context,
+                                          //   builder: (BuildContext context) {
+                                          //     return TaskDetailsPopup(task: task);
+                                          //   },
+                                          // );
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TaskDetailsPage(
+                                                      taskId: task['id']),
+                                            ),
+                                          );
+                                        },
+                                        onLongPress: () {
+                                          _showBottomSheet(context, task,
+                                              _selectedDate, role!);
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            TaskTile(task),
+                                            if (role == "Manager" &&
+                                                    task['managerName'] ==
+                                                        null ||
+                                                role == "Supervisor" &&
+                                                    task['managerName'] != null)
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                alignment: Alignment.topRight,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15),
+                                                child: Tooltip(
+                                                  message: role == "Manager"
+                                                      ? 'Công việc do người giám sát tạo'
+                                                      : 'Công việc do người quản lí tạo',
+                                                  child: Icon(
+                                                    Icons
+                                                        .account_circle_rounded,
+                                                    color: Colors.grey[200],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                  color: kPrimaryColor),
+                            );
+                          }
                         }),
                   ));
   }
@@ -463,8 +509,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 4).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Xóa thành công!", false);
@@ -566,11 +611,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               );
                             },
                           ).then((value) => {
-                                if (value != null)
-                                  {
-                                    _getTasksForSelectedDateAndStatus(
-                                        _selectedDate, groupValue)
-                                  }
+                                if (value != null) {removeTask(task['id'])}
                               });
                         },
                         cls: kPrimaryColor,
@@ -592,8 +633,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                   cancelRejectTaskStatus(task['id'])
                                       .then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
                                     } else {
@@ -624,8 +664,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 1).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
@@ -656,8 +695,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 4).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Xóa thành công!", false);
@@ -689,8 +727,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             },
                           ).then((value) {
                             if (value != null) {
-                              _getTasksForSelectedDateAndStatus(
-                                  _selectedDate, groupValue);
+                              removeTask(task['id']);
                             }
                           });
                         },
@@ -710,8 +747,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 2).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
@@ -743,8 +779,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 onConfirm: () {
                                   changeTaskStatus(task['id'], 3).then((value) {
                                     if (value) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          _selectedDate, groupValue);
+                                      removeTask(task['id']);
                                       Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
