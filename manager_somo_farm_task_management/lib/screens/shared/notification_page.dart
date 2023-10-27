@@ -19,6 +19,27 @@ class _NotificationPageState extends State<NotificationPage>
   List<String> optionsNoti = ["Đánh dấu chưa đọc", "Xóa thông báo"];
   List<Map<String, dynamic>> filteredNoti = [];
   int? userId;
+  bool isLoadingMore = false;
+  int page = 1;
+  final scrollController = ScrollController();
+  Future<void> _scrollListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      setState(() {
+        isLoadingMore = true;
+      });
+      page = page + 1;
+      if (showUnreadOnly) {
+        await getNotSeenNoti(page, 10, false);
+      } else {
+        await getAllNoti(page, 10, false);
+      }
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
+  }
+
   Future<void> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userIdStored = prefs.getInt('userId');
@@ -27,32 +48,53 @@ class _NotificationPageState extends State<NotificationPage>
     });
   }
 
-  void getNotSeenNoti() {
-    NotiService().getNotSeenNotificationByMemberId(userId!).then((value) {
-      setState(() {
-        filteredNoti = value;
-        isLoading = false;
-      });
+  Future<void> getNotSeenNoti(int index, int pageSize, bool isReset) async {
+    await NotiService()
+        .getNotSeenNotificationByMemberId(index, pageSize, userId!)
+        .then((value) {
+      if (isReset) {
+        setState(() {
+          filteredNoti = value;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          filteredNoti = filteredNoti + value;
+          isLoading = false;
+        });
+      }
     });
   }
 
-  void getAllNoti() {
-    NotiService().getAllNotificationByMemberId(userId!).then((value) {
-      setState(() {
-        filteredNoti = value;
-        isLoading = false;
-      });
+  Future<void> getAllNoti(int index, int pageSize, bool isReset) async {
+    await NotiService()
+        .getAllNotificationByMemberId(index, pageSize, userId!)
+        .then((value) {
+      if (isReset) {
+        setState(() {
+          filteredNoti = value;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          filteredNoti = filteredNoti + value;
+          isLoading = false;
+        });
+      }
     });
   }
 
   void initData() {
     getUserId().then((_) {
-      NotiService().getAllNotificationByMemberId(userId!).then((value) {
+      NotiService().getAllNotificationByMemberId(1, 10, userId!).then((value) {
         setState(() {
           filteredNoti = value;
           isLoading = false;
         });
       });
+    });
+    scrollController.addListener(() {
+      _scrollListener();
     });
   }
 
@@ -60,7 +102,7 @@ class _NotificationPageState extends State<NotificationPage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       // Gọi hàm cập nhật số lượng thông báo khi ứng dụng được khôi phục
-      showUnreadOnly ? getNotSeenNoti() : getAllNoti();
+      showUnreadOnly ? getNotSeenNoti(1, 10, true) : getAllNoti(1, 10, true);
     }
   }
 
@@ -75,7 +117,7 @@ class _NotificationPageState extends State<NotificationPage>
     super.initState();
     initData();
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      showUnreadOnly ? getNotSeenNoti() : getAllNoti();
+      showUnreadOnly ? getNotSeenNoti(1, 10, true) : getAllNoti(1, 10, true);
     });
     WidgetsBinding.instance.addObserver(this);
   }
@@ -125,7 +167,8 @@ class _NotificationPageState extends State<NotificationPage>
                       setState(() {
                         showUnreadOnly = false;
                         isLoading = true;
-                        getAllNoti();
+                        page = 1;
+                        getAllNoti(1, 10, true);
                       });
                     },
                     child: Container(
@@ -157,7 +200,8 @@ class _NotificationPageState extends State<NotificationPage>
                       setState(() {
                         showUnreadOnly = true;
                         isLoading = true;
-                        getNotSeenNoti();
+                        page = 1;
+                        getNotSeenNoti(1, 10, true);
                       });
                     },
                     child: Container(
@@ -221,141 +265,153 @@ class _NotificationPageState extends State<NotificationPage>
                         : RefreshIndicator(
                             onRefresh: () async {
                               if (showUnreadOnly) {
-                                getNotSeenNoti();
+                                getNotSeenNoti(1, 10, true);
                               } else {
-                                getAllNoti();
+                                getAllNoti(1, 10, true);
                               }
                               // Add a return statement or throw an error here if needed.
                             },
                             child: ListView.builder(
-                                itemCount: filteredNoti.length,
+                                itemCount: isLoadingMore
+                                    ? filteredNoti.length + 1
+                                    : filteredNoti.length,
+                                controller: scrollController,
                                 itemExtent: 90,
                                 itemBuilder: (_, index) {
-                                  Map<String, dynamic> noti =
-                                      filteredNoti[index];
-                                  bool isRead = noti['isRead'] ?? false;
-                                  String message = noti['message'];
-                                  return AnimationConfiguration.staggeredList(
-                                    position: index,
-                                    child: SlideAnimation(
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TaskDetailsPage(
-                                                      taskId: noti['taskId']),
-                                            ),
-                                          );
-                                          NotiService()
-                                              .isReadNoti(noti['id'])
-                                              .then((value) {
-                                            showUnreadOnly
-                                                ? getNotSeenNoti()
-                                                : getAllNoti();
-                                          }).catchError((e) {
-                                            SnackbarShowNoti.showSnackbar(
-                                                e.toString(), true);
-                                          });
-                                        },
-                                        child: Container(
-                                          color: isRead
-                                              ? Colors.white
-                                              : Color.fromARGB(
-                                                  255, 209, 222, 233),
+                                  if (index < filteredNoti.length) {
+                                    Map<String, dynamic> noti =
+                                        filteredNoti[index];
+                                    bool isRead = noti['isRead'] ?? false;
+                                    String message = noti['message'];
+                                    return AnimationConfiguration.staggeredList(
+                                      position: index,
+                                      child: SlideAnimation(
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TaskDetailsPage(
+                                                        taskId: noti['taskId']),
+                                              ),
+                                            );
+                                            NotiService()
+                                                .isReadNoti(noti['id'])
+                                                .then((value) {
+                                              showUnreadOnly
+                                                  ? getNotSeenNoti(1, 10, true)
+                                                  : getAllNoti(1, 10, true);
+                                            }).catchError((e) {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  e.toString(), true);
+                                            });
+                                          },
                                           child: Container(
-                                            margin: EdgeInsets.only(top: 10),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                ListTile(
-                                                  leading: Icon(
-                                                    Icons.notifications,
-                                                    color: Colors.black,
-                                                  ),
-                                                  title: message.contains("'")
-                                                      ? RichText(
-                                                          text: TextSpan(
-                                                            style: DefaultTextStyle
-                                                                    .of(context)
-                                                                .style
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        16),
-                                                            children: [
-                                                              TextSpan(
-                                                                text: message
-                                                                    .substring(
-                                                                        0,
-                                                                        message.indexOf("'") +
-                                                                            1),
-                                                              ),
-                                                              TextSpan(
-                                                                text: message
-                                                                    .substring(
-                                                                  message.indexOf(
-                                                                          "'") +
-                                                                      1,
-                                                                  message
-                                                                      .lastIndexOf(
-                                                                          "'"),
+                                            color: isRead
+                                                ? Colors.white
+                                                : Color.fromARGB(
+                                                    255, 209, 222, 233),
+                                            child: Container(
+                                              margin: EdgeInsets.only(top: 10),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ListTile(
+                                                    leading: Icon(
+                                                      Icons.notifications,
+                                                      color: Colors.black,
+                                                    ),
+                                                    title: message.contains("'")
+                                                        ? RichText(
+                                                            text: TextSpan(
+                                                              style: DefaultTextStyle
+                                                                      .of(
+                                                                          context)
+                                                                  .style
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          16),
+                                                              children: [
+                                                                TextSpan(
+                                                                  text: message
+                                                                      .substring(
+                                                                          0,
+                                                                          message.indexOf("'") +
+                                                                              1),
                                                                 ),
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              TextSpan(
-                                                                text: message
-                                                                    .substring(message
+                                                                TextSpan(
+                                                                  text: message
+                                                                      .substring(
+                                                                    message.indexOf(
+                                                                            "'") +
+                                                                        1,
+                                                                    message
                                                                         .lastIndexOf(
-                                                                            "'")),
-                                                                // Không cần style ở đây vì đã được thiết lập ở style chung
-                                                              ),
-                                                            ],
+                                                                            "'"),
+                                                                  ),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                TextSpan(
+                                                                  text: message
+                                                                      .substring(
+                                                                          message
+                                                                              .lastIndexOf("'")),
+                                                                  // Không cần style ở đây vì đã được thiết lập ở style chung
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : Text(noti['message']),
+                                                    subtitle: Text(
+                                                      noti['time'],
+                                                      style: TextStyle(
+                                                        height: 2,
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                    ),
+                                                    trailing:
+                                                        PopupMenuButton<String>(
+                                                      icon: Icon(
+                                                        Icons.more_horiz,
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                      onSelected:
+                                                          (String selected) {},
+                                                      itemBuilder: (BuildContext
+                                                          context) {
+                                                        return [
+                                                          PopupMenuItem<String>(
+                                                            value: 'delete',
+                                                            child: Text(
+                                                                'Xóa thông báo'),
                                                           ),
-                                                        )
-                                                      : Text(noti['message']),
-                                                  subtitle: Text(
-                                                    noti['time'],
-                                                    style: TextStyle(
-                                                      height: 2,
-                                                      color: Colors.grey[700],
+                                                          PopupMenuItem<String>(
+                                                            value:
+                                                                'markAsUnread',
+                                                            child: Text(
+                                                                'Đánh dấu chưa đọc'),
+                                                          ),
+                                                        ];
+                                                      },
                                                     ),
                                                   ),
-                                                  trailing:
-                                                      PopupMenuButton<String>(
-                                                    icon: Icon(
-                                                      Icons.more_horiz,
-                                                      color: Colors.grey[700],
-                                                    ),
-                                                    onSelected:
-                                                        (String selected) {},
-                                                    itemBuilder:
-                                                        (BuildContext context) {
-                                                      return [
-                                                        PopupMenuItem<String>(
-                                                          value: 'delete',
-                                                          child: Text(
-                                                              'Xóa thông báo'),
-                                                        ),
-                                                        PopupMenuItem<String>(
-                                                          value: 'markAsUnread',
-                                                          child: Text(
-                                                              'Đánh dấu chưa đọc'),
-                                                        ),
-                                                      ];
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                          color: kPrimaryColor),
+                                    );
+                                  }
                                 }),
                           )),
           ],
@@ -391,7 +447,9 @@ class _NotificationPageState extends State<NotificationPage>
                   });
                   NotiService().makeAllNotiIsRead(userId!).then((value) {
                     if (value) {
-                      showUnreadOnly ? getNotSeenNoti() : getAllNoti();
+                      showUnreadOnly
+                          ? getNotSeenNoti(1, 10, true)
+                          : getAllNoti(1, 10, true);
                     }
                     setState(() {
                       isLoading = false;
