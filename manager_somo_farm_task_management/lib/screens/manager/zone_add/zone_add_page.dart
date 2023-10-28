@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
@@ -111,60 +112,112 @@ class CreateZoneState extends State<CreateZone> {
                       hint: "Nhập diện tích",
                       controller: _fZoneController,
                     ),
-                    MyInputField(
-                      title: "Loại vùng",
-                      hint: _selectedZoneType,
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (Map<String, dynamic>? newValue) {
-                          setState(() {
-                            _selectedZoneType = newValue!['name'];
-                            _selectedZoneTypeId = newValue['id'];
-                          });
-                        },
-                        items: filteredZoneType
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Loại vùng",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (Map<String, dynamic>? newValue) {
+                                    setState(() {
+                                      _selectedZoneType = newValue!['name'];
+                                      _selectedZoneTypeId = newValue['id'];
+                                    });
+                                  },
+                                  items: filteredZoneType.map<
+                                          DropdownMenuItem<
+                                              Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                    return DropdownMenuItem<
+                                        Map<String, dynamic>>(
+                                      value: value,
+                                      child: Text(value['name']),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedZoneType))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    MyInputField(
-                      title: "Vùng thuộc khu vực",
-                      hint: _selectedArea,
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (Map<String, dynamic>? newValue) {
-                          setState(() {
-                            _selectedArea = newValue!['name'];
-                            _selectedAreaId = newValue['id'];
-                          });
-                        },
-                        items: filteredArea
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Vùng thuộc khu vực",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (Map<String, dynamic>? newValue) {
+                                    setState(() {
+                                      _selectedArea = newValue!['name'];
+                                      _selectedAreaId = newValue['id'];
+                                    });
+                                  },
+                                  items: filteredArea.map<
+                                          DropdownMenuItem<
+                                              Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                    return DropdownMenuItem<
+                                        Map<String, dynamic>>(
+                                      value: value,
+                                      child: Text(value['nameCode']),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17, left: 16, child: Text(_selectedArea))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 40),

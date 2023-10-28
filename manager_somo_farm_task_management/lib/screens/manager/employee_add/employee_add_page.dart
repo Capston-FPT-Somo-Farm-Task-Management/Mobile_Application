@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -120,80 +121,138 @@ class CreateEmployeeState extends State<CreateEmployee> {
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,
                     ),
-                    MyInputField(
-                      title: "Tỉnh/Thành phố",
-                      hint: _selectedProvinces!,
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (Map<String, dynamic>? newValue) {
-                          setState(() {
-                            _selectedProvinces = newValue!['name'];
-                            _selectedWar = "";
-                            filteredWars = [];
-                          });
-                          // Lọc danh sách Zone tương ứng với Area đã chọn
-                          getDistrictsByProvinceCode(newValue!['code'])
-                              .then((value) {
-                            setState(() {
-                              filteredDistrict = value;
-                              // Gọi setState để cập nhật danh sách zone
-                              _selectedDistrict =
-                                  value.isEmpty ? "Chưa có" : "Chọn";
-                            });
-                          });
-                        },
-                        items: filteredProvinces
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(
-                              value['name'],
-                            ),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Tỉnh/Thành phố",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2<Map<String, dynamic>>(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (Map<String, dynamic>? newValue) {
+                                    setState(() {
+                                      _selectedProvinces = newValue!['name'];
+                                      _selectedWar = "";
+                                      filteredWars = [];
+                                    });
+                                    // Lọc danh sách Zone tương ứng với Area đã chọn
+                                    getDistrictsByProvinceCode(
+                                            newValue!['code'])
+                                        .then((value) {
+                                      setState(() {
+                                        filteredDistrict = value;
+                                        // Gọi setState để cập nhật danh sách zone
+                                        _selectedDistrict =
+                                            value.isEmpty ? "Chưa có" : "Chọn";
+                                      });
+                                    });
+                                  },
+                                  items: filteredProvinces.map<
+                                          DropdownMenuItem<
+                                              Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                    return DropdownMenuItem<
+                                        Map<String, dynamic>>(
+                                      value: value,
+                                      child: Text(
+                                        value['name'],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedProvinces!))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    MyInputField(
-                      title: "Quận/Huyện",
-                      hint: _selectedDistrict != null ? _selectedDistrict! : "",
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (Map<String, dynamic>? newValue) {
-                          setState(() {
-                            _selectedDistrict = newValue!['name'];
-                          });
-                          // Lọc danh sách Filed tương ứng với Zone đã chọn
-                          getWarsByDistrictCode(newValue!['code'])
-                              .then((value) {
-                            setState(() {
-                              filteredWars = value;
-                              _selectedWar = value.isEmpty ? "Chưa có" : "Chọn";
-                            });
-                          });
-                        },
-                        items: filteredDistrict
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Quận/Huyện",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2<Map<String, dynamic>>(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (Map<String, dynamic>? newValue) {
+                                    setState(() {
+                                      _selectedDistrict = newValue!['name'];
+                                    });
+                                    // Lọc danh sách Filed tương ứng với Zone đã chọn
+                                    getWarsByDistrictCode(newValue!['code'])
+                                        .then((value) {
+                                      setState(() {
+                                        filteredWars = value;
+                                        _selectedWar =
+                                            value.isEmpty ? "Chưa có" : "Chọn";
+                                      });
+                                    });
+                                  },
+                                  items: filteredDistrict.map<
+                                          DropdownMenuItem<
+                                              Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                    return DropdownMenuItem<
+                                        Map<String, dynamic>>(
+                                      value: value,
+                                      child: Text(value['name']),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedDistrict != null
+                                      ? _selectedDistrict!
+                                      : ""))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     if (_selectedDistrict == "Chưa có")
@@ -202,31 +261,60 @@ class CreateEmployeeState extends State<CreateEmployee> {
                         style: TextStyle(
                             fontSize: 14, color: Colors.red, height: 2),
                       ),
-                    MyInputField(
-                      title: "Phường/Xã",
-                      hint: _selectedWar != null ? _selectedWar! : "",
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (Map<String, dynamic>? newValue) {
-                          setState(() {
-                            _selectedWar = newValue!['name'];
-                          });
-                        },
-                        items: filteredWars
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Phường/Xã",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2<Map<String, dynamic>>(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (Map<String, dynamic>? newValue) {
+                                    setState(() {
+                                      _selectedWar = newValue!['name'];
+                                    });
+                                  },
+                                  items: filteredWars.map<
+                                          DropdownMenuItem<
+                                              Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                    return DropdownMenuItem<
+                                        Map<String, dynamic>>(
+                                      value: value,
+                                      child: Text(value['name']),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedWar != null
+                                      ? _selectedWar!
+                                      : ""))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     Container(
