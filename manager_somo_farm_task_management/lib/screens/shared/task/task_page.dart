@@ -751,7 +751,31 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Không chấp nhận",
                         onTap: () {
-                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Hủy từ chối",
+                                content:
+                                    'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                onConfirm: () {
+                                  Navigator.of(context).pop();
+                                  cancelRejectTaskStatus(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      removeTask(task['id']);
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
                         },
                         cls: Colors.red[300]!,
                         context: context,
