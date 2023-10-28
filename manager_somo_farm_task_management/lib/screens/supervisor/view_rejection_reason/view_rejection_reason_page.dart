@@ -109,7 +109,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                               context: context,
                               builder: (BuildContext context1) {
                                 return ConfirmDeleteDialog(
-                                  title: "Hủy từ chối",
+                                  title: "Không chấp nhận từ chối",
                                   content:
                                       'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                   onConfirm: () {
@@ -121,7 +121,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                                         });
                                         Navigator.of(context).pop("ok");
                                         SnackbarShowNoti.showSnackbar(
-                                            "Hủy thành công!", false);
+                                            "Đổi thành công!", false);
                                       } else {
                                         SnackbarShowNoti.showSnackbar(
                                             "Xảy ra lỗi!", true);
