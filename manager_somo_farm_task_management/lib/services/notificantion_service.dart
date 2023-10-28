@@ -39,7 +39,7 @@ class NotiService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<Map<String, dynamic>> n =
-          List<Map<String, dynamic>>.from(data['data']);
+          List<Map<String, dynamic>>.from(data['data']['notifications']);
       return n;
     } else {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -84,7 +84,7 @@ class NotiService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<Map<String, dynamic>> n =
-          List<Map<String, dynamic>>.from(data['data']);
+          List<Map<String, dynamic>>.from(data['data']['notifications']);
       return n;
     } else {
       final Map<String, dynamic> data = json.decode(response.body);

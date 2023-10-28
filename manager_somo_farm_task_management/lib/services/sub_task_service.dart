@@ -56,39 +56,4 @@ class SubTaskService {
       return Future.error(data['message']);
     }
   }
-
-  Future<List<Map<String, dynamic>>> getEffortByTaskId(int taskId) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/Task(${taskId})/Effort";
-    final response = await http.get(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      final List<Map<String, dynamic>> tasks =
-          List<Map<String, dynamic>>.from(data['data']);
-      return tasks;
-    } else {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return Future.error(data['message']);
-    }
-  }
-
-  Future<bool> createEffort(int taskId, List<Map<String, dynamic>> data) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/Task(${taskId})";
-    var body = jsonEncode(data);
-    final response = await http.put(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
-    print(response.body);
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return Future.error(data['message']);
-    }
-  }
 }

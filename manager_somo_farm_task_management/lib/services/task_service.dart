@@ -86,7 +86,7 @@ class TaskService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<Map<String, dynamic>> tasks =
-          List<Map<String, dynamic>>.from(data['data']);
+          List<Map<String, dynamic>>.from(data['data']['farmTasks']);
       return tasks;
     } else {
       throw Exception(response.body);
@@ -113,7 +113,7 @@ class TaskService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<Map<String, dynamic>> tasks =
-          List<Map<String, dynamic>>.from(data['data']);
+          List<Map<String, dynamic>>.from(data['data']['farmTasks']);
       return tasks;
     } else {
       throw Exception(response.body);
