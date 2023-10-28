@@ -679,7 +679,7 @@ class TaskPageState extends State<TaskPage> {
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.30
+                    ? MediaQuery.of(context).size.height * 0.35
                     : MediaQuery.of(context).size.height * 0.32,
                 color: kBackgroundColor,
                 child: Column(
