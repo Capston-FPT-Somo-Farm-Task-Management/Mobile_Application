@@ -283,7 +283,9 @@ class EmployeekPageState extends State<EmployeekPage> {
                                   ;
                                 },
                                 onLongPress: () {
-                                  _showBottomSheet(context, employee);
+                                  widget.role == "Manager"
+                                      ? _showBottomSheet(context, employee)
+                                      : null;
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
