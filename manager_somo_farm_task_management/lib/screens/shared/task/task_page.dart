@@ -704,6 +704,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
+                                role: role,
                                 task: task,
                               ),
                             ),
@@ -848,6 +849,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
+                                role: role,
                                 task: task,
                               ),
                             ),

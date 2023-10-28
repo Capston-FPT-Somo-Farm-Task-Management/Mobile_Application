@@ -446,6 +446,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
                                 task: task,
+                                role: role,
                               ),
                             ),
                           );
@@ -589,6 +590,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
+                                role: role,
                                 task: task,
                               ),
                             ),
