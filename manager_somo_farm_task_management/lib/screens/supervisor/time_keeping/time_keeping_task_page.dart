@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/services/effort_service.dart';
 import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
 
 class TimeKeepingInTask extends StatefulWidget {
@@ -20,7 +21,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   List<TextEditingController> controllers = [];
   bool isSaveEnabled = false;
   void getEmployees() {
-    SubTaskService().getEffortByTaskId(widget.taskId).then((value) {
+    EffortService().getEffortByTaskId(widget.taskId).then((value) {
       setState(() {
         employees = value;
         for (int i = 0; i < employees.length; i++) {
@@ -34,7 +35,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   }
 
   Future<bool> createEffort(List<Map<String, dynamic>> data) {
-    return SubTaskService().createEffort(widget.taskId, data);
+    return EffortService().createEffort(widget.taskId, data);
   }
 
   bool areChangesMade() {
