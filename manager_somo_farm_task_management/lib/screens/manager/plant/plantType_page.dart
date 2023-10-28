@@ -155,11 +155,8 @@ class PlantTypePageState extends State<PlantTypePage> {
                 child: ListView.builder(
                   itemCount: plants.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> liveStock = plants[index];
+                    Map<String, dynamic> plant = plants[index];
 
-                    if (liveStock['status'] == 'Inactive') {
-                      return SizedBox.shrink();
-                    }
                     return Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
@@ -187,7 +184,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                             ],
                           ),
                           child: Container(
-                            padding: const EdgeInsets.only(top: 27, left: 20),
+                            padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(15)),
@@ -202,12 +199,40 @@ class PlantTypePageState extends State<PlantTypePage> {
                                         CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        liveStock['name'],
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              plant['name'],
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: plant['isActive'] == false
+                                                  ? Colors.red[400]
+                                                  : kPrimaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: const EdgeInsets.all(10),
+                                            child: Text(
+                                              plant['isActive'] == true
+                                                  ? "Active"
+                                                  : "Inactive",
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
