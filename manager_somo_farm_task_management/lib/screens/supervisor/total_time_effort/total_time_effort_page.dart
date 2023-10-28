@@ -180,7 +180,7 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate:
-          isStartDate ? startDate ?? DateTime.now() : endDate ?? DateTime.now(),
+          isStartDate ? endDate ?? DateTime.now() : startDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       selectableDayPredicate: (DateTime date) {
