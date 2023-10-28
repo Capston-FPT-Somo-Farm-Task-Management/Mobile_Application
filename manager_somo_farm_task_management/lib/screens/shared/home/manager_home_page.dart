@@ -467,7 +467,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 role: role,
                               );
                             },
-                          );
+                          ).then((value) =>
+                              {if (value != null) removeTask(task['id'])});
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -496,7 +497,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             context: context,
                             builder: (BuildContext context1) {
                               return ConfirmDeleteDialog(
-                                title: "Hủy từ chối",
+                                title: "Không chấp nhận từ chối",
                                 content:
                                     'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                 onConfirm: () {

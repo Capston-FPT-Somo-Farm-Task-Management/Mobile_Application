@@ -726,7 +726,8 @@ class TaskPageState extends State<TaskPage> {
                                 role: role,
                               );
                             },
-                          );
+                          ).then((value) =>
+                              {if (value != null) removeTask(task['id'])});
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -755,7 +756,7 @@ class TaskPageState extends State<TaskPage> {
                             context: context,
                             builder: (BuildContext context1) {
                               return ConfirmDeleteDialog(
-                                title: "Hủy từ chối",
+                                title: "Không chấp nhận từ chối",
                                 content:
                                     'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                 onConfirm: () {
