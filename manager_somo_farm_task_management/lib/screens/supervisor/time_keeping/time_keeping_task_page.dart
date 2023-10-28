@@ -39,12 +39,25 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   }
 
   bool areChangesMade() {
+    return checkEmpty() && checkChanges();
+  }
+
+  bool checkChanges() {
     for (int i = 0; i < employees.length; i++) {
       if (controllers[i].text != employees[i]['effortTime'].toString()) {
         return true;
       }
     }
     return false;
+  }
+
+  bool checkEmpty() {
+    for (int i = 0; i < employees.length; i++) {
+      if (controllers[i].text.isEmpty) {
+        return false;
+      }
+    }
+    return true;
   }
 
   List<Map<String, dynamic>> getUpdatedEffortData() {

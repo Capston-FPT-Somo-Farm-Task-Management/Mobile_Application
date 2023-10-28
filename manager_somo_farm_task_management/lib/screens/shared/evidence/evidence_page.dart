@@ -6,9 +6,10 @@ import 'package:manager_somo_farm_task_management/services/evidence_service.dart
 import 'package:photo_manager/photo_manager.dart';
 
 class EvidencePage extends StatefulWidget {
+  final String role;
   final Map<String, dynamic> task;
 
-  const EvidencePage({super.key, required this.task});
+  const EvidencePage({super.key, required this.task, required this.role});
   @override
   EvidencePageState createState() => EvidencePageState();
 }
@@ -36,23 +37,25 @@ class EvidencePageState extends State<EvidencePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimaryColor,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    CreateEvidencePage(taskId: widget.task['id'])),
-          ).then((value) {
-            if (value != null) {
-              getEvdidence();
-            }
-          });
-        },
-        tooltip: 'Thêm Báo Cáo',
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: widget.role == "Manager"
+          ? null
+          : FloatingActionButton(
+              backgroundColor: kPrimaryColor,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CreateEvidencePage(taskId: widget.task['id'])),
+                ).then((value) {
+                  if (value != null) {
+                    getEvdidence();
+                  }
+                });
+              },
+              tooltip: 'Thêm Báo Cáo',
+              child: Icon(Icons.add),
+            ),
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(

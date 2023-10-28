@@ -679,7 +679,7 @@ class TaskPageState extends State<TaskPage> {
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.30
+                    ? MediaQuery.of(context).size.height * 0.35
                     : MediaQuery.of(context).size.height * 0.32,
                 color: kBackgroundColor,
                 child: Column(
@@ -704,6 +704,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
+                                role: role,
                                 task: task,
                               ),
                             ),
@@ -725,7 +726,8 @@ class TaskPageState extends State<TaskPage> {
                                 role: role,
                               );
                             },
-                          );
+                          ).then((value) =>
+                              {if (value != null) removeTask(task['id'])});
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -750,7 +752,31 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Không chấp nhận",
                         onTap: () {
-                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Không chấp nhận từ chối",
+                                content:
+                                    'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                onConfirm: () {
+                                  Navigator.of(context).pop();
+                                  cancelRejectTaskStatus(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      removeTask(task['id']);
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
                         },
                         cls: Colors.red[300]!,
                         context: context,
@@ -840,7 +866,11 @@ class TaskPageState extends State<TaskPage> {
                     if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
-                        isNotCompleted)
+                        isNotCompleted ||
+                        isPreparing &&
+                            DateTime.now()
+                                .add(Duration(minutes: 30))
+                                .isAfter(DateTime.parse(task['startDate'])))
                       _bottomSheetButton(
                         label: "Báo cáo",
                         onTap: () {
@@ -848,6 +878,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
+                                role: role,
                                 task: task,
                               ),
                             ),
@@ -972,7 +1003,11 @@ class TaskPageState extends State<TaskPage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isPreparing && task['managerName'] != null)
+                    if (isPreparing &&
+                        task['managerName'] != null &&
+                        DateTime.now()
+                            .add(Duration(minutes: 30))
+                            .isBefore(DateTime.parse(task['startDate'])))
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {

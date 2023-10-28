@@ -420,7 +420,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
               return Container(
                 padding: const EdgeInsets.only(top: 4),
                 height: isRejected
-                    ? MediaQuery.of(context).size.height * 0.30
+                    ? MediaQuery.of(context).size.height * 0.35
                     : MediaQuery.of(context).size.height * 0.32,
                 color: kBackgroundColor,
                 child: Column(
@@ -446,6 +446,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
                                 task: task,
+                                role: role,
                               ),
                             ),
                           );
@@ -466,7 +467,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 role: role,
                               );
                             },
-                          );
+                          ).then((value) =>
+                              {if (value != null) removeTask(task['id'])});
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -491,7 +493,31 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Không chấp nhận",
                         onTap: () {
-                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Không chấp nhận từ chối",
+                                content:
+                                    'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                onConfirm: () {
+                                  Navigator.of(context).pop();
+                                  cancelRejectTaskStatus(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      removeTask(task['id']);
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
                         },
                         cls: Colors.red[300]!,
                         context: context,
@@ -563,7 +589,13 @@ class ManagerHomePageState extends State<ManagerHomePage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected || isCompleted || isNotCompleted
+                height: isRejected ||
+                        isCompleted ||
+                        isNotCompleted ||
+                        isPreparing &&
+                            DateTime.now()
+                                .add(Duration(minutes: 30))
+                                .isAfter(DateTime.parse(task['startDate']))
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
@@ -589,6 +621,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
+                                role: role,
                                 task: task,
                               ),
                             ),
@@ -713,7 +746,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isPreparing && task['managerName'] != null)
+                    if (isPreparing &&
+                        task['managerName'] != null &&
+                        DateTime.now()
+                            .add(Duration(minutes: 30))
+                            .isBefore(DateTime.parse(task['startDate'])))
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {
