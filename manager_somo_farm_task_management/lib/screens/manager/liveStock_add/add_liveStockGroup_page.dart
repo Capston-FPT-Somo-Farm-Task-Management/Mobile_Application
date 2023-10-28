@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
@@ -108,68 +109,115 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                 hint: "Nhập diện tích",
                 controller: _areaController,
               ),
-              MyInputField(
-                title: "Khu vực",
-                hint: _selectedArea,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedArea = newValue!['name'];
-                    });
-                    // Lọc danh sách Zone tương ứng với Area đã chọn
-                    getZonesbyAreaLivestockId(newValue!['id']).then((value) {
-                      setState(() {
-                        filteredZone = value;
-                        // Gọi setState để cập nhật danh sách zone
-                        _selectedZone = value.isEmpty ? "Chưa có" : "Chọn";
-                      });
-                    });
-                  },
-                  items: filteredArea
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Khu vực",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            // value: _selectedArea,
+                            onChanged: (Map<String, dynamic>? newValue) {
+                              setState(() {
+                                _selectedArea = newValue!['nameCode'];
+                              });
+                              // Lọc danh sách Zone tương ứng với Area đã chọn
+                              getZonesbyAreaLivestockId(newValue!['id'])
+                                  .then((value) {
+                                setState(() {
+                                  filteredZone = value;
+                                  // Gọi setState để cập nhật danh sách zone
+                                  _selectedZone =
+                                      value.isEmpty ? "Chưa có" : "Chọn";
+                                });
+                              });
+                            },
+                            items: filteredArea
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nameCode']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedArea))
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              MyInputField(
-                title: "Vùng",
-                hint: _selectedZone,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedZone = newValue!['name'];
-                      zoneId = newValue['id'];
-                    });
-                    // Lọc danh sách Filed tương ứng với Zone đã chọn
-                  },
-                  items: filteredZone
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Vùng",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            // value: _selectedArea,
+                            onChanged: (Map<String, dynamic>? newValue) {
+                              setState(() {
+                                _selectedZone = newValue!['nameCode'];
+                                zoneId = newValue['id'];
+                              });
+                            },
+                            items: filteredZone
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nameCode']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedZone))
+                      ],
+                    ),
+                  ],
                 ),
               ),
               if (_selectedZone == "Chưa có")
