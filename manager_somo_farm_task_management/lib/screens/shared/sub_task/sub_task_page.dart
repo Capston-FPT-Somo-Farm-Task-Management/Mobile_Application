@@ -8,7 +8,6 @@ import 'package:manager_somo_farm_task_management/componets/wrap_words_with_elli
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task_add/sub_task_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task_update/sub_task_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
-import 'package:remove_diacritic/remove_diacritic.dart';
 
 class SubTaskPage extends StatefulWidget {
   final int taskId;
@@ -21,26 +20,17 @@ class SubTaskPage extends StatefulWidget {
 }
 
 class SubTaskPageState extends State<SubTaskPage> {
-  String? selectedFilter;
-  String selectedDate = "";
-  final TextEditingController searchController = TextEditingController();
-  List<Map<String, dynamic>> subTasks = [];
   List<Map<String, dynamic>> filteredTaskList = [];
   bool isLoading = true;
-  int groupValue = 0;
-  bool isMoreLeft = false;
   @override
   initState() {
     super.initState();
     _getSubTask();
   }
 
-  void searchTasks(String keyword) {
+  void removeTask(int employeeId) {
     setState(() {
-      filteredTaskList = subTasks
-          .where((task) => removeDiacritics(task['name'].toLowerCase())
-              .contains(removeDiacritics(keyword.toLowerCase())))
-          .toList();
+      filteredTaskList.removeWhere((task) => task['employeeId'] == employeeId);
     });
   }
 
@@ -48,11 +38,10 @@ class SubTaskPageState extends State<SubTaskPage> {
     SubTaskService().getSubTaskByTaskId(widget.taskId).then((value) {
       setState(() {
         isLoading = false;
-        subTasks = value;
         filteredTaskList = value;
       });
     }).catchError((e) {
-      SnackbarShowNoti.showSnackbar(e, true);
+      // SnackbarShowNoti.showSnackbar(e.toString(), true);
       setState(() {
         isLoading = false;
       });
@@ -379,16 +368,14 @@ class SubTaskPageState extends State<SubTaskPage> {
                         title: "Xóa công việc",
                         content: "Bạn có chắc muốn xóa công việc này?",
                         onConfirm: () {
-                          setState(() {
-                            isLoading = true;
-                          });
+                          Navigator.of(context).pop();
                           SubTaskService()
                               .deleteSubTask(
                                   subTask['taskId'], subTask['employeeId'])
                               .then((value) {
                             if (value) {
-                              _getSubTask();
-                              Navigator.of(context).pop();
+                              removeTask(subTask['employeeId']);
+
                               SnackbarShowNoti.showSnackbar(
                                   "Xóa thành công!", false);
                             }
