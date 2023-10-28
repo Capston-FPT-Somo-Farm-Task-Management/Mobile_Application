@@ -662,10 +662,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 content:
                                     'Chuyển công việc sang "Đang thực hiện"',
                                 onConfirm: () {
+                                  Navigator.of(context).pop();
                                   changeTaskStatus(task['id'], 1).then((value) {
                                     if (value) {
                                       removeTask(task['id']);
-                                      Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
                                     } else {
@@ -745,10 +745,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 title: "Đổi trạng thái",
                                 content: 'Chuyển công việc sang "Hoàn thành"',
                                 onConfirm: () {
+                                  Navigator.of(context).pop();
                                   changeTaskStatus(task['id'], 2).then((value) {
                                     if (value) {
                                       removeTask(task['id']);
-                                      Navigator.of(context).pop();
+
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
                                     } else {

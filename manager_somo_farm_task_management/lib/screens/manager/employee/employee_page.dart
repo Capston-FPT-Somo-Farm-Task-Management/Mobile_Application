@@ -5,6 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_add/employee_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/total_time_effort/total_time_effort_page.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class EmployeekPage extends StatefulWidget {
-  const EmployeekPage({super.key});
+  final String role;
+  const EmployeekPage({super.key, required this.role});
 
   @override
   EmployeekPageState createState() => EmployeekPageState();
@@ -106,43 +108,44 @@ class EmployeekPageState extends State<EmployeekPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreateEmployee(
-                                        farmId: farmId!,
-                                      )),
-                            ).then((value) {
-                              if (value != null) {
-                                getEmployees();
-                                SnackbarShowNoti.showSnackbar(
-                                    'Tạo nhân viên thành công', false);
-                              }
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            minimumSize: Size(100, 45),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                  if (widget.role == "Manager")
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreateEmployee(
+                                          farmId: farmId!,
+                                        )),
+                              ).then((value) {
+                                if (value != null) {
+                                  getEmployees();
+                                  SnackbarShowNoti.showSnackbar(
+                                      'Tạo nhân viên thành công', false);
+                                }
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryColor,
+                              minimumSize: Size(100, 45),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Thêm nhân viên",
+                                style: TextStyle(fontSize: 19),
+                              ),
                             ),
                           ),
-                          child: const Center(
-                            child: Text(
-                              "Thêm nhân viên",
-                              style: TextStyle(fontSize: 19),
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 15),
                   Container(
                     height: 42,
@@ -263,13 +266,21 @@ class EmployeekPageState extends State<EmployeekPage> {
 
                               return GestureDetector(
                                 onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return EmployeeDetailsPopup(
-                                          employee: employee);
-                                    },
-                                  );
+                                  widget.role == "Manager"
+                                      ? showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return EmployeeDetailsPopup(
+                                                employee: employee);
+                                          },
+                                        )
+                                      : Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              TotalTimeEffortPage(
+                                                  employeeId: employee['id']),
+                                        ));
+                                  ;
                                 },
                                 onLongPress: () {
                                   _showBottomSheet(context, employee);
