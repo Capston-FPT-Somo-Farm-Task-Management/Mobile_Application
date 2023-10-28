@@ -20,6 +20,7 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
     EffortService()
         .getTotalEffortByEmployeeId(widget.employeeId, start, end)
         .then((value) {
+      print(value);
       setState(() {
         data = value;
         isLoading = false;
@@ -158,8 +159,8 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                   )
                 : Column(
                     children: [
-                      _buildInfoCard('Mã nhân viên',
-                          data!["employeeId"].toString(), Icons.tag),
+                      _buildInfoCard(
+                          'Mã nhân viên', data!["employeeCode"], Icons.tag),
                       _buildInfoCard('Tên nhân viên', data!["employeeName"],
                           Icons.person_outline),
                       _buildInfoCard('Effort Time',
