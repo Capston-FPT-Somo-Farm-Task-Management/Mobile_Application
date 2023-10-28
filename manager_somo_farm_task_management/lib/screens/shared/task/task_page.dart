@@ -866,7 +866,11 @@ class TaskPageState extends State<TaskPage> {
                     if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
-                        isNotCompleted)
+                        isNotCompleted ||
+                        isPreparing &&
+                            DateTime.now()
+                                .add(Duration(minutes: 30))
+                                .isAfter(DateTime.parse(task['startDate'])))
                       _bottomSheetButton(
                         label: "Báo cáo",
                         onTap: () {
@@ -999,7 +1003,11 @@ class TaskPageState extends State<TaskPage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isPreparing && task['managerName'] != null)
+                    if (isPreparing &&
+                        task['managerName'] != null &&
+                        DateTime.now()
+                            .add(Duration(minutes: 30))
+                            .isBefore(DateTime.parse(task['startDate'])))
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {

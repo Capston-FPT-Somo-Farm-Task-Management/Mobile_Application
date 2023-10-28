@@ -589,7 +589,13 @@ class ManagerHomePageState extends State<ManagerHomePage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected || isCompleted || isNotCompleted
+                height: isRejected ||
+                        isCompleted ||
+                        isNotCompleted ||
+                        isPreparing &&
+                            DateTime.now()
+                                .add(Duration(minutes: 30))
+                                .isAfter(DateTime.parse(task['startDate']))
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
@@ -740,7 +746,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isPreparing && task['managerName'] != null)
+                    if (isPreparing &&
+                        task['managerName'] != null &&
+                        DateTime.now()
+                            .add(Duration(minutes: 30))
+                            .isBefore(DateTime.parse(task['startDate'])))
                       _bottomSheetButton(
                         label: "Từ chối",
                         onTap: () {
