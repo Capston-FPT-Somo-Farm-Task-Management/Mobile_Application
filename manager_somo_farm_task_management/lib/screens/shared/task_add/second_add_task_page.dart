@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -159,45 +160,70 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                 hint: "Nhập tên công việc",
                 controller: _titleController,
               ),
-              MyInputField(
-                title: "Loại công việc",
-                hint: _selectedTaskType,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedTaskType = newValue!['name'];
-                      _selectedTaskTypeId = newValue['id'];
-                      selectedEmployees.clear();
-                      // Gọi setState để cập nhật danh sách người thực hiện
-                      _keyChange =
-                          UniqueKey(); // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ
-                    });
-                    // Lọc danh sách Employee tương ứng với TaskType đã chọn
-                    getEmployeesbyFarmIdAndTaskTypeId(farmId, newValue!['id'])
-                        .then((value) {
-                      setState(() {
-                        filteredEmployees = value;
-                        hintEmployee = value.isEmpty
-                            ? "Không có người phù hợp với loại công việc"
-                            : "Chọn người thực hiện";
-                      });
-                    });
-                  },
-                  items: taskTypes.map<DropdownMenuItem<Map<String, dynamic>>>(
-                      (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Loại công việc",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            // value: _selectedArea,
+                            onChanged: (Map<String, dynamic>? newValue) {
+                              setState(() {
+                                _selectedTaskType = newValue!['name'];
+                                _selectedTaskTypeId = newValue['id'];
+                                selectedEmployees.clear();
+                                // Gọi setState để cập nhật danh sách người thực hiện
+                                _keyChange =
+                                    UniqueKey(); // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ
+                              });
+                              // Lọc danh sách Employee tương ứng với TaskType đã chọn
+                              getEmployeesbyFarmIdAndTaskTypeId(
+                                      farmId, newValue!['id'])
+                                  .then((value) {
+                                setState(() {
+                                  filteredEmployees = value;
+                                  hintEmployee = value.isEmpty
+                                      ? "Không có người phù hợp với loại công việc"
+                                      : "Chọn người thực hiện";
+                                });
+                              });
+                            },
+                            items: taskTypes
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['name']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedTaskType))
+                      ],
+                    ),
+                  ],
                 ),
               ),
               Container(

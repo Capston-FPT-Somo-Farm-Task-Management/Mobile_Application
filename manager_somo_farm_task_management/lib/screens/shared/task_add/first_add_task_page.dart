@@ -210,7 +210,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                             // value: _selectedArea,
                             onChanged: (Map<String, dynamic>? newValue) {
                               setState(() {
-                                _selectedZone = newValue!['name'];
+                                _selectedZone = newValue!['nameCode'];
                                 _selectedExternalId = "";
                                 filteredExternalId = [];
                               });
@@ -228,7 +228,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                                     (Map<String, dynamic> value) {
                               return DropdownMenuItem<Map<String, dynamic>>(
                                 value: value,
-                                child: Text(value['name']),
+                                child: Text(value['nameCode']),
                               );
                             }).toList(),
                           ),
@@ -245,51 +245,77 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   "Hãy chọn khu vực khác",
                   style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
                 ),
-              MyInputField(
-                title: widget.isPlant ? "Vườn" : "Chuồng",
-                hint: _selectedField,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedField = newValue!['name'];
-                      fiedlId = newValue['id'];
-                    });
-                    if (widget.isOne) {
-                      widget.isPlant
-                          ? getPlantExternalIdsbyFieldId(newValue!['id'])
-                              .then((value) {
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.isPlant ? "Vườn" : "Chuồng",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            onChanged: (Map<String, dynamic>? newValue) {
                               setState(() {
-                                filteredExternalId = value;
-                                _selectedExternalId =
-                                    value.isEmpty ? "Chưa có" : "Chọn";
+                                _selectedField = newValue!['nameCode'];
+                                fiedlId = newValue['id'];
                               });
-                            })
-                          : getLiveStockExternalIdsbyFieldId(newValue!['id'])
-                              .then((value) {
-                              setState(() {
-                                filteredExternalId = value;
-                                _selectedExternalId =
-                                    value.isEmpty ? "Chưa có" : "Chọn";
-                              });
-                            });
-                    }
-                  },
-                  items: filteredField
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+                              if (widget.isOne) {
+                                widget.isPlant
+                                    ? getPlantExternalIdsbyFieldId(
+                                            newValue!['id'])
+                                        .then((value) {
+                                        setState(() {
+                                          filteredExternalId = value;
+                                          _selectedExternalId = value.isEmpty
+                                              ? "Chưa có"
+                                              : "Chọn";
+                                        });
+                                      })
+                                    : getLiveStockExternalIdsbyFieldId(
+                                            newValue!['id'])
+                                        .then((value) {
+                                        setState(() {
+                                          filteredExternalId = value;
+                                          _selectedExternalId = value.isEmpty
+                                              ? "Chưa có"
+                                              : "Chọn";
+                                        });
+                                      });
+                              }
+                            },
+                            items: filteredField
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nameCode']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedField))
+                      ],
+                    ),
+                  ],
                 ),
               ),
               if (_selectedField == "Chưa có")
@@ -298,34 +324,59 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
                 ),
               if (widget.isOne)
-                MyInputField(
-                  title: widget.isPlant ? "Mã cây trồng" : "Mã vật nuôi",
-                  hint: _selectedExternalId,
-                  widget: DropdownButton(
-                    underline: Container(height: 0),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
-                    ),
-                    iconSize: 32,
-                    elevation: 4,
-                    style: subTitileStyle,
-                    onChanged: (Map<String, dynamic>? newValue) {
-                      setState(() {
-                        _selectedExternalId = newValue!['externalId'];
-                        widget.isPlant
-                            ? plantId = newValue['id']
-                            : liveStockId = newValue['id'];
-                      });
-                    },
-                    items: filteredExternalId
-                        .map<DropdownMenuItem<Map<String, dynamic>>>(
-                            (Map<String, dynamic> value) {
-                      return DropdownMenuItem<Map<String, dynamic>>(
-                        value: value,
-                        child: Text(value['externalId']),
-                      );
-                    }).toList(),
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.isPlant ? "Mã cây trồng" : "Mã vật nuôi",
+                        style: titileStyle,
+                      ),
+                      SizedBox(height: 5),
+                      Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              // value: _selectedArea,
+                              onChanged: (Map<String, dynamic>? newValue) {
+                                setState(() {
+                                  _selectedExternalId = newValue!['externalId'];
+                                  widget.isPlant
+                                      ? plantId = newValue['id']
+                                      : liveStockId = newValue['id'];
+                                });
+                              },
+                              items: filteredExternalId
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['externalId']),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Positioned(
+                              top: 17,
+                              left: 16,
+                              child: Text(_selectedExternalId))
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               if (_selectedExternalId == "Chưa có")
