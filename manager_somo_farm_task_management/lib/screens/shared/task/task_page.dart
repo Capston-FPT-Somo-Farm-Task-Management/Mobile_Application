@@ -6,7 +6,6 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
@@ -470,16 +469,19 @@ class TaskPageState extends State<TaskPage> {
                                                               MainAxisAlignment
                                                                   .spaceBetween,
                                                           children: [
-                                                            Text(
-                                                              wrapWordsWithEllipsis(
-                                                                  task['name'],
-                                                                  20),
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                            Flexible(
+                                                              child: Text(
+                                                                task['name'],
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
                                                             ),
                                                             Container(
@@ -570,16 +572,20 @@ class TaskPageState extends State<TaskPage> {
                                                           ),
                                                           const SizedBox(
                                                               width: 4),
-                                                          Text(
-                                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        13,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -591,28 +597,36 @@ class TaskPageState extends State<TaskPage> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            "Giám sát: ${task['supervisorName']}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Giám sát: ${task['supervisorName']}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
-                                                          Text(
-                                                            "Vị trí: ${task['fieldName']}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Vị trí: ${task['fieldName']}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -641,17 +655,27 @@ class TaskPageState extends State<TaskPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text(
-                                                  'Loại: ${task['taskTypeName']}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[200]),
+                                                Flexible(
+                                                  child: Text(
+                                                    'Loại: ${task['taskTypeName']}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            Colors.grey[200]),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                                Text(
-                                                  'Ưu tiên: ${task['priority']}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[200]),
+                                                Flexible(
+                                                  child: Text(
+                                                    'Ưu tiên: ${task['priority']}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            Colors.grey[200]),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -717,8 +741,8 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
-                                role: role,
                                 task: task,
+                                role: role,
                               ),
                             ),
                           );
@@ -861,7 +885,14 @@ class TaskPageState extends State<TaskPage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected || isCompleted || isNotCompleted
+                height: isRejected ||
+                        isCompleted ||
+                        isNotCompleted ||
+                        isPreparing &&
+                            DateTime.now()
+                                .add(Duration(minutes: 30))
+                                .isAfter(DateTime.parse(task['startDate'])) &&
+                            task['managerName'] != null
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
@@ -879,11 +910,7 @@ class TaskPageState extends State<TaskPage> {
                     if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
-                        isNotCompleted ||
-                        isPreparing &&
-                            DateTime.now()
-                                .add(Duration(minutes: 30))
-                                .isAfter(DateTime.parse(task['startDate'])))
+                        isNotCompleted)
                       _bottomSheetButton(
                         label: "Báo cáo",
                         onTap: () {
@@ -965,10 +992,10 @@ class TaskPageState extends State<TaskPage> {
                                 content:
                                     'Chuyển công việc sang "Đang thực hiện"',
                                 onConfirm: () {
+                                  Navigator.of(context).pop();
                                   changeTaskStatus(task['id'], 1).then((value) {
                                     if (value) {
                                       removeTask(task['id']);
-                                      Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
                                     } else {
@@ -1046,16 +1073,20 @@ class TaskPageState extends State<TaskPage> {
                         label: "Hoàn thành",
                         onTap: () {
                           Navigator.of(context).pop();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => TimeKeepingInTask(
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                isCreate: true,
-                                status: 2,
-                              ),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => TimeKeepingInTask(
+                                    taskId: task['id'],
+                                    taskName: task['name'],
+                                    isCreate: true,
+                                    status: 2,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null) {removeTask(task['id'])}
+                                  });
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -1065,16 +1096,20 @@ class TaskPageState extends State<TaskPage> {
                         label: "Không hoàn thành",
                         onTap: () {
                           Navigator.of(context).pop();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => TimeKeepingInTask(
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                isCreate: true,
-                                status: 3,
-                              ),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => TimeKeepingInTask(
+                                    taskId: task['id'],
+                                    taskName: task['name'],
+                                    isCreate: true,
+                                    status: 3,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null) {removeTask(task['id'])}
+                                  });
                         },
                         cls: Colors.red[300]!,
                         context: context,

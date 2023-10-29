@@ -171,6 +171,7 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => DoneTaskEmployeePage(
+                                employeeName: data!["employeeName"],
                                 employeeId: widget.employeeId,
                                 startDate: startDate,
                                 endDate: endDate,
