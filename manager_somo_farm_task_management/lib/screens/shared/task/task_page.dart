@@ -388,9 +388,11 @@ class TaskPageState extends State<TaskPage> {
                       : Padding(
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: RefreshIndicator(
+                            notificationPredicate: (_) => true,
                             onRefresh: () => _getTasksForSelectedDateAndStatus(
                                 1, 10, _selectedDate, groupValue, true),
                             child: ListView.separated(
+                              physics: AlwaysScrollableScrollPhysics(),
                               controller: scrollController,
                               itemCount: isLoadingMore
                                   ? filteredTaskList.length + 1
@@ -1032,28 +1034,16 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Hoàn thành",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Đổi trạng thái",
-                                content: 'Chuyển công việc sang "Hoàn thành"',
-                                onConfirm: () {
-                                  changeTaskStatus(task['id'], 2).then((value) {
-                                    if (value) {
-                                      removeTask(task['id']);
-                                      Navigator.of(context).pop();
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Đổi thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
-                                  });
-                                },
-                                buttonConfirmText: "Đồng ý",
-                              );
-                            },
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => TimeKeepingInTask(
+                                taskId: task['id'],
+                                taskName: task['name'],
+                                isCreate: true,
+                                status: 2,
+                              ),
+                            ),
                           );
                         },
                         cls: kPrimaryColor,
@@ -1063,29 +1053,16 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Không hoàn thành",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Đổi trạng thái",
-                                content:
-                                    'Chuyển công việc sang "Không hoàn thành"',
-                                onConfirm: () {
-                                  changeTaskStatus(task['id'], 3).then((value) {
-                                    if (value) {
-                                      removeTask(task['id']);
-                                      Navigator.of(context).pop();
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Đổi thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
-                                  });
-                                },
-                                buttonConfirmText: "Đồng ý",
-                              );
-                            },
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => TimeKeepingInTask(
+                                taskId: task['id'],
+                                taskName: task['name'],
+                                isCreate: true,
+                                status: 3,
+                              ),
+                            ),
                           );
                         },
                         cls: Colors.red[300]!,
@@ -1101,6 +1078,8 @@ class TaskPageState extends State<TaskPage> {
                               builder: (context) => TimeKeepingInTask(
                                 taskId: task['id'],
                                 taskName: task['name'],
+                                isCreate: false,
+                                status: 0,
                               ),
                             ),
                           );
