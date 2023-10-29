@@ -185,7 +185,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                             ],
                           ),
                           child: Container(
-                            padding: const EdgeInsets.only(top: 27, left: 20),
+                            padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(15)),
@@ -200,15 +200,41 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                         CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Flexible(
-                                        child: Text(
-                                          liveStock['name'],
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            overflow: TextOverflow.ellipsis,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              liveStock['name'],
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  liveStock['isActive'] == false
+                                                      ? Colors.red[400]
+                                                      : kPrimaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: const EdgeInsets.all(10),
+                                            child: Text(
+                                              liveStock['isActive'] == true
+                                                  ? "Active"
+                                                  : "Inactive",
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

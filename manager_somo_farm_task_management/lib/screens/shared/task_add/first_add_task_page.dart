@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
@@ -105,90 +106,138 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                 "Thêm công việc (1/3)",
                 style: headingStyle,
               ),
-              MyInputField(
-                title: "Khu vực",
-                hint: _selectedArea,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedArea = newValue!['name'];
-                      _selectedField = "";
-                      _selectedExternalId = "";
-                      filteredField = [];
-                      filteredExternalId = [];
-                    });
-                    // Lọc danh sách Zone tương ứng với Area đã chọn
-                    widget.isPlant
-                        ? getZonesbyAreaPlantId(newValue!['id']).then((value) {
-                            setState(() {
-                              filteredZone = value;
-                              // Gọi setState để cập nhật danh sách zone
-                              _selectedZone =
-                                  value.isEmpty ? "Chưa có" : "Chọn";
-                            });
-                          })
-                        : getZonesbyAreaLivestockId(newValue!['id'])
-                            .then((value) {
-                            setState(() {
-                              filteredZone = value;
-                              // Gọi setState để cập nhật danh sách zone
-                              _selectedZone =
-                                  value.isEmpty ? "Chưa có" : "Chọn";
-                            });
-                          });
-                  },
-                  items: filteredArea
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Khu vực",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            // value: _selectedArea,
+                            onChanged: (Map<String, dynamic>? newValue) {
+                              setState(() {
+                                _selectedArea = newValue!['name'];
+                                _selectedField = "";
+                                _selectedExternalId = "";
+                                filteredField = [];
+                                filteredExternalId = [];
+                              });
+                              // Lọc danh sách Zone tương ứng với Area đã chọn
+                              widget.isPlant
+                                  ? getZonesbyAreaPlantId(newValue!['id'])
+                                      .then((value) {
+                                      setState(() {
+                                        filteredZone = value;
+                                        // Gọi setState để cập nhật danh sách zone
+                                        _selectedZone =
+                                            value.isEmpty ? "Chưa có" : "Chọn";
+                                      });
+                                    })
+                                  : getZonesbyAreaLivestockId(newValue!['id'])
+                                      .then((value) {
+                                      setState(() {
+                                        filteredZone = value;
+                                        // Gọi setState để cập nhật danh sách zone
+                                        _selectedZone =
+                                            value.isEmpty ? "Chưa có" : "Chọn";
+                                      });
+                                    });
+                            },
+                            items: filteredArea
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nameCode']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedArea))
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              MyInputField(
-                title: "Vùng",
-                hint: _selectedZone,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedZone = newValue!['name'];
-                      _selectedExternalId = "";
-                      filteredExternalId = [];
-                    });
-                    // Lọc danh sách Filed tương ứng với Zone đã chọn
-                    getFieldsbyZoneId(newValue!['id']).then((value) {
-                      setState(() {
-                        filteredField = value;
-                        _selectedField = value.isEmpty ? "Chưa có" : "Chọn";
-                      });
-                    });
-                  },
-                  items: filteredZone
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Vùng",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            // value: _selectedArea,
+                            onChanged: (Map<String, dynamic>? newValue) {
+                              setState(() {
+                                _selectedZone = newValue!['nameCode'];
+                                _selectedExternalId = "";
+                                filteredExternalId = [];
+                              });
+                              // Lọc danh sách Filed tương ứng với Zone đã chọn
+                              getFieldsbyZoneId(newValue!['id']).then((value) {
+                                setState(() {
+                                  filteredField = value;
+                                  _selectedField =
+                                      value.isEmpty ? "Chưa có" : "Chọn";
+                                });
+                              });
+                            },
+                            items: filteredZone
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nameCode']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedZone))
+                      ],
+                    ),
+                  ],
                 ),
               ),
               if (_selectedZone == "Chưa có")
@@ -196,51 +245,77 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   "Hãy chọn khu vực khác",
                   style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
                 ),
-              MyInputField(
-                title: widget.isPlant ? "Vườn" : "Chuồng",
-                hint: _selectedField,
-                widget: DropdownButton(
-                  underline: Container(height: 0),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  iconSize: 32,
-                  elevation: 4,
-                  style: subTitileStyle,
-                  onChanged: (Map<String, dynamic>? newValue) {
-                    setState(() {
-                      _selectedField = newValue!['name'];
-                      fiedlId = newValue['id'];
-                    });
-                    if (widget.isOne) {
-                      widget.isPlant
-                          ? getPlantExternalIdsbyFieldId(newValue!['id'])
-                              .then((value) {
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.isPlant ? "Vườn" : "Chuồng",
+                      style: titileStyle,
+                    ),
+                    SizedBox(height: 5),
+                    Stack(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            minHeight:
+                                50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButton2<Map<String, dynamic>>(
+                            isExpanded: true,
+                            underline: Container(height: 0),
+                            onChanged: (Map<String, dynamic>? newValue) {
                               setState(() {
-                                filteredExternalId = value;
-                                _selectedExternalId =
-                                    value.isEmpty ? "Chưa có" : "Chọn";
+                                _selectedField = newValue!['nameCode'];
+                                fiedlId = newValue['id'];
                               });
-                            })
-                          : getLiveStockExternalIdsbyFieldId(newValue!['id'])
-                              .then((value) {
-                              setState(() {
-                                filteredExternalId = value;
-                                _selectedExternalId =
-                                    value.isEmpty ? "Chưa có" : "Chọn";
-                              });
-                            });
-                    }
-                  },
-                  items: filteredField
-                      .map<DropdownMenuItem<Map<String, dynamic>>>(
-                          (Map<String, dynamic> value) {
-                    return DropdownMenuItem<Map<String, dynamic>>(
-                      value: value,
-                      child: Text(value['name']),
-                    );
-                  }).toList(),
+                              if (widget.isOne) {
+                                widget.isPlant
+                                    ? getPlantExternalIdsbyFieldId(
+                                            newValue!['id'])
+                                        .then((value) {
+                                        setState(() {
+                                          filteredExternalId = value;
+                                          _selectedExternalId = value.isEmpty
+                                              ? "Chưa có"
+                                              : "Chọn";
+                                        });
+                                      })
+                                    : getLiveStockExternalIdsbyFieldId(
+                                            newValue!['id'])
+                                        .then((value) {
+                                        setState(() {
+                                          filteredExternalId = value;
+                                          _selectedExternalId = value.isEmpty
+                                              ? "Chưa có"
+                                              : "Chọn";
+                                        });
+                                      });
+                              }
+                            },
+                            items: filteredField
+                                .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nameCode']),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Positioned(
+                            top: 17, left: 16, child: Text(_selectedField))
+                      ],
+                    ),
+                  ],
                 ),
               ),
               if (_selectedField == "Chưa có")
@@ -249,34 +324,59 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
                   style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
                 ),
               if (widget.isOne)
-                MyInputField(
-                  title: widget.isPlant ? "Mã cây trồng" : "Mã vật nuôi",
-                  hint: _selectedExternalId,
-                  widget: DropdownButton(
-                    underline: Container(height: 0),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.grey,
-                    ),
-                    iconSize: 32,
-                    elevation: 4,
-                    style: subTitileStyle,
-                    onChanged: (Map<String, dynamic>? newValue) {
-                      setState(() {
-                        _selectedExternalId = newValue!['externalId'];
-                        widget.isPlant
-                            ? plantId = newValue['id']
-                            : liveStockId = newValue['id'];
-                      });
-                    },
-                    items: filteredExternalId
-                        .map<DropdownMenuItem<Map<String, dynamic>>>(
-                            (Map<String, dynamic> value) {
-                      return DropdownMenuItem<Map<String, dynamic>>(
-                        value: value,
-                        child: Text(value['externalId']),
-                      );
-                    }).toList(),
+                Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.isPlant ? "Mã cây trồng" : "Mã vật nuôi",
+                        style: titileStyle,
+                      ),
+                      SizedBox(height: 5),
+                      Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              // value: _selectedArea,
+                              onChanged: (Map<String, dynamic>? newValue) {
+                                setState(() {
+                                  _selectedExternalId = newValue!['externalId'];
+                                  widget.isPlant
+                                      ? plantId = newValue['id']
+                                      : liveStockId = newValue['id'];
+                                });
+                              },
+                              items: filteredExternalId
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['externalId']),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Positioned(
+                              top: 17,
+                              left: 16,
+                              child: Text(_selectedExternalId))
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               if (_selectedExternalId == "Chưa có")

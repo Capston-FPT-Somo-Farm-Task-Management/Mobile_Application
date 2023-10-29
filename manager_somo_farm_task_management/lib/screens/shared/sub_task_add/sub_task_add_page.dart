@@ -242,6 +242,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
           setState(() {
             isLoading = false;
           });
+          print(data);
           Navigator.pop(context, "newSubtask");
           SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
         }

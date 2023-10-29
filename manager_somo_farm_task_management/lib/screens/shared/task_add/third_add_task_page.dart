@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -179,69 +180,119 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                         },
                       ),
                     ),
-                    MyInputField(
-                      title: "Nhắc nhở",
-                      hint: "$_selectedRemind phút trước khi bắt đầu",
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedRemind = int.parse(newValue!);
-                          });
-                        },
-                        items: remindList
-                            .map<DropdownMenuItem<String>>((int value) {
-                          return DropdownMenuItem<String>(
-                            value: value.toString(),
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Nhắc nhở",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedRemind = int.parse(newValue!);
+                                    });
+                                  },
+                                  items: remindList
+                                      .map<DropdownMenuItem<String>>(
+                                          (int value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.toString(),
+                                      child: Text(value.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(
+                                      "$_selectedRemind phút trước khi bắt đầu"))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    MyInputField(
-                      title: "Lặp lại",
-                      hint: "$_selectedRepeat",
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedRepeat = newValue!;
-                            showInputFieldRepeat = newValue;
-                            if (showInputFieldRepeat != "Không") {
-                              for (int i = 1; i <= 30; i++) {
-                                repeatNumbers.add(i);
-                              }
-                            } else {
-                              selectedDatesRepeat.clear();
-                            }
-                          });
-                        },
-                        items: repeatList
-                            .map<DropdownMenuItem<String>>((String? value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value!,
-                              style: const TextStyle(
-                                color: Colors.grey,
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Lặp lại",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedRepeat = newValue!;
+                                      showInputFieldRepeat = newValue;
+                                      if (showInputFieldRepeat != "Không") {
+                                        for (int i = 1; i <= 30; i++) {
+                                          repeatNumbers.add(i);
+                                        }
+                                      } else {
+                                        selectedDatesRepeat.clear();
+                                      }
+                                    });
+                                  },
+                                  items: repeatList
+                                      .map<DropdownMenuItem<String>>(
+                                          (String? value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value!,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
                               ),
-                            ),
-                          );
-                        }).toList(),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text("$_selectedRepeat"))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     if (showInputFieldRepeat != "Không")
@@ -316,30 +367,56 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                                 ),
                               ],
                             ),
-                    MyInputField(
-                      title: "Độ ưu tiên",
-                      hint: _selectedPriority,
-                      widget: DropdownButton(
-                        underline: Container(height: 0),
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.grey,
-                        ),
-                        iconSize: 32,
-                        elevation: 4,
-                        style: subTitileStyle,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedPriority = newValue!;
-                          });
-                        },
-                        items: priorities
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Độ ưu tiên",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedPriority = newValue!;
+                                    });
+                                  },
+                                  items: priorities
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedPriority))
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 18),
