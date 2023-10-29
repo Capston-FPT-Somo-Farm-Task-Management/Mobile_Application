@@ -80,10 +80,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, "");
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, "");
     }
     if (reset) {
       setState(() {
@@ -597,7 +597,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         isPreparing &&
                             DateTime.now()
                                 .add(Duration(minutes: 30))
-                                .isAfter(DateTime.parse(task['startDate']))
+                                .isAfter(DateTime.parse(task['startDate'])) &&
+                            task['managerName'] != null
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,

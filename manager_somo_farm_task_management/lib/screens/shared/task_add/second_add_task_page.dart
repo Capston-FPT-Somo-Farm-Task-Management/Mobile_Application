@@ -192,7 +192,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                               setState(() {
                                 _selectedTaskType = newValue!['name'];
                                 _selectedTaskTypeId = newValue['id'];
-                                selectedEmployees.clear();
+                                selectedEmployees = [];
                                 // Gọi setState để cập nhật danh sách người thực hiện
                                 _keyChange =
                                     UniqueKey(); // Đặt lại người thực hiện khi thay đổi loại nhiệm vụ

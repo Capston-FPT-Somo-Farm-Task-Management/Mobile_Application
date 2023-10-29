@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/done_task_employee/done_task_employee_page.dart';
 import 'package:manager_somo_farm_task_management/services/effort_service.dart';
 
 class TotalTimeEffortPage extends StatefulWidget {
@@ -165,10 +166,23 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                           Icons.person_outline),
                       _buildInfoCard('Effort Time',
                           '${data!["effortTime"]} giờ', Icons.timer),
-                      _buildInfoCard(
-                          'Tổng số công việc đã làm',
-                          data!["totalTask"].toString(),
-                          Icons.sticky_note_2_sharp),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => DoneTaskEmployeePage(
+                                employeeId: widget.employeeId,
+                                startDate: startDate,
+                                endDate: endDate,
+                              ),
+                            ),
+                          );
+                        },
+                        child: _buildInfoCard(
+                            'Tổng số công việc đã làm',
+                            data!["totalTask"].toString(),
+                            Icons.sticky_note_2_sharp),
+                      ),
                     ],
                   ),
           ],
