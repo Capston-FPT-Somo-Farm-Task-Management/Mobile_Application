@@ -3,13 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/services/effort_service.dart';
-import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
 
 class TimeKeepingInTask extends StatefulWidget {
   final int taskId;
   final String taskName;
-
-  TimeKeepingInTask({required this.taskId, required this.taskName});
+  final bool isCreate;
+  final int status;
+  TimeKeepingInTask(
+      {required this.taskId,
+      required this.taskName,
+      required this.isCreate,
+      required this.status});
 
   @override
   State<TimeKeepingInTask> createState() => _TimeKeepingInTaskState();
@@ -104,21 +109,43 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                           setState(() {
                             isLoading = true;
                           });
-                          createEffort(getUpdatedEffortData()).then((value) {
-                            setState(() {
-                              isLoading = false;
-                            });
-                            if (value) {
-                              Navigator.of(context).pop();
-                              SnackbarShowNoti.showSnackbar(
-                                  "Đã lưu thay đổi!", false);
-                            }
-                          }).catchError((e) {
-                            setState(() {
-                              isLoading = false;
-                            });
-                            SnackbarShowNoti.showSnackbar(e.toString(), true);
-                          });
+                          widget.isCreate
+                              ? TaskService()
+                                  .endTaskAndTimeKeeping(widget.taskId,
+                                      widget.status, getUpdatedEffortData())
+                                  .then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (value) {
+                                    Navigator.of(context).pop("ok");
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Đã lưu thay đổi!", false);
+                                  }
+                                }).catchError((e) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  SnackbarShowNoti.showSnackbar(
+                                      e.toString(), true);
+                                })
+                              : createEffort(getUpdatedEffortData())
+                                  .then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (value) {
+                                    Navigator.of(context).pop();
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Đã lưu thay đổi!", false);
+                                  }
+                                }).catchError((e) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  SnackbarShowNoti.showSnackbar(
+                                      e.toString(), true);
+                                });
                         }
                       : null,
                   child: Container(

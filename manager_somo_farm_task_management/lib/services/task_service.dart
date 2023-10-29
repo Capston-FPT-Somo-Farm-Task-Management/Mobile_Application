@@ -62,7 +62,8 @@ class TaskService {
       final Map<String, dynamic> task = Map<String, dynamic>.from(data['data']);
       return task;
     } else {
-      throw Exception('Failed to get tasks by user ID');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
@@ -193,6 +194,32 @@ class TaskService {
         headers: {
           'Content-Type': 'application/json',
         },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Future.error(data['message']);
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> endTaskAndTimeKeeping(
+      int taskId, int status, List<Map<String, dynamic>> data) async {
+    try {
+      final String apiUrl =
+          "$baseUrl/FarmSubTask/Task($taskId)/Status($status)";
+      var body = jsonEncode(data);
+      final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
       );
 
       if (response.statusCode == 200) {
