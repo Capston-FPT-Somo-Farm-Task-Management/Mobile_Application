@@ -597,7 +597,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         isPreparing &&
                             DateTime.now()
                                 .add(Duration(minutes: 30))
-                                .isAfter(DateTime.parse(task['startDate']))
+                                .isAfter(DateTime.parse(task['startDate'])) &&
+                            task['managerName'] != null
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
