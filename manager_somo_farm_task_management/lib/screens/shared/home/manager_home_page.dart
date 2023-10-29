@@ -80,10 +80,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, "");
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, "");
     }
     if (reset) {
       setState(() {

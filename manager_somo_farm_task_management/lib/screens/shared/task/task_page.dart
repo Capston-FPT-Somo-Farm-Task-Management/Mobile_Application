@@ -50,6 +50,7 @@ class TaskPageState extends State<TaskPage> {
   String? role;
   int page = 1;
   bool isLoadingMore = false;
+  String searchValue = "";
   final scrollController = ScrollController();
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
@@ -59,7 +60,7 @@ class TaskPageState extends State<TaskPage> {
       });
       page = page + 1;
       await _getTasksForSelectedDateAndStatus(
-          page, 10, _selectedDate, groupValue, false);
+          page, 10, _selectedDate, groupValue, false, searchValue);
       setState(() {
         isLoadingMore = false;
       });
@@ -84,7 +85,7 @@ class TaskPageState extends State<TaskPage> {
       farmId = value;
     });
     getRole().then((_) {
-      _getTasksForSelectedDateAndStatus(page, 10, null, 0, true);
+      _getTasksForSelectedDateAndStatus(page, 10, null, 0, true, "");
     });
     scrollController.addListener(() {
       _scrollListener();
@@ -119,16 +120,16 @@ class TaskPageState extends State<TaskPage> {
   }
 
   Future<void> _getTasksForSelectedDateAndStatus(int index, int pageSize,
-      DateTime? selectedDate, int status, bool reset) async {
+      DateTime? selectedDate, int status, bool reset, String search) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, search);
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, search);
     }
     if (reset) {
       setState(() {
@@ -212,7 +213,12 @@ class TaskPageState extends State<TaskPage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchTasks(keyword);
+                          setState(() {
+                            searchValue = keyword.trim();
+                          });
+                          ;
+                          _getTasksForSelectedDateAndStatus(
+                              1, 10, null, groupValue, true, searchValue);
                         },
                         decoration: const InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -235,7 +241,7 @@ class TaskPageState extends State<TaskPage> {
                               selectedDate = "";
                             });
                             _getTasksForSelectedDateAndStatus(
-                                1, 10, null, groupValue, true);
+                                1, 10, null, groupValue, true, searchValue);
                           },
                           child: Icon(
                             Icons.delete_forever,
@@ -257,14 +263,14 @@ class TaskPageState extends State<TaskPage> {
 
                           setState(() {
                             if (_selected != null) {
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, _selected, groupValue, true);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selected, groupValue, true, searchValue);
                               selectedDate =
                                   DateFormat('dd/MM/yy').format(_selected);
                               _selectedDate = _selected;
                             } else {
                               _getTasksForSelectedDateAndStatus(
-                                  1, 10, null, groupValue, true);
+                                  1, 10, null, groupValue, true, searchValue);
                               setState(() {
                                 selectedDate = "";
                                 filteredTaskList = tasks;
@@ -309,8 +315,8 @@ class TaskPageState extends State<TaskPage> {
                               setState(() {
                                 groupValue = newValue;
                               });
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, _selectedDate, groupValue, true);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
                             },
                             groupValue: groupValue,
                           ),
@@ -345,8 +351,8 @@ class TaskPageState extends State<TaskPage> {
                               setState(() {
                                 groupValue = newValue;
                               });
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, _selectedDate, groupValue, true);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
                             },
                             groupValue: groupValue,
                           ),
@@ -390,7 +396,12 @@ class TaskPageState extends State<TaskPage> {
                           child: RefreshIndicator(
                             notificationPredicate: (_) => true,
                             onRefresh: () => _getTasksForSelectedDateAndStatus(
-                                1, 10, _selectedDate, groupValue, true),
+                                1,
+                                10,
+                                _selectedDate,
+                                groupValue,
+                                true,
+                                searchValue),
                             child: ListView.separated(
                               physics: AlwaysScrollableScrollPhysics(),
                               controller: scrollController,
