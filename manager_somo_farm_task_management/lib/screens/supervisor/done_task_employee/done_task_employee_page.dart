@@ -1,21 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DoneTaskEmployeePage extends StatefulWidget {
   final int employeeId;
+  final String employeeName;
   DateTime? startDate;
   DateTime? endDate;
   DoneTaskEmployeePage(
-      {Key? key, required this.employeeId, this.startDate, this.endDate})
+      {Key? key,
+      required this.employeeId,
+      this.startDate,
+      this.endDate,
+      required this.employeeName})
       : super(key: key);
 
   @override
@@ -35,13 +41,33 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
   List<Map<String, dynamic>> tasks = [];
   List<Map<String, dynamic>> filteredTaskList = [];
   bool isLoading = true;
+  bool isLoadingMore = false;
+  int page = 1;
+  final scrollController = ScrollController();
+  int groupValue = 2;
+  Future<void> _scrollListener() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      setState(() {
+        isLoadingMore = true;
+      });
+      page = page + 1;
+      await getTask(groupValue, false);
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
+  }
 
   @override
   initState() {
     super.initState();
     selectedFilter = filters[0];
-    getTask();
+    getTask(2, true);
     getRole();
+    scrollController.addListener(() {
+      _scrollListener();
+    });
   }
 
   void searchTasks(String keyword) {
@@ -61,16 +87,24 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
     });
   }
 
-  Future<void> getTask() async {
+  Future<void> getTask(int status, bool reset) async {
     await TaskService()
-        .getTasksByDateEmployeeId(
-            widget.employeeId, widget.startDate, widget.endDate)
+        .getTasksByDateEmployeeId(widget.employeeId, widget.startDate,
+            widget.endDate, 1, page, status)
         .then((value) {
-      setState(() {
-        tasks = value;
-        filteredTaskList = value;
-        isLoading = false;
-      });
+      if (reset) {
+        setState(() {
+          tasks = value;
+          filteredTaskList = value;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          tasks = tasks + value;
+          filteredTaskList = value;
+          isLoading = false;
+        });
+      }
     });
   }
 
@@ -96,80 +130,41 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
             Container(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 15),
-                  Container(
-                    height: 42,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: (keyword) {
-                          searchTasks(keyword.trim());
-                        },
-                        decoration: const InputDecoration(
-                          hintText: "Tìm kiếm...",
-                          border: InputBorder.none,
-                          icon: Icon(Icons.search),
-                        ),
-                      ),
-                    ),
+                  Text(
+                    widget.employeeName,
+                    style: headingStyle,
                   ),
                   const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey, // Màu đường viền
-                            width: 1.0, // Độ rộng của đường viền
+                  Container(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CupertinoSegmentedControl<int>(
+                            selectedColor: kSecondColor,
+                            borderColor: kSecondColor,
+                            pressedColor: Colors.blue[50],
+                            children: {
+                              2: Text("Hoàn thành"),
+                              3: Text("Không hoàn thành"),
+                              // Thêm các option khác nếu cần
+                            },
+                            onValueChanged: (int newValue) {
+                              setState(() {
+                                groupValue = newValue;
+                                isLoading = true;
+                              });
+                              getTask(groupValue, true);
+                            },
+                            groupValue: groupValue,
                           ),
-                          borderRadius: BorderRadius.circular(
-                              5.0), // Độ bo góc của đường viền
                         ),
-                        child: DropdownButton<String>(
-                          isDense: true,
-                          alignment: Alignment.center,
-                          hint: Text(selectedFilter!),
-                          value:
-                              selectedFilter, // Giá trị đã chọn cho Dropdown 1
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedFilter =
-                                  newValue; // Cập nhật giá trị đã chọn cho Dropdown 1
-                              if (selectedFilter == "Tất cả") {
-                                filteredTaskList = tasks;
-                              }
-                              if (selectedFilter == "Hoàn thành") {
-                                filteredTaskList = tasks
-                                    .where((t) => t['status'] == "Hoàn thành")
-                                    .toList();
-                              }
-                              if (selectedFilter == "Không hoàn thành") {
-                                filteredTaskList = tasks
-                                    .where((t) =>
-                                        t['status'] == "Không hoàn thành")
-                                    .toList();
-                              }
-                            });
-                          },
-                          items: filters
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      )
-                    ],
-                  )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -208,10 +203,12 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: RefreshIndicator(
                             notificationPredicate: (_) => true,
-                            onRefresh: () => getTask(),
+                            onRefresh: () => getTask(groupValue, true),
                             child: ListView.separated(
                               physics: AlwaysScrollableScrollPhysics(),
-                              itemCount: filteredTaskList.length,
+                              itemCount: isLoadingMore
+                                  ? filteredTaskList.length + 1
+                                  : filteredTaskList.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
                                 return const SizedBox(height: 20);
@@ -228,6 +225,9 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                               taskId: task['id']),
                                         ),
                                       );
+                                    },
+                                    onLongPress: () {
+                                      _showBottomSheet(context, task);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -270,16 +270,19 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                               MainAxisAlignment
                                                                   .spaceBetween,
                                                           children: [
-                                                            Text(
-                                                              wrapWordsWithEllipsis(
-                                                                  task['name'],
-                                                                  20),
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                            Flexible(
+                                                              child: Text(
+                                                                task['name'],
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
                                                             ),
                                                             Container(
@@ -370,16 +373,20 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                           ),
                                                           const SizedBox(
                                                               width: 4),
-                                                          Text(
-                                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        13,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -391,28 +398,61 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            "Giám sát: ${task['supervisorName']}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Giờ làm thực tế (cá nhân): ${task['effort']} giờ",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
-                                                          Text(
-                                                            "Vị trí: ${task['fieldName']}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Giám sát: ${task['supervisorName']}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Vị trí: ${task['fieldName']}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -441,17 +481,27 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text(
-                                                  'Loại: ${task['taskTypeName']}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[200]),
+                                                Flexible(
+                                                  child: Text(
+                                                    'Loại: ${task['taskTypeName']}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            Colors.grey[200]),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                                Text(
-                                                  'Ưu tiên: ${task['priority']}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[200]),
+                                                Flexible(
+                                                  child: Text(
+                                                    'Ưu tiên: ${task['priority']}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            Colors.grey[200]),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -472,6 +522,103 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                         ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  _showBottomSheet(
+    BuildContext context,
+    Map<String, dynamic> task,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        bool isCompleted = task['status'] == "Hoàn thành";
+        bool isNotCompleted = task['status'] == "Không hoàn thành";
+
+        return Container(
+          padding: const EdgeInsets.only(top: 4),
+          height: MediaQuery.of(context).size.height * 0.25,
+          color: kBackgroundColor,
+          child: Column(
+            children: [
+              Container(
+                height: 6,
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: kTextGreyColor,
+                ),
+              ),
+              const Spacer(),
+              if (isCompleted || isNotCompleted)
+                _bottomSheetButton(
+                  label: "Xem chấm công",
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TimeKeepingInTask(
+                          taskId: task['id'],
+                          taskName: task['name'],
+                          isCreate: false,
+                          status: 0,
+                        ),
+                      ),
+                    );
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+              const SizedBox(height: 20),
+              _bottomSheetButton(
+                label: "Đóng",
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                cls: Colors.white,
+                isClose: true,
+                context: context,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _bottomSheetButton({
+    required String label,
+    required Function()? onTap,
+    required Color cls,
+    bool isClose = false,
+    required BuildContext context,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        height: 55,
+        width: MediaQuery.of(context).size.width * 0.9,
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 2,
+            color: isClose == true ? Colors.grey[300]! : cls,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          color: isClose == true ? Colors.transparent : cls,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: isClose
+                ? titileStyle
+                : titileStyle.copyWith(
+                    color: Colors.white,
+                  ),
+          ),
         ),
       ),
     );
