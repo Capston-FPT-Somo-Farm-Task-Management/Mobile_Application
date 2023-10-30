@@ -28,6 +28,8 @@ class CreateEmployeeState extends State<CreateEmployee> {
   List<Map<String, dynamic>> filteredWars = [];
   List<Map<String, dynamic>> filterTaskType = [];
   List<Map<String, dynamic>> selectedTaskTypes = [];
+  List<String> filterGender = ["Nam", "Nữ"];
+  String? _selectedGender = "Chọn";
   String? _selectedProvinces = "Chọn";
   String? _selectedDistrict;
   String? _selectedWar;
@@ -120,6 +122,60 @@ class CreateEmployeeState extends State<CreateEmployee> {
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Giới tính",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _selectedGender = newValue;
+                                    });
+                                  },
+                                  items: filterGender
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedGender!))
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
@@ -439,6 +495,8 @@ class CreateEmployeeState extends State<CreateEmployee> {
         _selectedDistrict != "Chọn" &&
         _selectedWar != null &&
         _selectedWar != "Chọn" &&
+        _selectedGender != null &&
+        _selectedGender != "Chọn" &&
         selectedTaskTypes.isNotEmpty) {
       if (_phoneController.text.length != 10) {
         setState(() {
@@ -455,6 +513,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
             "address": "$_selectedWar, $_selectedDistrict, $_selectedProvinces",
             "farmId": widget.farmId,
             "code": _codeController.text,
+            "gender": _selectedGender == "Nữ"
           }
         };
         createEmployee(employeekData).then((value) {
