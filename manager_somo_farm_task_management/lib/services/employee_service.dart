@@ -125,4 +125,22 @@ class EmployeeService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> updateEmployee(
+      int employeeId, Map<String, dynamic> employeeData) async {
+    final String apiUrl = "$baseUrl/Employee/$employeeId";
+    var body = jsonEncode(employeeData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
