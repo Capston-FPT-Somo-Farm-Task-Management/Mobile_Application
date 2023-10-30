@@ -185,8 +185,10 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
             Expanded(
               flex: 2,
               child: RefreshIndicator(
+                notificationPredicate: (_) => true,
                 onRefresh: () => GetLiveStockFields(),
                 child: ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
                   itemCount: liveStocks.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> liveStock = liveStocks[index];
