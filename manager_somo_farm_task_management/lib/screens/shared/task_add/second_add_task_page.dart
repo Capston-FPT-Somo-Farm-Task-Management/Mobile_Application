@@ -13,14 +13,14 @@ import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SecondAddTaskPage extends StatefulWidget {
-  final bool isPlant;
-  final int fieldId;
+  bool? isPlant;
+  int? fieldId;
   final int? plantId;
   final int? otherId;
   final int? liveStockId;
   SecondAddTaskPage(
       {super.key,
-      required this.isPlant,
+      this.isPlant,
       required this.fieldId,
       this.otherId,
       this.liveStockId,
@@ -54,6 +54,10 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
 
   Future<List<Map<String, dynamic>>> getListTaskTypePlants() {
     return TaskTypeService().getTaskTypePlants();
+  }
+
+  Future<List<Map<String, dynamic>>> getListTaskTypeActive() {
+    return TaskTypeService().getListTaskTypeActive();
   }
 
   Future<List<Map<String, dynamic>>> getEmployeesbyFarmIdAndTaskTypeId(
@@ -104,17 +108,23 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
         });
       });
     });
-    widget.isPlant
-        ? getListTaskTypePlants().then((value) {
+    widget.isPlant == null
+        ? getListTaskTypeActive().then((value) {
             setState(() {
               taskTypes = value;
             });
           })
-        : getListTaskTypeLivestocks().then((value) {
-            setState(() {
-              taskTypes = value;
-            });
-          });
+        : widget.isPlant == true
+            ? getListTaskTypePlants().then((value) {
+                setState(() {
+                  taskTypes = value;
+                });
+              })
+            : getListTaskTypeLivestocks().then((value) {
+                setState(() {
+                  taskTypes = value;
+                });
+              });
     _selectedTaskType = "Chọn";
     MaterialService().getMaterialActive().then((value) {
       setState(() {
@@ -185,6 +195,9 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: DropdownButton2<Map<String, dynamic>>(
+                            dropdownStyleData: DropdownStyleData(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * 0.4),
                             isExpanded: true,
                             underline: Container(height: 0),
                             // value: _selectedArea,
