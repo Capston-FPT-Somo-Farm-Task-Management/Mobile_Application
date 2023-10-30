@@ -151,8 +151,10 @@ class PlantTypePageState extends State<PlantTypePage> {
             Expanded(
               flex: 2,
               child: RefreshIndicator(
+                notificationPredicate: (_) => true,
                 onRefresh: () => GetAllPlantType(),
                 child: ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
                   itemCount: plants.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> plant = plants[index];
