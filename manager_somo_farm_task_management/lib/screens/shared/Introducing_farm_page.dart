@@ -23,7 +23,7 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
   Future<void> _loadFarmData() async {
     GetFarm(widget.farmId).then((value) {
       setState(() {
-        farmData = value['data'];
+        farmData = value;
       });
     });
   }
