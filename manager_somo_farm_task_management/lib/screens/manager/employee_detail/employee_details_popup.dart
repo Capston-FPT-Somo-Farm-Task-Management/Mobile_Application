@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/employee_update/employee_update_page.dart';
 
 class EmployeeDetailsPopup extends StatelessWidget {
   final Map<String, dynamic> employee;
-
-  const EmployeeDetailsPopup({required this.employee});
+  final int farmId;
+  const EmployeeDetailsPopup({required this.employee, required this.farmId});
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +31,20 @@ class EmployeeDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              // Navigator.of(context).push(
-              //           MaterialPageRoute(
-              //             builder: (context) =>  FirstUpdateTaskPage(task: task),
-              //           ),
-              //         );
+              Navigator.of(context)
+                  .push(
+                MaterialPageRoute(
+                  builder: (context) => UpdateEmployee(
+                    farmId: farmId,
+                    employee: employee,
+                  ),
+                ),
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -69,6 +80,26 @@ class EmployeeDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   wrapWords('Điện thoại: ${employee['phoneNumber']}', 35),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  FontAwesomeIcons.venusMars,
+                  size: 18,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 14),
+                Text(
+                  wrapWords(
+                      'Giới tính: ${employee['gender'] == "Female" ? "Nữ" : "Nam"}',
+                      35),
                   style: const TextStyle(
                     fontSize: 16,
                   ),

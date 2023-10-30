@@ -273,16 +273,19 @@ class EmployeekPageState extends State<EmployeekPage> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return EmployeeDetailsPopup(
-                                                employee: employee);
+                                              employee: employee,
+                                              farmId: farmId!,
+                                            );
                                           },
-                                        )
+                                        ).then((value) => {
+                                            if (value != null) {getEmployees()}
+                                          })
                                       : Navigator.of(context)
                                           .push(MaterialPageRoute(
                                           builder: (context) =>
                                               TotalTimeEffortPage(
                                                   employeeId: employee['id']),
                                         ));
-                                  ;
                                 },
                                 onLongPress: () {
                                   widget.role == "Manager"
@@ -291,9 +294,14 @@ class EmployeekPageState extends State<EmployeekPage> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return EmployeeDetailsPopup(
-                                                employee: employee);
+                                              employee: employee,
+                                              farmId: farmId!,
+                                            );
                                           },
-                                        );
+                                        ).then((value) => {
+                                            if (value != null) {getEmployees()}
+                                          });
+                                  ;
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

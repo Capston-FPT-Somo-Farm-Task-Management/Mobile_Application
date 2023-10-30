@@ -1,35 +1,39 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/services/employee_service.dart';
+import 'package:manager_somo_farm_task_management/services/member_service.dart';
 
 import 'package:manager_somo_farm_task_management/services/provinces_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
 
 import '../../../componets/input_field.dart';
 
-class CreateEmployee extends StatefulWidget {
+class UpdateSupervisor extends StatefulWidget {
   final int farmId;
-  const CreateEmployee({super.key, required this.farmId});
+  const UpdateSupervisor({super.key, required this.farmId});
 
   @override
-  CreateEmployeeState createState() => CreateEmployeeState();
+  UpdateSupervisorState createState() => UpdateSupervisorState();
 }
 
-class CreateEmployeeState extends State<CreateEmployee> {
+class UpdateSupervisorState extends State<UpdateSupervisor> {
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  DateTime? _birthday;
+  String? password, confirmPassword;
   List<Map<String, dynamic>> filteredProvinces = [];
   List<Map<String, dynamic>> filteredDistrict = [];
   List<Map<String, dynamic>> filteredWars = [];
   List<Map<String, dynamic>> filterTaskType = [];
   List<Map<String, dynamic>> selectedTaskTypes = [];
-  List<String> filterGender = ["Nam", "Nữ"];
-  String? _selectedGender = "Chọn";
   String? _selectedProvinces = "Chọn";
   String? _selectedDistrict;
   String? _selectedWar;
@@ -58,8 +62,8 @@ class CreateEmployeeState extends State<CreateEmployee> {
     });
   }
 
-  Future<bool> createEmployee(Map<String, dynamic> employeeData) {
-    return EmployeeService().createEmployee(employeeData);
+  Future<bool> createSupervisor(Map<String, dynamic> data) {
+    return MemberService().createMember(data);
   }
 
   @override
@@ -109,19 +113,14 @@ class CreateEmployeeState extends State<CreateEmployee> {
                       style: headingStyle,
                     ),
                     MyInputField(
-                      title: "Mã nhân viên",
-                      hint: "Nhập mã nhân viên",
-                      controller: _codeController,
-                    ),
-                    MyInputField(
                       title: "Họ và tên",
                       hint: "Nhập họ và tên của nhân viên",
                       controller: _fullnameController,
                     ),
-                    MyInputNumber(
-                      title: "Số điện thoại",
-                      hint: "Nhập số điện thoại",
-                      controller: _phoneController,
+                    MyInputField(
+                      title: "Tài khoản",
+                      hint: "Nhập tài khoản",
+                      controller: _userNameController,
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
@@ -129,52 +128,148 @@ class CreateEmployeeState extends State<CreateEmployee> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Giới tính",
+                            "Mật khẩu",
                             style: titileStyle,
                           ),
-                          SizedBox(height: 5),
-                          Stack(
-                            children: [
-                              Container(
-                                constraints: BoxConstraints(
-                                  minHeight:
-                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: DropdownButton2<String>(
-                                  isExpanded: true,
-                                  underline: Container(height: 0),
-                                  // value: _selectedArea,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedGender = newValue;
-                                    });
-                                  },
-                                  items: filterGender
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
+                          Container(
+                            height: 52,
+                            margin: const EdgeInsets.only(top: 8.0),
+                            padding: const EdgeInsets.only(left: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
                               ),
-                              Positioned(
-                                  top: 17,
-                                  left: 16,
-                                  child: Text(_selectedGender!))
-                            ],
-                          ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: false,
+                                    autofocus: false,
+                                    obscureText: true,
+                                    controller: _passwordController,
+                                    style: subTitileStyle,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        password = value;
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: "Nhập mật khẩu",
+                                      hintStyle: subTitileStyle,
+                                      focusedBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: kBackgroundColor, width: 0),
+                                      ),
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: kBackgroundColor, width: 0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Xác nhận mật khẩu",
+                            style: titileStyle,
+                          ),
+                          Container(
+                            height: 52,
+                            margin: const EdgeInsets.only(top: 8.0),
+                            padding: const EdgeInsets.only(left: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    readOnly: false,
+                                    autofocus: false,
+                                    obscureText: true,
+                                    controller: _confirmPasswordController,
+                                    style: subTitileStyle,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        confirmPassword = value;
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: "Nhập lại mật khẩu",
+                                      hintStyle: subTitileStyle,
+                                      focusedBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: kBackgroundColor, width: 0),
+                                      ),
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: kBackgroundColor, width: 0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    if (password != null &&
+                        confirmPassword!.isNotEmpty &&
+                        password != confirmPassword)
+                      Text(
+                        "Mật khẩu và mật khẩu xác nhận phải giống nhau",
+                        style: TextStyle(
+                            fontSize: 11, color: Colors.red, height: 2),
+                      ),
+                    MyInputField(
+                      title: "Email",
+                      hint: "Nhập địa chỉ email",
+                      controller: _emailController,
+                    ),
+                    MyInputNumber(
+                      title: "Số điện thoại",
+                      hint: "Nhập số điện thoại",
+                      controller: _phoneController,
+                    ),
+                    MyInputField(
+                      title: "Ngày sinh",
+                      hint: _birthday == null
+                          ? "dd/MM/yyyy"
+                          : DateFormat('dd/MM/yyyy').format(_birthday!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () async {
+                          var selectedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now());
+                          if (selectedDate != null) {
+                            setState(() {
+                              _birthday = selectedDate;
+                            });
+                          }
+                        },
                       ),
                     ),
                     Container(
@@ -373,81 +468,6 @@ class CreateEmployeeState extends State<CreateEmployee> {
                         ],
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Kĩ năng công việc",
-                            style: titileStyle,
-                          ),
-                          Container(
-                            height: 52,
-                            margin: const EdgeInsets.only(top: 8.0),
-                            padding: const EdgeInsets.only(left: 14),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SingleChildScrollView(
-                              child: ChipsInput(
-                                suggestionsBoxMaxHeight: 200,
-                                decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Chọn các kĩ năng phù hợp",
-                                    hintStyle:
-                                        TextStyle(color: Colors.black45)),
-                                initialValue: [],
-                                findSuggestions: (String query) {
-                                  if (query.length != 0) {
-                                    var lowercaseQuery = query.toLowerCase();
-                                    return filterTaskType.where((m) {
-                                      return m['name']
-                                          .toLowerCase()
-                                          .contains(query.toLowerCase());
-                                    }).toList(growable: false)
-                                      ..sort((a, b) => a['name']
-                                          .toLowerCase()
-                                          .indexOf(lowercaseQuery)
-                                          .compareTo(b['name']
-                                              .toLowerCase()
-                                              .indexOf(lowercaseQuery)));
-                                  } else {
-                                    return const <Map<String, dynamic>>[];
-                                  }
-                                },
-                                onChanged: (data) {
-                                  selectedTaskTypes =
-                                      data.cast<Map<String, dynamic>>();
-                                  print(data);
-                                },
-                                chipBuilder: (context, state, material) {
-                                  return InputChip(
-                                    key: ObjectKey(material),
-                                    label: Text(material['name']),
-                                    onDeleted: () => state.deleteChip(material),
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  );
-                                },
-                                suggestionBuilder: (context, state, material) {
-                                  return ListTile(
-                                    key: ObjectKey(material),
-                                    title: Text(material['name']),
-                                    onTap: () =>
-                                        state.selectSuggestion(material),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     const SizedBox(height: 40),
                     const Divider(
                       color: Colors.grey, // Đặt màu xám
@@ -469,7 +489,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
                         ),
                         child: const Center(
                           child: Text(
-                            "Tạo nhân viên",
+                            "Tạo người giám sát",
                             style: TextStyle(fontSize: 19),
                           ),
                         ),
@@ -488,40 +508,41 @@ class CreateEmployeeState extends State<CreateEmployee> {
     });
     if (_fullnameController.text.isNotEmpty &&
         _phoneController.text.isNotEmpty &&
-        _codeController.text.isNotEmpty &&
         _selectedProvinces != null &&
         _selectedProvinces != "Chọn" &&
         _selectedDistrict != null &&
         _selectedDistrict != "Chọn" &&
         _selectedWar != null &&
         _selectedWar != "Chọn" &&
-        _selectedGender != null &&
-        _selectedGender != "Chọn" &&
-        selectedTaskTypes.isNotEmpty) {
+        _userNameController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmPasswordController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _phoneController.text.isNotEmpty &&
+        _birthday != null) {
       if (_phoneController.text.length != 10) {
         setState(() {
           isLoading = false;
         });
         SnackbarShowNoti.showSnackbar("Số điện thoại không hợp lệ!", true);
       } else {
-        Map<String, dynamic> employeekData = {
-          "taskTypeId":
-              selectedTaskTypes.map<int>((t) => t['id'] as int).toList(),
-          "employee": {
-            "name": _fullnameController.text,
-            "phoneNumber": _phoneController.text,
-            "address": "$_selectedWar, $_selectedDistrict, $_selectedProvinces",
-            "farmId": widget.farmId,
-            "code": _codeController.text,
-            "gender": _selectedGender == "Nữ"
-          }
+        Map<String, dynamic> data = {
+          "name": _fullnameController.text,
+          "email": _emailController.text,
+          "userName": _userNameController.text,
+          "password": _passwordController.text,
+          "phoneNumber": _phoneController.text,
+          "birthday": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_birthday!),
+          "roleId": 3,
+          "address": "$_selectedWar, $_selectedDistrict, $_selectedProvinces",
+          "farmId": widget.farmId,
         };
-        createEmployee(employeekData).then((value) {
+        createSupervisor(data).then((value) {
           if (value) {
             setState(() {
               isLoading = false;
             });
-            Navigator.pop(context, "newEmployee");
+            Navigator.pop(context, "newSupervisor");
           }
         }).catchError((e) {
           setState(() {
