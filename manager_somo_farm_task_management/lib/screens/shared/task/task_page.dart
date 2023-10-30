@@ -6,7 +6,6 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
@@ -50,6 +49,7 @@ class TaskPageState extends State<TaskPage> {
   String? role;
   int page = 1;
   bool isLoadingMore = false;
+  String searchValue = "";
   final scrollController = ScrollController();
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
@@ -59,7 +59,7 @@ class TaskPageState extends State<TaskPage> {
       });
       page = page + 1;
       await _getTasksForSelectedDateAndStatus(
-          page, 10, _selectedDate, groupValue, false);
+          page, 10, _selectedDate, groupValue, false, searchValue);
       setState(() {
         isLoadingMore = false;
       });
@@ -84,7 +84,7 @@ class TaskPageState extends State<TaskPage> {
       farmId = value;
     });
     getRole().then((_) {
-      _getTasksForSelectedDateAndStatus(page, 10, null, 0, true);
+      _getTasksForSelectedDateAndStatus(page, 10, null, 0, true, "");
     });
     scrollController.addListener(() {
       _scrollListener();
@@ -119,16 +119,16 @@ class TaskPageState extends State<TaskPage> {
   }
 
   Future<void> _getTasksForSelectedDateAndStatus(int index, int pageSize,
-      DateTime? selectedDate, int status, bool reset) async {
+      DateTime? selectedDate, int status, bool reset, String search) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId');
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, search);
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, search);
     }
     if (reset) {
       setState(() {
@@ -212,7 +212,12 @@ class TaskPageState extends State<TaskPage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchTasks(keyword);
+                          setState(() {
+                            searchValue = keyword.trim();
+                          });
+                          ;
+                          _getTasksForSelectedDateAndStatus(
+                              1, 10, null, groupValue, true, searchValue);
                         },
                         decoration: const InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -235,7 +240,7 @@ class TaskPageState extends State<TaskPage> {
                               selectedDate = "";
                             });
                             _getTasksForSelectedDateAndStatus(
-                                1, 10, null, groupValue, true);
+                                1, 10, null, groupValue, true, searchValue);
                           },
                           child: Icon(
                             Icons.delete_forever,
@@ -257,14 +262,14 @@ class TaskPageState extends State<TaskPage> {
 
                           setState(() {
                             if (_selected != null) {
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, _selected, groupValue, true);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selected, groupValue, true, searchValue);
                               selectedDate =
                                   DateFormat('dd/MM/yy').format(_selected);
                               _selectedDate = _selected;
                             } else {
                               _getTasksForSelectedDateAndStatus(
-                                  1, 10, null, groupValue, true);
+                                  1, 10, null, groupValue, true, searchValue);
                               setState(() {
                                 selectedDate = "";
                                 filteredTaskList = tasks;
@@ -309,8 +314,8 @@ class TaskPageState extends State<TaskPage> {
                               setState(() {
                                 groupValue = newValue;
                               });
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, _selectedDate, groupValue, true);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
                             },
                             groupValue: groupValue,
                           ),
@@ -345,8 +350,8 @@ class TaskPageState extends State<TaskPage> {
                               setState(() {
                                 groupValue = newValue;
                               });
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, _selectedDate, groupValue, true);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
                             },
                             groupValue: groupValue,
                           ),
@@ -388,9 +393,16 @@ class TaskPageState extends State<TaskPage> {
                       : Padding(
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: RefreshIndicator(
+                            notificationPredicate: (_) => true,
                             onRefresh: () => _getTasksForSelectedDateAndStatus(
-                                1, 10, _selectedDate, groupValue, true),
+                                1,
+                                10,
+                                _selectedDate,
+                                groupValue,
+                                true,
+                                searchValue),
                             child: ListView.separated(
+                              physics: AlwaysScrollableScrollPhysics(),
                               controller: scrollController,
                               itemCount: isLoadingMore
                                   ? filteredTaskList.length + 1
@@ -457,16 +469,19 @@ class TaskPageState extends State<TaskPage> {
                                                               MainAxisAlignment
                                                                   .spaceBetween,
                                                           children: [
-                                                            Text(
-                                                              wrapWordsWithEllipsis(
-                                                                  task['name'],
-                                                                  20),
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                            Flexible(
+                                                              child: Text(
+                                                                task['name'],
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
                                                             ),
                                                             Container(
@@ -557,16 +572,20 @@ class TaskPageState extends State<TaskPage> {
                                                           ),
                                                           const SizedBox(
                                                               width: 4),
-                                                          Text(
-                                                            "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        13,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -578,28 +597,36 @@ class TaskPageState extends State<TaskPage> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            "Giám sát: ${task['supervisorName']}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Giám sát: ${task['supervisorName']}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
-                                                          Text(
-                                                            "Vị trí: ${task['fieldName']}",
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black),
+                                                          Flexible(
+                                                            child: Text(
+                                                              "Vị trí: ${task['fieldName']}",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle: const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -628,17 +655,27 @@ class TaskPageState extends State<TaskPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text(
-                                                  'Loại: ${task['taskTypeName']}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[200]),
+                                                Flexible(
+                                                  child: Text(
+                                                    'Loại: ${task['taskTypeName']}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            Colors.grey[200]),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                                Text(
-                                                  'Ưu tiên: ${task['priority']}',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[200]),
+                                                Flexible(
+                                                  child: Text(
+                                                    'Ưu tiên: ${task['priority']}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            Colors.grey[200]),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -704,8 +741,8 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => EvidencePage(
-                                role: role,
                                 task: task,
+                                role: role,
                               ),
                             ),
                           );
@@ -848,7 +885,14 @@ class TaskPageState extends State<TaskPage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected || isCompleted || isNotCompleted
+                height: isRejected ||
+                        isCompleted ||
+                        isNotCompleted ||
+                        isPreparing &&
+                            DateTime.now()
+                                .add(Duration(minutes: 30))
+                                .isAfter(DateTime.parse(task['startDate'])) &&
+                            task['managerName'] != null
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
@@ -866,11 +910,7 @@ class TaskPageState extends State<TaskPage> {
                     if (isPreparing ||
                         isExecuting ||
                         isCompleted ||
-                        isNotCompleted ||
-                        isPreparing &&
-                            DateTime.now()
-                                .add(Duration(minutes: 30))
-                                .isAfter(DateTime.parse(task['startDate'])))
+                        isNotCompleted)
                       _bottomSheetButton(
                         label: "Báo cáo",
                         onTap: () {
@@ -952,10 +992,10 @@ class TaskPageState extends State<TaskPage> {
                                 content:
                                     'Chuyển công việc sang "Đang thực hiện"',
                                 onConfirm: () {
+                                  Navigator.of(context).pop();
                                   changeTaskStatus(task['id'], 1).then((value) {
                                     if (value) {
                                       removeTask(task['id']);
-                                      Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Đổi thành công!", false);
                                     } else {
@@ -1032,29 +1072,21 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Hoàn thành",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Đổi trạng thái",
-                                content: 'Chuyển công việc sang "Hoàn thành"',
-                                onConfirm: () {
-                                  changeTaskStatus(task['id'], 2).then((value) {
-                                    if (value) {
-                                      removeTask(task['id']);
-                                      Navigator.of(context).pop();
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Đổi thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
+                          Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => TimeKeepingInTask(
+                                    taskId: task['id'],
+                                    taskName: task['name'],
+                                    isCreate: true,
+                                    status: 2,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null) {removeTask(task['id'])}
                                   });
-                                },
-                                buttonConfirmText: "Đồng ý",
-                              );
-                            },
-                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -1063,30 +1095,21 @@ class TaskPageState extends State<TaskPage> {
                       _bottomSheetButton(
                         label: "Không hoàn thành",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Đổi trạng thái",
-                                content:
-                                    'Chuyển công việc sang "Không hoàn thành"',
-                                onConfirm: () {
-                                  changeTaskStatus(task['id'], 3).then((value) {
-                                    if (value) {
-                                      removeTask(task['id']);
-                                      Navigator.of(context).pop();
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Đổi thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
+                          Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => TimeKeepingInTask(
+                                    taskId: task['id'],
+                                    taskName: task['name'],
+                                    isCreate: true,
+                                    status: 3,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null) {removeTask(task['id'])}
                                   });
-                                },
-                                buttonConfirmText: "Đồng ý",
-                              );
-                            },
-                          );
                         },
                         cls: Colors.red[300]!,
                         context: context,
@@ -1101,6 +1124,8 @@ class TaskPageState extends State<TaskPage> {
                               builder: (context) => TimeKeepingInTask(
                                 taskId: task['id'],
                                 taskName: task['name'],
+                                isCreate: false,
+                                status: 0,
                               ),
                             ),
                           );

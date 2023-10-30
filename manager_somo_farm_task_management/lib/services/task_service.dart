@@ -62,19 +62,25 @@ class TaskService {
       final Map<String, dynamic> task = Map<String, dynamic>.from(data['data']);
       return task;
     } else {
-      throw Exception('Failed to get tasks by user ID');
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 
   Future<List<Map<String, dynamic>>> getTasksByManagerIdDateStatus(
-      int index, int pagesize, int userId, DateTime? date, int status) async {
+      int index,
+      int pagesize,
+      int userId,
+      DateTime? date,
+      int status,
+      String search) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime&taskName=$search';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -94,14 +100,19 @@ class TaskService {
   }
 
   Future<List<Map<String, dynamic>>> getTasksBySupervisorIdDateStatus(
-      int index, int pagesize, int userId, DateTime? date, int status) async {
+      int index,
+      int pagesize,
+      int userId,
+      DateTime? date,
+      int status,
+      String? search) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime&taskName=$search';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -204,6 +215,67 @@ class TaskService {
     } catch (error) {
       print('Error: $error');
       return false;
+    }
+  }
+
+  Future<bool> endTaskAndTimeKeeping(
+      int taskId, int status, List<Map<String, dynamic>> data) async {
+    try {
+      final String apiUrl =
+          "$baseUrl/FarmSubTask/Task($taskId)/Status($status)";
+      var body = jsonEncode(data);
+      final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Future.error(data['message']);
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getTasksByDateEmployeeId(
+      int employeeId,
+      DateTime? start,
+      DateTime? end,
+      int index,
+      int pageSize,
+      int status) async {
+    var startDate = "";
+    if (start != null) {
+      startDate = DateFormat('yyyy-MM-dd').format(start);
+    }
+    var endDate = "";
+    if (end != null) {
+      endDate = DateFormat('yyyy-MM-dd').format(end);
+    }
+    final String apiUrl =
+        "$baseUrl/FarmTask/PageIndex($index)/PageSize($pageSize)/Done/Employee($employeeId)?startDay=$startDate&endDay=$endDate&status=$status";
+    final http.Response response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> tasks =
+          List<Map<String, dynamic>>.from(data['data']['taskByEmployeeDates']);
+      return tasks;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 }

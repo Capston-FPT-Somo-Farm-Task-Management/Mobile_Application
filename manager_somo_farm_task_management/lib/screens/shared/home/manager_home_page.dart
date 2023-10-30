@@ -80,10 +80,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, "");
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status);
+          index, pageSize, userId!, selectedDate, status, "");
     }
     if (reset) {
       setState(() {
@@ -325,9 +325,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                     ),
                   )
                 : RefreshIndicator(
+                    notificationPredicate: (_) => true,
                     onRefresh: () => _getTasksForSelectedDateAndStatus(
                         1, 10, _selectedDate, groupValue, true),
                     child: ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
                         itemCount:
                             isLoadingMore ? tasks.length + 1 : tasks.length,
                         controller: scrollController,
@@ -595,7 +597,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         isPreparing &&
                             DateTime.now()
                                 .add(Duration(minutes: 30))
-                                .isAfter(DateTime.parse(task['startDate']))
+                                .isAfter(DateTime.parse(task['startDate'])) &&
+                            task['managerName'] != null
                     ? MediaQuery.of(context).size.height * 0.30
                     : MediaQuery.of(context).size.height * 0.38,
                 color: kBackgroundColor,
@@ -775,30 +778,21 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Hoàn thành",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Đổi trạng thái",
-                                content: 'Chuyển công việc sang "Hoàn thành"',
-                                onConfirm: () {
-                                  Navigator.of(context).pop();
-                                  changeTaskStatus(task['id'], 2).then((value) {
-                                    if (value) {
-                                      removeTask(task['id']);
-
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Đổi thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
+                          Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => TimeKeepingInTask(
+                                    taskId: task['id'],
+                                    taskName: task['name'],
+                                    isCreate: true,
+                                    status: 2,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null) {removeTask(task['id'])}
                                   });
-                                },
-                                buttonConfirmText: "Đồng ý",
-                              );
-                            },
-                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -807,30 +801,21 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       _bottomSheetButton(
                         label: "Không hoàn thành",
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context1) {
-                              return ConfirmDeleteDialog(
-                                title: "Đổi trạng thái",
-                                content:
-                                    'Chuyển công việc sang "Không hoàn thành"',
-                                onConfirm: () {
-                                  changeTaskStatus(task['id'], 3).then((value) {
-                                    if (value) {
-                                      removeTask(task['id']);
-                                      Navigator.of(context).pop();
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Đổi thành công!", false);
-                                    } else {
-                                      SnackbarShowNoti.showSnackbar(
-                                          "Xảy ra lỗi!", true);
-                                    }
+                          Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => TimeKeepingInTask(
+                                    taskId: task['id'],
+                                    taskName: task['name'],
+                                    isCreate: true,
+                                    status: 3,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null) {removeTask(task['id'])}
                                   });
-                                },
-                                buttonConfirmText: "Đồng ý",
-                              );
-                            },
-                          );
                         },
                         cls: Colors.red[300]!,
                         context: context,
@@ -845,6 +830,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               builder: (context) => TimeKeepingInTask(
                                 taskId: task['id'],
                                 taskName: task['name'],
+                                isCreate: false,
+                                status: 0,
                               ),
                             ),
                           );
