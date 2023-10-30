@@ -181,8 +181,10 @@ class MaterialPageState extends State<MaterialsPage> {
                           ),
                         )
                       : RefreshIndicator(
+                          notificationPredicate: (_) => true,
                           onRefresh: () => getMaterials(),
                           child: ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: filteredareaList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {

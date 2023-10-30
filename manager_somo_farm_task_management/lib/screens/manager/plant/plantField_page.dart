@@ -175,8 +175,10 @@ class PlantFieldPageState extends State<PlantFieldPage> {
             Expanded(
               flex: 2,
               child: RefreshIndicator(
+                notificationPredicate: (_) => true,
                 onRefresh: () => GetPlantFields(),
                 child: ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
                   itemCount: plants.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> plant = plants[index];

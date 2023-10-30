@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone_add/zone_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone_detail/zone_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
@@ -248,8 +247,10 @@ class ZonePageState extends State<ZonePage> {
                           ),
                         )
                       : RefreshIndicator(
+                          notificationPredicate: (_) => true,
                           onRefresh: () => getZones(),
                           child: ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: filteredZoneList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {

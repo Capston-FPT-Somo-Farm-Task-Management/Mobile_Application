@@ -247,8 +247,10 @@ class SupervisorPageState extends State<SupervisorPage> {
                           ),
                         )
                       : RefreshIndicator(
+                          notificationPredicate: (_) => true,
                           onRefresh: () => getSupervisors(),
                           child: ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: filteredSupervisorList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
