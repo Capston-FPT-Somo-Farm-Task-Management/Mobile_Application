@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 
@@ -33,6 +34,25 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      // API hasn't been called yet, return a loading indicator or empty container
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: kPrimaryColor),
+        ),
+      );
+    }
+
+    if (task['status'] == "Đã xóa") {
+      // Task is deleted, close the screen and show a notification
+      Future.delayed(Duration.zero, () {
+        Navigator.of(context).pop();
+        SnackbarShowNoti.showSnackbar(
+            "Công việc đã bị xóa bởi người tạo", true);
+      });
+      // Return an empty container as the UI won't be shown
+      return Container();
+    }
     return Scaffold(
       appBar: isLoading
           ? null

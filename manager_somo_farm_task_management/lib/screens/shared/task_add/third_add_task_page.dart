@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ThirdAddTaskPage extends StatefulWidget {
-  final int fiedlId;
+  int? fiedlId;
   int? plantId;
   int? liveStockId;
   int? otherId;
