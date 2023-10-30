@@ -71,7 +71,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       ManagerHomePage(
         farmId: widget.farmId,
       ),
-      IntroducingFarmPage(),
+      IntroducingFarmPage(farmId: widget.farmId),
       NotificationPage(),
       SettingsPage(),
     ];
