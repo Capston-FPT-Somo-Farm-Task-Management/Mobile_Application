@@ -5,6 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/supervisor_add/supervisor_add_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/supervisor_detail/supervisor_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/member_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -247,28 +248,30 @@ class SupervisorPageState extends State<SupervisorPage> {
                           ),
                         )
                       : RefreshIndicator(
+                          notificationPredicate: (_) => true,
                           onRefresh: () => getSupervisors(),
                           child: ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: filteredSupervisorList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
                               return const SizedBox(height: 20);
                             },
                             itemBuilder: (context, index) {
-                              final employee = filteredSupervisorList[index];
+                              final supervisor = filteredSupervisorList[index];
 
                               return GestureDetector(
                                 onTap: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return EmployeeDetailsPopup(
-                                          employee: employee);
+                                      return SupervisorDetailsPopup(
+                                          supervisor: supervisor);
                                     },
                                   );
                                 },
                                 onLongPress: () {
-                                  _showBottomSheet(context, employee);
+                                  _showBottomSheet(context, supervisor);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -307,11 +310,12 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        employee['name']
+                                                        supervisor['name']
                                                                     .length >
                                                                 23
-                                                            ? '${employee['name'].substring(0, 20)}...'
-                                                            : employee['name'],
+                                                            ? '${supervisor['name'].substring(0, 20)}...'
+                                                            : supervisor[
+                                                                'name'],
                                                         style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight:
@@ -321,7 +325,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                       Container(
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: employee[
+                                                          color: supervisor[
                                                                       'status'] ==
                                                                   "Inactive"
                                                               ? Colors.red[400]
@@ -334,7 +338,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                             const EdgeInsets
                                                                 .all(10),
                                                         child: Text(
-                                                          employee['status'],
+                                                          supervisor['status'],
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14,
@@ -359,7 +363,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Email: ${employee['email']}",
+                                                        "Email: ${supervisor['email']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
@@ -383,7 +387,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                                       ),
                                                       const SizedBox(width: 4),
                                                       Text(
-                                                        "Điện thoại: ${employee['phoneNumber']}",
+                                                        "Điện thoại: ${supervisor['phoneNumber']}",
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
@@ -415,7 +419,7 @@ class SupervisorPageState extends State<SupervisorPage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'Địa chỉ: ${employee['address'].length > 33 ? '${employee['address'].substring(0, 33)}...' : employee['address']}',
+                                              'Địa chỉ: ${supervisor['address'].length > 33 ? '${supervisor['address'].substring(0, 33)}...' : supervisor['address']}',
                                               style:
                                                   const TextStyle(fontSize: 16),
                                             ),
