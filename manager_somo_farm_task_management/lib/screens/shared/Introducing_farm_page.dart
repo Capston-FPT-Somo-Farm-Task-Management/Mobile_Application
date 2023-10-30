@@ -21,9 +21,10 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
   }
 
   Future<void> _loadFarmData() async {
-    final data = await GetFarm(widget.farmId);
-    setState(() {
-      farmData = data;
+    GetFarm(widget.farmId).then((value) {
+      setState(() {
+        farmData = value['data'];
+      });
     });
   }
 

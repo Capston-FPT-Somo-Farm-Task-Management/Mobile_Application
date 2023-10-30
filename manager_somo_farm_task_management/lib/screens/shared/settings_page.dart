@@ -13,6 +13,21 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool isLoading = false;
+  int? userId;
+  Future<int?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedUserId = prefs.getInt('userId');
+    return storedUserId;
+  }
+
+  @override
+  initState() {
+    super.initState();
+    getUserId().then((value) {
+      userId = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +76,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Thông tin cá nhân'),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => UserProfilePage(),
+                            builder: (context) =>
+                                UserProfilePage(userId: userId!),
                           ));
                         },
                       ),
