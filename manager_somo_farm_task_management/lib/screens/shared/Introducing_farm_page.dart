@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/services/farm_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/app_bar.dart';
 
@@ -13,16 +12,23 @@ class IntroducingFarmPage extends StatefulWidget {
 }
 
 class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
-  Future<Map<String, dynamic>> GetFarm(int farmId) {
-    return FarmService().getUserById(farmId);
-  }
-
-  Future<Map<String, dynamic>>? farmData;
+  Map<String, dynamic>? farmData;
 
   @override
   void initState() {
     super.initState();
-    farmData = GetFarm(widget.farmId);
+    _loadFarmData();
+  }
+
+  Future<void> _loadFarmData() async {
+    final data = await GetFarm(widget.farmId);
+    setState(() {
+      farmData = data;
+    });
+  }
+
+  Future<Map<String, dynamic>> GetFarm(int farmId) {
+    return FarmService().getFarmById(farmId);
   }
 
   @override
@@ -39,81 +45,25 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
           children: [
             SizedBox(height: 30),
             Expanded(
-              flex: 2,
-              child: SingleChildScrollView(
-                child: FutureBuilder(
-                  future: farmData,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Thay bằng tiến trình đang tải dữ liệu
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final farm = snapshot.data as Map<String, dynamic>;
-
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 15),
-                        child: GestureDetector(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.teal,
-                              borderRadius: BorderRadius.circular(25),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 8,
-                                  offset: Offset(2, 4), // Shadow position
-                                ),
-                              ],
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15)),
-                              height: 80,
-                              width: double.infinity,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                "",
-                                                // farmData['name'],
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        farmData != null ? farmData!['name'] : '',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    }
-                  },
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),
