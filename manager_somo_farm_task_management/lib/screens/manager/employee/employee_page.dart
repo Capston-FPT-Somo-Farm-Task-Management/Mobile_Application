@@ -254,8 +254,10 @@ class EmployeekPageState extends State<EmployeekPage> {
                           ),
                         )
                       : RefreshIndicator(
+                          notificationPredicate: (_) => true,
                           onRefresh: () => getEmployees(),
                           child: ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: filteredEmployeeList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {

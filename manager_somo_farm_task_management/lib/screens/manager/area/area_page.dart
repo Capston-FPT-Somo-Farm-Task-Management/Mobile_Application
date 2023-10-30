@@ -186,8 +186,10 @@ class AreaPageState extends State<AreaPage> {
                           ),
                         )
                       : RefreshIndicator(
+                          notificationPredicate: (_) => true,
                           onRefresh: () => getAreas(),
                           child: ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemCount: filteredareaList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
