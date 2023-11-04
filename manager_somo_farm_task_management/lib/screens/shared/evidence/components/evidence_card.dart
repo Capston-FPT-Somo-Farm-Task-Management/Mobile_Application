@@ -12,10 +12,12 @@ class EvidenceCard extends StatefulWidget {
   final Map<String, dynamic> evidence;
   final Map<String, dynamic> task;
   final VoidCallback updateEvidence;
+  final String role;
   const EvidenceCard({
     required this.evidence,
     required this.task,
     required this.updateEvidence,
+    required this.role,
   });
 
   @override
@@ -85,80 +87,81 @@ class _EvidenceCardState extends State<EvidenceCard> {
                     ),
                   ],
                 ),
-                PopupMenuButton<String>(
-                  icon: Icon(Icons.more_horiz_outlined),
-                  onSelected: (value) {
-                    if (value == 'Delete') {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context1) {
-                          return ConfirmDeleteDialog(
-                            title: "Xóa báo cáo",
-                            content: "Bạn có chắc muốn xóa báo cáo này?",
-                            onConfirm: () {
-                              EvidenceService()
-                                  .deleteEvidence(widget.evidence['id'])
-                                  .then((value) {
-                                if (value) {
-                                  widget.updateEvidence();
+                if (widget.role != "Manager")
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.more_horiz_outlined),
+                    onSelected: (value) {
+                      if (value == 'Delete') {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context1) {
+                            return ConfirmDeleteDialog(
+                              title: "Xóa báo cáo",
+                              content: "Bạn có chắc muốn xóa báo cáo này?",
+                              onConfirm: () {
+                                EvidenceService()
+                                    .deleteEvidence(widget.evidence['id'])
+                                    .then((value) {
+                                  if (value) {
+                                    widget.updateEvidence();
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Xóa thành công!", false);
+                                  }
+                                }).catchError((e) {
                                   SnackbarShowNoti.showSnackbar(
-                                      "Xóa thành công!", false);
-                                }
-                              }).catchError((e) {
-                                SnackbarShowNoti.showSnackbar(
-                                    "Xảy ra lỗi!", true);
-                              });
-                            },
-                            buttonConfirmText: "Xóa",
-                          );
-                        },
-                      );
-                    }
-                    if (value == 'Edit') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return UpdateEvidencePage(
-                              evidenceId: widget.evidence['id'],
+                                      "Xảy ra lỗi!", true);
+                                });
+                              },
+                              buttonConfirmText: "Xóa",
                             );
                           },
+                        );
+                      }
+                      if (value == 'Edit') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return UpdateEvidencePage(
+                                evidenceId: widget.evidence['id'],
+                              );
+                            },
+                          ),
+                        ).then((value) {
+                          if (value != null) widget.updateEvidence();
+                        });
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'Delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, color: Colors.red),
+                              SizedBox(width: 5),
+                              Text(
+                                'Xóa',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
                         ),
-                      ).then((value) {
-                        if (value != null) widget.updateEvidence();
-                      });
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return <PopupMenuEntry<String>>[
-                      PopupMenuItem<String>(
-                        value: 'Delete',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete, color: Colors.red),
-                            SizedBox(width: 5),
-                            Text(
-                              'Xóa',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ],
+                        PopupMenuItem<String>(
+                          value: 'Edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit_note_rounded),
+                              SizedBox(width: 5),
+                              Text(
+                                'Chỉnh sửa',
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'Edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit_note_rounded),
-                            SizedBox(width: 5),
-                            Text(
-                              'Chỉnh sửa',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ];
-                  },
-                ),
+                      ];
+                    },
+                  ),
               ],
             ),
           ),
@@ -197,7 +200,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
               ),
             ),
           ),
-          if (widget.evidence['urlImage'].isNotEmpty) ...[
+          if (widget.evidence['urlImage'] != null) ...[
             SizedBox(height: 8.0),
             Container(
               constraints: BoxConstraints(maxHeight: 230.0),
