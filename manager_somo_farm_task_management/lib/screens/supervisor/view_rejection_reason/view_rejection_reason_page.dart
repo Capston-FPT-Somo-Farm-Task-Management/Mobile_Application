@@ -93,6 +93,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                               MaterialPageRoute(
                                 builder: (context) => UpdateTaskPage(
                                   task: widget.task,
+                                  role: widget.role,
                                 ),
                               ),
                             );
