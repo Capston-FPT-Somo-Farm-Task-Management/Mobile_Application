@@ -564,6 +564,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           taskName: task['name'],
                           isCreate: false,
                           status: 0,
+                          endDateTask: task['endDate'],
                         ),
                       ),
                     );

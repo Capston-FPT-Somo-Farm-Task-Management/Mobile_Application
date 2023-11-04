@@ -148,6 +148,7 @@ class EvidencePageState extends State<EvidencePage> {
                             return Column(
                               children: [
                                 EvidenceCard(
+                                  role: widget.role,
                                   evidence: evidences[index],
                                   task: widget.task,
                                   updateEvidence: getEvdidence,

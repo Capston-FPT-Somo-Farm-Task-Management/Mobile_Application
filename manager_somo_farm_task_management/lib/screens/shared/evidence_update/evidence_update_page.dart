@@ -146,11 +146,9 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
             selectedAssetList = result['assets'];
             urlImages = result['urls'];
           }
-          if (selectedAssetList.isNotEmpty ||
-              urlImages.isNotEmpty && _descriptionController.text.isNotEmpty)
+          if (_descriptionController.text.isNotEmpty)
             isCreateButtonEnabled = true;
-          if (selectedAssetList.isEmpty && urlImages.isEmpty ||
-              _descriptionController.text.trim().isEmpty)
+          if (_descriptionController.text.trim().isEmpty)
             isCreateButtonEnabled = false;
           if (_descriptionController.text.trim() == evidence!['description'] &&
               selectedAssetList.isEmpty &&
@@ -288,14 +286,11 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                       controller: _descriptionController,
                       style: subTitileStyle.copyWith(fontSize: 17),
                       onChanged: (value) {
-                        if (value.trim().isNotEmpty &&
-                                selectedAssetList.isNotEmpty ||
-                            urlImages.isNotEmpty)
+                        if (value.trim().isNotEmpty)
                           setState(() {
                             isCreateButtonEnabled = true;
                           });
-                        if (value.trim().isEmpty ||
-                            selectedAssetList.isEmpty && urlImages.isEmpty)
+                        if (value.trim().isEmpty)
                           setState(() {
                             isCreateButtonEnabled = false;
                           });

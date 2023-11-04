@@ -76,6 +76,10 @@ class TaskPageState extends State<TaskPage> {
     });
   }
 
+  Future<bool> deleteTask(int taskId) async {
+    return TaskService().deleteTask(taskId);
+  }
+
   @override
   initState() {
     super.initState();
@@ -417,12 +421,23 @@ class TaskPageState extends State<TaskPage> {
 
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).push(
+                                      Navigator.of(context)
+                                          .push(
                                         MaterialPageRoute(
                                           builder: (context) => TaskDetailsPage(
                                               taskId: task['id']),
                                         ),
-                                      );
+                                      )
+                                          .then((value) {
+                                        if (value != null)
+                                          _getTasksForSelectedDateAndStatus(
+                                              1,
+                                              10,
+                                              _selectedDate,
+                                              groupValue,
+                                              true,
+                                              searchValue);
+                                      });
                                     },
                                     onLongPress: () {
                                       _showBottomSheet(
@@ -559,37 +574,68 @@ class TaskPageState extends State<TaskPage> {
                                                       ]),
                                                       const SizedBox(
                                                           height: 10),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .access_time_rounded,
-                                                            color: Colors.black,
-                                                            size: 18,
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 4),
-                                                          Flexible(
-                                                            child: Text(
-                                                              "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: const TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    color: Colors
-                                                                        .black),
+                                                      Stack(children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .access_time_rounded,
+                                                              color:
+                                                                  Colors.black,
+                                                              size: 18,
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 4),
+                                                            Flexible(
+                                                              child: Text(
+                                                                "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .lato(
+                                                                  textStyle: const TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        if (task[
+                                                            'isHaveEvidence'])
+                                                          Container(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        0),
+                                                            child: Tooltip(
+                                                              message:
+                                                                  "Có báo cáo",
+                                                              child: Icon(
+                                                                Icons
+                                                                    .barcode_reader,
+                                                                color: Colors
+                                                                    .black54,
+                                                                size: 20,
+                                                              ),
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                      ]),
                                                       const SizedBox(
                                                           height: 20),
                                                       Row(
@@ -715,9 +761,11 @@ class TaskPageState extends State<TaskPage> {
 
               return Container(
                 padding: const EdgeInsets.only(top: 4),
-                height: isRejected
+                height: isRejected || isCompleted
                     ? MediaQuery.of(context).size.height * 0.35
-                    : MediaQuery.of(context).size.height * 0.32,
+                    : isExecuting
+                        ? MediaQuery.of(context).size.height * 0.23
+                        : MediaQuery.of(context).size.height * 0.32,
                 color: kBackgroundColor,
                 child: Column(
                   children: [
@@ -778,6 +826,7 @@ class TaskPageState extends State<TaskPage> {
                             MaterialPageRoute(
                               builder: (context) => UpdateTaskPage(
                                 task: task,
+                                role: role,
                               ),
                             ),
                           );
@@ -818,7 +867,7 @@ class TaskPageState extends State<TaskPage> {
                         cls: Colors.red[300]!,
                         context: context,
                       ),
-                    if (isPreparing || isNotCompleted)
+                    if (isPreparing)
                       _bottomSheetButton(
                         label: "Hủy / Xóa",
                         onTap: () {
@@ -829,10 +878,10 @@ class TaskPageState extends State<TaskPage> {
                                 title: "Xóa công việc",
                                 content: "Bạn có chắc muốn xóa công việc này?",
                                 onConfirm: () {
-                                  changeTaskStatus(task['id'], 4).then((value) {
+                                  Navigator.of(context).pop();
+                                  deleteTask(task['id']).then((value) {
                                     if (value) {
                                       removeTask(task['id']);
-                                      Navigator.of(context).pop();
                                       SnackbarShowNoti.showSnackbar(
                                           "Xóa thành công!", false);
                                     } else {
@@ -854,6 +903,26 @@ class TaskPageState extends State<TaskPage> {
                         label: "Đánh giá",
                         onTap: () {
                           Navigator.of(context).pop();
+                        },
+                        cls: kPrimaryColor,
+                        context: context,
+                      ),
+                    if (isCompleted || isNotCompleted)
+                      _bottomSheetButton(
+                        label: "Chấm công",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => TimeKeepingInTask(
+                                taskId: task['id'],
+                                taskName: task['name'],
+                                isCreate: false,
+                                status: 0,
+                                endDateTask: task['endDate'],
+                              ),
+                            ),
+                          );
                         },
                         cls: kPrimaryColor,
                         context: context,
@@ -1023,7 +1092,7 @@ class TaskPageState extends State<TaskPage> {
                                 title: "Xóa công việc",
                                 content: "Bạn có chắc muốn xóa công việc này?",
                                 onConfirm: () {
-                                  changeTaskStatus(task['id'], 4).then((value) {
+                                  deleteTask(task['id']).then((value) {
                                     if (value) {
                                       removeTask(task['id']);
                                       Navigator.of(context).pop();
@@ -1081,6 +1150,7 @@ class TaskPageState extends State<TaskPage> {
                                     taskName: task['name'],
                                     isCreate: true,
                                     status: 2,
+                                    endDateTask: task['endDate'],
                                   ),
                                 ),
                               )
@@ -1104,6 +1174,7 @@ class TaskPageState extends State<TaskPage> {
                                     taskName: task['name'],
                                     isCreate: true,
                                     status: 3,
+                                    endDateTask: task['endDate'],
                                   ),
                                 ),
                               )
@@ -1126,6 +1197,7 @@ class TaskPageState extends State<TaskPage> {
                                 taskName: task['name'],
                                 isCreate: false,
                                 status: 0,
+                                endDateTask: task['endDate'],
                               ),
                             ),
                           );

@@ -386,7 +386,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Dụng cụ", // Thay đổi tiêu đề nếu cần thiết
+                      "Dụng cụ (tùy chọn)", // Thay đổi tiêu đề nếu cần thiết
                       style:
                           titileStyle, // Đảm bảo bạn đã định nghĩa titileStyle
                     ),
@@ -460,7 +460,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Mô tả",
+                      "Mô tả (tùy chọn)",
                       style: titileStyle,
                     ),
                     Container(
