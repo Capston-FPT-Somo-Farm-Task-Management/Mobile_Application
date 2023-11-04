@@ -12,21 +12,28 @@ import 'package:manager_somo_farm_task_management/services/livestock_service.dar
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:manager_somo_farm_task_management/services/member_service.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class UpdateTaskPage extends StatefulWidget {
   final Map<String, dynamic> task;
-  const UpdateTaskPage({super.key, required this.task});
+  final String role;
+  const UpdateTaskPage({super.key, required this.task, required this.role});
 
   @override
   State<UpdateTaskPage> createState() => _FirstUpdateTaskPage();
 }
 
 class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
+  List<DateTime> disabledDates = [];
+  int? rangeDate;
   int? farmId;
+  bool isLoading = true;
+  int? userId;
   List<Map<String, dynamic>> areas = [];
   Map<String, dynamic>? areaSelected;
   List<Map<String, dynamic>> zones = [];
@@ -48,8 +55,48 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   final TextEditingController _desController = TextEditingController();
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
-  List<Map<String, dynamic>> priorities = [];
-  Map<String, dynamic>? prioritySelected;
+  List<String> priorities = [
+    "Thấp nhất",
+    "Thấp",
+    "Trung bình",
+    "Cao",
+    "Cao nhất"
+  ];
+  String? prioritySelected;
+
+  int? _selectedRemind;
+  List<int> remindList = [0, 5, 10, 15, 20];
+
+  String? _selectedRepeat;
+  List<String> repeatList = ["Không", "Có"];
+  List<DateTime> selectedDatesRepeat = [];
+  DateTime _focusedDay = DateTime.now();
+  String _formatDates(List<DateTime> dates) {
+    if (dates.isEmpty) {
+      return 'Không có ngày được chọn';
+    }
+
+    List<String> formattedDates = dates.map((date) {
+      return DateFormat('dd-MM-yyyy').format(date);
+    }).toList();
+
+    return formattedDates.join(', ');
+  }
+
+  Future<void> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userIdStored = prefs.getInt('userId');
+    setState(() {
+      userId = userIdStored;
+    });
+  }
+
+  void _onDaySelected(DateTime focusedDay) {
+    setState(() {
+      _focusedDay = focusedDay;
+    });
+  }
+
   Future<void> getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
@@ -59,7 +106,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getAreas() async {
-    AreaService().getAreasActiveByFarmId(farmId!).then((value) {
+    await AreaService().getAreasActiveByFarmId(farmId!).then((value) {
       setState(() {
         areas = value;
         areaSelected = areas
@@ -71,7 +118,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
 
   Future<void> getZones(int areaId, bool init) async {
     widget.task['fieldStatus'] == "Động vật"
-        ? ZoneService().getZonesbyAreaLivestockId(areaId).then((value) {
+        ? await ZoneService().getZonesbyAreaLivestockId(areaId).then((value) {
             setState(() {
               zones = value;
               if (init)
@@ -80,7 +127,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                     .firstOrNull;
             });
           })
-        : ZoneService().getZonesbyAreaPlantId(areaId).then((value) {
+        : await ZoneService().getZonesbyAreaPlantId(areaId).then((value) {
             setState(() {
               zones = value;
               if (init)
@@ -92,7 +139,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getFields(int zoneId, bool init) async {
-    FieldService().getFieldsActivebyZoneId(zoneId).then((value) {
+    await FieldService().getFieldsActivebyZoneId(zoneId).then((value) {
       setState(() {
         fields = value;
         if (init)
@@ -105,7 +152,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
 
   Future<void> getExternalIds(int fieldId, bool init) async {
     widget.task['fieldStatus'] == "Động vật"
-        ? LiveStockService()
+        ? await LiveStockService()
             .getLiveStockExternalIdsByFieldId(fieldId)
             .then((value) {
             setState(() {
@@ -117,7 +164,9 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                     .firstOrNull;
             });
           })
-        : PlantService().getPlantExternalIdsByFieldId(fieldId).then((value) {
+        : await PlantService()
+            .getPlantExternalIdsByFieldId(fieldId)
+            .then((value) {
             setState(() {
               externalIds = value;
               if (init)
@@ -131,7 +180,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
 
   Future<void> getTaskTypes() async {
     widget.task['fieldStatus'] == "Động vật"
-        ? TaskTypeService().getListTaskTypeLivestock().then((value) {
+        ? await TaskTypeService().getListTaskTypeLivestock().then((value) {
             setState(() {
               taskTypes = value;
               taskTypeSelected = taskTypes
@@ -140,7 +189,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                   .firstOrNull;
             });
           })
-        : TaskTypeService().getTaskTypePlants().then((value) {
+        : await TaskTypeService().getTaskTypePlants().then((value) {
             setState(() {
               taskTypes = value;
               taskTypeSelected = taskTypes
@@ -153,7 +202,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
 
   Future<void> getEmployeesbyFarmIdAndTaskTypeId(
       int taskTypeId, bool init) async {
-    EmployeeService()
+    await EmployeeService()
         .getEmployeesbyFarmIdAndTaskTypeId(farmId!, taskTypeId)
         .then((value) {
       setState(() {
@@ -168,7 +217,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getSupervisors() async {
-    MemberService().getSupervisorsActivebyFarmId(farmId!).then((value) {
+    await MemberService().getSupervisorsActivebyFarmId(farmId!).then((value) {
       setState(() {
         supervisors = value;
         supervisorSelected = supervisors
@@ -179,7 +228,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getMaterials(bool init) async {
-    MaterialService().getMaterialActive().then((value) {
+    await MaterialService().getMaterialActive().then((value) {
       setState(() {
         materials = value;
         if (init)
@@ -191,25 +240,111 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getFarmId().then((_) {
+  List<int> listIds(List<Map<String, dynamic>> listObject) {
+    List<int> ids = [];
+    for (var o in listObject) {
+      if (o.containsKey('id') && o['id'] is int) {
+        ids.add(o['id']);
+      }
+    }
+    return ids;
+  }
+
+  Future<void> initData() async {
+    await getFarmId().then((_) {
       getAreas();
       getZones(widget.task['areaId'], true);
       getFields(widget.task['zoneId'], true);
       if (widget.task['externalId'] != null)
         getExternalIds(widget.task['fieldId'], true);
-      getTaskTypes();
-      getEmployeesbyFarmIdAndTaskTypeId(widget.task['taskTypeId'], true);
-      getSupervisors();
-      getMaterials(true);
+    });
+    await getTaskTypes();
+    await getEmployeesbyFarmIdAndTaskTypeId(widget.task['taskTypeId'], true);
+    await getSupervisors();
+    await getMaterials(true);
+  }
+
+  void calculateDateDifference(DateTime startDate, DateTime endDate) {
+    setState(() {
+      rangeDate = endDate.difference(startDate).inDays;
+    });
+  }
+
+  void getDisabledDates() {
+    for (DateTime selectedDate in selectedDatesRepeat) {
+      for (int i = 1; i <= rangeDate!; i++) {
+        DateTime newDateAdd = selectedDate.add(Duration(days: i));
+        DateTime newDateMinus = selectedDate.subtract(Duration(days: i));
+        DateTime newDateAddWithoutTime =
+            DateTime(newDateAdd.year, newDateAdd.month, newDateAdd.day);
+        DateTime newDateMinusWithoutTime =
+            DateTime(newDateMinus.year, newDateMinus.month, newDateMinus.day);
+        setState(() {
+          disabledDates.add(newDateAddWithoutTime);
+          disabledDates.add(newDateMinusWithoutTime);
+        });
+      }
+    }
+  }
+
+  void addDisabledDates(DateTime date) {
+    for (int i = 1; i <= rangeDate!; i++) {
+      DateTime newDateAdd = date.add(Duration(days: i));
+      DateTime newDateMinus = date.subtract(Duration(days: i));
+      DateTime newDateAddWithoutTime =
+          DateTime(newDateAdd.year, newDateAdd.month, newDateAdd.day);
+      DateTime newDateMinusWithoutTime =
+          DateTime(newDateMinus.year, newDateMinus.month, newDateMinus.day);
+      setState(() {
+        disabledDates.add(newDateAddWithoutTime);
+        disabledDates.add(newDateMinusWithoutTime);
+      });
+    }
+  }
+
+  void removeDisabledDates(DateTime date) {
+    for (int i = 1; i <= rangeDate!; i++) {
+      DateTime newDateAdd = date.add(Duration(days: i));
+      DateTime newDateMinus = date.subtract(Duration(days: i));
+      DateTime newDateAddWithoutTime =
+          DateTime(newDateAdd.year, newDateAdd.month, newDateAdd.day);
+      DateTime newDateMinusWithoutTime =
+          DateTime(newDateMinus.year, newDateMinus.month, newDateMinus.day);
+
+      setState(() {
+        disabledDates.remove(newDateAddWithoutTime);
+        disabledDates.remove(newDateMinusWithoutTime);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+    initData().then((_) {
+      setState(() {
+        isLoading = false;
+      });
     });
     _titleController.text = widget.task['name'];
     _desController.text = widget.task['description'];
     _selectedStartDate = DateTime.parse((widget.task['startDate']));
 
     _selectedEndDate = DateTime.parse(widget.task['endDate']);
+    prioritySelected = widget.task['priority'];
+    _selectedRepeat = widget.task['isRepeat'] ? "Có" : "Không";
+    _focusedDay = _selectedEndDate!.add(Duration(days: 1));
+    List<dynamic> dateStrings = widget.task['dateRepeate'];
+    selectedDatesRepeat =
+        dateStrings.map((dateString) => DateTime.parse(dateString)).toList();
+
+    _selectedRemind = widget.task['remind'];
+
+    calculateDateDifference(DateTime.parse(widget.task['startDate']),
+        DateTime.parse(widget.task['endDate']));
+
+    getDisabledDates();
   }
 
   @override
@@ -230,650 +365,855 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
           ),
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Chỉnh sửa công việc",
-                style: headingStyle,
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(color: kPrimaryColor),
+            )
+          : Container(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
+              child: SingleChildScrollView(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Khu vực",
-                      style: titileStyle,
+                      "Chỉnh sửa công việc",
+                      style: headingStyle,
                     ),
-                    SizedBox(height: 5),
                     Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Khu vực",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: areaSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  areaSelected = newValue;
+                                  zoneSelected = null;
+                                  getZones(newValue!['id'], false);
+                                  fieldSelected = null;
+                                  getFields(newValue['id'], false);
+                                  externalSelected = null;
+                                  getExternalIds(newValue['id'], false);
+                                });
+                              },
+                              items: areas
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
                       ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: areaSelected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            areaSelected = newValue;
-                            zoneSelected = null;
-                            getZones(newValue!['id'], false);
-                            fieldSelected = null;
-                            getFields(newValue['id'], false);
-                            externalSelected = null;
-                            getExternalIds(newValue['id'], false);
-                          });
-                        },
-                        items: areas
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Vùng",
-                      style: titileStyle,
                     ),
-                    SizedBox(height: 5),
                     Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Vùng",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: zoneSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  zoneSelected = newValue;
+                                  fieldSelected = null;
+                                  getFields(newValue!['id'], false);
+                                  externalSelected = null;
+                                  getExternalIds(newValue['id'], false);
+                                });
+                              },
+                              items: zones
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
                       ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: zoneSelected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            zoneSelected = newValue;
-                            fieldSelected = null;
-                            getFields(newValue!['id'], false);
-                            externalSelected = null;
-                            getExternalIds(newValue['id'], false);
-                          });
-                        },
-                        items: zones
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              if (zones.isEmpty)
-                Text(
-                  "Khu vực chưa có vùng. Hãy chọn khu vực khác!",
-                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
-                ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.task['fieldStatus'] == "Động vật"
-                          ? "Chuồng"
-                          : "Vườn",
-                      style: titileStyle,
                     ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: fieldSelected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            fieldSelected = newValue;
-                            externalSelected = null;
-                            getExternalIds(newValue!['id'], false);
-                          });
-                        },
-                        items: fields
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              if (fields.isEmpty)
-                widget.task['fieldStatus'] == "Động vật"
-                    ? Text(
-                        "Vùng này chưa có chuồng. Hãy chọn vùng khác!",
-                        style: TextStyle(
-                            fontSize: 11, color: Colors.red, height: 2),
-                      )
-                    : Text(
-                        "Vùng này chưa có Vườn. Hãy chọn vùng khác!",
-                        style: TextStyle(
-                            fontSize: 11, color: Colors.red, height: 2),
-                      ),
-              if (widget.task['externalId'] != null)
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    if (zones.isEmpty)
                       Text(
-                        widget.task['fieldStatus'] == "Động vật"
-                            ? "Mã con vật"
-                            : "Mã cây trồng",
-                        style: titileStyle,
+                        "Khu vực chưa có vùng. Hãy chọn khu vực khác!",
+                        style: TextStyle(
+                            fontSize: 11, color: Colors.red, height: 2),
                       ),
-                      SizedBox(height: 5),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.task['fieldStatus'] == "Động vật"
+                                ? "Chuồng"
+                                : "Vườn",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: fieldSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  fieldSelected = newValue;
+                                  externalSelected = null;
+                                  getExternalIds(newValue!['id'], false);
+                                });
+                              },
+                              items: fields
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    if (fields.isEmpty && zoneSelected != null)
+                      widget.task['fieldStatus'] == "Động vật"
+                          ? Text(
+                              "Vùng này chưa có chuồng. Hãy chọn vùng khác!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            )
+                          : Text(
+                              "Vùng này chưa có Vườn. Hãy chọn vùng khác!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            ),
+                    if (widget.task['externalId'] != null)
                       Container(
-                        constraints: BoxConstraints(
-                          minHeight:
-                              50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                        margin: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.task['fieldStatus'] == "Động vật"
+                                  ? "Mã con vật"
+                                  : "Mã cây trồng",
+                              style: titileStyle,
+                            ),
+                            SizedBox(height: 5),
+                            Container(
+                              constraints: BoxConstraints(
+                                minHeight:
+                                    50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: DropdownButton2<Map<String, dynamic>>(
+                                isExpanded: true,
+                                underline: Container(height: 0),
+                                value: externalSelected,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    externalSelected = newValue;
+                                  });
+                                },
+                                items: externalIds.map<
+                                        DropdownMenuItem<Map<String, dynamic>>>(
+                                    (Map<String, dynamic> value) {
+                                  return DropdownMenuItem<Map<String, dynamic>>(
+                                    value: value,
+                                    child: Text(value['externalId']),
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          ],
                         ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1.0,
+                      ),
+                    if (widget.task['externalId'] != null &&
+                        externalIds.isEmpty)
+                      widget.task['fieldStatus'] == "Động vật"
+                          ? Text(
+                              "Chuồng này không có con vật nào. Hãy chọn chuồng khác!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            )
+                          : Text(
+                              "Vườn này chưa có cây trồng nào. Hãy chọn vườn khác!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            ),
+                    MyInputField(
+                      title: "Tên công việc",
+                      hint: "Nhập tên công việc",
+                      controller: _titleController,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Loại công việc",
+                            style: titileStyle,
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: DropdownButton2<Map<String, dynamic>>(
-                          isExpanded: true,
-                          underline: Container(height: 0),
-                          value: externalSelected,
-                          onChanged: (newValue) {
-                            setState(() {
-                              externalSelected = newValue;
-                            });
-                          },
-                          items: externalIds
-                              .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                  (Map<String, dynamic> value) {
-                            return DropdownMenuItem<Map<String, dynamic>>(
-                              value: value,
-                              child: Text(value['externalId']),
-                            );
-                          }).toList(),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              if (widget.task['externalId'] != null && externalIds.isEmpty)
-                widget.task['fieldStatus'] == "Động vật"
-                    ? Text(
-                        "Chuồng này không có con vật nào. Hãy chọn chuồng khác!",
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: taskTypeSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  taskTypeSelected = newValue;
+                                  employeesSelected.clear();
+                                  getEmployeesbyFarmIdAndTaskTypeId(
+                                      newValue!['id'], false);
+                                  _keyChange = UniqueKey();
+                                });
+                              },
+                              items: taskTypes
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Người thực hiện",
+                            style: titileStyle,
+                          ),
+                          Container(
+                            height: 52,
+                            margin: const EdgeInsets.only(top: 8.0),
+                            padding: const EdgeInsets.only(left: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: SingleChildScrollView(
+                              child: ChipsInput(
+                                suggestionsBoxMaxHeight: 200,
+                                key: _keyChange,
+                                enabled: !employees.isEmpty,
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Chọn người thực hiện",
+                                    hintStyle:
+                                        TextStyle(color: Colors.black45)),
+                                initialValue: employeesSelected,
+                                findSuggestions: (String query) {
+                                  if (query.length != 0) {
+                                    var lowercaseQuery =
+                                        removeDiacritics(query.toLowerCase());
+                                    return employees.where((e) {
+                                      return removeDiacritics(
+                                              e['name'].toLowerCase())
+                                          .contains(lowercaseQuery);
+                                    }).toList(growable: false)
+                                      ..sort((a, b) => removeDiacritics(
+                                              a['name'].toLowerCase())
+                                          .indexOf(lowercaseQuery)
+                                          .compareTo(removeDiacritics(
+                                                  b['name'].toLowerCase())
+                                              .indexOf(lowercaseQuery)));
+                                  } else {
+                                    return const <Map<String, dynamic>>[];
+                                  }
+                                },
+                                onChanged: (data) {
+                                  employeesSelected =
+                                      data.cast<Map<String, dynamic>>();
+                                },
+                                chipBuilder: (context, state, employee) {
+                                  return InputChip(
+                                    key: ObjectKey(employee),
+                                    label: Text(employee['name']),
+                                    onDeleted: () => state.deleteChip(employee),
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  );
+                                },
+                                suggestionBuilder: (context, state, profile) {
+                                  return ListTile(
+                                    key: ObjectKey(profile),
+                                    title: Text(profile['name']),
+                                    onTap: () =>
+                                        state.selectSuggestion(profile),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (employees.isEmpty)
+                      Text(
+                        "Hãy chọn loại công việc khác",
                         style: TextStyle(
                             fontSize: 11, color: Colors.red, height: 2),
-                      )
-                    : Text(
-                        "Vườn này chưa có cây trồng nào. Hãy chọn vườn khác!",
-                        style: TextStyle(
-                            fontSize: 11, color: Colors.red, height: 2),
                       ),
-              MyInputField(
-                title: "Tên công việc",
-                hint: "Nhập tên công việc",
-                controller: _titleController,
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Loại công việc",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
                     Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: taskTypeSelected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            taskTypeSelected = newValue;
-                            employeesSelected.clear();
-                            getEmployeesbyFarmIdAndTaskTypeId(
-                                newValue!['id'], false);
-                            _keyChange = UniqueKey();
-                          });
-                        },
-                        items: taskTypes
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Người thực hiện",
-                      style: titileStyle,
-                    ),
-                    Container(
-                      height: 52,
-                      margin: const EdgeInsets.only(top: 8.0),
-                      padding: const EdgeInsets.only(left: 14),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: SingleChildScrollView(
-                        child: ChipsInput(
-                          suggestionsBoxMaxHeight: 200,
-                          key: _keyChange,
-                          enabled: !employeesSelected.isEmpty,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Chọn người thực hiện",
-                              hintStyle: TextStyle(color: Colors.black45)),
-                          initialValue: employeesSelected,
-                          findSuggestions: (String query) {
-                            if (query.length != 0) {
-                              var lowercaseQuery =
-                                  removeDiacritics(query.toLowerCase());
-                              return employees.where((e) {
-                                return removeDiacritics(e['name'].toLowerCase())
-                                    .contains(lowercaseQuery);
-                              }).toList(growable: false)
-                                ..sort((a, b) =>
-                                    removeDiacritics(a['name'].toLowerCase())
-                                        .indexOf(lowercaseQuery)
-                                        .compareTo(removeDiacritics(
-                                                b['name'].toLowerCase())
-                                            .indexOf(lowercaseQuery)));
-                            } else {
-                              return const <Map<String, dynamic>>[];
-                            }
-                          },
-                          onChanged: (data) {
-                            employeesSelected =
-                                data.cast<Map<String, dynamic>>();
-                          },
-                          chipBuilder: (context, state, employee) {
-                            return InputChip(
-                              key: ObjectKey(employee),
-                              label: Text(employee['name']),
-                              onDeleted: () => state.deleteChip(employee),
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                            );
-                          },
-                          suggestionBuilder: (context, state, profile) {
-                            return ListTile(
-                              key: ObjectKey(profile),
-                              title: Text(profile['name']),
-                              onTap: () => state.selectSuggestion(profile),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (employees.isEmpty)
-                Text(
-                  "Hãy chọn loại công việc khác",
-                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
-                ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Người giám sát",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: supervisorSelected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            supervisorSelected = newValue;
-                            getSupervisors();
-                          });
-                        },
-                        items: supervisors
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Dụng cụ",
-                      style: titileStyle,
-                    ),
-                    Container(
-                      height: 52,
-                      margin: const EdgeInsets.only(top: 8.0),
-                      padding: const EdgeInsets.only(left: 14),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: SingleChildScrollView(
-                        child: ChipsInput(
-                          suggestionsBoxMaxHeight: 200,
-                          enabled: !materialsSelected.isEmpty,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Chọn công cụ cần thiết",
-                              hintStyle: TextStyle(color: Colors.black45)),
-                          initialValue: materialsSelected,
-                          key: GlobalKey(),
-                          findSuggestions: (String query) {
-                            if (query.length != 0) {
-                              var lowercaseQuery =
-                                  removeDiacritics(query.toLowerCase());
-                              return materials.where((e) {
-                                return removeDiacritics(e['name'].toLowerCase())
-                                    .contains(lowercaseQuery);
-                              }).toList(growable: false)
-                                ..sort((a, b) =>
-                                    removeDiacritics(a['name'].toLowerCase())
-                                        .indexOf(lowercaseQuery)
-                                        .compareTo(removeDiacritics(
-                                                b['name'].toLowerCase())
-                                            .indexOf(lowercaseQuery)));
-                            } else {
-                              return const <Map<String, dynamic>>[];
-                            }
-                          },
-                          onChanged: (data) {
-                            materialsSelected =
-                                data.cast<Map<String, dynamic>>();
-                          },
-                          chipBuilder: (context, state, material) {
-                            return InputChip(
-                              key: ObjectKey(material),
-                              label: Text(material['name']),
-                              onDeleted: () => state.deleteChip(material),
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                            );
-                          },
-                          suggestionBuilder: (context, state, profile) {
-                            return ListTile(
-                              key: ObjectKey(profile),
-                              title: Text(profile['name']),
-                              onTap: () => state.selectSuggestion(profile),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Mô tả",
-                      style: titileStyle,
-                    ),
-                    Container(
-                      height: 150,
-                      margin: const EdgeInsets.only(top: 8.0),
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: TextFormField(
-                        maxLines: null,
-                        autofocus: false,
-                        controller: _desController,
-                        style: subTitileStyle,
-                        decoration: InputDecoration(
-                          hintText: "Nhập mô tả",
-                          hintStyle:
-                              subTitileStyle.copyWith(color: kTextGreyColor),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: kBackgroundColor, width: 0),
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Người giám sát",
+                            style: titileStyle,
                           ),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: kBackgroundColor, width: 0),
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: supervisorSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  supervisorSelected = newValue;
+                                });
+                              },
+                              items: supervisors
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Dụng cụ",
+                            style: titileStyle,
+                          ),
+                          Container(
+                            height: 52,
+                            margin: const EdgeInsets.only(top: 8.0),
+                            padding: const EdgeInsets.only(left: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: SingleChildScrollView(
+                              child: ChipsInput(
+                                suggestionsBoxMaxHeight: 200,
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Chọn công cụ cần thiết",
+                                    hintStyle:
+                                        TextStyle(color: Colors.black45)),
+                                initialValue: materialsSelected,
+                                key: GlobalKey(),
+                                findSuggestions: (String query) {
+                                  if (query.length != 0) {
+                                    var lowercaseQuery =
+                                        removeDiacritics(query.toLowerCase());
+                                    return materials.where((e) {
+                                      return removeDiacritics(
+                                              e['name'].toLowerCase())
+                                          .contains(lowercaseQuery);
+                                    }).toList(growable: false)
+                                      ..sort((a, b) => removeDiacritics(
+                                              a['name'].toLowerCase())
+                                          .indexOf(lowercaseQuery)
+                                          .compareTo(removeDiacritics(
+                                                  b['name'].toLowerCase())
+                                              .indexOf(lowercaseQuery)));
+                                  } else {
+                                    return const <Map<String, dynamic>>[];
+                                  }
+                                },
+                                onChanged: (data) {
+                                  materialsSelected =
+                                      data.cast<Map<String, dynamic>>();
+                                },
+                                chipBuilder: (context, state, material) {
+                                  return InputChip(
+                                    key: ObjectKey(material),
+                                    label: Text(material['name']),
+                                    onDeleted: () => state.deleteChip(material),
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  );
+                                },
+                                suggestionBuilder: (context, state, profile) {
+                                  return ListTile(
+                                    key: ObjectKey(profile),
+                                    title: Text(profile['name']),
+                                    onTap: () =>
+                                        state.selectSuggestion(profile),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Mô tả",
+                            style: titileStyle,
+                          ),
+                          Container(
+                            height: 150,
+                            margin: const EdgeInsets.only(top: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: TextFormField(
+                              maxLines: null,
+                              autofocus: false,
+                              controller: _desController,
+                              style: subTitileStyle,
+                              decoration: InputDecoration(
+                                hintText: "Nhập mô tả",
+                                hintStyle: subTitileStyle.copyWith(
+                                    color: kTextGreyColor),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: kBackgroundColor, width: 0),
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: kBackgroundColor, width: 0),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    MyInputField(
+                      title: "Ngày giờ thực hiện",
+                      hint: _selectedStartDate == null
+                          ? "dd/MM/yyyy HH:mm a"
+                          : DateFormat('dd/MM/yyyy HH:mm a')
+                              .format(_selectedStartDate!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          widget.task['status'] == "Đang thực hiện" ||
+                                  _selectedStartDate!.isBefore(DateTime.now())
+                              ? null
+                              : _getDateTimeFromUser(true);
+                        },
+                      ),
+                    ),
+                    MyInputField(
+                      title: "Ngày giờ kết thúc",
+                      hint: _selectedEndDate == null
+                          ? "dd/MM/yyyy HH:mm a"
+                          : DateFormat('dd/MM/yyyy HH:mm a')
+                              .format(_selectedEndDate!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          _getDateTimeFromUser(false);
+                        },
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Lặp lại",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  value: _selectedRepeat,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedRepeat = newValue!;
+                                      if (_selectedRepeat == "Không") {
+                                        selectedDatesRepeat.clear();
+                                      }
+                                    });
+                                  },
+                                  items: repeatList
+                                      .map<DropdownMenuItem<String>>(
+                                          (String? value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value!,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (_selectedRepeat != "Không")
+                      _selectedStartDate == null || _selectedEndDate == null
+                          ? Text(
+                              "Hãy chọn ngày giờ bắt đầu và kết thúc trước!",
+                              style: TextStyle(
+                                  fontSize: 11, color: Colors.red, height: 2),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    "Chọn ngày lặp lại",
+                                    style: titileStyle,
+                                  ),
+                                ),
+                                TableCalendar(
+                                    locale: 'vi_VN',
+                                    rowHeight: 43,
+                                    headerStyle: HeaderStyle(
+                                      formatButtonVisible: false,
+                                      titleCentered: true,
+                                    ),
+                                    availableGestures: AvailableGestures.all,
+                                    firstDay: _selectedEndDate!
+                                        .add(Duration(days: 1)),
+                                    focusedDay: _focusedDay,
+                                    lastDay:
+                                        DateTime.now().add(Duration(days: 365)),
+                                    onDaySelected: (date, events) {
+                                      _onDaySelected(date);
+                                      setState(() {
+                                        if (selectedDatesRepeat.any(
+                                            (selectedDate) => isSameDay(
+                                                selectedDate, date))) {
+                                          // Nếu ngày đã có trong danh sách, loại bỏ nó
+                                          selectedDatesRepeat.removeWhere(
+                                              (selectedDate) => isSameDay(
+                                                  selectedDate, date));
+                                          removeDisabledDates(date);
+                                        } else {
+                                          // Nếu ngày chưa có trong danh sách, thêm vào
+                                          selectedDatesRepeat.add(date);
+                                          addDisabledDates(date);
+                                        }
+                                      });
+                                    },
+                                    calendarStyle: CalendarStyle(
+                                      selectedDecoration: BoxDecoration(
+                                        color: kPrimaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    selectedDayPredicate: (day) =>
+                                        selectedDatesRepeat.any(
+                                            (date) => isSameDay(date, day)),
+                                    enabledDayPredicate: (DateTime day) {
+                                      DateTime dayWithoutTime = DateTime(
+                                          day.year, day.month, day.day);
+                                      var r = !disabledDates
+                                          .contains(dayWithoutTime);
+                                      return r;
+                                    }),
+                                SizedBox(height: 20),
+                                RichText(
+                                  text: TextSpan(
+                                    style: titileStyle,
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: 'Ngày được chọn: ',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 16),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            '${_formatDates(selectedDatesRepeat)}',
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Nhắc nhở",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight:
+                                      50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: DropdownButton2(
+                                  isExpanded: true,
+                                  underline: Container(height: 0),
+                                  // value: _selectedArea,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedRemind = int.parse(newValue!);
+                                    });
+                                  },
+                                  items: remindList
+                                      .map<DropdownMenuItem<String>>(
+                                          (int value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.toString(),
+                                      child: Text(value == 0
+                                          ? "Không"
+                                          : "${value.toString()} phút trước khi bắt đầu"),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 17,
+                                  left: 16,
+                                  child: Text(_selectedRemind == 0
+                                      ? "Không"
+                                      : "$_selectedRemind phút trước khi bắt đầu"))
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Độ ưu tiên",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: prioritySelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  prioritySelected = newValue;
+                                });
+                              },
+                              items: priorities.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(),
+                        GestureDetector(
+                          onTap: () {
+                            _validateDate();
+                          },
+                          child: Container(
+                            width: 120,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: kPrimaryColor,
+                            ),
+                            alignment: Alignment
+                                .center, // Đặt alignment thành Alignment.center
+                            child: const Text(
+                              "Cập nhật",
+                              style: TextStyle(
+                                color: kTextWhiteColor,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    )
+                      ],
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
-              MyInputField(
-                title: "Ngày giờ thực hiện",
-                hint: _selectedStartDate == null
-                    ? "dd/MM/yyyy HH:mm a"
-                    : DateFormat('dd/MM/yyyy HH:mm a')
-                        .format(_selectedStartDate!),
-                widget: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    _getDateTimeFromUser(true);
-                  },
-                ),
-              ),
-              MyInputField(
-                title: "Ngày giờ kết thúc",
-                hint: _selectedEndDate == null
-                    ? "dd/MM/yyyy HH:mm a"
-                    : DateFormat('dd/MM/yyyy HH:mm a')
-                        .format(_selectedEndDate!),
-                widget: IconButton(
-                  icon: const Icon(
-                    Icons.calendar_today_outlined,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    _getDateTimeFromUser(false);
-                  },
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Độ ưu tiên",
-                      style: titileStyle,
-                    ),
-                    SizedBox(height: 5),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight:
-                            50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButton2<Map<String, dynamic>>(
-                        isExpanded: true,
-                        underline: Container(height: 0),
-                        value: prioritySelected,
-                        onChanged: (newValue) {
-                          setState(() {
-                            prioritySelected = newValue;
-                          });
-                        },
-                        items: priorities
-                            .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                (Map<String, dynamic> value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value['name']),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(),
-                  GestureDetector(
-                    // onTap: () {
-                    //   Navigator.of(context).push(
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const SecondAddTaskPage(),
-                    //     ),
-                    //   );
-                    // },
-                    child: Container(
-                      width: 120,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: kPrimaryColor,
-                      ),
-                      alignment: Alignment
-                          .center, // Đặt alignment thành Alignment.center
-                      child: const Text(
-                        "Cập nhật",
-                        style: TextStyle(
-                          color: kTextWhiteColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -913,11 +1253,31 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
         } else {
           setState(() {
             if (isStart) {
-              _selectedStartDate = selectedDateTime;
-              _selectedEndDate = null;
-              // _focusedDay = _selectedStartDate!.add(Duration(days: 1));
+              if (selectedDateTime.isBefore(DateTime.now())) {
+                SnackbarShowNoti.showSnackbar(
+                    "Ngày giờ thực hiện phải lớn hơn giờ hiện tại", true);
+              } else {
+                _selectedStartDate = selectedDateTime;
+
+                if (_selectedEndDate != null) {
+                  if (_selectedStartDate!.isAfter(_selectedEndDate!))
+                    _selectedEndDate = null;
+                  else {
+                    calculateDateDifference(
+                        _selectedStartDate!, _selectedEndDate!);
+                  }
+                }
+                selectedDatesRepeat.clear();
+                disabledDates.clear();
+              }
             } else {
               _selectedEndDate = selectedDateTime;
+              _focusedDay = _selectedEndDate!.add(Duration(days: 1));
+              if (_selectedStartDate != null) {
+                calculateDateDifference(_selectedStartDate!, _selectedEndDate!);
+              }
+              selectedDatesRepeat.clear();
+              disabledDates.clear();
             }
           });
         }
@@ -925,5 +1285,93 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
       return;
     }
     return;
+  }
+
+  _validateDate() {
+    setState(() {
+      isLoading = true;
+    });
+    if (_selectedStartDate != null &&
+        _selectedEndDate != null &&
+        employeesSelected.isNotEmpty &&
+        _titleController.text.trim().isNotEmpty &&
+        fieldSelected!.isNotEmpty &&
+        areaSelected!.isNotEmpty &&
+        zoneSelected!.isNotEmpty &&
+        taskTypeSelected!.isNotEmpty &&
+        _selectedRemind != null) {
+      if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty ||
+          widget.role == "Manager" && supervisorSelected == null ||
+          widget.task['externalId'] != null && externalSelected!.isEmpty) {
+        setState(() {
+          isLoading = false;
+        });
+        SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+      } else {
+        List<String> formattedDates = selectedDatesRepeat.map((date) {
+          return DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(date);
+        }).toList();
+//add database
+        Map<String, dynamic> taskData = {
+          "employeeIds": listIds(employeesSelected),
+          "materialIds": listIds(materialsSelected),
+          "dates": formattedDates,
+          // "dates":
+          "farmTask": {
+            "name": _titleController.text,
+            "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+                .format(_selectedStartDate!),
+            "endDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+                .format(_selectedEndDate!),
+            "description": _desController.text,
+            "priority": prioritySelected,
+            "isRepeat": _selectedRepeat == "Không" ? false : true,
+            "suppervisorId":
+                widget.role == "Manager" ? supervisorSelected!['id'] : userId,
+            "fieldId": fieldSelected!['id'],
+            "taskTypeId": taskTypeSelected!['id'],
+            "managerId": widget.role == "Manager" ? userId : null,
+            "otherId": null,
+            "plantId":
+                widget.task['plantId'] == null ? null : externalSelected!['id'],
+            "liveStockId": widget.task['liveStockId'] == null
+                ? null
+                : externalSelected!['id'],
+            "remind": _selectedRemind,
+          }
+        };
+        print(taskData);
+        print(userId!);
+        TaskService().updateTask(taskData, widget.task['id']).then((value) {
+          if (value) {
+            Navigator.of(context).pop("ok");
+            setState(() {
+              isLoading = false;
+            });
+            SnackbarShowNoti.showSnackbar(
+                'Cập nhật công việc thành công', false);
+          }
+        }).catchError((e) {
+          setState(() {
+            isLoading = false;
+          });
+          SnackbarShowNoti.showSnackbar(e.toString(), true);
+        });
+      }
+    }
+    // else if (_selectedRepeat != "Không" && selectedDatesRepeat.isNotEmpty) {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //   Navigator.of(context).pop("ok");
+    //   SnackbarShowNoti.showSnackbar('Cập nhật công việc thành công111', false);
+    //}
+    else {
+      setState(() {
+        isLoading = false;
+      });
+      // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
+      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+    }
   }
 }
