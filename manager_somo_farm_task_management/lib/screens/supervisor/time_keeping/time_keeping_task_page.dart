@@ -4,17 +4,20 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/services/effort_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TimeKeepingInTask extends StatefulWidget {
   final int taskId;
   final String taskName;
   final bool isCreate;
   final int status;
+  final String endDateTask;
   TimeKeepingInTask(
       {required this.taskId,
       required this.taskName,
       required this.isCreate,
-      required this.status});
+      required this.status,
+      required this.endDateTask});
 
   @override
   State<TimeKeepingInTask> createState() => _TimeKeepingInTaskState();
@@ -25,6 +28,15 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   List<Map<String, dynamic>> employees = [];
   List<TextEditingController> controllers = [];
   bool isSaveEnabled = false;
+  String? role;
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
+  }
+
   void getEmployees() {
     EffortService().getEffortByTaskId(widget.taskId).then((value) {
       setState(() {
@@ -85,6 +97,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   void initState() {
     super.initState();
     getEmployees();
+    getRole();
   }
 
   @override
@@ -102,65 +115,72 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
               title: Text("Chấm công", style: TextStyle(color: kPrimaryColor)),
               centerTitle: true,
-              actions: [
-                GestureDetector(
-                  onTap: isSaveEnabled
-                      ? () {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          widget.isCreate
-                              ? TaskService()
-                                  .endTaskAndTimeKeeping(widget.taskId,
-                                      widget.status, getUpdatedEffortData())
-                                  .then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  if (value) {
-                                    Navigator.of(context).pop("ok");
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đã lưu thay đổi!", false);
-                                  }
-                                }).catchError((e) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
-                                })
-                              : createEffort(getUpdatedEffortData())
-                                  .then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  if (value) {
-                                    Navigator.of(context).pop();
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đã lưu thay đổi!", false);
-                                  }
-                                }).catchError((e) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
+              actions: role != "Manager" &&
+                      DateTime.now().isAfter(DateTime.parse(widget.endDateTask)
+                          .add(Duration(hours: 48)))
+                  ? null
+                  : [
+                      GestureDetector(
+                        onTap: isSaveEnabled
+                            ? () {
+                                setState(() {
+                                  isLoading = true;
                                 });
-                        }
-                      : null,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: isSaveEnabled ? kPrimaryColor : Colors.black26,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
+                                widget.isCreate
+                                    ? TaskService()
+                                        .endTaskAndTimeKeeping(
+                                            widget.taskId,
+                                            widget.status,
+                                            getUpdatedEffortData())
+                                        .then((value) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        if (value) {
+                                          Navigator.of(context).pop("ok");
+                                          SnackbarShowNoti.showSnackbar(
+                                              "Đã lưu thay đổi!", false);
+                                        }
+                                      }).catchError((e) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        SnackbarShowNoti.showSnackbar(
+                                            e.toString(), true);
+                                      })
+                                    : createEffort(getUpdatedEffortData())
+                                        .then((value) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        if (value) {
+                                          Navigator.of(context).pop();
+                                          SnackbarShowNoti.showSnackbar(
+                                              "Đã lưu thay đổi!", false);
+                                        }
+                                      }).catchError((e) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        SnackbarShowNoti.showSnackbar(
+                                            e.toString(), true);
+                                      });
+                              }
+                            : null,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color:
+                                isSaveEnabled ? kPrimaryColor : Colors.black26,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(7),
+                            ),
+                          ),
+                          child: Center(child: Text("Lưu")),
+                        ),
                       ),
-                    ),
-                    child: Center(child: Text("Lưu")),
-                  ),
-                ),
-              ],
+                    ],
             ),
       body: isLoading
           ? Center(
