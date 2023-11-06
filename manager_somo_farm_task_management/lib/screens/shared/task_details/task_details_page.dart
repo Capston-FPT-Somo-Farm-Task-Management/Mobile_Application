@@ -5,6 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TaskDetailsPage extends StatefulWidget {
   final int taskId;
@@ -17,12 +18,39 @@ class TaskDetailsPage extends StatefulWidget {
 class _TaskDetailsPageState extends State<TaskDetailsPage> {
   late Map<String, dynamic> task;
   bool isLoading = true;
-  void getTask() {
-    TaskService().getTasksByTaskId(widget.taskId).then((value) {
+  String? role;
+  String? dateRepeat;
+  bool isChange = false;
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
+  }
+
+  String formatDates(List<dynamic> dateStrings) {
+    List<DateTime> dateTimes = dateStrings.map((dynamic dateString) {
+      return DateTime.parse(dateString);
+    }).toList();
+
+    List<String> formattedDates = dateTimes.map((DateTime dateTime) {
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    }).toList();
+
+    return formattedDates.join(', ');
+  }
+
+  Future<void> getTask() async {
+    await TaskService().getTasksByTaskId(widget.taskId).then((value) {
       setState(() {
         task = value;
+        dateRepeat = formatDates(task['dateRepeate']);
         isLoading = false;
       });
+    }).catchError((e) {
+      isLoading = false;
+      SnackbarShowNoti.showSnackbar(e.toString(), true);
     });
   }
 
@@ -30,6 +58,8 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   void initState() {
     super.initState();
     getTask();
+
+    getRole();
   }
 
   @override
@@ -61,27 +91,47 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
               elevation: 0,
               leading: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pop();
+                    isChange
+                        ? Navigator.of(context).pop("ok")
+                        : Navigator.of(context).pop();
                   },
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
               title: Text(task['name'], style: TextStyle(color: kPrimaryColor)),
               centerTitle: true,
               actions: [
-                GestureDetector(
-                    onTap: () {},
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.mode_edit_outline_outlined,
-                        color: kPrimaryColor,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => UpdateTaskPage(task: task),
-                          ),
-                        );
-                      },
-                    )),
+                role == "Manager" && task['managerName'] != null ||
+                        role != "Manager" && task['managerName'] == null
+                    ? (task['status'] == "Từ chối" ||
+                            task['status'] == "Chuẩn bị" ||
+                            task['status'] == "Đang thực hiện")
+                        ? task['isParent'] && task['isRepeat']
+                            ? IconButton(
+                                icon: const Icon(
+                                  Icons.mode_edit_outline_outlined,
+                                  color: kPrimaryColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => UpdateTaskPage(
+                                          task: task, role: role!),
+                                    ),
+                                  )
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLoading = true;
+                                        isChange = true;
+                                      });
+                                      getTask();
+                                    }
+                                  });
+                                },
+                              )
+                            : Container()
+                        : Container()
+                    : Container(),
               ],
             ),
       body: isLoading
@@ -107,7 +157,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ),
                       child: SingleChildScrollView(
                         child: Text(
-                          task['description'],
+                          task['description'].toString().trim().isEmpty
+                              ? "Không có mô tả"
+                              : task['description'],
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
@@ -384,7 +436,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            'Dụng cụ: ${task['materialName']}',
+                            'Dụng cụ: ${task['materialName'].toString().trim().isEmpty ? 'Không có' : task['materialName']}',
                             style: const TextStyle(
                               fontSize: 16,
                             ),
@@ -451,24 +503,45 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.repeat,
-                          color: kSecondColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            'Lặp lại: ${task['isRepeat'] ? "Có" : "Không"}',
-                            style: const TextStyle(
-                              fontSize: 16,
+                    if (task['isParent'])
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.repeat,
+                            color: kSecondColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              'Lặp lại: ${task['isRepeat'] ? "Có" : "Không"}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                        ],
+                      ),
+                    if (task['isParent']) const SizedBox(height: 16),
+                    if (task['isRepeat'] && task['isParent'])
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.event_repeat,
+                            color: kSecondColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              'Ngày lặp lại: $dateRepeat',
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (task['isRepeat'] && task['isParent'])
+                      const SizedBox(height: 16),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -487,6 +560,24 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         ),
                       ],
                     ),
+                    if (!task['isParent']) const SizedBox(height: 16),
+                    if (!task['isParent'])
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.repeat,
+                            color: kSecondColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              "Công việc được lặp lại từ công việc trước đó",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),

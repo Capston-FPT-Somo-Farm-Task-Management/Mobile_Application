@@ -183,9 +183,9 @@ class _LoginPageState extends State<LoginPage> {
                           });
 
                           if (role == "Manager" || role == "Supervisor") {
-                            setState(() {
-                              isLoading = false;
-                            });
+                            // setState(() {
+                            //   isLoading = false;
+                            // });
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) =>

@@ -54,7 +54,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   List<String> priorities = [
     "Thấp nhất",
     "Thấp",
-    "Trung Bình",
+    "Trung bình",
     "Cao",
     "Cao nhất"
   ];
@@ -63,6 +63,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   int? userId;
   bool isLoading = false;
   DateTime _focusedDay = DateTime.now();
+  List<DateTime> disabledDates = [];
+  int? rangeDate;
   getFarmId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedFarmId = prefs.getInt('farmId');
@@ -101,6 +103,43 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     setState(() {
       _focusedDay = focusedDay;
     });
+  }
+
+  void calculateDateDifference(DateTime startDate, DateTime endDate) {
+    setState(() {
+      rangeDate = endDate.difference(startDate).inDays;
+    });
+  }
+
+  void addDisabledDates(DateTime date) {
+    for (int i = 1; i <= rangeDate!; i++) {
+      DateTime newDateAdd = date.add(Duration(days: i));
+      DateTime newDateMinus = date.subtract(Duration(days: i));
+      DateTime newDateAddWithoutTime =
+          DateTime(newDateAdd.year, newDateAdd.month, newDateAdd.day);
+      DateTime newDateMinusWithoutTime =
+          DateTime(newDateMinus.year, newDateMinus.month, newDateMinus.day);
+      setState(() {
+        disabledDates.add(newDateAddWithoutTime);
+        disabledDates.add(newDateMinusWithoutTime);
+      });
+    }
+  }
+
+  void removeDisabledDates(DateTime date) {
+    for (int i = 1; i <= rangeDate!; i++) {
+      DateTime newDateAdd = date.add(Duration(days: i));
+      DateTime newDateMinus = date.subtract(Duration(days: i));
+      DateTime newDateAddWithoutTime =
+          DateTime(newDateAdd.year, newDateAdd.month, newDateAdd.day);
+      DateTime newDateMinusWithoutTime =
+          DateTime(newDateMinus.year, newDateMinus.month, newDateMinus.day);
+
+      setState(() {
+        disabledDates.remove(newDateAddWithoutTime);
+        disabledDates.remove(newDateMinusWithoutTime);
+      });
+    }
   }
 
   @override
@@ -218,7 +257,9 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                                           (int value) {
                                     return DropdownMenuItem<String>(
                                       value: value.toString(),
-                                      child: Text(value.toString()),
+                                      child: Text(value == 0
+                                          ? "Không"
+                                          : "${value.toString()} phút trước khi bắt đầu"),
                                     );
                                   }).toList(),
                                 ),
@@ -226,8 +267,9 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                               Positioned(
                                   top: 17,
                                   left: 16,
-                                  child: Text(
-                                      "$_selectedRemind phút trước khi bắt đầu"))
+                                  child: Text(_selectedRemind == 0
+                                      ? "Không"
+                                      : "$_selectedRemind phút trước khi bắt đầu"))
                             ],
                           ),
                         ],
@@ -296,9 +338,9 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                       ),
                     ),
                     if (showInputFieldRepeat != "Không")
-                      _selectedStartDate == null
+                      _selectedStartDate == null || _selectedEndDate == null
                           ? Text(
-                              "Hãy chọn ngày giờ bắt đầu trước!",
+                              "Hãy chọn ngày giờ bắt đầu và kết thúc trước!",
                               style: TextStyle(
                                   fontSize: 11, color: Colors.red, height: 2),
                             )
@@ -313,37 +355,46 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                                   ),
                                 ),
                                 TableCalendar(
-                                  locale: 'vi_VN',
-                                  rowHeight: 43,
-                                  headerStyle: HeaderStyle(
-                                    formatButtonVisible: false,
-                                    titleCentered: true,
-                                  ),
-                                  availableGestures: AvailableGestures.all,
-                                  firstDay: _selectedStartDate!
-                                      .add(Duration(days: 1)),
-                                  focusedDay: _focusedDay,
-                                  lastDay:
-                                      DateTime.now().add(Duration(days: 365)),
-                                  onDaySelected: (date, events) {
-                                    _onDaySelected(date);
-                                    setState(() {
-                                      if (selectedDatesRepeat.contains(date)) {
-                                        selectedDatesRepeat.remove(date);
-                                      } else {
-                                        selectedDatesRepeat.add(date);
-                                      }
-                                    });
-                                  },
-                                  calendarStyle: CalendarStyle(
-                                    selectedDecoration: BoxDecoration(
-                                      color: kPrimaryColor,
-                                      shape: BoxShape.circle,
+                                    locale: 'vi_VN',
+                                    rowHeight: 43,
+                                    headerStyle: HeaderStyle(
+                                      formatButtonVisible: false,
+                                      titleCentered: true,
                                     ),
-                                  ),
-                                  selectedDayPredicate: (day) =>
-                                      selectedDatesRepeat.contains(day),
-                                ),
+                                    availableGestures: AvailableGestures.all,
+                                    firstDay: _selectedEndDate!
+                                        .add(Duration(days: 1)),
+                                    focusedDay: _focusedDay,
+                                    lastDay:
+                                        DateTime.now().add(Duration(days: 365)),
+                                    onDaySelected: (date, events) {
+                                      _onDaySelected(date);
+                                      setState(() {
+                                        if (selectedDatesRepeat
+                                            .contains(date)) {
+                                          selectedDatesRepeat.remove(date);
+                                          removeDisabledDates(date);
+                                        } else {
+                                          selectedDatesRepeat.add(date);
+                                          addDisabledDates(date);
+                                        }
+                                      });
+                                    },
+                                    calendarStyle: CalendarStyle(
+                                      selectedDecoration: BoxDecoration(
+                                        color: kPrimaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    selectedDayPredicate: (day) =>
+                                        selectedDatesRepeat.contains(day),
+                                    enabledDayPredicate: (DateTime day) {
+                                      DateTime dayWithoutTime = DateTime(
+                                          day.year, day.month, day.day);
+                                      var r = !disabledDates
+                                          .contains(dayWithoutTime);
+                                      return r;
+                                    }),
                                 SizedBox(height: 20),
                                 RichText(
                                   text: TextSpan(
@@ -572,10 +623,24 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           setState(() {
             if (isStart) {
               _selectedStartDate = selectedDateTime;
-              _selectedEndDate = null;
-              _focusedDay = _selectedStartDate!.add(Duration(days: 1));
+              if (_selectedEndDate != null) {
+                if (_selectedStartDate!.isAfter(_selectedEndDate!))
+                  _selectedEndDate = null;
+                else {
+                  calculateDateDifference(
+                      _selectedStartDate!, _selectedEndDate!);
+                }
+              }
+              selectedDatesRepeat.clear();
+              disabledDates.clear();
             } else {
               _selectedEndDate = selectedDateTime;
+              _focusedDay = _selectedEndDate!.add(Duration(days: 1));
+              if (_selectedStartDate != null) {
+                calculateDateDifference(_selectedStartDate!, _selectedEndDate!);
+              }
+              selectedDatesRepeat.clear();
+              disabledDates.clear();
             }
           });
         }

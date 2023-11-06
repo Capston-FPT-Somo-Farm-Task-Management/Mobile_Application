@@ -39,8 +39,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
       if (selectedAssetList.isNotEmpty &&
           _descriptionController.text.trim().isNotEmpty)
         isCreateButtonEnabled = true;
-      if (selectedAssetList.isEmpty ||
-          _descriptionController.text.trim().isEmpty)
+      if (_descriptionController.text.trim().isEmpty)
         isCreateButtonEnabled = false;
     });
   }
@@ -68,11 +67,9 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
         );
         setState(() {
           if (result != null) selectedAssetList = result;
-          if (selectedAssetList.isNotEmpty &&
-              _descriptionController.text.isNotEmpty)
+          if (_descriptionController.text.isNotEmpty)
             isCreateButtonEnabled = true;
-          if (selectedAssetList.isEmpty ||
-              _descriptionController.text.trim().isEmpty)
+          if (_descriptionController.text.trim().isEmpty)
             isCreateButtonEnabled = false;
         });
       },
@@ -205,12 +202,11 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                       controller: _descriptionController,
                       style: subTitileStyle.copyWith(fontSize: 17),
                       onChanged: (value) {
-                        if (value.trim().isNotEmpty &&
-                            selectedAssetList.isNotEmpty)
+                        if (value.trim().isNotEmpty)
                           setState(() {
                             isCreateButtonEnabled = true;
                           });
-                        if (value.trim().isEmpty || selectedAssetList.isEmpty)
+                        if (value.trim().isEmpty)
                           setState(() {
                             isCreateButtonEnabled = false;
                           });

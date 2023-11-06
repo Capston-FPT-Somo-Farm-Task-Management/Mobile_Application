@@ -278,4 +278,43 @@ class TaskService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> updateTask(Map<String, dynamic> taskData, int taskId) async {
+    final String apiUrl = "$baseUrl/FarmTask/${taskId}";
+    var body = jsonEncode(taskData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> deleteTask(int taskId) async {
+    try {
+      final String apiUrl = "$baseUrl/FarmTask/DeleteTask/$taskId";
+
+      final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
 }
