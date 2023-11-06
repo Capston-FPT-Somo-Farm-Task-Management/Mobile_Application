@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/services/farm_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/app_bar.dart';
 
@@ -39,24 +40,35 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
       ),
-      body: Container(
-        color: Colors.grey[200],
-        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
-        child: Column(
-          children: [
-            SizedBox(height: 30),
-            Expanded(
-              child: Column(
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.grey[200],
+          child: Column(
+            children: [
+              Container(
+                width: 500,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Image.network(
+                  '${farmData != null ? farmData!['urlImage'] : ''}',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(height: 20),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         farmData != null ? farmData!['name'] : '',
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -64,8 +76,53 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
                   ),
                 ],
               ),
-            )
-          ],
+              Container(
+                padding:
+                    EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          wrapWords(
+                              farmData != null ? farmData!['address'] : '', 45),
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          wrapWords(
+                              farmData != null ? farmData!['description'] : '',
+                              38),
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
