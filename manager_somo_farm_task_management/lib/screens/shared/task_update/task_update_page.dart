@@ -56,11 +56,9 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
   List<String> priorities = [
-    "Thấp nhất",
     "Thấp",
     "Trung bình",
     "Cao",
-    "Cao nhất"
   ];
   String? prioritySelected;
 
