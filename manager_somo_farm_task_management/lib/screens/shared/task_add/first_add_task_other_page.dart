@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/second_add_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
@@ -16,6 +17,8 @@ class FirstAddTaskOtherPage extends StatefulWidget {
 }
 
 class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
+  final TextEditingController _addressDetailController =
+      TextEditingController();
   String _selectedArea = "";
   List<Map<String, dynamic>> filteredArea = [];
   String _selectedZone = "";
@@ -263,6 +266,12 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
                   ],
                 ),
               ),
+              MyInputField(
+                title: "Địa chỉ chi tiết (Tùy chọn)",
+                hint: "Mô tả chi tiết địa chỉ",
+                hintColor: kTextGreyColor,
+                controller: _addressDetailController,
+              ),
               const SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,6 +316,7 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SecondAddTaskPage(
+            addressDetail: _addressDetailController.text.trim(),
             fieldId: fiedlId,
             otherId: null,
             liveStockId: null,
