@@ -177,8 +177,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(height: 25),
                                                   if (role == "Supervisor") ...[
+                                                    SizedBox(height: 25),
                                                     Container(
                                                       padding: EdgeInsets.only(
                                                           left: padingForAll,
@@ -251,6 +251,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                     const SizedBox(height: 25),
                                                   ],
                                                   if (role == "Manager") ...[
+                                                    SizedBox(height: 10),
                                                     Container(
                                                       padding: EdgeInsets.only(
                                                           top: padingForAll,
