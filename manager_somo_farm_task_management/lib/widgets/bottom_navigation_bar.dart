@@ -108,9 +108,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                 }),
             IconButton(
                 icon: Icon(
-                  FontAwesomeIcons.warehouse,
-                  // size: _getCurrentTabSize(1),
-                  size: 18,
+                  Icons.info,
+                  size: _getCurrentTabSize(1),
+                  // size: 18,
                   color: _getCurrentTabColor(1),
                 ),
                 onPressed: () {

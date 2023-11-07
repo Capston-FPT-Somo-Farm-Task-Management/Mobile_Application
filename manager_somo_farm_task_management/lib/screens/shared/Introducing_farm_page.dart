@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/services/farm_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/app_bar.dart';
 
@@ -80,19 +79,38 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
                           onRefresh: () => _loadFarmData(),
                           child: Column(
                             children: [
-                              Container(
-                                width: 500,
-                                height: 250,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Image.network(
-                                  '${farmData != null ? farmData!['urlImage'] : ''}',
-                                  fit: BoxFit.cover,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, right: 20),
+                                child: Container(
+                                  width: 450,
+                                  height: 280,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.only(
+                                        bottomRight: Radius.circular(100)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black
+                                            .withOpacity(0.6), // Màu của bóng
+                                        offset: Offset(
+                                            10, 10), // Điểm bắt đầu của bóng
+                                        blurRadius: 10, // Độ mờ của bóng
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(100),
+                                    ),
+                                    child: Image.network(
+                                      '${farmData!['urlImage']}',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 30),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
