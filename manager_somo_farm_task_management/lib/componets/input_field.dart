@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
 class MyInputField extends StatelessWidget {
+  final Color? hintColor;
   final String title;
   final String hint;
   final TextEditingController? controller;
@@ -11,7 +12,8 @@ class MyInputField extends StatelessWidget {
       required this.title,
       required this.hint,
       this.controller,
-      this.widget});
+      this.widget,
+      this.hintColor});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,9 @@ class MyInputField extends StatelessWidget {
                     style: subTitileStyle,
                     decoration: InputDecoration(
                       hintText: hint,
-                      hintStyle: subTitileStyle.copyWith(color: Colors.black),
+                      hintStyle: hintColor != null
+                          ? subTitileStyle.copyWith(color: hintColor)
+                          : subTitileStyle.copyWith(color: Colors.black),
                       focusedBorder: const UnderlineInputBorder(
                         borderSide:
                             BorderSide(color: kBackgroundColor, width: 0),
