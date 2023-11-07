@@ -450,6 +450,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SecondAddTaskPage(
+            addressDetail: null,
             fieldId: fiedlId!,
             otherId: null,
             liveStockId: liveStockId,
