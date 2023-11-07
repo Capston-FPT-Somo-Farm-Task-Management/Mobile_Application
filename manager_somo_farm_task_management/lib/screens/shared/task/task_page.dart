@@ -572,34 +572,82 @@ class TaskPageState extends State<TaskPage> {
                                                             ),
                                                           ),
                                                       ]),
+                                                      const SizedBox(height: 5),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              "#CV23001",
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic, // Chữ in nghiêng
+                                                                  color: Priority
+                                                                      .getBGClr(
+                                                                          task[
+                                                                              'priority']),
+                                                                ),
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                       const SizedBox(
-                                                          height: 10),
+                                                          height: 20),
                                                       Stack(children: [
                                                         Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            const Icon(
+                                                            Icon(
                                                               Icons
                                                                   .access_time_rounded,
-                                                              color:
-                                                                  Colors.black,
+                                                              color: Colors
+                                                                  .black87,
                                                               size: 18,
                                                             ),
                                                             const SizedBox(
-                                                                width: 4),
+                                                                width: 5),
                                                             Flexible(
-                                                              child: Text(
-                                                                "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
-                                                                style:
-                                                                    GoogleFonts
-                                                                        .lato(
-                                                                  textStyle: const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Colors
-                                                                          .black),
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Bắt đầu: ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .black87,
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .black87,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                                 overflow:
                                                                     TextOverflow
@@ -636,44 +684,135 @@ class TaskPageState extends State<TaskPage> {
                                                             ),
                                                           ),
                                                       ]),
-                                                      const SizedBox(
-                                                          height: 20),
+                                                      const SizedBox(height: 5),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
-                                                                .spaceBetween,
+                                                                .start,
                                                         children: [
+                                                          Icon(
+                                                            Icons
+                                                                .access_time_rounded,
+                                                            color:
+                                                                Colors.black87,
+                                                            size: 18,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
                                                           Flexible(
-                                                            child: Text(
-                                                              "Giám sát: ${task['supervisorName']}",
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Kết thúc: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
                                                             ),
                                                           ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 30),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
                                                           Flexible(
-                                                            child: Text(
-                                                              "Vị trí: ${task['fieldName']}",
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Giám sát: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        '${task['supervisorName']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
                                                             ),
+                                                          ),
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Vị trí: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black87,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      '${task['fieldName']}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black87,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ],
                                                       ),
@@ -702,26 +841,60 @@ class TaskPageState extends State<TaskPage> {
                                                       .spaceBetween,
                                               children: [
                                                 Flexible(
-                                                  child: Text(
-                                                    'Loại: ${task['taskTypeName']}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            Colors.grey[200]),
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Loại: ',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .grey[200],
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text:
+                                                              '${task['taskTypeName']}',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .grey[200],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                   ),
                                                 ),
-                                                Flexible(
-                                                  child: Text(
-                                                    'Ưu tiên: ${task['priority']}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            Colors.grey[200]),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
+                                                RichText(
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text: 'Ưu tiên: ',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.grey[200],
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            '${task['priority']}',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.grey[200],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),

@@ -27,6 +27,8 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   bool isLoading = true;
   List<Map<String, dynamic>> employees = [];
   List<TextEditingController> controllers = [];
+  List<TextEditingController> _minutesController = [];
+  List<TextEditingController> _hoursController = [];
   bool isSaveEnabled = false;
   String? role;
   Future<void> getRole() async {
@@ -41,10 +43,14 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
     EffortService().getEffortByTaskId(widget.taskId).then((value) {
       setState(() {
         employees = value;
+        print(value);
         for (int i = 0; i < employees.length; i++) {
-          TextEditingController controller = TextEditingController(
-              text: employees[i]['effortTime'].toString());
-          controllers.add(controller);
+          TextEditingController minutesController = TextEditingController(
+              text: employees[i]['actualEfforMinutes'].toString());
+          TextEditingController hoursController = TextEditingController(
+              text: employees[i]['actualEffortHour'].toString());
+          _minutesController.add(minutesController);
+          _hoursController.add(hoursController);
         }
         isLoading = false;
       });
@@ -61,7 +67,14 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
 
   bool checkChanges() {
     for (int i = 0; i < employees.length; i++) {
-      if (controllers[i].text != employees[i]['effortTime'].toString()) {
+      if (_minutesController[i].text !=
+          employees[i]['actualEfforMinutes'].toString()) {
+        return true;
+      }
+    }
+    for (int i = 0; i < employees.length; i++) {
+      if (_hoursController[i].text !=
+          employees[i]['actualEffortHour'].toString()) {
         return true;
       }
     }
@@ -289,29 +302,106 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                   ),
                                 ),
                               ),
+                              // Container(
+                              //   width: 60,
+                              //   child: TextField(
+                              //     controller: controllers[dataIndex],
+                              //     keyboardType: TextInputType.number,
+                              //     inputFormatters: <TextInputFormatter>[
+                              //       FilteringTextInputFormatter.allow(
+                              //           RegExp(r'^\d+\.?\d{0,2}$')),
+                              //     ],
+                              //     style: TextStyle(fontSize: 14),
+                              //     decoration: InputDecoration(
+                              //       border: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             color: Colors.blue, width: 1.0),
+                              //       ),
+                              //     ),
+                              //     onChanged: (value) {
+                              //       setState(() {
+                              //         isSaveEnabled = areChangesMade();
+                              //       });
+                              //     },
+                              //   ),
+                              // ),
                               Container(
-                                width: 60,
-                                child: TextField(
-                                  controller: controllers[dataIndex],
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d+\.?\d{0,2}$')),
-                                  ],
-                                  style: TextStyle(fontSize: 14),
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.blue, width: 1.0),
+                                width: 100,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                child: TextField(
+                                                  textAlign: TextAlign.right,
+                                                  controller: _hoursController[
+                                                      dataIndex],
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  inputFormatters: <TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                  ],
+                                                  style:
+                                                      TextStyle(fontSize: 14),
+                                                  decoration: InputDecoration(
+                                                    hintText: "0",
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              "G",
+                                              style: TextStyle(fontSize: 12),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      isSaveEnabled = areChangesMade();
-                                    });
-                                  },
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Container(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                child: TextField(
+                                                  textAlign: TextAlign.right,
+                                                  controller:
+                                                      _minutesController[
+                                                          dataIndex],
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  inputFormatters: <TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                  ],
+                                                  style:
+                                                      TextStyle(fontSize: 14),
+                                                  decoration: InputDecoration(
+                                                    hintText: "0",
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              "p",
+                                              style: TextStyle(fontSize: 12),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         );
