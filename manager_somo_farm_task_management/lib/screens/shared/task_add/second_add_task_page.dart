@@ -13,8 +13,9 @@ import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SecondAddTaskPage extends StatefulWidget {
-  bool? isPlant;
-  int? fieldId;
+  final String? addressDetail;
+  final bool? isPlant;
+  final int? fieldId;
   final int? plantId;
   final int? otherId;
   final int? liveStockId;
@@ -24,7 +25,8 @@ class SecondAddTaskPage extends StatefulWidget {
       required this.fieldId,
       this.otherId,
       this.liveStockId,
-      this.plantId});
+      this.plantId,
+      this.addressDetail});
 
   @override
   State<SecondAddTaskPage> createState() => _SecondAddTaskPage();
@@ -168,6 +170,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
               MyInputField(
                 title: "Tên công việc",
                 hint: "Nhập tên công việc",
+                hintColor: kTextGreyColor,
                 controller: _titleController,
               ),
               Container(
@@ -481,7 +484,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                         style: subTitileStyle,
                         decoration: InputDecoration(
                           hintText: "Nhập mô tả",
-                          hintStyle: subTitileStyle,
+                          hintStyle:
+                              subTitileStyle.copyWith(color: kTextGreyColor),
                           focusedBorder: const UnderlineInputBorder(
                             borderSide:
                                 BorderSide(color: kBackgroundColor, width: 0),
@@ -550,8 +554,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ThirdAddTaskPage(
+          addressDetail: widget.addressDetail,
           fiedlId: widget.fieldId,
-          otherId: widget.otherId,
           plantId: widget.plantId,
           liveStockId: widget.liveStockId,
           taskName: _titleController.text,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 
@@ -16,11 +15,22 @@ class TaskTile extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(bottom: 12),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 5, 16),
+        padding: const EdgeInsets.fromLTRB(10, 16, 5, 16),
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Priority.getBGClr(task['priority']),
+          border: Border.all(
+            color: Colors.grey,
+            width: 1.0,
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 10,
+              offset: Offset(1, 4), // Shadow position
+            ),
+          ],
+          color: Colors.white,
         ),
         child: Row(children: [
           Expanded(
@@ -33,45 +43,38 @@ class TaskTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         task['name'],
-                        style: GoogleFonts.lato(
-                          textStyle: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Flexible(
                       child: Text(
                         task['priority'],
-                        style: GoogleFonts.lato(
-                          textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87),
                         overflow: TextOverflow.ellipsis,
                       ),
                     )
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.access_time_rounded,
-                      color: Colors.grey[200],
-                      size: 18,
-                    ),
-                    const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        "${DateFormat('HH:mm aa  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm aa dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                        "#${task['code']}",
                         style: GoogleFonts.lato(
-                          textStyle:
-                              TextStyle(fontSize: 13, color: Colors.grey[100]),
+                          textStyle: TextStyle(
+                            fontSize: 15,
+                            fontStyle: FontStyle.italic, // Chữ in nghiêng
+                            color: Priority.getBGClr(task['priority']),
+                          ),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -80,27 +83,127 @@ class TaskTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      color: Colors.black87,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 5),
                     Flexible(
-                      child: Text(
-                        "Giám sát: ${task['supervisorName']}",
-                        style: GoogleFonts.lato(
-                          textStyle:
-                              TextStyle(fontSize: 15, color: Colors.grey[100]),
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Bắt đầu: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      color: Colors.black87,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 5),
                     Flexible(
-                      child: Text(
-                        "Vị trí: ${task['fieldName']}",
-                        style: GoogleFonts.lato(
-                          textStyle:
-                              TextStyle(fontSize: 15, color: Colors.grey[100]),
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Kết thúc: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Giám sát: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '${task['supervisorName']}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Vị trí: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${task['fieldName']}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -108,10 +211,9 @@ class TaskTile extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(left: 10),
-            height: 60,
-            width: 0.5,
-            color: Colors.grey[200]!.withOpacity(0.7),
+            height: 100,
+            width: 5,
+            color: Priority.getBGClr(task['priority']),
           ),
           GestureDetector(
             onTap: () {
@@ -126,11 +228,11 @@ class TaskTile extends StatelessWidget {
               quarterTurns: 0,
               child: Container(
                 color: Colors.transparent,
-                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 8),
                 child: Icon(
                   Icons.arrow_forward_ios_outlined,
-                  color: kBackgroundColor,
-                  size: 12,
+                  color: Colors.black87,
+                  size: 13,
                 ),
               ),
             ),

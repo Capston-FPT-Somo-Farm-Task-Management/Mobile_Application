@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
@@ -10,23 +11,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ThirdAddTaskPage extends StatefulWidget {
-  int? fiedlId;
-  int? plantId;
-  int? liveStockId;
-  int? otherId;
+  final String? addressDetail;
+  final int? fiedlId;
+  final int? plantId;
+  final int? liveStockId;
   final String taskName;
   final int taskTypeId;
   final List<int> employeeIds;
   final int supervisorId;
   final List<int> materialIds;
-  String? description;
+  final String? description;
   final String role;
   ThirdAddTaskPage({
     super.key,
     required this.fiedlId,
     this.plantId,
     this.liveStockId,
-    this.otherId,
     required this.taskName,
     required this.taskTypeId,
     required this.employeeIds,
@@ -34,6 +34,7 @@ class ThirdAddTaskPage extends StatefulWidget {
     required this.materialIds,
     this.description,
     required this.role,
+    required this.addressDetail,
   });
 
   @override
@@ -41,6 +42,8 @@ class ThirdAddTaskPage extends StatefulWidget {
 }
 
 class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
+  final TextEditingController _minutesController = TextEditingController();
+  final TextEditingController _hoursController = TextEditingController();
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
   DateTime? _selectedDateRepeatUntil;
@@ -52,13 +55,11 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   List<int> repeatNumbers = [];
   List<DateTime> selectedDatesRepeat = [];
   List<String> priorities = [
-    "Thấp nhất",
     "Thấp",
     "Trung bình",
     "Cao",
-    "Cao nhất"
   ];
-  String _selectedPriority = "Thấp nhất";
+  String _selectedPriority = "Thấp";
   int? farmId;
   int? userId;
   bool isLoading = false;
@@ -470,6 +471,95 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                         ],
                       ),
                     ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Thời gian làm việc dự kiến phải bỏ ra",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: _hoursController,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            style: TextStyle(fontSize: 14),
+                                            decoration: InputDecoration(
+                                              hintText: "0",
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 1.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Giờ")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 50),
+                              Expanded(
+                                child: Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: _minutesController,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            style: TextStyle(fontSize: 14),
+                                            decoration: InputDecoration(
+                                              hintText: "0",
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 1.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Phút")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 18),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -507,7 +597,10 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     setState(() {
       isLoading = true;
     });
-    if (_selectedStartDate != null && _selectedEndDate != null) {
+    if (_selectedStartDate != null &&
+        _selectedEndDate != null &&
+        (_hoursController.text.isNotEmpty ||
+            _minutesController.text.isNotEmpty)) {
       if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty) {
         setState(() {
           isLoading = false;
@@ -537,10 +630,12 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
             "fieldId": widget.fiedlId,
             "taskTypeId": widget.taskTypeId,
             "managerId": widget.role == "Manager" ? userId : null,
-            "otherId": widget.otherId,
             "plantId": widget.plantId,
             "liveStockId": widget.liveStockId,
             "remind": _selectedRemind,
+            "addressDetail": widget.addressDetail,
+            "overallEfforMinutes": _minutesController.text,
+            "overallEffortHour": _minutesController.text,
           }
         };
         print(taskData);

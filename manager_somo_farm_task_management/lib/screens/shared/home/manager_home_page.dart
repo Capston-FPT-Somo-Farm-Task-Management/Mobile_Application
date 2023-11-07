@@ -399,7 +399,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                                   child: Icon(
                                                     Icons
                                                         .account_circle_rounded,
-                                                    color: Colors.grey[200],
+                                                    color: Colors.black54,
                                                   ),
                                                 ),
                                               ),
@@ -416,7 +416,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                                   message: "Có báo cáo",
                                                   child: Icon(
                                                     Icons.barcode_reader,
-                                                    color: Colors.grey[200],
+                                                    color: Colors.black54,
                                                   ),
                                                 ),
                                               ),
