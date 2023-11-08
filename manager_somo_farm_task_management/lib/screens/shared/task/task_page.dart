@@ -522,9 +522,13 @@ class TaskPageState extends State<TaskPage> {
                                                                         .push(
                                                                       MaterialPageRoute(
                                                                         builder: (context) => SubTaskPage(
-                                                                            taskId:
-                                                                                task['id'],
-                                                                            taskName: task['name']),
+                                                                            taskStatus:
+                                                                                task['status'],
+                                                                            startDate: task['startDate'],
+                                                                            endDate: task['endDate'],
+                                                                            taskId: task['id'],
+                                                                            taskName: task['name'],
+                                                                            taskCode: task['code']),
                                                                       ),
                                                                     );
                                                                   },

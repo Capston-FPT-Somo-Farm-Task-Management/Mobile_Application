@@ -39,6 +39,24 @@ class EffortService {
     }
   }
 
+  Future<bool> createEffortBySubtask(
+      int subTaskId, Map<String, dynamic> data) async {
+    final String apiUrl = "$baseUrl/FarmSubTask/(${subTaskId})/Effort";
+    var body = jsonEncode(data);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<Map<String, dynamic>> getTotalEffortByEmployeeId(
       int employeeId, DateTime? startDate, DateTime? endDate) async {
     var dateTimeStart = "";

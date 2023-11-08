@@ -308,8 +308,12 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                         .push(
                                                                       MaterialPageRoute(
                                                                         builder: (context) => SubTaskPage(
-                                                                            taskId:
-                                                                                task['id'],
+                                                                            taskStatus:
+                                                                                task['status'],
+                                                                            startDate: task['startDate'],
+                                                                            endDate: task['endDate'],
+                                                                            taskCode: task['code'],
+                                                                            taskId: task['id'],
                                                                             taskName: task['name']),
                                                                       ),
                                                                     );
