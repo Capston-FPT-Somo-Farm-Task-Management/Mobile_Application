@@ -88,7 +88,7 @@ class UpdatePlantState extends State<UpdatePlant> {
   }
 
   Future<void> getHabitantTypes(int habitantTypeId, bool init) async {
-    HabitantTypeService().getPlantTypeFromHabitantType().then((value) {
+    HabitantTypeService().getPlantTypeFromHabitantType(farmId!).then((value) {
       setState(() {
         filterPlantType = value;
         _selectedPlantType = filterPlantType

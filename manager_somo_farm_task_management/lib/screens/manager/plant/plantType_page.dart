@@ -38,8 +38,8 @@ class PlantTypePageState extends State<PlantTypePage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> GetAllPlantType() {
-    return HabitantTypeService().getPlantTypeFromHabitantType();
+  Future<List<Map<String, dynamic>>> GetAllPlantType(int id) {
+    return HabitantTypeService().getPlantTypeFromHabitantType(id);
   }
 
   List<Map<String, dynamic>> plants = [];
@@ -47,7 +47,7 @@ class PlantTypePageState extends State<PlantTypePage> {
   @override
   void initState() {
     super.initState();
-    GetAllPlantType().then((value) {
+    GetAllPlantType(farmId!).then((value) {
       setState(() {
         plants = value;
       });
@@ -152,7 +152,7 @@ class PlantTypePageState extends State<PlantTypePage> {
               flex: 2,
               child: RefreshIndicator(
                 notificationPredicate: (_) => true,
-                onRefresh: () => GetAllPlantType(),
+                onRefresh: () => GetAllPlantType(farmId!),
                 child: ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   itemCount: plants.length,

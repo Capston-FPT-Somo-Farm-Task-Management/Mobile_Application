@@ -7,7 +7,8 @@ import 'package:manager_somo_farm_task_management/services/habittantType_service
 import '../../../componets/input_field.dart';
 
 class CreateLiveStockType extends StatefulWidget {
-  const CreateLiveStockType({Key? key}) : super(key: key);
+  final int farmId;
+  const CreateLiveStockType({Key? key, required this.farmId}) : super(key: key);
 
   @override
   CreateLiveStockTypeState createState() => CreateLiveStockTypeState();
@@ -136,7 +137,7 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LiveStockTypePage(),
+              builder: (context) => LiveStockTypePage(farmId: widget.farmId),
             ),
           );
         }
