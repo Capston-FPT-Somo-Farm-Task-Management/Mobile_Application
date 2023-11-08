@@ -57,8 +57,8 @@ class CreatePlantState extends State<CreatePlant> {
     return FieldService().getFieldsActivebyZoneId(zoneId);
   }
 
-  Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() {
-    return HabitantTypeService().getPlantTypeFromHabitantType();
+  Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType(int id) {
+    return HabitantTypeService().getPlantTypeFromHabitantType(id);
   }
 
   Future<Map<String, dynamic>> CreatePlant(Map<String, dynamic> plant) {
@@ -74,7 +74,7 @@ class CreatePlantState extends State<CreatePlant> {
         _selectedArea = "Chọn";
       });
     });
-    getPlantTypeFromHabitantType().then((p) {
+    getPlantTypeFromHabitantType(widget.farmId).then((p) {
       setState(() {
         filterHabitantType = p;
         _selectedPlantType = "Chọn";

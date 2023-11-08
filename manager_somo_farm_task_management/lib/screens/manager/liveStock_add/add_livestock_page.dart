@@ -56,8 +56,8 @@ class CreateLiveStockState extends State<CreateLiveStock> {
     return FieldService().getFieldsActivebyZoneId(zoneId);
   }
 
-  Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType() {
-    return HabitantTypeService().getLiveStockTypeFromHabitantType();
+  Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType(int id) {
+    return HabitantTypeService().getLiveStockTypeFromHabitantType(id);
   }
 
   Future<bool> CreateLiveStock(Map<String, dynamic> liveStock) {
@@ -73,7 +73,7 @@ class CreateLiveStockState extends State<CreateLiveStock> {
         _selectedArea = "Chọn";
       });
     });
-    getLiveStockTypeFromHabitantType().then((a) {
+    getLiveStockTypeFromHabitantType(widget.farmId).then((a) {
       setState(() {
         filterLivestock = a;
         _selectedLiveStock = "Chọn";
@@ -475,11 +475,12 @@ class CreateLiveStockState extends State<CreateLiveStock> {
       };
       CreateLiveStock(liveStock).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LiveStockPage(farmId: widget.farmId),
-            ),
-          );
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => LiveStockPage(farmId: widget.farmId),
+          //   ),
+          // );
+          Navigator.of(context).pop("ok");
         }
       }).catchError((e) {
         setState(() {

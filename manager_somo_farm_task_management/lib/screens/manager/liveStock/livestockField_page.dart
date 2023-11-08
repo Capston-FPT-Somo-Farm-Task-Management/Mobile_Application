@@ -136,7 +136,13 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                   builder: (context) => CreateLiveStockGroup(
                                         farmId: farmId!,
                                       )),
-                            );
+                            ).then((value) {
+                              if (value != null) {
+                                GetLiveStockFields();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo chuồng thành công!', false);
+                              }
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,

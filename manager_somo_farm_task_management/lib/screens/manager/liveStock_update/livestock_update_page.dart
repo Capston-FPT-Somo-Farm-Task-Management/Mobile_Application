@@ -91,7 +91,9 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
   }
 
   Future<void> getHabitantTypes(int habitantTypeId, bool init) async {
-    HabitantTypeService().getLiveStockTypeFromHabitantType().then((value) {
+    HabitantTypeService()
+        .getLiveStockTypeFromHabitantType(farmId!)
+        .then((value) {
       setState(() {
         filterLivestockType = value;
         _selectedLiveStockType = filterLivestockType

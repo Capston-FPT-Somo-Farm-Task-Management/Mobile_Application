@@ -125,7 +125,14 @@ class LiveStockPageState extends State<LiveStockPage> {
                                   builder: (context) => CreateLiveStock(
                                         farmId: widget.farmId,
                                       )),
-                            );
+                            ).then((value) {
+                              if (value != null) {
+                                GetLiveStocks();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo con vật thành công!', false);
+                              }
+                            });
+                            ;
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,

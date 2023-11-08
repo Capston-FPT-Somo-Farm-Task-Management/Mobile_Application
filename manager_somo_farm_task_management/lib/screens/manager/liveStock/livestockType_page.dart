@@ -10,23 +10,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class LiveStockTypePage extends StatefulWidget {
-  const LiveStockTypePage({Key? key}) : super(key: key);
+  final int farmId;
+  const LiveStockTypePage({Key? key, required this.farmId}) : super(key: key);
 
   @override
   LiveStockTypePageState createState() => LiveStockTypePageState();
 }
 
 class LiveStockTypePageState extends State<LiveStockTypePage> {
-  int? farmId;
   List<LiveStock> SearchliveStock = plantList;
   bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
-
-  Future<int?> getFarmId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedFarmId = prefs.getInt('farmId');
-    return storedFarmId;
-  }
 
   void searchLiveStocks(String keyword) {
     setState(() {
@@ -37,25 +31,38 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> GetAllLiveStockType() {
-    return HabitantTypeService().getLiveStockTypeFromHabitantType();
+  List<Map<String, dynamic>> liveStocks = [];
+
+  Future<void> GetAllLiveStockType() async {
+    HabitantTypeService()
+        .getLiveStockTypeFromHabitantType(widget.farmId)
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+      if (value.isNotEmpty) {
+        setState(() {
+          liveStocks = value;
+        });
+      } else {
+        throw Exception();
+      }
+    });
   }
 
-  List<Map<String, dynamic>> liveStocks = [];
+  Future<void> _initializeData() async {
+    await GetAllLiveStockType();
+  }
 
   @override
   void initState() {
     super.initState();
-    GetAllLiveStockType().then((value) {
-      setState(() {
-        liveStocks = value;
-      });
-    });
     Future.delayed(Duration(milliseconds: 700), () {
       setState(() {
         isLoading = false;
       });
     });
+    _initializeData();
   }
 
   @override
@@ -100,8 +107,16 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateLiveStockType()),
-                            );
+                                  builder: (context) => CreateLiveStockType(
+                                      farmId: widget.farmId)),
+                            ).then((value) {
+                              if (value != null) {
+                                GetAllLiveStockType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo loại thành công!', false);
+                              }
+                            });
+                            ;
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
