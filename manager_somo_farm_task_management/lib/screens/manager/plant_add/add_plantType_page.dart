@@ -7,7 +7,8 @@ import 'package:manager_somo_farm_task_management/services/habittantType_service
 import '../../../componets/input_field.dart';
 
 class CreatePlantType extends StatefulWidget {
-  const CreatePlantType({Key? key}) : super(key: key);
+  final int farmId;
+  const CreatePlantType({Key? key, required this.farmId}) : super(key: key);
 
   @override
   CreatePlantTypeState createState() => CreatePlantTypeState();
@@ -134,7 +135,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
         if (value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => PlantTypePage(),
+              builder: (context) => PlantTypePage(farmId: widget.farmId),
             ),
           );
         }

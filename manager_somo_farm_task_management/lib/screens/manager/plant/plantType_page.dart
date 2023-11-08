@@ -10,24 +10,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class PlantTypePage extends StatefulWidget {
-  const PlantTypePage({Key? key}) : super(key: key);
+  final int farmId;
+  const PlantTypePage({Key? key, required this.farmId}) : super(key: key);
 
   @override
   PlantTypePageState createState() => PlantTypePageState();
 }
 
 class PlantTypePageState extends State<PlantTypePage> {
-  int? farmId;
   List<LiveStock> Searchplant = plantList;
   bool isLoading = true;
 
   final TextEditingController searchController = TextEditingController();
-
-  Future<int?> getFarmId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedFarmId = prefs.getInt('farmId');
-    return storedFarmId;
-  }
 
   void searchLiveStocks(String keyword) {
     setState(() {
@@ -38,25 +32,38 @@ class PlantTypePageState extends State<PlantTypePage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> GetAllPlantType(int id) {
-    return HabitantTypeService().getPlantTypeFromHabitantType(id);
+  List<Map<String, dynamic>> plants = [];
+
+  Future<void> GetAllPlantType() async {
+    HabitantTypeService()
+        .getPlantTypeFromHabitantType(widget.farmId)
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+      if (value.isNotEmpty) {
+        setState(() {
+          plants = value;
+        });
+      } else {
+        throw Exception();
+      }
+    });
   }
 
-  List<Map<String, dynamic>> plants = [];
+  Future<void> _initializeData() async {
+    await GetAllPlantType();
+  }
 
   @override
   void initState() {
     super.initState();
-    GetAllPlantType(farmId!).then((value) {
-      setState(() {
-        plants = value;
-      });
-    });
     Future.delayed(Duration(milliseconds: 700), () {
       setState(() {
         isLoading = false;
       });
     });
+    _initializeData();
   }
 
   @override
@@ -101,7 +108,9 @@ class PlantTypePageState extends State<PlantTypePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlantType()),
+                                  builder: (context) => CreatePlantType(
+                                        farmId: widget.farmId,
+                                      )),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -152,7 +161,7 @@ class PlantTypePageState extends State<PlantTypePage> {
               flex: 2,
               child: RefreshIndicator(
                 notificationPredicate: (_) => true,
-                onRefresh: () => GetAllPlantType(farmId!),
+                onRefresh: () => GetAllPlantType(),
                 child: ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   itemCount: plants.length,

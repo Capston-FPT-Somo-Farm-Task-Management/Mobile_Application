@@ -765,7 +765,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .pushReplacement(
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              PlantTypePage(),
+                                                                              PlantTypePage(farmId: farmId!),
                                                                         ),
                                                                       );
                                                                     },
