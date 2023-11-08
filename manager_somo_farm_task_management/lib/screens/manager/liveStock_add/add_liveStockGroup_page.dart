@@ -2,7 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
@@ -31,7 +30,6 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
   String _selectedZone = "";
 
   String name = "";
-  int? status;
   int? zoneId;
   bool isCreating = false;
 
@@ -272,17 +270,17 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
       Map<String, dynamic> liveStock = {
         'code': _fieldCodeController.text,
         'name': _nameController.text,
-        'status': 1,
         'area': _areaController.text,
         'zoneId': zoneId
       };
       CreateLiveStockGroup(liveStock).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LiveStockFieldPage(farmId: widget.farmId),
-            ),
-          );
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => LiveStockFieldPage(farmId: widget.farmId),
+          //   ),
+          // );
+          Navigator.pop(context, "ok");
         }
       }).catchError((e) {
         setState(() {

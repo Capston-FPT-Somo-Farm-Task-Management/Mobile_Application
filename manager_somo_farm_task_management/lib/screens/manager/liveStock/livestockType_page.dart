@@ -109,7 +109,14 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                               MaterialPageRoute(
                                   builder: (context) => CreateLiveStockType(
                                       farmId: widget.farmId)),
-                            );
+                            ).then((value) {
+                              if (value != null) {
+                                GetAllLiveStockType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo loại thành công!', false);
+                              }
+                            });
+                            ;
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,

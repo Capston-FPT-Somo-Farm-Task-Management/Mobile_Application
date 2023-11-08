@@ -475,11 +475,12 @@ class CreateLiveStockState extends State<CreateLiveStock> {
       };
       CreateLiveStock(liveStock).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LiveStockPage(farmId: widget.farmId),
-            ),
-          );
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => LiveStockPage(farmId: widget.farmId),
+          //   ),
+          // );
+          Navigator.of(context).pop("ok");
         }
       }).catchError((e) {
         setState(() {

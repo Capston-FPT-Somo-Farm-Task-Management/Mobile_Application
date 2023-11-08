@@ -294,7 +294,6 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
         'code': _titleIdController.text,
         'area': _titleAreaController.text,
         'zoneId': zoneId,
-        'status': 1,
       };
       UpdateField(field, widget.livestockFied['id']).then((value) {
         if (value) {
