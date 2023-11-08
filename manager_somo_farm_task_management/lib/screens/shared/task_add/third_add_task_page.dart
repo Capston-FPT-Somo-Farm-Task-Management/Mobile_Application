@@ -634,8 +634,12 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
             "liveStockId": widget.liveStockId,
             "remind": _selectedRemind,
             "addressDetail": widget.addressDetail,
-            "overallEfforMinutes": _minutesController.text,
-            "overallEffortHour": _minutesController.text,
+            "overallEfforMinutes": _minutesController.text.trim().isEmpty
+                ? 0
+                : _minutesController.text.trim(),
+            "overallEffortHour": _hoursController.text.trim().isEmpty
+                ? 0
+                : _hoursController.text.trim(),
           }
         };
         print(taskData);
