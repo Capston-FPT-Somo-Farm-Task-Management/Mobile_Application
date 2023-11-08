@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/material_add/material_add_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/material_update/material_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../widgets/app_bar.dart';
 
 class MaterialsPage extends StatefulWidget {
-  const MaterialsPage({super.key});
+  final int farmId;
+  const MaterialsPage({super.key, required this.farmId});
 
   @override
   MaterialPageState createState() => MaterialPageState();
@@ -39,7 +43,7 @@ class MaterialPageState extends State<MaterialsPage> {
   }
 
   Future<void> getMaterials() async {
-    MaterialService().getMaterial().then((value) {
+    MaterialService().getMaterialAllByFamrId(widget.farmId).then((value) {
       setState(() {
         isLoading = false;
       });
@@ -54,9 +58,9 @@ class MaterialPageState extends State<MaterialsPage> {
     });
   }
 
-  // Future<bool> changeStatusArea(int id) async {
-  //   return MaterialService().changeStatusArea(id);
-  // }
+  Future<bool> changeStatusMaterial(int id) async {
+    return MaterialService().changeStatusMaterial(id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,19 +95,19 @@ class MaterialPageState extends State<MaterialsPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => CreateArea(
-                            //             farmId: widget.farmId,
-                            //           )),
-                            // ).then((value) {
-                            //   if (value != null) {
-                            //     getAreas();
-                            //     SnackbarShowNoti.showSnackbar(
-                            //         'Tạo khu vực thành công!', false);
-                            //   }
-                            // });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateMaterial(
+                                        farmId: widget.farmId,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                getMaterials();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo công cụ thành công!', false);
+                              }
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
@@ -242,15 +246,32 @@ class MaterialPageState extends State<MaterialsPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        task['name'].length > 20
-                                                            ? '${task['name'].substring(0, 20)}...'
-                                                            : task['name'],
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            height: 50,
+                                                            width: 50,
+                                                            child:
+                                                                Image.network(
+                                                              task['urlImage'],
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Text(
+                                                            task['name'].length >
+                                                                    20
+                                                                ? '${task['name'].substring(0, 20)}...'
+                                                                : task['name'],
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Container(
                                                         decoration:
@@ -280,7 +301,6 @@ class MaterialPageState extends State<MaterialsPage> {
                                                       ),
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 10),
                                                 ],
                                               ),
                                             ),
@@ -307,7 +327,7 @@ class MaterialPageState extends State<MaterialsPage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: MediaQuery.of(context).size.height * 0.24,
+          height: MediaQuery.of(context).size.height * 0.3,
           color: kBackgroundColor,
           child: Column(
             children: [
@@ -321,6 +341,29 @@ class MaterialPageState extends State<MaterialsPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
+                label: "Chỉnh sửa",
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .push(
+                    MaterialPageRoute(
+                      builder: (context) => UpdateMaterial(
+                        material: employee,
+                      ),
+                    ),
+                  )
+                      .then((value) {
+                    if (value != null) {
+                      getMaterials();
+                      SnackbarShowNoti.showSnackbar(
+                          'Chỉnh sửa thành công!', false);
+                    }
+                  });
+                },
+                cls: kPrimaryColor,
+                context: context,
+              ),
+              _bottomSheetButton(
                 label: employee['status'] == "Inactive"
                     ? "Đổi sang Actice"
                     : "Đổi sang Inactive",
@@ -332,17 +375,18 @@ class MaterialPageState extends State<MaterialsPage> {
                           title: "Đổi trạng thái",
                           content: "Bạn có chắc muốn đổi trạng thái dụng cụ?",
                           onConfirm: () {
-                            // changeStatusArea(employee['id']).then((value) {
-                            //   if (value) {
-                            //     getMaterials();
-                            //     Navigator.of(context).pop();
-                            //     SnackbarShowNoti.showSnackbar(
-                            //         'Đổi trạng thái thành công!', false);
-                            //   } else {
-                            //     SnackbarShowNoti.showSnackbar(
-                            //         'Đổi trạng thái không thành công!', true);
-                            //   }
-                            // });
+                            Navigator.of(context).pop();
+                            changeStatusMaterial(employee['id']).then((value) {
+                              if (value) {
+                                getMaterials();
+
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái không thành công!', true);
+                              }
+                            });
                           },
                           buttonConfirmText: "Có",
                         );

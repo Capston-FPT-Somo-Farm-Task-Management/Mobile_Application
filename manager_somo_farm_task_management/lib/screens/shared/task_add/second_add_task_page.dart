@@ -128,7 +128,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                 });
               });
     _selectedTaskType = "Chọn";
-    MaterialService().getMaterialActive().then((value) {
+    MaterialService().getMaterialActiveByFamrId(farmId).then((value) {
       setState(() {
         materials = value;
       });
