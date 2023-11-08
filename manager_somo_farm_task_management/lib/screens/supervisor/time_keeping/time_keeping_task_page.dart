@@ -68,13 +68,9 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   bool checkChanges() {
     for (int i = 0; i < employees.length; i++) {
       if (_minutesController[i].text !=
-          employees[i]['actualEfforMinutes'].toString()) {
-        return true;
-      }
-    }
-    for (int i = 0; i < employees.length; i++) {
-      if (_hoursController[i].text !=
-          employees[i]['actualEffortHour'].toString()) {
+              employees[i]['actualEfforMinutes'].toString() ||
+          _hoursController[i].text !=
+              employees[i]['actualEffortHour'].toString()) {
         return true;
       }
     }
@@ -83,10 +79,12 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
 
   bool checkEmpty() {
     for (int i = 0; i < employees.length; i++) {
-      if (controllers[i].text.isEmpty) {
+      if (_hoursController[i].text.isEmpty &&
+          _minutesController[i].text.isEmpty) {
         return false;
       }
     }
+
     return true;
   }
 
@@ -94,11 +92,15 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
     List<Map<String, dynamic>> updatedData = [];
     for (int i = 0; i < employees.length; i++) {
       int employeeId = employees[i]['employeeId'];
-      double effortTime = double.parse(controllers[i].text);
+      if (_minutesController[i].text.isEmpty) _minutesController[i].text = "0";
+      if (_hoursController[i].text.isEmpty) _hoursController[i].text = "0";
+      int effortTimeM = int.parse(_minutesController[i].text);
+      int effortTimeH = int.parse(_hoursController[i].text);
 
       Map<String, dynamic> updatedEffort = {
         'employeeId': employeeId,
-        'effortTime': effortTime,
+        'actualEfforMinutes': effortTimeM,
+        'actualEffortHour': effortTimeH,
       };
 
       updatedData.add(updatedEffort);
@@ -326,7 +328,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                               //   ),
                               // ),
                               Container(
-                                width: 100,
+                                width: 80,
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -352,10 +354,15 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                                   decoration: InputDecoration(
                                                     hintText: "0",
                                                   ),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      isSaveEnabled =
+                                                          areChangesMade();
+                                                    });
+                                                  },
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 5),
                                             Text(
                                               "G",
                                               style: TextStyle(fontSize: 12),
@@ -364,7 +371,6 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 10),
                                     Expanded(
                                       child: Container(
                                         child: Row(
@@ -387,10 +393,15 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                                   decoration: InputDecoration(
                                                     hintText: "0",
                                                   ),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      isSaveEnabled =
+                                                          areChangesMade();
+                                                    });
+                                                  },
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 5),
                                             Text(
                                               "p",
                                               style: TextStyle(fontSize: 12),

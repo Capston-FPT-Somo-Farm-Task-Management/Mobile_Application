@@ -226,7 +226,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getMaterials(bool init) async {
-    await MaterialService().getMaterialActive().then((value) {
+    await MaterialService().getMaterialActiveByFamrId(farmId!).then((value) {
       setState(() {
         materials = value;
         if (init)
