@@ -219,8 +219,13 @@ class TaskTile extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      SubTaskPage(taskId: task['id'], taskName: task['name']),
+                  builder: (context) => SubTaskPage(
+                      taskStatus: task['status'],
+                      startDate: task['startDate'],
+                      endDate: task['endDate'],
+                      taskId: task['id'],
+                      taskName: task['name'],
+                      taskCode: task['code']),
                 ),
               );
             },

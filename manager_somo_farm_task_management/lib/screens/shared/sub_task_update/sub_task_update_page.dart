@@ -1,4 +1,6 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
@@ -9,12 +11,17 @@ import '../../../componets/input_field.dart';
 class UpdateSubTask extends StatefulWidget {
   final int taskId;
   final String taskName;
+  final String taskCode;
+  final String startDate, endDate;
   final Map<String, dynamic> subtask;
   const UpdateSubTask(
       {super.key,
       required this.taskId,
       required this.taskName,
-      required this.subtask});
+      required this.subtask,
+      required this.taskCode,
+      required this.startDate,
+      required this.endDate});
 
   @override
   UpdateSubTaskState createState() => UpdateSubTaskState();
@@ -26,8 +33,11 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
   List<Map<String, dynamic>> employees = [];
   Map<String, dynamic>? employeeSelected;
   bool isLoading = true;
-  Future<bool> createSubTask(Map<String, dynamic> subTaskData) {
-    return SubTaskService().createSubTask(subTaskData);
+  DateTime? _selectedStartDate;
+  DateTime? _selectedEndDate;
+  Future<bool> updateSubTask(Map<String, dynamic> subTaskData) {
+    return SubTaskService()
+        .updateSubTask(widget.subtask['subtaskId'], subTaskData);
   }
 
   void getEmployees() async {
@@ -50,6 +60,9 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
     getEmployees();
     _titleController.text = widget.subtask['name'];
     _desController.text = widget.subtask['description'];
+    _selectedStartDate = DateTime.parse((widget.startDate));
+
+    _selectedEndDate = DateTime.parse(widget.endDate);
   }
 
   @override
@@ -92,7 +105,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.taskName,
+                      "#" + widget.taskCode + " - " + widget.taskName,
                       style: headingStyle.copyWith(fontSize: 23),
                     ),
                     SizedBox(height: 30),
@@ -112,7 +125,6 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                           ),
                           SizedBox(height: 5),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
                             constraints: BoxConstraints(
                               minHeight:
                                   50.0, // Đặt giá trị minHeight theo ý muốn của bạn
@@ -124,23 +136,58 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: TextFormField(
-                              initialValue: employeeSelected!['name'],
-                              enabled: false,
-                              style: subTitileStyle,
-                              decoration: InputDecoration(
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: kBackgroundColor, width: 0),
-                                ),
-                                enabledBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: kBackgroundColor, width: 0),
-                                ),
-                              ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: employeeSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  employeeSelected = newValue;
+                                });
+                              },
+                              items: employees
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
                             ),
                           )
                         ],
+                      ),
+                    ),
+                    MyInputField(
+                      title: "Ngày giờ thực hiện",
+                      hint: _selectedStartDate == null
+                          ? "dd/MM/yyyy HH:mm a"
+                          : DateFormat('dd/MM/yyyy HH:mm a')
+                              .format(_selectedStartDate!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          _getDateTimeFromUser(true);
+                        },
+                      ),
+                    ),
+                    MyInputField(
+                      title: "Ngày giờ kết thúc",
+                      hint: _selectedEndDate == null
+                          ? "dd/MM/yyyy HH:mm a"
+                          : DateFormat('dd/MM/yyyy HH:mm a')
+                              .format(_selectedEndDate!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          _getDateTimeFromUser(false);
+                        },
                       ),
                     ),
                     Container(
@@ -149,7 +196,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Mô tả",
+                            "Mô tả (Tùy chọn)",
                             style: titileStyle,
                           ),
                           Container(
@@ -226,15 +273,21 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
     setState(() {
       isLoading = true;
     });
-    if (_titleController.text.isNotEmpty && employeeSelected != null) {
+    if (_titleController.text.isNotEmpty &&
+        employeeSelected != null &&
+        _selectedEndDate != null &&
+        _selectedStartDate != null) {
       Map<String, dynamic> data = {
-        'taskId': widget.taskId,
         'employeeId': employeeSelected!['id'],
         'description': _desController.text,
+        'startDay':
+            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedStartDate!),
+        'endDay':
+            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!),
         'name': _titleController.text,
       };
       print(data);
-      createSubTask(data).then((value) {
+      updateSubTask(data).then((value) {
         if (value) {
           setState(() {
             isLoading = false;
@@ -255,5 +308,64 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
       // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
       SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
     }
+  }
+
+  _getDateTimeFromUser(bool isStart) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.parse(widget.startDate),
+      firstDate: DateTime.parse(widget.startDate),
+      lastDate: DateTime.parse(widget.endDate),
+    );
+
+    if (selectedDate != null) {
+      // Nếu người dùng đã chọn một ngày, tiếp theo bạn có thể chọn giờ
+      TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (selectedTime != null) {
+        // Người dùng đã chọn cả ngày và giờ
+        DateTime selectedDateTime = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
+        if (selectedDateTime.isAfter(DateTime.parse(widget.endDate)) &&
+            isStart == false)
+          SnackbarShowNoti.showSnackbar(
+              "Giờ kết thúc phải nhỏ hơn giờ kết thúc của công việc cha", true);
+        else if (selectedDateTime.isBefore(DateTime.parse(widget.startDate)) &&
+            isStart)
+          SnackbarShowNoti.showSnackbar(
+              "Giờ bắt đầu phải lớn hơn giờ bắt đầu của công việc cha", true);
+        else if (isStart == false && _selectedStartDate == null) {
+          SnackbarShowNoti.showSnackbar("Chọn ngày giờ thực hiện trước", true);
+        } else if (isStart == false &&
+                selectedDateTime.isBefore(_selectedStartDate!) ||
+            isStart == false &&
+                selectedDateTime.isAtSameMomentAs(_selectedStartDate!)) {
+          SnackbarShowNoti.showSnackbar(
+              "Ngày giờ kết thúc phải lớn hơn ngày giờ thực hiện", true);
+        } else {
+          setState(() {
+            if (isStart) {
+              _selectedStartDate = selectedDateTime;
+              if (_selectedEndDate != null) {
+                if (_selectedStartDate!.isAfter(_selectedEndDate!))
+                  _selectedEndDate = null;
+              }
+            } else {
+              _selectedEndDate = selectedDateTime;
+            }
+          });
+        }
+      }
+      return;
+    }
+    return;
   }
 }

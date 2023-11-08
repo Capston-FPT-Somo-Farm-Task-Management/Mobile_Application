@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task_add/sub_task_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task_update/sub_task_update_page.dart';
+import 'package:manager_somo_farm_task_management/services/effort_service.dart';
 import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
 
 class SubTaskPage extends StatefulWidget {
   final int taskId;
   final String taskName;
-  const SubTaskPage({Key? key, required this.taskId, required this.taskName})
+  final String taskCode;
+  final String taskStatus;
+  final String startDate, endDate;
+  const SubTaskPage(
+      {Key? key,
+      required this.taskId,
+      required this.taskName,
+      required this.taskCode,
+      required this.startDate,
+      required this.endDate,
+      required this.taskStatus})
       : super(key: key);
 
   @override
@@ -20,17 +29,21 @@ class SubTaskPage extends StatefulWidget {
 }
 
 class SubTaskPageState extends State<SubTaskPage> {
+  TextEditingController hourController = TextEditingController();
+  TextEditingController minuteController = TextEditingController();
+
   List<Map<String, dynamic>> filteredTaskList = [];
   bool isLoading = true;
   @override
   initState() {
     super.initState();
     _getSubTask();
+    print(widget.taskStatus);
   }
 
-  void removeTask(int employeeId) {
+  void removeTask(int subTaskId) {
     setState(() {
-      filteredTaskList.removeWhere((task) => task['employeeId'] == employeeId);
+      filteredTaskList.removeWhere((task) => task['subtaskId'] == subTaskId);
     });
   }
 
@@ -76,6 +89,18 @@ class SubTaskPageState extends State<SubTaskPage> {
       ),
       body: Column(
         children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "#${widget.taskCode}",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w700,
+                  color: kSecondColor),
+            ),
+          ),
           const SizedBox(height: 30),
           Container(
             padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
@@ -84,36 +109,45 @@ class SubTaskPageState extends State<SubTaskPage> {
               children: [
                 Text("Danh sách các công việc con:",
                     style: TextStyle(fontSize: 18)),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(
-                      MaterialPageRoute(
-                        builder: (context) => CreateSubTask(
-                            taskId: widget.taskId, taskName: widget.taskName),
-                      ),
-                    )
-                        .then((value) {
-                      if (value != null) {
-                        _getSubTask();
-                      }
-                    });
-                    ;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
-                    minimumSize: Size(80, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Thêm",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ),
+                (widget.taskStatus == "Chuẩn bị" ||
+                        widget.taskStatus == "Từ chối" ||
+                        widget.taskStatus == "Đang thực hiện")
+                    ? ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (context) => CreateSubTask(
+                                taskCode: widget.taskCode,
+                                taskId: widget.taskId,
+                                taskName: widget.taskName,
+                                startDate: widget.startDate,
+                                endDate: widget.endDate,
+                              ),
+                            ),
+                          )
+                              .then((value) {
+                            if (value != null) {
+                              _getSubTask();
+                            }
+                          });
+                          ;
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kPrimaryColor,
+                          minimumSize: Size(80, 40),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Thêm",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -170,7 +204,14 @@ class SubTaskPageState extends State<SubTaskPage> {
 
                               return GestureDetector(
                                 onLongPress: () {
-                                  _showBottomSheet(context, task);
+                                  if (widget.taskStatus == "Chuẩn bị" ||
+                                      widget.taskStatus == "Từ chối" ||
+                                      widget.taskStatus == "Đang thực hiện")
+                                    _showBottomSheet(context, task);
+                                  else
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Không có tùy chọn cho công việc đã hoàn thành",
+                                        true);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -211,30 +252,299 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
-                                                        wrapWords(
-                                                            task['name'], 25),
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                      Flexible(
+                                                        child: Text(
+                                                          task['name'],
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 22,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                kPrimaryColor,
+                                                          ),
                                                         ),
                                                       ),
+                                                      Tooltip(
+                                                        message: "Chấm công",
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            await showDialog<
+                                                                void>(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  title: Text(
+                                                                      'Chấm công'),
+                                                                  content:
+                                                                      Container(
+                                                                    height: 100,
+                                                                    child:
+                                                                        Column(
+                                                                      children: [
+                                                                        Text(
+                                                                            'Nhập giờ thực hiện thực tế'),
+                                                                        SizedBox(
+                                                                            height:
+                                                                                20),
+                                                                        Row(
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: TextField(
+                                                                                decoration: InputDecoration(labelText: 'Giờ'),
+                                                                                keyboardType: TextInputType.number,
+                                                                                controller: hourController,
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(width: 16), // Khoảng trống giữa hai ô input
+                                                                            Expanded(
+                                                                              child: TextField(
+                                                                                decoration: InputDecoration(labelText: 'Phút'),
+                                                                                keyboardType: TextInputType.number,
+                                                                                controller: minuteController,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  actions: <Widget>[
+                                                                    TextButton(
+                                                                      onPressed: hourController.text.isEmpty ||
+                                                                              minuteController.text.isEmpty
+                                                                          ? null
+                                                                          : () {
+                                                                              Navigator.of(context).pop();
+                                                                              String hourText = hourController.text;
+                                                                              String minuteText = minuteController.text;
+                                                                              int hours = int.tryParse(hourText) ?? 0;
+                                                                              int minutes = int.tryParse(minuteText) ?? 0;
+
+                                                                              Map<String, dynamic> data = {
+                                                                                'employeeId': task['employeeId'],
+                                                                                'actualEfforMinutes': minutes,
+                                                                                'actualEffortHour': hours
+                                                                              };
+                                                                              EffortService().createEffortBySubtask(task['subtaskId'], data).then((value) {
+                                                                                setState(() {
+                                                                                  minuteController.text = "";
+                                                                                  hourController.text = "";
+                                                                                });
+                                                                                if (value) _getSubTask();
+                                                                                SnackbarShowNoti.showSnackbar("Chấm công thành công", true);
+                                                                              }).catchError((e) {
+                                                                                SnackbarShowNoti.showSnackbar(e.toString(), true);
+                                                                              });
+                                                                            },
+                                                                      child: Text(
+                                                                          'Lưu'),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child:
+                                                                          Text(
+                                                                        'Đóng',
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Icon(
+                                                              Icons
+                                                                  .grading_rounded,
+                                                              color:
+                                                                  kPrimaryColor),
+                                                        ),
+                                                      )
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 10),
+                                                  const SizedBox(height: 20),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
-                                                      Text(
-                                                        "Nhân viên: ${wrapWordsWithEllipsis(task['employeeName'], 25)}",
-                                                        style: GoogleFonts.lato(
-                                                          textStyle:
-                                                              const TextStyle(
+                                                      Icon(
+                                                        Icons
+                                                            .access_time_rounded,
+                                                        color: Colors.black87,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Flexible(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Bắt đầu: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
                                                                   fontSize: 16,
                                                                   color: Colors
-                                                                      .black),
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDay']))}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .access_time_rounded,
+                                                        color: Colors.black87,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Flexible(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Kết thúc: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDay']))}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.person_2_sharp,
+                                                        color: Colors.black87,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Flexible(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Nhân viên: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${task['codeEmployee']} - ${task['employeeName']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.timelapse_rounded,
+                                                        color: Colors.black87,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Flexible(
+                                                        child: RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Giờ làm thực tế: ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${task['actualEffortHour']} giờ ${task['actualEfforMinutes']} phút',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
@@ -253,13 +563,12 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                       const SizedBox(width: 4),
                                                       Text(
                                                         "Mô tả:",
-                                                        style: GoogleFonts.lato(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontSize: 15,
-                                                                  color: Colors
-                                                                      .black),
-                                                        ),
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
                                                       ),
                                                     ],
                                                   ),
@@ -289,7 +598,7 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                                 'description'],
                                                         style: const TextStyle(
                                                           fontSize: 16,
-                                                          color: Colors.black54,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
                                                     ),
@@ -322,7 +631,7 @@ class SubTaskPageState extends State<SubTaskPage> {
       ) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: MediaQuery.of(context).size.height * 0.30,
+          height: MediaQuery.of(context).size.height * 0.3,
           color: kBackgroundColor,
           child: Column(
             children: [
@@ -343,6 +652,9 @@ class SubTaskPageState extends State<SubTaskPage> {
                       .push(
                     MaterialPageRoute(
                       builder: (context) => UpdateSubTask(
+                        startDate: widget.startDate,
+                        endDate: widget.endDate,
+                        taskCode: widget.taskCode,
                         taskId: widget.taskId,
                         taskName: widget.taskName,
                         subtask: subTask,
@@ -369,12 +681,12 @@ class SubTaskPageState extends State<SubTaskPage> {
                         content: "Bạn có chắc muốn xóa công việc này?",
                         onConfirm: () {
                           Navigator.of(context).pop();
+
                           SubTaskService()
-                              .deleteSubTask(
-                                  subTask['taskId'], subTask['employeeId'])
+                              .deleteSubTask(subTask['subtaskId'])
                               .then((value) {
                             if (value) {
-                              removeTask(subTask['employeeId']);
+                              removeTask(subTask['subtaskId']);
 
                               SnackbarShowNoti.showSnackbar(
                                   "Xóa thành công!", false);
