@@ -132,6 +132,7 @@ class CreateLiveStockTypeState extends State<CreateLiveStockType> {
         'environment': _environmentController.text,
         'description': _descriptionController.text,
         'status': 1,
+        'farmId': widget.farmId
       };
       CreateLiveStockType(liveStock).then((value) {
         if (value) {

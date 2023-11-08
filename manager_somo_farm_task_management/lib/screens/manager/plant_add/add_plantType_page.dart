@@ -130,6 +130,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
         'environment': _environmentController.text,
         'description': _descriptionController.text,
         'status': 0,
+        'farmId': widget.farmId
       };
       CreatePlantType(liveStock).then((value) {
         if (value) {
