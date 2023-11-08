@@ -4,8 +4,10 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
 
 class HabitantTypeService {
-  Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType() async {
-    final String getPlantTypeUrl = '$baseUrl/HabitantType/PlantType';
+  Future<List<Map<String, dynamic>>> getPlantTypeFromHabitantType(
+      int id) async {
+    final String getPlantTypeUrl =
+        '$baseUrl/HabitantType/PlantType/Farm(${id})';
 
     final http.Response response = await http.get(
       Uri.parse(getPlantTypeUrl),
@@ -24,8 +26,10 @@ class HabitantTypeService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType() async {
-    final String getLLiveStockUrl = '$baseUrl/HabitantType/LivestockType';
+  Future<List<Map<String, dynamic>>> getLiveStockTypeFromHabitantType(
+      int id) async {
+    final String getLLiveStockUrl =
+        '$baseUrl/HabitantType/LivestockType/Farm(${id})';
 
     final http.Response response = await http.get(
       Uri.parse(getLLiveStockUrl),

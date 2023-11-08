@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/components/imange_list_selected.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/components/media_picker.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 
 import 'package:manager_somo_farm_task_management/services/provinces_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import '../../../componets/input_field.dart';
 
@@ -28,12 +33,14 @@ class CreateEmployeeState extends State<CreateEmployee> {
   List<Map<String, dynamic>> filteredWars = [];
   List<Map<String, dynamic>> filterTaskType = [];
   List<Map<String, dynamic>> selectedTaskTypes = [];
+  List<AssetEntity> selectedAssetList = [];
   List<String> filterGender = ["Nam", "Nữ"];
   String? _selectedGender = "Chọn";
   String? _selectedProvinces = "Chọn";
   String? _selectedDistrict;
   String? _selectedWar;
   bool isLoading = false;
+  File? selectedFiles;
   Future<void> getProvinces() async {
     ProvincesService().getProvinces().then((value) {
       setState(() {
@@ -62,6 +69,15 @@ class CreateEmployeeState extends State<CreateEmployee> {
     return EmployeeService().createEmployee(employeeData);
   }
 
+  Future convertAssetsToFiles(List<AssetEntity> assetEntities) async {
+    for (var i = 0; i < assetEntities.length; i++) {
+      final File? file = await assetEntities[i].originFile;
+      setState(() {
+        selectedFiles = file!;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +87,62 @@ class CreateEmployeeState extends State<CreateEmployee> {
   Future<void> _initializeData() async {
     await getProvinces();
     await getListTaskTypeActive();
+  }
+
+  Future pickAssets({
+    required int maxCount,
+    required RequestType requestType,
+  }) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MediaPicker(maxCount, requestType, selectedAssetList);
+        },
+      ),
+    );
+    setState(() {
+      if (result != null) selectedAssetList = result;
+    });
+  }
+
+  Widget buildAssetWidget(AssetEntity assetEntity) {
+    int indexInSelectedList = selectedAssetList.indexOf(assetEntity);
+    return GestureDetector(
+      onTap: () async {
+        //_showFullSizeImage(assetEntity);
+        final result = await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ImageListSelectedPage(
+                selectedAssetList: selectedAssetList,
+                indexFocus: indexInSelectedList),
+          ),
+        );
+        setState(() {
+          if (result != null) selectedAssetList = result;
+        });
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: AssetEntityImage(
+              assetEntity,
+              isOriginal: false,
+              thumbnailSize: const ThumbnailSize.square(1000),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -108,6 +180,25 @@ class CreateEmployeeState extends State<CreateEmployee> {
                       "Thêm nhân viên",
                       style: headingStyle,
                     ),
+                    GestureDetector(
+                      onTap: () {
+                        pickAssets(
+                          maxCount: 1,
+                          requestType: RequestType.image,
+                        );
+                        setState(() {});
+                      },
+                      child: MyInputField(
+                        title: "Chọn ảnh",
+                        hint: "Tải ảnh lên",
+                        widget: Icon(Icons.add_photo_alternate, size: 30),
+                      ),
+                    ),
+                    if (selectedAssetList.length == 1)
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        child: buildAssetWidget(selectedAssetList[0]),
+                      ),
                     MyInputField(
                       title: "Mã nhân viên",
                       hint: "Nhập mã nhân viên",
@@ -513,21 +604,24 @@ class CreateEmployeeState extends State<CreateEmployee> {
             "address": "$_selectedWar, $_selectedDistrict, $_selectedProvinces",
             "farmId": widget.farmId,
             "code": _codeController.text,
-            "gender": _selectedGender == "Nữ"
+            "gender": _selectedGender == "Nữ",
+            "imageFile": selectedFiles
           }
         };
-        createEmployee(employeekData).then((value) {
-          if (value) {
+        convertAssetsToFiles(selectedAssetList).then((value) {
+          createEmployee(employeekData).then((value) {
+            if (value) {
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.pop(context, "newEmployee");
+            }
+          }).catchError((e) {
             setState(() {
               isLoading = false;
             });
-            Navigator.pop(context, "newEmployee");
-          }
-        }).catchError((e) {
-          setState(() {
-            isLoading = false;
+            SnackbarShowNoti.showSnackbar(e.toString(), true);
           });
-          SnackbarShowNoti.showSnackbar(e.toString(), true);
         });
       }
     } else {
