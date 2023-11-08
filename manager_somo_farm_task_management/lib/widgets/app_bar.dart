@@ -870,7 +870,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                 .push(
                                                                     MaterialPageRoute(
                                                               builder: (context) =>
-                                                                  MaterialsPage(),
+                                                                  MaterialsPage(
+                                                                      farmId:
+                                                                          farmId!),
                                                             ));
                                                           },
                                                           child: const Row(
