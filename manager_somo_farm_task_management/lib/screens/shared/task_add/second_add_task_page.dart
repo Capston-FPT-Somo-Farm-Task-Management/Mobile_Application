@@ -277,15 +277,16 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                               var lowercaseQuery =
                                   removeDiacritics(query.toLowerCase());
                               return filteredEmployees.where((e) {
-                                return removeDiacritics(e['name'].toLowerCase())
+                                return removeDiacritics(
+                                        e['nameCode'].toLowerCase())
                                     .contains(lowercaseQuery);
                               }).toList(growable: false)
-                                ..sort((a, b) =>
-                                    removeDiacritics(a['name'].toLowerCase())
-                                        .indexOf(lowercaseQuery)
-                                        .compareTo(removeDiacritics(
-                                                b['name'].toLowerCase())
-                                            .indexOf(lowercaseQuery)));
+                                ..sort((a, b) => removeDiacritics(
+                                        a['nameCode'].toLowerCase())
+                                    .indexOf(lowercaseQuery)
+                                    .compareTo(removeDiacritics(
+                                            b['nameCode'].toLowerCase())
+                                        .indexOf(lowercaseQuery)));
                             } else {
                               return const <Map<String, dynamic>>[];
                             }
@@ -298,7 +299,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           chipBuilder: (context, state, employee) {
                             return InputChip(
                               key: ObjectKey(employee),
-                              label: Text(employee['name']),
+                              label: Text(employee['nameCode']),
                               onDeleted: () => state.deleteChip(employee),
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
@@ -307,7 +308,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           suggestionBuilder: (context, state, profile) {
                             return ListTile(
                               key: ObjectKey(profile),
-                              title: Text(profile['name']),
+                              title: Text(profile['nameCode']),
                               onTap: () => state.selectSuggestion(profile),
                             );
                           },
