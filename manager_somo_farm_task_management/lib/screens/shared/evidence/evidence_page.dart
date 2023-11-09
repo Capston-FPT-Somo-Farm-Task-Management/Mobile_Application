@@ -67,7 +67,7 @@ class EvidencePageState extends State<EvidencePage> {
         title: Container(
           margin: EdgeInsets.only(top: 5),
           child: Text(
-            'Báo cáo công việc',
+            'Báo cáo',
             style: TextStyle(
               fontSize: 25.0,
               fontWeight: FontWeight.bold,
@@ -87,11 +87,27 @@ class EvidencePageState extends State<EvidencePage> {
                 padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                 width: double.infinity,
                 color: Colors.grey[200],
-                child: Text(
-                  widget.task['name'],
-                  style: TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold,
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "#${widget.task['code']}",
+                        style: TextStyle(
+                          fontSize: 23.0, // Kích thước nhỏ hơn
+                          fontStyle: FontStyle.italic, // Chữ in nghiêng
+                          color: kSecondColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: " - " + widget.task['name'],
+                        style: TextStyle(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold,
+                          color: kSecondColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
