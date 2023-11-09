@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/components/media_picker.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 
 import 'package:manager_somo_farm_task_management/services/provinces_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../componets/input_field.dart';
@@ -32,11 +37,17 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
   List<Map<String, dynamic>> filterTaskType = [];
   List<Map<String, dynamic>> selectedTaskTypes = [];
   List<String> filterGender = ["Nam", "Nữ"];
+  List<AssetEntity> selectedAssetList = [];
   Map<String, dynamic>? _selectedProvinces;
   Map<String, dynamic>? _selectedDistrict;
   Map<String, dynamic>? _selectedWar;
   String? _selectedGender;
   String? provinces, district, ward;
+  String? urlImage;
+  File? selectedFile;
+  String hintImg = "Tải ảnh lên";
+  String? _birthday;
+  DateTime? _dateTime;
   bool isLoading = true;
   Future<void> splitAddress(String address) async {
     // Tách địa chỉ thành các phần: Xã, Huyện, Tỉnh
@@ -104,8 +115,37 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
   }
 
   Future<bool> updateEmployee(
-      int employeeId, Map<String, dynamic> employeeData) {
-    return EmployeeService().updateEmployee(employeeId, employeeData);
+      int employeeId, Map<String, dynamic> employeeData, File image) {
+    return EmployeeService().updateEmployee(employeeId, employeeData, image);
+  }
+
+  Future pickAssets({
+    required int maxCount,
+    required RequestType requestType,
+  }) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MediaPicker(maxCount, requestType, selectedAssetList);
+        },
+      ),
+    );
+    setState(() {
+      if (result != null) {
+        selectedAssetList = result;
+        urlImage = "";
+      }
+    });
+  }
+
+  Future convertAssetsToFiles(List<AssetEntity> assetEntities) async {
+    for (var i = 0; i < assetEntities.length; i++) {
+      final File? file = await assetEntities[i].originFile;
+      setState(() {
+        selectedFile = file!;
+      });
+    }
   }
 
   @override
@@ -119,6 +159,9 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
     _fullnameController.text = widget.employee['name'];
     _phoneController.text = widget.employee['phoneNumber'];
     _selectedGender = widget.employee['gender'] == "Male" ? "Nam" : "Nữ";
+    urlImage = widget.employee['avatar'];
+    _birthday = widget.employee['dateOfBirth'];
+    _dateTime = DateTime.parse(_birthday!);
   }
 
   Future<void> _initializeData() async {
@@ -165,6 +208,71 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                       "Thêm nhân viên",
                       style: headingStyle,
                     ),
+                    GestureDetector(
+                      onTap: () {
+                        pickAssets(
+                          maxCount: 1,
+                          requestType: RequestType.image,
+                        );
+                        setState(() {});
+                      },
+                      child: MyInputField(
+                        title: "Chọn ảnh",
+                        hint: hintImg,
+                        widget: Icon(Icons.add_photo_alternate, size: 30),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    if (selectedAssetList.length == 1)
+                      Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.height * 0.2,
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          child: Positioned.fill(
+                            child: AssetEntityImage(
+                              selectedAssetList[0],
+                              isOriginal: false,
+                              thumbnailSize: const ThumbnailSize.square(1000),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Center(
+                                  child: Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (urlImage!.isNotEmpty)
+                      Center(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          width: MediaQuery.of(context).size.height * 0.2,
+                          child: Positioned.fill(
+                            child: Image.network(
+                              urlImage!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Center(
+                                  child: Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 40),
+                    const Divider(
+                      color: Colors.grey, // Đặt màu xám
+                      height: 1, // Độ dày của dòng gạch
+                      thickness: 1, // Độ dày của dòng gạch (có thể thay đổi)
+                    ),
                     MyInputField(
                       title: "Mã nhân viên",
                       hint: "Nhập mã nhân viên",
@@ -179,6 +287,30 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,
+                    ),
+                    MyInputField(
+                      title: "Ngày sinh",
+                      hint: _birthday == null
+                          ? "dd/MM/yyyy"
+                          : DateFormat('dd/MM/yyyy').format(_dateTime!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () async {
+                          var selectedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now());
+                          if (selectedDate != null) {
+                            setState(() {
+                              _dateTime = selectedDate;
+                            });
+                          }
+                        },
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
@@ -524,7 +656,7 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                         ),
                         child: const Center(
                           child: Text(
-                            "Tạo nhân viên",
+                            "Lưu chỉnh sửa",
                             style: TextStyle(fontSize: 19),
                           ),
                         ),
@@ -567,22 +699,27 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                 "${_selectedWar!['name']}, ${_selectedDistrict!['name']}, ${_selectedProvinces!['name']}",
             "farmId": widget.farmId,
             "code": _codeController.text,
-            "gender": _selectedGender == "Nữ"
+            "gender": _selectedGender == "Nữ",
+            "dateOfBirth":
+                DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(_dateTime!)
           }
         };
-        updateEmployee(widget.employee['id'], employeekData).then((value) {
-          if (value) {
+        convertAssetsToFiles(selectedAssetList).then((value) {
+          updateEmployee(widget.employee['id'], employeekData, selectedFile!)
+              .then((value) {
+            if (value) {
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.pop(context, "newEmployee");
+              SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+            }
+          }).catchError((e) {
             setState(() {
               isLoading = false;
             });
-            Navigator.pop(context, "newEmployee");
-            SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
-          }
-        }).catchError((e) {
-          setState(() {
-            isLoading = false;
+            SnackbarShowNoti.showSnackbar(e.toString(), true);
           });
-          SnackbarShowNoti.showSnackbar(e.toString(), true);
         });
       }
     } else {
