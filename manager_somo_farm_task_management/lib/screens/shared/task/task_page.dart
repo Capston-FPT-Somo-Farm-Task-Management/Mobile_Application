@@ -1092,6 +1092,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => TimeKeepingInTask(
+                                codeTask: task['code'],
                                 taskId: task['id'],
                                 taskName: task['name'],
                                 isCreate: false,
@@ -1323,6 +1324,7 @@ class TaskPageState extends State<TaskPage> {
                               .push(
                                 MaterialPageRoute(
                                   builder: (context) => TimeKeepingInTask(
+                                    codeTask: task['code'],
                                     taskId: task['id'],
                                     taskName: task['name'],
                                     isCreate: true,
@@ -1347,6 +1349,7 @@ class TaskPageState extends State<TaskPage> {
                               .push(
                                 MaterialPageRoute(
                                   builder: (context) => TimeKeepingInTask(
+                                    codeTask: task['code'],
                                     taskId: task['id'],
                                     taskName: task['name'],
                                     isCreate: true,
@@ -1370,6 +1373,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => TimeKeepingInTask(
+                                codeTask: task['code'],
                                 taskId: task['id'],
                                 taskName: task['name'],
                                 isCreate: false,

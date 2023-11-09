@@ -606,6 +606,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => TimeKeepingInTask(
+                                codeTask: task['code'],
                                 taskId: task['id'],
                                 taskName: task['name'],
                                 isCreate: false,
@@ -837,6 +838,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               .push(
                                 MaterialPageRoute(
                                   builder: (context) => TimeKeepingInTask(
+                                    codeTask: task['code'],
                                     taskId: task['id'],
                                     taskName: task['name'],
                                     isCreate: true,
@@ -861,6 +863,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                               .push(
                                 MaterialPageRoute(
                                   builder: (context) => TimeKeepingInTask(
+                                    codeTask: task['code'],
                                     taskId: task['id'],
                                     taskName: task['name'],
                                     isCreate: true,
@@ -884,6 +887,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => TimeKeepingInTask(
+                                codeTask: task['code'],
                                 taskId: task['id'],
                                 taskName: task['name'],
                                 isCreate: false,
