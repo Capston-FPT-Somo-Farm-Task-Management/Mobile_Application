@@ -825,8 +825,16 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(
-            top: BorderSide(width: 0.7, color: Colors.grey),
+            top: BorderSide(width: 0.2, color: Colors.grey),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.7),
+              spreadRadius: 5,
+              blurRadius: 8,
+              offset: Offset(0, -1),
+            ),
+          ],
         ),
         child: role == "Manager"
             ? Row(
