@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
@@ -28,6 +29,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
   final TextEditingController _fullnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
+  DateTime? _birthday;
   List<Map<String, dynamic>> filteredProvinces = [];
   List<Map<String, dynamic>> filteredDistrict = [];
   List<Map<String, dynamic>> filteredWars = [];
@@ -65,8 +67,8 @@ class CreateEmployeeState extends State<CreateEmployee> {
     });
   }
 
-  Future<bool> createEmployee(Map<String, dynamic> employeeData) {
-    return EmployeeService().createEmployee(employeeData);
+  Future<bool> createEmployee(Map<String, dynamic> employeeData, File image) {
+    return EmployeeService().createEmployee(employeeData, image);
   }
 
   Future convertAssetsToFiles(List<AssetEntity> assetEntities) async {
@@ -213,6 +215,30 @@ class CreateEmployeeState extends State<CreateEmployee> {
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,
+                    ),
+                    MyInputField(
+                      title: "Ngày sinh",
+                      hint: _birthday == null
+                          ? "dd/MM/yyyy"
+                          : DateFormat('dd/MM/yyyy').format(_birthday!),
+                      widget: IconButton(
+                        icon: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () async {
+                          var selectedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now());
+                          if (selectedDate != null) {
+                            setState(() {
+                              _birthday = selectedDate;
+                            });
+                          }
+                        },
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
@@ -605,11 +631,11 @@ class CreateEmployeeState extends State<CreateEmployee> {
             "farmId": widget.farmId,
             "code": _codeController.text,
             "gender": _selectedGender == "Nữ",
-            "imageFile": selectedFiles
+            "dateOfBirth": _birthday
           }
         };
         convertAssetsToFiles(selectedAssetList).then((value) {
-          createEmployee(employeekData).then((value) {
+          createEmployee(employeekData, selectedFiles!).then((value) {
             if (value) {
               setState(() {
                 isLoading = false;

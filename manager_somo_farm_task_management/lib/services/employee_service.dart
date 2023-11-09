@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -91,20 +93,42 @@ class EmployeeService {
     }
   }
 
-  Future<bool> createEmployee(Map<String, dynamic> employeeData) async {
+  Future<bool> createEmployee(
+      Map<String, dynamic> employeeData, File? image) async {
     final String apiUrl = "$baseUrl/Employee";
-    var body = jsonEncode(employeeData);
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
+
+    Dio dio = Dio();
+    FormData formData = FormData();
+
+    formData.fields.add(MapEntry('name', employeeData['employee']['name']));
+    formData.fields.add(MapEntry('code', employeeData['employee']['code']));
+    formData.fields
+        .add(MapEntry('phoneNumber', employeeData['employee']['phoneNumber']));
+    formData.fields
+        .add(MapEntry('address', employeeData['employee']['address']));
+    formData.fields
+        .add(MapEntry('gender', employeeData['employee']['gender'].toString()));
+    formData.fields.add(MapEntry(
+        'dateOfBirth', employeeData['employee']['dateOfBirth'].toString()));
+    for (int i = 0; i < employeeData['taskTypeId'].length; i++) {
+      formData.fields.add(
+          MapEntry('taskTypeIds', employeeData['taskTypeId'][i].toString()));
+    }
+    formData.fields
+        .add(MapEntry('farmId', employeeData['employee']['farmId'].toString()));
+
+    if (image != null)
+      formData.files.add(MapEntry(
+        'imageFile',
+        await MultipartFile.fromFile(image.path),
+      ));
+
+    Response response = await dio.post(apiUrl, data: formData);
 
     if (response.statusCode == 200) {
       return true;
     } else {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return Future.error(data['message']);
+      return false;
     }
   }
 
@@ -127,20 +151,40 @@ class EmployeeService {
   }
 
   Future<bool> updateEmployee(
-      int employeeId, Map<String, dynamic> employeeData) async {
+      int employeeId, Map<String, dynamic> employeeData, File? image) async {
     final String apiUrl = "$baseUrl/Employee/$employeeId";
-    var body = jsonEncode(employeeData);
-    final response = await http.put(
-      Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
+    Dio dio = Dio();
+    FormData formData = FormData();
+
+    formData.fields.add(MapEntry('name', employeeData['employee']['name']));
+    formData.fields.add(MapEntry('code', employeeData['employee']['code']));
+    formData.fields
+        .add(MapEntry('phoneNumber', employeeData['employee']['phoneNumber']));
+    formData.fields
+        .add(MapEntry('address', employeeData['employee']['address']));
+    formData.fields
+        .add(MapEntry('gender', employeeData['employee']['gender'].toString()));
+    formData.fields.add(MapEntry(
+        'dateOfBirth', employeeData['employee']['dateOfBirth'].toString()));
+    for (int i = 0; i < employeeData['taskTypeId'].length; i++) {
+      formData.fields.add(
+          MapEntry('taskTypeIds', employeeData['taskTypeId'][i].toString()));
+    }
+    formData.fields
+        .add(MapEntry('farmId', employeeData['employee']['farmId'].toString()));
+
+    if (image != null)
+      formData.files.add(MapEntry(
+        'imageFile',
+        await MultipartFile.fromFile(image.path),
+      ));
+
+    Response response = await dio.put(apiUrl, data: formData);
 
     if (response.statusCode == 200) {
       return true;
     } else {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return Future.error(data['message']);
+      return false;
     }
   }
 }

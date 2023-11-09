@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_update/employee_update_page.dart';
@@ -15,14 +16,48 @@ class EmployeeDetailsPopup extends StatelessWidget {
       insetPadding: EdgeInsets.all(20),
       contentPadding: EdgeInsets.all(20),
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            wrapWords(employee['name'], 20),
-            style: const TextStyle(
-              color: kPrimaryColor,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                employee['avatar'] != null
+                    ? Container(
+                        height: 70,
+                        width: 70,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100.0),
+                          child: Image.network(
+                            employee['avatar'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: 70,
+                        width: 70,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Center(
+                            child: Icon(
+                              Icons.person,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                SizedBox(width: 15),
+                Text(
+                  wrapWords(employee['name'], 20),
+                  style: const TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 40),
+              ],
             ),
           ),
           IconButton(
@@ -46,7 +81,7 @@ class EmployeeDetailsPopup extends StatelessWidget {
                 }
               });
             },
-          )
+          ),
         ],
       ),
       content: SingleChildScrollView(
@@ -80,6 +115,23 @@ class EmployeeDetailsPopup extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   wrapWords('Điện thoại: ${employee['phoneNumber']}', 35),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.date_range_outlined,
+                  color: kSecondColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Ngày sinh: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(employee['dateOfBirth']))}',
                   style: const TextStyle(
                     fontSize: 16,
                   ),
