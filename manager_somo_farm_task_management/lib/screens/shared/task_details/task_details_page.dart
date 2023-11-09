@@ -426,7 +426,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      // const SizedBox(height: 10),
                       if (task['plantName'] != null ||
                           task['liveStockName'] != null)
                         Container(
@@ -531,7 +531,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ],
                           ),
                         ),
-                      SizedBox(height: 10),
+                      if (task['status'] != "chuẩn bị") SizedBox(height: 10),
                       Container(
                         color: Colors.white,
                         padding:
@@ -792,7 +792,6 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               ),
                             if (task['isRepeat'] && task['isParent'])
                               const SizedBox(height: 16),
-                            if (!task['isParent']) const SizedBox(height: 16),
                             if (!task['isParent'])
                               Row(
                                 children: [
@@ -1202,7 +1201,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       child: Text("Đang thực hiện"),
                     ),
                   if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
-
+                  if (task['status'] == "Hoàn thành") SizedBox(width: 10),
                   // Đánh giá
                   if (task['status'] == "Hoàn thành")
                     ElevatedButton(
