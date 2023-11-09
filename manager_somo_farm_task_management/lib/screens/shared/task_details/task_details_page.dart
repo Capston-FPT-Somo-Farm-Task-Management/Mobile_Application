@@ -131,34 +131,32 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     ? (task['status'] == "Từ chối" ||
                             task['status'] == "Chuẩn bị" ||
                             task['status'] == "Đang thực hiện")
-                        ? task['isParent'] && task['isRepeat']
-                            ? IconButton(
-                                icon: const Icon(
-                                  Icons.mode_edit_outline_outlined,
-                                  color: kPrimaryColor,
+                        ? IconButton(
+                            icon: const Icon(
+                              Icons.mode_edit_outline_outlined,
+                              color: kPrimaryColor,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdateTaskPage(task: task, role: role!),
                                 ),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => UpdateTaskPage(
-                                          task: task, role: role!),
-                                    ),
-                                  )
-                                      .then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLoading = true;
-                                        isChange = true;
-                                      });
-                                      getTask();
-                                    }
-                                  });
-                                },
                               )
-                            : Container()
+                                  .then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    isLoading = true;
+                                    isChange = true;
+                                  });
+                                  getTask();
+                                }
+                              });
+                            },
+                          )
                         : Container()
-                    : Container(),
+                    : Container()
               ],
             ),
       body: isLoading
@@ -949,6 +947,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => TimeKeepingInTask(
+                              codeTask: task['code'],
                               taskId: task['id'],
                               taskName: task['name'],
                               isCreate: false,
@@ -1061,6 +1060,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => TimeKeepingInTask(
+                              codeTask: task['code'],
                               taskId: task['id'],
                               taskName: task['name'],
                               isCreate: false,
@@ -1094,6 +1094,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => TimeKeepingInTask(
+                              codeTask: task['code'],
                               taskId: task['id'],
                               taskName: task['name'],
                               isCreate: false,
@@ -1232,6 +1233,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                           MaterialPageRoute(
                             builder: (context) => TimeKeepingInTask(
                               taskId: task['id'],
+                              codeTask: task['code'],
                               taskName: task['name'],
                               isCreate: false,
                               status: 0,
