@@ -160,6 +160,7 @@ class TaskTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
+                      flex: 2,
                       child: RichText(
                         text: TextSpan(
                           children: [
@@ -183,27 +184,31 @@ class TaskTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Vị trí: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.black87,
+                    Flexible(
+                      flex: 1,
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Vị trí: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.black87,
+                              ),
                             ),
-                          ),
-                          TextSpan(
-                            text: '${task['fieldName']}',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black87,
+                            TextSpan(
+                              text:
+                                  '${task['fieldName'] ?? task['addressDetail']}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black87,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
