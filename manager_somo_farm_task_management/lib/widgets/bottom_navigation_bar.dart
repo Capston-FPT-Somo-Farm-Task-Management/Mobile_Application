@@ -11,8 +11,8 @@ import '../screens/shared/settings_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   final int farmId;
-
-  const BottomNavBar({super.key, required this.farmId});
+  final int index;
+  const BottomNavBar({super.key, required this.farmId, required this.index});
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
@@ -45,6 +45,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     getUserId().then((_) {
       getNewNotiCount();
     });
+    myCurrentIndex = widget.index;
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       // Xử lý thông báo khi có
       getNewNotiCount();
