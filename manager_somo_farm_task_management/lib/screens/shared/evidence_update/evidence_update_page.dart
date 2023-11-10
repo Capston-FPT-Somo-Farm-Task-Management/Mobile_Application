@@ -86,6 +86,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
         final result = await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ImageListSelectedPage(
+                viewOnly: false,
                 urlImages: urlImages,
                 selectedAssetList: selectedAssetList,
                 indexFocus: index),
@@ -136,6 +137,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
         final result = await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ImageListSelectedPage(
+                viewOnly: false,
                 urlImages: urlImages,
                 selectedAssetList: selectedAssetList,
                 indexFocus: index),
@@ -1300,6 +1302,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ImageListSelectedPage(
+                                                      viewOnly: false,
                                                       urlImages: urlImages,
                                                       selectedAssetList:
                                                           selectedAssetList,
@@ -1428,6 +1431,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ImageListSelectedPage(
+                                                      viewOnly: false,
                                                       urlImages: urlImages,
                                                       selectedAssetList:
                                                           selectedAssetList,
@@ -1556,6 +1560,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ImageListSelectedPage(
+                                                      viewOnly: false,
                                                       urlImages: urlImages,
                                                       selectedAssetList:
                                                           selectedAssetList,
@@ -1684,6 +1689,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ImageListSelectedPage(
+                                                      viewOnly: false,
                                                       urlImages: urlImages,
                                                       selectedAssetList:
                                                           selectedAssetList,
@@ -1812,6 +1818,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ImageListSelectedPage(
+                                                      viewOnly: false,
                                                       urlImages: urlImages,
                                                       selectedAssetList:
                                                           selectedAssetList,
@@ -1940,6 +1947,7 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ImageListSelectedPage(
+                                                      viewOnly: false,
                                                       urlImages: urlImages,
                                                       selectedAssetList:
                                                           selectedAssetList,

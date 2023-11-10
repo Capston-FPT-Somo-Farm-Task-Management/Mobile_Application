@@ -12,12 +12,14 @@ class TimeKeepingInTask extends StatefulWidget {
   final bool isCreate;
   final int status;
   final String endDateTask;
+  final String codeTask;
   TimeKeepingInTask(
       {required this.taskId,
       required this.taskName,
       required this.isCreate,
       required this.status,
-      required this.endDateTask});
+      required this.endDateTask,
+      required this.codeTask});
 
   @override
   State<TimeKeepingInTask> createState() => _TimeKeepingInTaskState();
@@ -31,6 +33,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   List<TextEditingController> _hoursController = [];
   bool isSaveEnabled = false;
   String? role;
+  bool? isHaveSubtask;
   Future<void> getRole() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? roleStored = prefs.getString('role');
@@ -42,13 +45,14 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   void getEmployees() {
     EffortService().getEffortByTaskId(widget.taskId).then((value) {
       setState(() {
-        employees = value;
-        print(value);
+        employees = List<Map<String, dynamic>>.from(value['subtasks']);
+        isHaveSubtask = value['isHaveSubtask'];
+        if (isHaveSubtask!) isSaveEnabled = true;
         for (int i = 0; i < employees.length; i++) {
           TextEditingController minutesController = TextEditingController(
-              text: employees[i]['actualEfforMinutes'].toString());
+              text: employees[i]['totalActualEfforMinutes'].toString());
           TextEditingController hoursController = TextEditingController(
-              text: employees[i]['actualEffortHour'].toString());
+              text: employees[i]['totalActualEffortHour'].toString());
           _minutesController.add(minutesController);
           _hoursController.add(hoursController);
         }
@@ -68,9 +72,13 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   bool checkChanges() {
     for (int i = 0; i < employees.length; i++) {
       if (_minutesController[i].text !=
-              employees[i]['actualEfforMinutes'].toString() ||
-          _hoursController[i].text !=
-              employees[i]['actualEffortHour'].toString()) {
+          employees[i]['totalActualEfforMinutes'].toString()) {
+        return true;
+      }
+    }
+    for (int i = 0; i < employees.length; i++) {
+      if (_hoursController[i].text !=
+          employees[i]['totalActualEffortHour'].toString()) {
         return true;
       }
     }
@@ -130,72 +138,68 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
               title: Text("Chấm công", style: TextStyle(color: kPrimaryColor)),
               centerTitle: true,
-              actions: role != "Manager" &&
-                      DateTime.now().isAfter(DateTime.parse(widget.endDateTask)
-                          .add(Duration(hours: 48)))
-                  ? null
-                  : [
-                      GestureDetector(
-                        onTap: isSaveEnabled
-                            ? () {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                widget.isCreate
-                                    ? TaskService()
-                                        .endTaskAndTimeKeeping(
-                                            widget.taskId,
-                                            widget.status,
-                                            getUpdatedEffortData())
-                                        .then((value) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        if (value) {
-                                          Navigator.of(context).pop("ok");
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Đã lưu thay đổi!", false);
-                                        }
-                                      }).catchError((e) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        SnackbarShowNoti.showSnackbar(
-                                            e.toString(), true);
-                                      })
-                                    : createEffort(getUpdatedEffortData())
-                                        .then((value) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        if (value) {
-                                          Navigator.of(context).pop();
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Đã lưu thay đổi!", false);
-                                        }
-                                      }).catchError((e) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        SnackbarShowNoti.showSnackbar(
-                                            e.toString(), true);
+              actions: [
+                GestureDetector(
+                  onTap: isSaveEnabled
+                      ? () {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          widget.isCreate
+                              ? TaskService()
+                                  .endTaskAndTimeKeeping(widget.taskId,
+                                      widget.status, getUpdatedEffortData())
+                                  .then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (value) {
+                                    Navigator.of(context).pop("ok");
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Đã lưu thay đổi!", false);
+                                  }
+                                }).catchError((e) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  SnackbarShowNoti.showSnackbar(
+                                      e.toString(), true);
+                                })
+                              : isHaveSubtask!
+                                  ? Navigator.of(context).pop()
+                                  : createEffort(getUpdatedEffortData())
+                                      .then((value) {
+                                      setState(() {
+                                        isLoading = false;
                                       });
-                              }
-                            : null,
-                        child: Container(
-                          margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color:
-                                isSaveEnabled ? kPrimaryColor : Colors.black26,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(7),
-                            ),
-                          ),
-                          child: Center(child: Text("Lưu")),
-                        ),
+                                      if (value) {
+                                        Navigator.of(context).pop();
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Đã lưu thay đổi!", false);
+                                      }
+                                    }).catchError((e) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      SnackbarShowNoti.showSnackbar(
+                                          e.toString(), true);
+                                    });
+                        }
+                      : null,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: isSaveEnabled ? kPrimaryColor : Colors.black26,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(7),
                       ),
-                    ],
+                    ),
+                    child: Center(
+                        child: Text(isHaveSubtask! ? "Xác nhận" : "Lưu")),
+                  ),
+                ),
+              ],
             ),
       body: isLoading
           ? Center(
@@ -206,15 +210,35 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
           : Column(
               children: [
                 Container(
-                  padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.taskName,
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w700,
-                              color: kSecondColor)),
+                      Flexible(
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "#${widget.codeTask}",
+                                style: TextStyle(
+                                  fontSize: 23.0, // Kích thước nhỏ hơn
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold,
+                                  color: kSecondColor,
+                                ),
+                              ),
+                              TextSpan(
+                                text: " - " + widget.taskName,
+                                style: TextStyle(
+                                  fontSize: 25.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: kSecondColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -341,6 +365,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                               child: Container(
                                                 child: TextField(
                                                   textAlign: TextAlign.right,
+                                                  readOnly: isHaveSubtask!,
                                                   controller: _hoursController[
                                                       dataIndex],
                                                   keyboardType:
@@ -379,6 +404,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                               child: Container(
                                                 child: TextField(
                                                   textAlign: TextAlign.right,
+                                                  readOnly: isHaveSubtask!,
                                                   controller:
                                                       _minutesController[
                                                           dataIndex],

@@ -35,7 +35,7 @@ class TaskPageState extends State<TaskPage> {
     "Đang thực hiện",
     "Không hoàn thành",
   ];
-
+  bool showRepeatedTasks = false;
   String? selectedFilter;
   String selectedDate = "";
   DateTime? _selectedDate;
@@ -129,10 +129,22 @@ class TaskPageState extends State<TaskPage> {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status, search);
+          index,
+          pageSize,
+          userId!,
+          selectedDate,
+          status,
+          search,
+          showRepeatedTasks ? 0 : 1);
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status, search);
+          index,
+          pageSize,
+          userId!,
+          selectedDate,
+          status,
+          search,
+          showRepeatedTasks ? 0 : 1);
     }
     if (reset) {
       setState(() {
@@ -233,56 +245,76 @@ class TaskPageState extends State<TaskPage> {
                   ),
                   const SizedBox(height: 5),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (!selectedDate.isEmpty)
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isLoading = true;
-                              _selectedDate = null;
-                              selectedDate = "";
-                            });
-                            _getTasksForSelectedDateAndStatus(
-                                1, 10, null, groupValue, true, searchValue);
-                          },
-                          child: Icon(
-                            Icons.delete_forever,
-                            color: Colors.red,
-                            size: 20,
-                          ),
-                        ),
-                      SizedBox(width: 10),
-                      Text(selectedDate),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_month_outlined),
-                        onPressed: () async {
-                          DateTime? _selected = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1),
-                            lastDate: DateTime(9000),
-                          );
-
-                          setState(() {
-                            if (_selected != null) {
-                              _getTasksForSelectedDateAndStatus(1, 10,
-                                  _selected, groupValue, true, searchValue);
-                              selectedDate =
-                                  DateFormat('dd/MM/yy').format(_selected);
-                              _selectedDate = _selected;
-                            } else {
-                              _getTasksForSelectedDateAndStatus(
-                                  1, 10, null, groupValue, true, searchValue);
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: showRepeatedTasks,
+                            onChanged: (value) {
                               setState(() {
-                                selectedDate = "";
-                                filteredTaskList = tasks;
+                                showRepeatedTasks = value!;
                               });
-                            }
-                          });
-                        },
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            },
+                          ),
+                          Text('Chỉ công việc có lặp lại'),
+                        ],
                       ),
-                      const SizedBox(width: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (!selectedDate.isEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isLoading = true;
+                                  _selectedDate = null;
+                                  selectedDate = "";
+                                });
+                                _getTasksForSelectedDateAndStatus(
+                                    1, 10, null, groupValue, true, searchValue);
+                              },
+                              child: Icon(
+                                Icons.delete_forever,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ),
+                          SizedBox(width: 10),
+                          Text(selectedDate),
+                          IconButton(
+                            icon: const Icon(Icons.calendar_month_outlined),
+                            onPressed: () async {
+                              DateTime? _selected = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(1),
+                                lastDate: DateTime(9000),
+                              );
+
+                              setState(() {
+                                if (_selected != null) {
+                                  _getTasksForSelectedDateAndStatus(1, 10,
+                                      _selected, groupValue, true, searchValue);
+                                  selectedDate =
+                                      DateFormat('dd/MM/yy').format(_selected);
+                                  _selectedDate = _selected;
+                                } else {
+                                  _getTasksForSelectedDateAndStatus(1, 10, null,
+                                      groupValue, true, searchValue);
+                                  setState(() {
+                                    selectedDate = "";
+                                    filteredTaskList = tasks;
+                                  });
+                                }
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
                     ],
                   )
                 ],
@@ -563,17 +595,36 @@ class TaskPageState extends State<TaskPage> {
                                                                     horizontal:
                                                                         35),
                                                             child: Tooltip(
-                                                              message: role ==
-                                                                      "Manager"
-                                                                  ? 'Công việc do người giám sát tạo'
-                                                                  : 'Công việc do người quản lí tạo',
-                                                              child: Icon(
-                                                                Icons
-                                                                    .account_circle_rounded,
-                                                                color: Colors
-                                                                    .black54,
-                                                              ),
-                                                            ),
+                                                                message: role ==
+                                                                        "Manager"
+                                                                    ? 'Công việc do người giám sát tạo'
+                                                                    : 'Công việc do người quản lí tạo',
+                                                                child: ClipOval(
+                                                                  child: Image
+                                                                      .network(
+                                                                    task['avatar'] ??
+                                                                        "String",
+                                                                    width: 25,
+                                                                    height: 25,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    errorBuilder: (BuildContext
+                                                                            context,
+                                                                        Object
+                                                                            error,
+                                                                        StackTrace?
+                                                                            stackTrace) {
+                                                                      return Icon(
+                                                                        Icons
+                                                                            .account_circle_rounded,
+                                                                        size:
+                                                                            25,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                )),
                                                           ),
                                                       ]),
                                                       const SizedBox(height: 5),
@@ -584,7 +635,7 @@ class TaskPageState extends State<TaskPage> {
                                                         children: [
                                                           Flexible(
                                                             child: Text(
-                                                              "#CV23001",
+                                                              '#${task['code']}',
                                                               style: GoogleFonts
                                                                   .lato(
                                                                 textStyle:
@@ -1092,6 +1143,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => TimeKeepingInTask(
+                                codeTask: task['code'],
                                 taskId: task['id'],
                                 taskName: task['name'],
                                 isCreate: false,
@@ -1323,6 +1375,7 @@ class TaskPageState extends State<TaskPage> {
                               .push(
                                 MaterialPageRoute(
                                   builder: (context) => TimeKeepingInTask(
+                                    codeTask: task['code'],
                                     taskId: task['id'],
                                     taskName: task['name'],
                                     isCreate: true,
@@ -1347,6 +1400,7 @@ class TaskPageState extends State<TaskPage> {
                               .push(
                                 MaterialPageRoute(
                                   builder: (context) => TimeKeepingInTask(
+                                    codeTask: task['code'],
                                     taskId: task['id'],
                                     taskName: task['name'],
                                     isCreate: true,
@@ -1370,6 +1424,7 @@ class TaskPageState extends State<TaskPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => TimeKeepingInTask(
+                                codeTask: task['code'],
                                 taskId: task['id'],
                                 taskName: task['name'],
                                 isCreate: false,

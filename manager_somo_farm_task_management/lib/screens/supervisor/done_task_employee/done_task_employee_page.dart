@@ -564,6 +564,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => TimeKeepingInTask(
+                          codeTask: task['code'],
                           taskId: task['id'],
                           taskName: task['name'],
                           isCreate: false,

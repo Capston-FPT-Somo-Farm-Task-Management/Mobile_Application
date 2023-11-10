@@ -57,7 +57,10 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
             ? const CircularProgressIndicator()
             : farmId == null
                 ? LoginPage()
-                : BottomNavBar(farmId: farmId!),
+                : BottomNavBar(
+                    farmId: farmId!,
+                    index: 0,
+                  ),
       ),
     );
   }

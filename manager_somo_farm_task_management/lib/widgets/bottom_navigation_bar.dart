@@ -1,8 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/Introducing_farm_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/dashboard/dashboard_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/notification_page.dart';
 import 'package:manager_somo_farm_task_management/services/notificantion_service.dart';
@@ -11,8 +11,8 @@ import '../screens/shared/settings_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   final int farmId;
-
-  const BottomNavBar({super.key, required this.farmId});
+  final int index;
+  const BottomNavBar({super.key, required this.farmId, required this.index});
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
@@ -45,6 +45,7 @@ class _BottomNavBarState extends State<BottomNavBar>
     getUserId().then((_) {
       getNewNotiCount();
     });
+    myCurrentIndex = widget.index;
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       // Xử lý thông báo khi có
       getNewNotiCount();
@@ -68,6 +69,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   @override
   Widget build(BuildContext context) {
     List pages = [
+      StatisticsPage(),
       ManagerHomePage(
         farmId: widget.farmId,
       ),
@@ -108,9 +110,8 @@ class _BottomNavBarState extends State<BottomNavBar>
                 }),
             IconButton(
                 icon: Icon(
-                  Icons.info,
+                  Icons.calendar_month,
                   size: _getCurrentTabSize(1),
-                  // size: 18,
                   color: _getCurrentTabColor(1),
                 ),
                 onPressed: () {
@@ -119,12 +120,24 @@ class _BottomNavBarState extends State<BottomNavBar>
                   });
                 }),
             IconButton(
+                icon: Icon(
+                  Icons.info,
+                  size: _getCurrentTabSize(2),
+                  // size: 18,
+                  color: _getCurrentTabColor(2),
+                ),
+                onPressed: () {
+                  setState(() {
+                    myCurrentIndex = 2;
+                  });
+                }),
+            IconButton(
                 icon: Stack(
                   children: [
                     Icon(
                       Icons.notifications_rounded,
-                      size: _getCurrentTabSize(2),
-                      color: _getCurrentTabColor(2),
+                      size: _getCurrentTabSize(3),
+                      color: _getCurrentTabColor(3),
                     ),
                     notificationCount > 0
                         ? Positioned(
@@ -161,18 +174,18 @@ class _BottomNavBarState extends State<BottomNavBar>
                     print(e.toString());
                   });
                   setState(() {
-                    myCurrentIndex = 2;
+                    myCurrentIndex = 3;
                   });
                 }),
             IconButton(
                 icon: Icon(
                   Icons.settings,
-                  size: _getCurrentTabSize(3),
-                  color: _getCurrentTabColor(3),
+                  size: _getCurrentTabSize(4),
+                  color: _getCurrentTabColor(4),
                 ),
                 onPressed: () {
                   setState(() {
-                    myCurrentIndex = 3;
+                    myCurrentIndex = 4;
                   });
                 }),
           ],

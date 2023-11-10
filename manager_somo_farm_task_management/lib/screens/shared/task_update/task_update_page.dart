@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -29,6 +30,8 @@ class UpdateTaskPage extends StatefulWidget {
 }
 
 class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
+  final TextEditingController _minutesController = TextEditingController();
+  final TextEditingController _hoursController = TextEditingController();
   List<DateTime> disabledDates = [];
   int? rangeDate;
   int? farmId;
@@ -43,6 +46,8 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   List<Map<String, dynamic>> externalIds = [];
   Map<String, dynamic>? externalSelected;
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _addressDetailController =
+      TextEditingController();
   List<Map<String, dynamic>> taskTypes = [];
   Map<String, dynamic>? taskTypeSelected;
   List<Map<String, dynamic>> employees = [];
@@ -325,6 +330,10 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
         isLoading = false;
       });
     });
+    if (widget.task['addressDetail'] != null)
+      _addressDetailController.text = widget.task['addressDetail'];
+    _minutesController.text = widget.task['overallEfforMinutes'].toString();
+    _hoursController.text = widget.task['overallEffortHour'].toString();
     _titleController.text = widget.task['name'];
     _desController.text = widget.task['description'];
     _selectedStartDate = DateTime.parse((widget.task['startDate']));
@@ -605,10 +614,18 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                               style: TextStyle(
                                   fontSize: 11, color: Colors.red, height: 2),
                             ),
+                    if (widget.task['addressDetail'] != null)
+                      MyInputField(
+                        title: "Địa chỉ chi tiết (Tùy chọn)",
+                        hint: "Nhập địa chỉ chi tiết",
+                        controller: _addressDetailController,
+                        hintColor: Colors.grey,
+                      ),
                     MyInputField(
                       title: "Tên công việc",
                       hint: "Nhập tên công việc",
                       controller: _titleController,
+                      hintColor: Colors.grey,
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
@@ -695,14 +712,14 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                         removeDiacritics(query.toLowerCase());
                                     return employees.where((e) {
                                       return removeDiacritics(
-                                              e['name'].toLowerCase())
+                                              e['nameCode'].toLowerCase())
                                           .contains(lowercaseQuery);
                                     }).toList(growable: false)
                                       ..sort((a, b) => removeDiacritics(
-                                              a['name'].toLowerCase())
+                                              a['nameCode'].toLowerCase())
                                           .indexOf(lowercaseQuery)
                                           .compareTo(removeDiacritics(
-                                                  b['name'].toLowerCase())
+                                                  b['nameCode'].toLowerCase())
                                               .indexOf(lowercaseQuery)));
                                   } else {
                                     return const <Map<String, dynamic>>[];
@@ -715,7 +732,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                 chipBuilder: (context, state, employee) {
                                   return InputChip(
                                     key: ObjectKey(employee),
-                                    label: Text(employee['name']),
+                                    label: Text(employee['nameCode']),
                                     onDeleted: () => state.deleteChip(employee),
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
@@ -724,7 +741,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                 suggestionBuilder: (context, state, profile) {
                                   return ListTile(
                                     key: ObjectKey(profile),
-                                    title: Text(profile['name']),
+                                    title: Text(profile['nameCode']),
                                     onTap: () =>
                                         state.selectSuggestion(profile),
                                   );
@@ -1178,6 +1195,95 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                         ],
                       ),
                     ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Thời gian làm việc dự kiến phải bỏ ra",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: _hoursController,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            style: TextStyle(fontSize: 14),
+                                            decoration: InputDecoration(
+                                              hintText: "0",
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 1.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Giờ")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 50),
+                              Expanded(
+                                child: Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: _minutesController,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            style: TextStyle(fontSize: 14),
+                                            decoration: InputDecoration(
+                                              hintText: "0",
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 1.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Phút")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1297,7 +1403,9 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
         areaSelected!.isNotEmpty &&
         zoneSelected!.isNotEmpty &&
         taskTypeSelected!.isNotEmpty &&
-        _selectedRemind != null) {
+        _selectedRemind != null &&
+        (_hoursController.text.isNotEmpty ||
+            _minutesController.text.isNotEmpty)) {
       if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty ||
           widget.role == "Manager" && supervisorSelected == null ||
           widget.task['externalId'] != null && externalSelected!.isEmpty) {
@@ -1335,7 +1443,9 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
             "liveStockId": widget.task['liveStockId'] == null
                 ? null
                 : externalSelected!['id'],
-            "remind": _selectedRemind,
+            "addressDetail": _addressDetailController.text,
+            "overallEfforMinutes": _minutesController.text,
+            "overallEffortHour": _hoursController.text,
           }
         };
         print(taskData);

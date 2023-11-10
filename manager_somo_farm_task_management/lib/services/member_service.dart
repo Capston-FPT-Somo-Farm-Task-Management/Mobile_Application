@@ -63,4 +63,24 @@ class MemberService {
       return Future.error(data['message']);
     }
   }
+
+  Future<Map<String, dynamic>> getMemberById(int memberId) async {
+    final String getSupervisorsUrl = '$baseUrl/Member/${memberId}';
+
+    final http.Response response = await http.get(
+      Uri.parse(getSupervisorsUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final Map<String, dynamic> m = Map<String, dynamic>.from(data['data']);
+      return m;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
