@@ -325,8 +325,39 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                 topRight: Radius.circular(10))),
                                         child: Row(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment.center,
                                           children: [
+                                            employee['avatar'] != null
+                                                ? Container(
+                                                    height: 70,
+                                                    width: 70,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100.0),
+                                                      child: Image.network(
+                                                        employee['avatar'],
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    height: 70,
+                                                    width: 70,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20.0),
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.person,
+                                                          size: 60,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                            SizedBox(width: 10),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:

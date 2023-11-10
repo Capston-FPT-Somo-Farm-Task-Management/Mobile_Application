@@ -505,7 +505,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                             .grey, // Màu của bóng
                                                                         offset: Offset(
                                                                             0,
-                                                                            1), // Điều chỉnh vị trí của bóng theo chiều dọc
+                                                                            1),
                                                                         blurRadius:
                                                                             1.0,
                                                                         spreadRadius:

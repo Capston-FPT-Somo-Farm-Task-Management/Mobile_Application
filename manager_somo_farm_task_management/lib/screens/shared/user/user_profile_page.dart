@@ -57,15 +57,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Colors.grey,
-                    child: Icon(
-                      Icons.person,
-                      size: 100,
-                      color: Colors.white,
-                    ),
-                  ),
+                  userData!['avatar'] != null
+                      ? Container(
+                          height: 150,
+                          width: 150,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.0),
+                            child: Image.network(
+                              userData!['avatar'],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 80,
+                          backgroundColor: Colors.grey,
+                          child: Icon(
+                            Icons.person,
+                            size: 100,
+                            color: Colors.white,
+                          ),
+                        ),
                   SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +94,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   SizedBox(height: 25),
                   Container(
                     padding: EdgeInsets.all(30),
-                    height: 225,
+                    height: 250,
                     width: 350,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -91,6 +103,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        // Text(
+                        //   "Thông tin nhân viên",
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     color: Colors.black,
+                        //   ),
+                        // ),
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
