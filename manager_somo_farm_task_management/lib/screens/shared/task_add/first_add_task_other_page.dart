@@ -153,7 +153,7 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Vùng",
+                      "Vùng (Tùy chọn)",
                       style: titileStyle,
                     ),
                     SizedBox(height: 5),
@@ -208,11 +208,6 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
                   ],
                 ),
               ),
-              if (_selectedZone == "Chưa có")
-                Text(
-                  "Hãy chọn khu vực khác",
-                  style: TextStyle(fontSize: 11, color: Colors.red, height: 2),
-                ),
               Container(
                 margin: const EdgeInsets.only(top: 16),
                 child: Column(
@@ -267,7 +262,7 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
                 ),
               ),
               MyInputField(
-                title: "Địa chỉ chi tiết (Tùy chọn)",
+                title: "Địa chỉ chi tiết",
                 hint: "Mô tả chi tiết địa chỉ",
                 hintColor: kTextGreyColor,
                 controller: _addressDetailController,
@@ -310,14 +305,16 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
   }
 
   validate(context) {
-    if (_selectedArea != "Chọn" &&
-        _selectedZone != "Chọn" &&
-        _selectedZone != "Chưa có") {
+    if (_selectedArea != "Chọn" && _addressDetailController.text.isNotEmpty) {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SecondAddTaskPage(
-            addressDetail: _addressDetailController.text.trim(),
-            fieldId: fiedlId,
+            addressDetail: _selectedArea +
+                ", " +
+                (_selectedZone.isEmpty ? "" : _selectedZone) +
+                (_selectedField.isEmpty ? "" : _selectedField) +
+                _addressDetailController.text.trim(),
+            fieldId: null,
             otherId: null,
             liveStockId: null,
             plantId: null,
