@@ -80,10 +80,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status, "");
+          index, pageSize, userId!, selectedDate, status, "", 1);
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status, "");
+          index, pageSize, userId!, selectedDate, status, "", 1);
     }
     if (reset) {
       setState(() {
@@ -393,15 +393,31 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 15),
                                                 child: Tooltip(
-                                                  message: role == "Manager"
-                                                      ? 'Công việc do người giám sát tạo'
-                                                      : 'Công việc do người quản lí tạo',
-                                                  child: Icon(
-                                                    Icons
-                                                        .account_circle_rounded,
-                                                    color: Colors.black54,
-                                                  ),
-                                                ),
+                                                    message: role == "Manager"
+                                                        ? 'Công việc do người giám sát tạo'
+                                                        : 'Công việc do người quản lí tạo',
+                                                    child: ClipOval(
+                                                      child: Image.network(
+                                                        task['avatar'] ??
+                                                            "String",
+                                                        width: 25,
+                                                        height: 25,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                Object error,
+                                                                StackTrace?
+                                                                    stackTrace) {
+                                                          return Icon(
+                                                            Icons
+                                                                .account_circle_rounded,
+                                                            size: 25,
+                                                            color: Colors.black,
+                                                          );
+                                                        },
+                                                      ),
+                                                    )),
                                               ),
                                             if (task['isHaveEvidence'])
                                               Container(
