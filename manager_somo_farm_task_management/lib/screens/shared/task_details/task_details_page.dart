@@ -225,66 +225,72 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(height: 14),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  FontAwesomeIcons.mapPin,
-                                  color: kSecondColor,
-                                  size: 22,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    'Khu vực: ${task['areaName']}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                            if (task['areaName'] != null)
+                              const SizedBox(height: 14),
+                            if (task['areaName'] != null)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FontAwesomeIcons.mapPin,
+                                    color: kSecondColor,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Khu vực: ${task['areaName']}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  FontAwesomeIcons.borderNone,
-                                  color: kSecondColor,
-                                  size: 22,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    'Vùng: ${task['zoneName']}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                                ],
+                              ),
+                            if (task['zoneName'] != null)
+                              const SizedBox(height: 16),
+                            if (task['zoneName'] != null)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    FontAwesomeIcons.borderNone,
+                                    color: kSecondColor,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Vùng: ${task['zoneName']}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.business,
-                                  color: kSecondColor,
-                                  size: 22,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    'Chuồng: ${task['fieldName']}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                                ],
+                              ),
+                            if (task['fieldName'] != null)
+                              const SizedBox(height: 16),
+                            if (task['fieldName'] != null)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.business,
+                                    color: kSecondColor,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Chuồng: ${task['fieldName']}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                             if (task['addressDetail'] != null)
                               const SizedBox(height: 16),
                             if (task['addressDetail'] != null)
