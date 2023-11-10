@@ -317,4 +317,28 @@ class TaskService {
       return false;
     }
   }
+
+  Future<List<Map<String, dynamic>>> getTotalTaskOfWeekByMember(
+    int memberId,
+  ) async {
+    final String getTasksUrl =
+        '$baseUrl/FarmTask/GetTotalTaskOfWeekByMember($memberId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getTasksUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> tasks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return tasks;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
