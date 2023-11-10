@@ -73,14 +73,15 @@ class TaskService {
       int userId,
       DateTime? date,
       int status,
-      String search) async {
+      String search,
+      int? checkParent) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime&taskName=$search';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime&checkTaskParent=$checkParent&taskName=$search';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -105,14 +106,15 @@ class TaskService {
       int userId,
       DateTime? date,
       int status,
-      String? search) async {
+      String? search,
+      int? checkParent) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime&taskName=$search';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime&checkTaskParent=$checkParent&taskName=$search';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
