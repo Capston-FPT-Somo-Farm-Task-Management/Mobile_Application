@@ -2,6 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/services/member_service.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StatisticsPage extends StatefulWidget {
   @override
@@ -9,17 +12,85 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
-  List<int> dailyTasks = [10, 5, 8, 12, 6, 9, 7]; // Replace with your data
+  List<int> dailyTasks = []; // Replace with your data
   int maxTask = 0;
-  List<int> totalTasks = [65, 45, 30]; // Replace with your data
+  List<int> totalTasks = []; // Replace with your data
+  int totalTasksLiveStock = 0;
+  int totalTasksPlant = 0;
+  int totalTasksOther = 0;
   int selectedDay = 0; // Default to show the total tasks
   int selectedColumnIndex = -1;
   bool rotateEffect = false;
+  int? memberId;
+  bool isLoading = true;
+  List<Map<String, dynamic>>? listTotal;
+  Map<String, dynamic>? member;
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    int? userIdStored = prefs.getInt('userId');
+    setState(() {
+      memberId = userIdStored;
+    });
+  }
+
+  Future<void> getTotalTaskByDay(int index) async {
+    setState(() {
+      totalTasksLiveStock = listTotal![index]['totalTaskOfLivestock'];
+      totalTasksPlant = listTotal![index]['totalTaskOfPlant'];
+      totalTasksOther = listTotal![index]['totalTaskOfOther'];
+      totalTasks = [totalTasksLiveStock, totalTasksPlant, totalTasksOther];
+    });
+  }
+
+  Future<void> getTotalTaskByWeek() async {
+    setState(() {
+      dailyTasks.clear();
+      totalTasksPlant = 0;
+      totalTasksOther = 0;
+      totalTasksLiveStock = 0;
+      for (var element in listTotal!) {
+        dailyTasks.add(element['taskCount']);
+        totalTasksPlant += int.parse(element['totalTaskOfPlant'].toString());
+        totalTasksOther += int.parse(element['totalTaskOfOther'].toString());
+        totalTasksLiveStock +=
+            int.parse(element['totalTaskOfLivestock'].toString());
+      }
+      totalTasks = [totalTasksLiveStock, totalTasksPlant, totalTasksOther];
+    });
+  }
+
+  Future<void> getReport() async {
+    await TaskService().getTotalTaskOfWeekByMember(memberId!).then((value) {
+      setState(() {
+        listTotal = value;
+        for (var element in value) {
+          dailyTasks.add(element['taskCount']);
+          totalTasksPlant += int.parse(element['totalTaskOfPlant'].toString());
+          totalTasksOther += int.parse(element['totalTaskOfOther'].toString());
+          totalTasksLiveStock +=
+              int.parse(element['totalTaskOfLivestock'].toString());
+        }
+        maxTask = dailyTasks
+            .reduce((value, element) => value > element ? value : element);
+        isLoading = false;
+        totalTasks = [totalTasksLiveStock, totalTasksPlant, totalTasksOther];
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    maxTask = dailyTasks
-        .reduce((value, element) => value > element ? value : element);
+
+    getRole().then((_) async {
+      await MemberService().getMemberById(memberId!).then((value) {
+        setState(() {
+          member = value;
+        });
+      });
+      getReport();
+    });
   }
 
   void onBarTapped(
@@ -29,6 +100,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         touchEvent is! PointerExitEvent) {
       setState(() {
         selectedColumnIndex = barTouchResponse!.spot!.touchedBarGroupIndex;
+        getTotalTaskByDay(selectedColumnIndex);
         rotateEffect = true;
       });
       Future.delayed(Duration(milliseconds: 300), () {
@@ -39,7 +111,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
     } else {
       setState(() {
         selectedColumnIndex = -1;
-        rotateEffect = false;
+        getTotalTaskByWeek();
+        rotateEffect = true;
       });
     }
   }
@@ -47,118 +120,218 @@ class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.1,
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(color: kPrimaryColor),
+            )
+          : Stack(
               children: [
-                Flexible(
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Xin chào, ',
-                      style: TextStyle(fontSize: 25, color: Colors.black),
-                      children: [
-                        TextSpan(
-                          text: 'Huỳnh Ngô Gia Bảo',
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryColor),
-                        ),
-                      ],
+                Container(
+                  margin: EdgeInsets.only(top: 24),
+                  height: 100,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    ),
+                    child: Image.network(
+                      "https://firebasestorage.googleapis.com/v0/b/somotaskmanagement.appspot.com/o/Gioithieu_Su-menh-scaled.jpg?alt=media&token=264a9f43-9936-4566-b47c-7b06cbc89940",
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                SizedBox(width: 100),
-                Icon(
-                  Icons.account_circle_rounded,
-                  size: 50,
-                )
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.8,
-              child: Column(
-                children: [
-                  Text(
-                    "Tổng số công việc:",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.29,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: PieChart(
-                            PieChartData(
-                              startDegreeOffset: rotateEffect ? 360.0 : null,
-                              sections: generatePieChartSections(),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(25),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              buildLegendItem(0, 'Động vật', getColor(0)),
-                              SizedBox(height: 10),
-                              buildLegendItem(1, 'Thực vật', getColor(1)),
-                              SizedBox(height: 10),
-                              buildLegendItem(2, 'Khác', getColor(2)),
-                            ],
-                          ),
-                        ),
-                      ],
+                Container(
+                  margin: EdgeInsets.only(top: 24),
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
                     ),
                   ),
-                  SizedBox(height: 40),
-                  Text(
-                    "Biểu đồ công việc trong tuần:",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.29,
-                    child: BarChart(BarChartData(
-                      maxY: double.parse(maxTask.toString()),
-                      minY: 0,
-                      gridData: FlGridData(show: false),
-                      borderData: FlBorderData(show: false),
-                      titlesData: FlTitlesData(
-                          show: true,
-                          topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          leftTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: getBottomTitles),
-                          )),
-                      barGroups: generateBarGroups(),
-                      barTouchData: BarTouchData(
-                        touchCallback: onBarTapped,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 10),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: RichText(
+                              text: TextSpan(
+                                text: 'Xin chào, ',
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.white,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: member!['name'],
+                                    style: TextStyle(
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 50),
+                          ClipOval(
+                            child: Image.network(
+                              member!['avatar'],
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (BuildContext context, Object error,
+                                  StackTrace? stackTrace) {
+                                return Icon(
+                                  Icons.account_circle_rounded,
+                                  size: 50,
+                                  color: Colors.white,
+                                );
+                              },
+                            ),
+                          )
+                        ],
                       ),
-                    )),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Tổng số công việc: ',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.black),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              '${totalTasksLiveStock + totalTasksPlant + totalTasksOther} công việc ',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue),
+                                        ),
+                                        TextSpan(
+                                          text: selectedColumnIndex == -1
+                                              ? "/ tuần"
+                                              : selectedColumnIndex == 6
+                                                  ? "/ CN"
+                                                  : "/ T${selectedColumnIndex + 2}",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.3,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: PieChart(
+                                            PieChartData(
+                                              startDegreeOffset:
+                                                  rotateEffect ? 360.0 : null,
+                                              sections:
+                                                  generatePieChartSections(),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              buildLegendItem(
+                                                  0, 'Động vật', getColor(0)),
+                                              SizedBox(height: 10),
+                                              buildLegendItem(
+                                                  1, 'Thực vật', getColor(1)),
+                                              SizedBox(height: 10),
+                                              buildLegendItem(
+                                                  2, 'Khác', getColor(2)),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "Biểu đồ công việc trong tuần:",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.3,
+                                    child: BarChart(BarChartData(
+                                      maxY: double.parse(maxTask.toString()),
+                                      minY: 0,
+                                      gridData: FlGridData(show: true),
+                                      borderData: FlBorderData(show: false),
+                                      titlesData: FlTitlesData(
+                                          show: true,
+                                          topTitles: AxisTitles(
+                                              sideTitles: SideTitles(
+                                                  showTitles: false)),
+                                          rightTitles: AxisTitles(
+                                              sideTitles: SideTitles(
+                                                  showTitles: false)),
+                                          bottomTitles: AxisTitles(
+                                            sideTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitlesWidget:
+                                                    getBottomTitles),
+                                          )),
+                                      barGroups: generateBarGroups(),
+                                      barTouchData: BarTouchData(
+                                        touchCallback: onBarTapped,
+                                      ),
+                                    )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
-          )
-        ],
-      ),
     );
   }
 
@@ -186,7 +359,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       7,
       (index) {
         bool isSelected = selectedColumnIndex == index;
-        Color columnColor = isSelected ? Colors.red : Colors.blue;
+        Color columnColor = isSelected ? Colors.orange : Colors.blue;
         return BarChartGroupData(
           x: index,
           barRods: [
@@ -205,11 +378,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Color getColor(int index) {
     switch (index) {
       case 0:
-        return const Color(0xff0293ee);
+        return kPrimaryColor;
       case 1:
-        return const Color(0xfff8b250);
+        return kSecondColor;
       case 2:
-        return const Color(0xff845bef);
+        return kTextGreyColor;
       default:
         return const Color(0xff0293ee);
     }
