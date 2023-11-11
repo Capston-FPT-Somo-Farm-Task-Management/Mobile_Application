@@ -8,6 +8,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/home/components/option.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
@@ -19,7 +20,6 @@ import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../widgets/app_bar.dart';
-import 'package:flutter/cupertino.dart';
 
 class ManagerHomePage extends StatefulWidget {
   final int farmId;
@@ -40,6 +40,15 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   bool isLoadingMore = false;
   int page = 1;
   final scrollController = ScrollController();
+  int currentPage = 0;
+  int totalPages = 5;
+  GlobalKey _keyPrepare = GlobalKey();
+  GlobalKey _keyDoing = GlobalKey();
+  GlobalKey _keyComplete = GlobalKey();
+  GlobalKey _keyNotCom = GlobalKey();
+  GlobalKey _keyReject = GlobalKey();
+  double _offsetX = 0.0;
+  final scrollControllerOption = ScrollController();
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -219,87 +228,192 @@ class ManagerHomePageState extends State<ManagerHomePage> {
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            alignment: Alignment.center,
-            child: !isMoreLeft
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: CupertinoSegmentedControl<int>(
-                          selectedColor: kSecondColor,
-                          borderColor: kSecondColor,
-                          pressedColor: Colors.blue[50],
-                          children: {
-                            5: Text("Từ chối"),
-                            0: Text("Chuẩn bị"),
-                            1: Text("Đang làm"),
-                            2: Text(">>>")
-                            // Thêm các option khác nếu cần
-                          },
-                          onValueChanged: (int newValue) {
-                            if (newValue == 2)
-                              setState(() {
-                                isMoreLeft = true;
-                              });
-
-                            setState(() {
-                              groupValue = newValue;
-                              isLoading = true;
-                            });
-                            _getTasksForSelectedDateAndStatus(
-                                1, 10, _selectedDate, groupValue, true);
-                          },
-                          groupValue: groupValue,
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: CupertinoSegmentedControl<int>(
-                          selectedColor: kSecondColor,
-                          borderColor: kSecondColor,
-                          pressedColor: Colors.blue[50],
-                          children: {
-                            0: Text("<<<"),
-                            1: Text('Đang làm'),
-                            2: Text('Hoàn thành'),
-                            3: Text(' Không h.thành ',
-                                textAlign: TextAlign.center),
-
-                            // Thêm các option khác nếu cần
-                          },
-                          onValueChanged: (int newValue) {
-                            if (newValue == 0)
-                              setState(() {
-                                isMoreLeft = false;
-                              });
-
-                            setState(() {
-                              isLoading = true;
-                              groupValue = newValue;
-                            });
-                            _getTasksForSelectedDateAndStatus(
-                                1, 10, _selectedDate, groupValue, true);
-                          },
-                          groupValue: groupValue,
-                        ),
-                      ),
-                    ],
+          SingleChildScrollView(
+            controller: scrollControllerOption,
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SelectableTextWidget(
+                    keyGlobal: _keyPrepare,
+                    text: "Chuẩn bị",
+                    isSelected: groupValue == 0,
+                    onTap: () {
+                      scrollTo(key: _keyPrepare);
+                      setState(() {
+                        groupValue = 0;
+                        isLoading = true;
+                        currentPage = 0;
+                      });
+                      _getTasksForSelectedDateAndStatus(
+                          1, 10, _selectedDate, groupValue, true);
+                    },
                   ),
+                  SelectableTextWidget(
+                    keyGlobal: _keyDoing,
+                    text: "Đang thực hiện",
+                    isSelected: groupValue == 1,
+                    onTap: () {
+                      scrollTo(key: _keyDoing);
+                      setState(() {
+                        groupValue = 1;
+                        isLoading = true;
+                        currentPage = 1;
+                      });
+                      _getTasksForSelectedDateAndStatus(
+                          1, 10, _selectedDate, groupValue, true);
+                    },
+                  ),
+                  SelectableTextWidget(
+                    keyGlobal: _keyComplete,
+                    text: "Hoàn thành",
+                    isSelected: groupValue == 2,
+                    onTap: () {
+                      scrollTo(key: _keyComplete);
+                      setState(() {
+                        groupValue = 2;
+                        isLoading = true;
+                        currentPage = 2;
+                      });
+                      _getTasksForSelectedDateAndStatus(
+                          1, 10, _selectedDate, groupValue, true);
+                    },
+                  ),
+                  SelectableTextWidget(
+                    keyGlobal: _keyNotCom,
+                    text: "Không hoàn thành",
+                    isSelected: groupValue == 3,
+                    onTap: () {
+                      scrollTo(key: _keyNotCom);
+                      setState(() {
+                        groupValue = 3;
+                        isLoading = true;
+                        currentPage = 3;
+                      });
+                      _getTasksForSelectedDateAndStatus(
+                          1, 10, _selectedDate, groupValue, true);
+                    },
+                  ),
+                  SelectableTextWidget(
+                    keyGlobal: _keyReject,
+                    text: "Từ chối",
+                    isSelected: groupValue == 5,
+                    onTap: () {
+                      scrollTo(key: _keyReject);
+                      setState(() {
+                        groupValue = 5;
+                        isLoading = true;
+                        currentPage = 4;
+                      });
+                      _getTasksForSelectedDateAndStatus(
+                          1, 10, _selectedDate, groupValue, true);
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 10),
-          _showTask(),
+          Expanded(
+            child: GestureDetector(
+                onHorizontalDragUpdate: (details) {
+                  setState(() {
+                    _offsetX += details.primaryDelta!;
+                  });
+                },
+                onHorizontalDragEnd: (details) {
+                  double screenWidth = MediaQuery.of(context).size.width;
+                  if (_offsetX.abs() < screenWidth * 0.5) {
+                    setState(() {
+                      _offsetX = 0.0;
+                    });
+                  } else {
+                    if (_offsetX > 0) {
+                      // Vuốt sang phải
+                      setState(() {
+                        if (groupValue != 0) {
+                          _offsetX = screenWidth;
+                          isLoading = true;
+                          if (groupValue == 1) {
+                            groupValue = 0;
+                            scrollTo(key: _keyPrepare);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          } else if (groupValue == 2) {
+                            groupValue = 1;
+                            scrollTo(key: _keyDoing);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          } else if (groupValue == 3) {
+                            groupValue = 2;
+                            scrollTo(key: _keyComplete);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          } else if (groupValue == 5) {
+                            groupValue = 3;
+                            scrollTo(key: _keyNotCom);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          }
+                          ;
+                        }
+                      });
+                    } else if (_offsetX < 0) {
+                      // Vuốt sang trái
+                      setState(() {
+                        if (groupValue != 5) {
+                          _offsetX = -screenWidth;
+                          isLoading = true;
+                          if (groupValue == 0) {
+                            groupValue = 1;
+                            scrollTo(key: _keyDoing);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          } else if (groupValue == 1) {
+                            groupValue = 2;
+                            scrollTo(key: _keyComplete);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          } else if (groupValue == 2) {
+                            groupValue = 3;
+                            scrollTo(key: _keyNotCom);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          } else if (groupValue == 3) {
+                            groupValue = 5;
+                            scrollTo(key: _keyReject);
+                            _getTasksForSelectedDateAndStatus(
+                                1, 10, _selectedDate, groupValue, true);
+                          }
+                        }
+                      });
+                    }
+                    setState(() {
+                      _offsetX = 0;
+                    });
+                  }
+                },
+                child: Transform.translate(
+                  offset: Offset(_offsetX, 0.0),
+                  child: _showTask(),
+                )),
+          ),
         ],
       ),
     );
   }
 
+  void scrollTo({required GlobalKey key}) {
+    final RenderBox renderBox =
+        key.currentContext!.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    scrollControllerOption.animateTo(position.dx,
+        duration: Duration(seconds: 1), curve: Curves.easeInOut);
+  }
+
   _showTask() {
-    return Expanded(
+    return Container(
         child: isLoading
             ? Center(
                 child: CircularProgressIndicator(color: kPrimaryColor),
