@@ -123,8 +123,7 @@ class ZoneService {
   }
 
   Future<bool> changeStatusZone(int zoneId) async {
-    final String url = '$baseUrl/Zone/ChangeStatus/$zoneId';
-
+    final String url = '$baseUrl/Zone/Delete/$zoneId';
     final http.Response response = await http.put(
       Uri.parse(url),
       headers: {

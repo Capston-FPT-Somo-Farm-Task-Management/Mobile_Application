@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/employee_detail/employee_details_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/supervisor_add/supervisor_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/supervisor_detail/supervisor_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/member_service.dart';

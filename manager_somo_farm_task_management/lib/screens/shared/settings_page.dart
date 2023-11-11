@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/user/user_profile_page.dart';
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
@@ -14,10 +15,17 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool isLoading = false;
   int? userId;
+  int? farmId;
   Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedUserId = prefs.getInt('userId');
     return storedUserId;
+  }
+
+  Future<int?> getFarmId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedFarmId = prefs.getInt('farmId');
+    return storedFarmId;
   }
 
   @override
@@ -25,6 +33,9 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
     getUserId().then((value) {
       userId = value;
+    });
+    getFarmId().then((value) {
+      farmId = value;
     });
   }
 
@@ -76,8 +87,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Thông tin cá nhân'),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                UserProfilePage(userId: userId!),
+                            builder: (context) => UserProfilePage(
+                                userId: userId!, farmId: farmId!),
                           ));
                         },
                       ),
