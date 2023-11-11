@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/option.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
@@ -28,13 +29,6 @@ class TaskPage extends StatefulWidget {
 }
 
 class TaskPageState extends State<TaskPage> {
-  final List<String> filters = [
-    "Tất cả",
-    "Chuẩn bị",
-    "Hoàn thành",
-    "Đang thực hiện",
-    "Không hoàn thành",
-  ];
   bool showRepeatedTasks = false;
   String? selectedFilter;
   String selectedDate = "";
@@ -51,6 +45,13 @@ class TaskPageState extends State<TaskPage> {
   bool isLoadingMore = false;
   String searchValue = "";
   final scrollController = ScrollController();
+  GlobalKey _keyPrepare = GlobalKey();
+  GlobalKey _keyDoing = GlobalKey();
+  GlobalKey _keyComplete = GlobalKey();
+  GlobalKey _keyNotCom = GlobalKey();
+  GlobalKey _keyReject = GlobalKey();
+  double _offsetX = 0.0;
+  final scrollControllerOption = ScrollController();
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -83,7 +84,6 @@ class TaskPageState extends State<TaskPage> {
   @override
   initState() {
     super.initState();
-    selectedFilter = filters[0];
     getFarmId().then((value) {
       farmId = value;
     });
@@ -173,7 +173,8 @@ class TaskPageState extends State<TaskPage> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+              color: Colors.white,
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
               child: Column(
                 children: [
                   Row(
@@ -222,7 +223,7 @@ class TaskPageState extends State<TaskPage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: TextField(
@@ -320,602 +321,588 @@ class TaskPageState extends State<TaskPage> {
                 ],
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              child: !isMoreLeft
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CupertinoSegmentedControl<int>(
-                            selectedColor: kSecondColor,
-                            borderColor: kSecondColor,
-                            pressedColor: Colors.blue[50],
-                            children: {
-                              5: Text("Từ chối"),
-                              0: Text("Chuẩn bị"),
-                              1: Text("Đang làm"),
-                              2: Text(">>>")
-                              // Thêm các option khác nếu cần
-                            },
-                            onValueChanged: (int newValue) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              if (newValue == 2)
-                                setState(() {
-                                  isMoreLeft = true;
-                                });
-
-                              setState(() {
-                                groupValue = newValue;
-                              });
-                              _getTasksForSelectedDateAndStatus(1, 10,
-                                  _selectedDate, groupValue, true, searchValue);
-                            },
-                            groupValue: groupValue,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CupertinoSegmentedControl<int>(
-                            selectedColor: kSecondColor,
-                            borderColor: kSecondColor,
-                            pressedColor: Colors.blue[50],
-                            children: {
-                              0: Text("<<<"),
-                              1: Text('Đang làm'),
-                              2: Text('Hoàn thành'),
-                              3: Text(' Không h.thành '),
-
-                              // Thêm các option khác nếu cần
-                            },
-                            onValueChanged: (int newValue) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              if (newValue == 0)
-                                setState(() {
-                                  isMoreLeft = false;
-                                });
-
-                              setState(() {
-                                groupValue = newValue;
-                              });
-                              _getTasksForSelectedDateAndStatus(1, 10,
-                                  _selectedDate, groupValue, true, searchValue);
-                            },
-                            groupValue: groupValue,
-                          ),
-                        ),
-                      ],
+            SingleChildScrollView(
+              controller: scrollControllerOption,
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SelectableTextWidget(
+                      keyGlobal: _keyPrepare,
+                      text: "Chuẩn bị",
+                      isSelected: groupValue == 0,
+                      onTap: () {
+                        scrollTo(key: _keyPrepare);
+                        setState(() {
+                          groupValue = 0;
+                          isLoading = true;
+                        });
+                        _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
+                            groupValue, true, searchValue);
+                      },
                     ),
+                    SelectableTextWidget(
+                      keyGlobal: _keyDoing,
+                      text: "Đang thực hiện",
+                      isSelected: groupValue == 1,
+                      onTap: () {
+                        scrollTo(key: _keyDoing);
+                        setState(() {
+                          groupValue = 1;
+                          isLoading = true;
+                        });
+                        _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
+                            groupValue, true, searchValue);
+                      },
+                    ),
+                    SelectableTextWidget(
+                      keyGlobal: _keyComplete,
+                      text: "Hoàn thành",
+                      isSelected: groupValue == 2,
+                      onTap: () {
+                        scrollTo(key: _keyComplete);
+                        setState(() {
+                          groupValue = 2;
+                          isLoading = true;
+                        });
+                        _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
+                            groupValue, true, searchValue);
+                      },
+                    ),
+                    SelectableTextWidget(
+                      keyGlobal: _keyNotCom,
+                      text: "Không hoàn thành",
+                      isSelected: groupValue == 3,
+                      onTap: () {
+                        scrollTo(key: _keyNotCom);
+                        setState(() {
+                          groupValue = 3;
+                          isLoading = true;
+                        });
+                        _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
+                            groupValue, true, searchValue);
+                      },
+                    ),
+                    SelectableTextWidget(
+                      keyGlobal: _keyReject,
+                      text: "Từ chối",
+                      isSelected: groupValue == 5,
+                      onTap: () {
+                        scrollTo(key: _keyReject);
+                        setState(() {
+                          groupValue = 5;
+                          isLoading = true;
+                        });
+                        _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
+                            groupValue, true, searchValue);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: GestureDetector(
+                  onHorizontalDragUpdate: (details) {
+                    setState(() {
+                      _offsetX += details.primaryDelta!;
+                    });
+                  },
+                  onHorizontalDragEnd: (details) {
+                    double screenWidth = MediaQuery.of(context).size.width;
+                    if (_offsetX.abs() < screenWidth * 0.5) {
+                      setState(() {
+                        _offsetX = 0.0;
+                      });
+                    } else {
+                      if (_offsetX > 0) {
+                        // Vuốt sang phải
+                        setState(() {
+                          if (groupValue != 0) {
+                            _offsetX = screenWidth;
+                            isLoading = true;
+                            if (groupValue == 1) {
+                              groupValue = 0;
+                              scrollTo(key: _keyPrepare);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            } else if (groupValue == 2) {
+                              groupValue = 1;
+                              scrollTo(key: _keyDoing);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            } else if (groupValue == 3) {
+                              groupValue = 2;
+                              scrollTo(key: _keyComplete);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            } else if (groupValue == 5) {
+                              groupValue = 3;
+                              scrollTo(key: _keyNotCom);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            }
+                            ;
+                          }
+                        });
+                      } else if (_offsetX < 0) {
+                        // Vuốt sang trái
+                        setState(() {
+                          if (groupValue != 5) {
+                            _offsetX = -screenWidth;
+                            isLoading = true;
+                            if (groupValue == 0) {
+                              groupValue = 1;
+                              scrollTo(key: _keyDoing);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            } else if (groupValue == 1) {
+                              groupValue = 2;
+                              scrollTo(key: _keyComplete);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            } else if (groupValue == 2) {
+                              groupValue = 3;
+                              scrollTo(key: _keyNotCom);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            } else if (groupValue == 3) {
+                              groupValue = 5;
+                              scrollTo(key: _keyReject);
+                              _getTasksForSelectedDateAndStatus(1, 10,
+                                  _selectedDate, groupValue, true, searchValue);
+                            }
+                          }
+                        });
+                      }
+                      setState(() {
+                        _offsetX = 0;
+                      });
+                    }
+                  },
+                  child: Transform.translate(
+                    offset: Offset(_offsetX, 0.0),
+                    child: _showTask(),
+                  )),
             ),
             const SizedBox(height: 20),
-            Expanded(
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(color: kPrimaryColor),
-                    )
-                  : filteredTaskList.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.no_backpack,
-                                size:
-                                    75, // Kích thước biểu tượng có thể điều chỉnh
-                                color: Colors.grey, // Màu của biểu tượng
-                              ),
-                              SizedBox(
-                                  height:
-                                      16), // Khoảng cách giữa biểu tượng và văn bản
-                              Text(
-                                "Không có công việc nào",
-                                style: TextStyle(
-                                  fontSize:
-                                      20, // Kích thước văn bản có thể điều chỉnh
-                                  color: Colors.grey, // Màu văn bản
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: RefreshIndicator(
-                            notificationPredicate: (_) => true,
-                            onRefresh: () => _getTasksForSelectedDateAndStatus(
-                                1,
-                                10,
-                                _selectedDate,
-                                groupValue,
-                                true,
-                                searchValue),
-                            child: ListView.separated(
-                              physics: AlwaysScrollableScrollPhysics(),
-                              controller: scrollController,
-                              itemCount: isLoadingMore
-                                  ? filteredTaskList.length + 1
-                                  : filteredTaskList.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return const SizedBox(height: 20);
-                              },
-                              itemBuilder: (context, index) {
-                                if (index < filteredTaskList.length) {
-                                  final task = filteredTaskList[index];
+          ],
+        ),
+      ),
+    );
+  }
 
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(
-                                        MaterialPageRoute(
-                                          builder: (context) => TaskDetailsPage(
-                                              taskId: task['id']),
-                                        ),
-                                      )
-                                          .then((value) {
-                                        if (value != null)
-                                          _getTasksForSelectedDateAndStatus(
-                                              1,
-                                              10,
-                                              _selectedDate,
-                                              groupValue,
-                                              true,
-                                              searchValue);
-                                      });
-                                    },
-                                    onLongPress: () {
-                                      _showBottomSheet(
-                                          context, task, _selectedDate, role!);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            blurRadius: 10,
-                                            offset:
-                                                Offset(1, 4), // Shadow position
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(10),
-                                                    topRight:
-                                                        Radius.circular(10))),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Stack(children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
+  void scrollTo({required GlobalKey key}) {
+    final RenderBox renderBox =
+        key.currentContext!.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    scrollControllerOption.animateTo(position.dx,
+        duration: Duration(seconds: 1), curve: Curves.easeInOut);
+  }
+
+  _showTask() {
+    return Container(
+      child: isLoading
+          ? Center(
+              child: CircularProgressIndicator(color: kPrimaryColor),
+            )
+          : filteredTaskList.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.no_backpack,
+                        size: 75, // Kích thước biểu tượng có thể điều chỉnh
+                        color: Colors.grey, // Màu của biểu tượng
+                      ),
+                      SizedBox(
+                          height: 16), // Khoảng cách giữa biểu tượng và văn bản
+                      Text(
+                        "Không có công việc nào",
+                        style: TextStyle(
+                          fontSize: 20, // Kích thước văn bản có thể điều chỉnh
+                          color: Colors.grey, // Màu văn bản
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: RefreshIndicator(
+                    notificationPredicate: (_) => true,
+                    onRefresh: () => _getTasksForSelectedDateAndStatus(
+                        1, 10, _selectedDate, groupValue, true, searchValue),
+                    child: ListView.separated(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: scrollController,
+                      itemCount: isLoadingMore
+                          ? filteredTaskList.length + 1
+                          : filteredTaskList.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(height: 20);
+                      },
+                      itemBuilder: (context, index) {
+                        if (index < filteredTaskList.length) {
+                          final task = filteredTaskList[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TaskDetailsPage(taskId: task['id']),
+                                ),
+                              )
+                                  .then((value) {
+                                if (value != null)
+                                  _getTasksForSelectedDateAndStatus(
+                                      1,
+                                      10,
+                                      _selectedDate,
+                                      groupValue,
+                                      true,
+                                      searchValue);
+                              });
+                            },
+                            onLongPress: () {
+                              _showBottomSheet(
+                                  context, task, _selectedDate, role!);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 10,
+                                    offset: Offset(1, 4), // Shadow position
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10))),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Stack(children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        task['name'],
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Priority
+                                                              .getBGClr(task[
+                                                                  'priority']),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder: (context) => SubTaskPage(
+                                                                    taskStatus:
+                                                                        task[
+                                                                            'status'],
+                                                                    startDate: task[
+                                                                        'startDate'],
+                                                                    endDate: task[
+                                                                        'endDate'],
+                                                                    taskId: task[
+                                                                        'id'],
+                                                                    taskName: task[
+                                                                        'name'],
+                                                                    taskCode: task[
+                                                                        'code']),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Icon(
+                                                            Icons
+                                                                .arrow_forward_ios,
+                                                            color: Colors
+                                                                .grey[200],
+                                                            size: 15,
+                                                          ),
+                                                        )),
+                                                  ],
+                                                ),
+                                                if (role == "Manager" &&
+                                                        task['managerName'] ==
+                                                            null ||
+                                                    role == "Supervisor" &&
+                                                        task['managerName'] !=
+                                                            null)
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 35),
+                                                    child: Tooltip(
+                                                        message: role ==
+                                                                "Manager"
+                                                            ? 'Công việc do người giám sát tạo'
+                                                            : 'Công việc do người quản lí tạo',
+                                                        child: ClipOval(
+                                                          child: Image.network(
+                                                            task['avatar'] ??
+                                                                "String",
+                                                            width: 25,
+                                                            height: 25,
+                                                            fit: BoxFit.cover,
+                                                            errorBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Object
+                                                                        error,
+                                                                    StackTrace?
+                                                                        stackTrace) {
+                                                              return Icon(
+                                                                Icons
+                                                                    .account_circle_rounded,
+                                                                size: 25,
+                                                                color: Colors
+                                                                    .white,
+                                                              );
+                                                            },
+                                                          ),
+                                                        )),
+                                                  ),
+                                              ]),
+                                              const SizedBox(height: 5),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      '#${task['code']}',
+                                                      style: GoogleFonts.lato(
+                                                        textStyle: TextStyle(
+                                                          fontSize: 15,
+                                                          fontStyle: FontStyle
+                                                              .italic, // Chữ in nghiêng
+                                                          color: Priority
+                                                              .getBGClr(task[
+                                                                  'priority']),
+                                                        ),
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Stack(children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.access_time_rounded,
+                                                      color: Colors.black87,
+                                                      size: 18,
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Flexible(
+                                                      child: RichText(
+                                                        text: TextSpan(
                                                           children: [
-                                                            Flexible(
-                                                              child: Text(
-                                                                task['name'],
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                            TextSpan(
+                                                              text: 'Bắt đầu: ',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .black87,
                                                               ),
                                                             ),
-                                                            Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Priority
-                                                                      .getBGClr(
-                                                                          task[
-                                                                              'priority']),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                ),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .push(
-                                                                      MaterialPageRoute(
-                                                                        builder: (context) => SubTaskPage(
-                                                                            taskStatus:
-                                                                                task['status'],
-                                                                            startDate: task['startDate'],
-                                                                            endDate: task['endDate'],
-                                                                            taskId: task['id'],
-                                                                            taskName: task['name'],
-                                                                            taskCode: task['code']),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .arrow_forward_ios,
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        200],
-                                                                    size: 15,
-                                                                  ),
-                                                                )),
+                                                            TextSpan(
+                                                              text:
+                                                                  '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            ),
                                                           ],
                                                         ),
-                                                        if (role == "Manager" &&
-                                                                task['managerName'] ==
-                                                                    null ||
-                                                            role == "Supervisor" &&
-                                                                task['managerName'] !=
-                                                                    null)
-                                                          Container(
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                            alignment: Alignment
-                                                                .topRight,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        35),
-                                                            child: Tooltip(
-                                                                message: role ==
-                                                                        "Manager"
-                                                                    ? 'Công việc do người giám sát tạo'
-                                                                    : 'Công việc do người quản lí tạo',
-                                                                child: ClipOval(
-                                                                  child: Image
-                                                                      .network(
-                                                                    task['avatar'] ??
-                                                                        "String",
-                                                                    width: 25,
-                                                                    height: 25,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    errorBuilder: (BuildContext
-                                                                            context,
-                                                                        Object
-                                                                            error,
-                                                                        StackTrace?
-                                                                            stackTrace) {
-                                                                      return Icon(
-                                                                        Icons
-                                                                            .account_circle_rounded,
-                                                                        size:
-                                                                            25,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                )),
-                                                          ),
-                                                      ]),
-                                                      const SizedBox(height: 5),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Flexible(
-                                                            child: Text(
-                                                              '#${task['code']}',
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle:
-                                                                    TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontStyle:
-                                                                      FontStyle
-                                                                          .italic, // Chữ in nghiêng
-                                                                  color: Priority
-                                                                      .getBGClr(
-                                                                          task[
-                                                                              'priority']),
-                                                                ),
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
-                                                      const SizedBox(
-                                                          height: 20),
-                                                      Stack(children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Icon(
-                                                              Icons
-                                                                  .access_time_rounded,
+                                                    ),
+                                                  ],
+                                                ),
+                                                if (task['isHaveEvidence'])
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 0),
+                                                    child: Tooltip(
+                                                      message: "Có báo cáo",
+                                                      child: Icon(
+                                                        Icons.barcode_reader,
+                                                        color: Colors.black54,
+                                                        size: 20,
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ]),
+                                              const SizedBox(height: 5),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(
+                                                    Icons.access_time_rounded,
+                                                    color: Colors.black87,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Flexible(
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: 'Kết thúc: ',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14,
                                                               color: Colors
                                                                   .black87,
-                                                              size: 18,
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 5),
-                                                            Flexible(
-                                                              child: RichText(
-                                                                text: TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Bắt đầu: ',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize:
-                                                                            14,
-                                                                        color: Colors
-                                                                            .black87,
-                                                                      ),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            14,
-                                                                        color: Colors
-                                                                            .black87,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        if (task[
-                                                            'isHaveEvidence'])
-                                                          Container(
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                            alignment: Alignment
-                                                                .topRight,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        0),
-                                                            child: Tooltip(
-                                                              message:
-                                                                  "Có báo cáo",
-                                                              child: Icon(
-                                                                Icons
-                                                                    .barcode_reader,
-                                                                color: Colors
-                                                                    .black54,
-                                                                size: 20,
-                                                              ),
                                                             ),
                                                           ),
-                                                      ]),
-                                                      const SizedBox(height: 5),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .access_time_rounded,
-                                                            color:
-                                                                Colors.black87,
-                                                            size: 18,
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 5),
-                                                          Flexible(
-                                                            child: RichText(
-                                                              text: TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Kết thúc: ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          14,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                          TextSpan(
+                                                            text:
+                                                                '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors
+                                                                  .black87,
                                                             ),
                                                           ),
                                                         ],
                                                       ),
-                                                      const SizedBox(
-                                                          height: 30),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Flexible(
-                                                            child: RichText(
-                                                              text: TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        'Giám sát: ',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${task['supervisorName']}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      color: Colors
-                                                                          .black87,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ),
-                                                          RichText(
-                                                            text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Vị trí: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black87,
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text:
-                                                                      '${task['fieldName'] ?? task['addressDetail']}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black87,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: Priority.getBGClr(task[
-                                                  'priority']), // Đặt màu xám ở đây
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                bottomLeft: Radius.circular(10),
-                                                bottomRight:
-                                                    Radius.circular(10),
+                                                ],
                                               ),
-                                            ),
-                                            height: 45,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Flexible(
-                                                  child: RichText(
+                                              const SizedBox(height: 30),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Flexible(
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: 'Giám sát: ',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 15,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                '${task['supervisorName']}',
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  RichText(
                                                     text: TextSpan(
                                                       children: [
                                                         TextSpan(
-                                                          text: 'Loại: ',
+                                                          text: 'Vị trí: ',
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 16,
-                                                            color: Colors
-                                                                .grey[200],
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.black87,
                                                           ),
                                                         ),
                                                         TextSpan(
                                                           text:
-                                                              '${task['taskTypeName']}',
+                                                              '${task['fieldName'] ?? task['addressDetail']}',
                                                           style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors
-                                                                .grey[200],
+                                                            fontSize: 15,
+                                                            color:
+                                                                Colors.black87,
                                                           ),
                                                         ),
                                                       ],
@@ -923,55 +910,93 @@ class TaskPageState extends State<TaskPage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                   ),
-                                                ),
-                                                RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text: 'Ưu tiên: ',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 16,
-                                                          color:
-                                                              Colors.grey[200],
-                                                        ),
-                                                      ),
-                                                      TextSpan(
-                                                        text:
-                                                            '${task['priority']}',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              Colors.grey[200],
-                                                        ),
-                                                      ),
-                                                    ],
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Priority.getBGClr(task[
+                                          'priority']), // Đặt màu xám ở đây
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    height: 45,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Loại: ',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: Colors.grey[200],
                                                   ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      '${task['taskTypeName']}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.grey[200],
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          )
-                                        ],
-                                      ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Ưu tiên: ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[200],
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: '${task['priority']}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey[200],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                        color: kPrimaryColor),
-                                  );
-                                }
-                              },
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-            ),
-          ],
-        ),
-      ),
+                          );
+                        } else {
+                          return Center(
+                            child:
+                                CircularProgressIndicator(color: kPrimaryColor),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ),
     );
   }
 

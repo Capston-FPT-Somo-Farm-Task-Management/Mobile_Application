@@ -40,7 +40,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   bool isLoadingMore = false;
   int page = 1;
   final scrollController = ScrollController();
-  int currentPage = 0;
   int totalPages = 5;
   GlobalKey _keyPrepare = GlobalKey();
   GlobalKey _keyDoing = GlobalKey();
@@ -244,7 +243,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       setState(() {
                         groupValue = 0;
                         isLoading = true;
-                        currentPage = 0;
                       });
                       _getTasksForSelectedDateAndStatus(
                           1, 10, _selectedDate, groupValue, true);
@@ -259,7 +257,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       setState(() {
                         groupValue = 1;
                         isLoading = true;
-                        currentPage = 1;
                       });
                       _getTasksForSelectedDateAndStatus(
                           1, 10, _selectedDate, groupValue, true);
@@ -274,7 +271,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       setState(() {
                         groupValue = 2;
                         isLoading = true;
-                        currentPage = 2;
                       });
                       _getTasksForSelectedDateAndStatus(
                           1, 10, _selectedDate, groupValue, true);
@@ -289,7 +285,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       setState(() {
                         groupValue = 3;
                         isLoading = true;
-                        currentPage = 3;
                       });
                       _getTasksForSelectedDateAndStatus(
                           1, 10, _selectedDate, groupValue, true);
@@ -304,7 +299,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       setState(() {
                         groupValue = 5;
                         isLoading = true;
-                        currentPage = 4;
                       });
                       _getTasksForSelectedDateAndStatus(
                           1, 10, _selectedDate, groupValue, true);
