@@ -311,10 +311,14 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
           builder: (context) => SecondAddTaskPage(
             addressDetail: _selectedArea +
                 ", " +
-                (_selectedZone.isEmpty || _selectedZone == "Chưa có"
+                (_selectedZone.isEmpty ||
+                        _selectedZone == "Chưa có" ||
+                        _selectedZone == "Chọn"
                     ? ""
                     : _selectedZone + ", ") +
-                (_selectedField.isEmpty || _selectedField == "Chưa có"
+                (_selectedField.isEmpty ||
+                        _selectedField == "Chưa có" ||
+                        _selectedField == "Chọn"
                     ? ""
                     : _selectedField + ", ") +
                 _addressDetailController.text.trim(),
