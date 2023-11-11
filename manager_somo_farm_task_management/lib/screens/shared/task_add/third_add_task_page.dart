@@ -617,7 +617,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           "dates": formattedDates,
           // "dates":
           "farmTask": {
-            "name": widget.taskName,
+            "name": widget.taskName.trim(),
             "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
                 .format(_selectedStartDate!),
             "endDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')

@@ -109,6 +109,11 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
           supervisors = s;
         });
       });
+      MaterialService().getMaterialActiveByFamrId(farmId).then((value) {
+        setState(() {
+          materials = value;
+        });
+      });
     });
     widget.isPlant == null
         ? getListTaskTypeActive().then((value) {
@@ -128,11 +133,6 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                 });
               });
     _selectedTaskType = "Chọn";
-    MaterialService().getMaterialActiveByFamrId(farmId).then((value) {
-      setState(() {
-        materials = value;
-      });
-    });
   }
 
   @override

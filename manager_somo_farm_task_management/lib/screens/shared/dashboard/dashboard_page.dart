@@ -231,9 +231,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                         TextSpan(
                                           text: selectedColumnIndex == -1
                                               ? "/ tuần"
-                                              : selectedColumnIndex == 6
+                                              : selectedColumnIndex == 0
                                                   ? "/ CN"
-                                                  : "/ T${selectedColumnIndex + 2}",
+                                                  : "/ T${selectedColumnIndex + 1}",
                                           style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,

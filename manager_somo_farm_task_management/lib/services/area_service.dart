@@ -45,6 +45,52 @@ class AreaService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getAreasActiveZoneLiveStockByFarmId(
+      int farmId) async {
+    final String getAreasUrl =
+        '$baseUrl/Area/GetAreaWithZoneTypeLiveStock/Farm($farmId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> areas =
+          List<Map<String, dynamic>>.from(data['data']);
+      return areas;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAreasActiveZonePlantByFarmId(
+      int farmId) async {
+    final String getAreasUrl =
+        '$baseUrl/Area/GetAreaWithZoneTypePlant/Farm($farmId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> areas =
+          List<Map<String, dynamic>>.from(data['data']);
+      return areas;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> createArea(Map<String, dynamic> areaData) async {
     final String apiUrl = "$baseUrl/Area";
     var body = jsonEncode(areaData);
