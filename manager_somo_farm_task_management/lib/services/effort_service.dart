@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
 class EffortService {
-  Future<List<Map<String, dynamic>>> getEffortByTaskId(int taskId) async {
+  Future<Map<String, dynamic>> getEffortByTaskId(int taskId) async {
     final String apiUrl = "$baseUrl/FarmSubTask/Task(${taskId})/Effort";
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -13,9 +13,8 @@ class EffortService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      final List<Map<String, dynamic>> tasks =
-          List<Map<String, dynamic>>.from(data['data']);
-      return tasks;
+      final Map<String, dynamic> task = Map<String, dynamic>.from(data['data']);
+      return task;
     } else {
       final Map<String, dynamic> data = json.decode(response.body);
       return Future.error(data['message']);

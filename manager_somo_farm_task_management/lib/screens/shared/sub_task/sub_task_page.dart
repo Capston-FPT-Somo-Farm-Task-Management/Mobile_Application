@@ -313,38 +313,69 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                                   ),
                                                                   actions: <Widget>[
                                                                     TextButton(
-                                                                      onPressed: hourController.text.isEmpty ||
-                                                                              minuteController.text.isEmpty
-                                                                          ? null
-                                                                          : () {
-                                                                              Navigator.of(context).pop();
-                                                                              String hourText = hourController.text;
-                                                                              String minuteText = minuteController.text;
-                                                                              int hours = int.tryParse(hourText) ?? 0;
-                                                                              int minutes = int.tryParse(minuteText) ?? 0;
+                                                                      onPressed:
+                                                                          () {
+                                                                        String
+                                                                            hourText =
+                                                                            hourController.text;
+                                                                        String
+                                                                            minuteText =
+                                                                            minuteController.text;
+                                                                        int hours =
+                                                                            int.tryParse(hourText) ??
+                                                                                0;
+                                                                        int minutes =
+                                                                            int.tryParse(minuteText) ??
+                                                                                0;
 
-                                                                              Map<String, dynamic> data = {
-                                                                                'employeeId': task['employeeId'],
-                                                                                'actualEfforMinutes': minutes,
-                                                                                'actualEffortHour': hours
-                                                                              };
-                                                                              EffortService().createEffortBySubtask(task['subtaskId'], data).then((value) {
-                                                                                setState(() {
-                                                                                  minuteController.text = "";
-                                                                                  hourController.text = "";
-                                                                                });
-                                                                                if (value) _getSubTask();
-                                                                                SnackbarShowNoti.showSnackbar("Chấm công thành công", true);
-                                                                              }).catchError((e) {
-                                                                                SnackbarShowNoti.showSnackbar(e.toString(), true);
-                                                                              });
-                                                                            },
+                                                                        Map<String,
+                                                                                dynamic>
+                                                                            data =
+                                                                            {
+                                                                          'employeeId':
+                                                                              task['employeeId'],
+                                                                          'actualEfforMinutes':
+                                                                              minutes,
+                                                                          'actualEffortHour':
+                                                                              hours
+                                                                        };
+                                                                        if (hourController.text.isEmpty &&
+                                                                            minuteController.text.isEmpty)
+                                                                          return null;
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                        EffortService()
+                                                                            .createEffortBySubtask(task['subtaskId'],
+                                                                                data)
+                                                                            .then((value) {
+                                                                          setState(
+                                                                              () {
+                                                                            minuteController.text =
+                                                                                "";
+                                                                            hourController.text =
+                                                                                "";
+                                                                          });
+                                                                          if (value)
+                                                                            _getSubTask();
+                                                                          SnackbarShowNoti.showSnackbar(
+                                                                              "Chấm công thành công",
+                                                                              false);
+                                                                        }).catchError((e) {
+                                                                          SnackbarShowNoti.showSnackbar(
+                                                                              e.toString(),
+                                                                              true);
+                                                                        });
+                                                                      },
                                                                       child: Text(
                                                                           'Lưu'),
                                                                     ),
                                                                     TextButton(
                                                                       onPressed:
                                                                           () {
+                                                                        minuteController.text =
+                                                                            "";
+                                                                        hourController.text =
+                                                                            "";
                                                                         Navigator.of(context)
                                                                             .pop();
                                                                       },

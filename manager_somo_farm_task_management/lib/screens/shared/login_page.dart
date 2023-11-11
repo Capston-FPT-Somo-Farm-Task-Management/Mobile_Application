@@ -188,8 +188,10 @@ class _LoginPageState extends State<LoginPage> {
                             // });
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    BottomNavBar(farmId: farmId),
+                                builder: (context) => BottomNavBar(
+                                  farmId: farmId,
+                                  index: 0,
+                                ),
                               ),
                             );
                             getDeviceToken(userId);

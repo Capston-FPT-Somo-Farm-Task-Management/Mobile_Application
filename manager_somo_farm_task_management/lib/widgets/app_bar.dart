@@ -70,7 +70,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   onTap: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => BottomNavBar(farmId: farmId!),
+                        builder: (context) => BottomNavBar(
+                          farmId: farmId!,
+                          index: 0,
+                        ),
                       ),
                     );
                   },
@@ -156,8 +159,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                             MaterialPageRoute(
                                                               builder: (context) =>
                                                                   BottomNavBar(
-                                                                      farmId:
-                                                                          farmId!),
+                                                                farmId: farmId!,
+                                                                index: 0,
+                                                              ),
                                                             ),
                                                           );
                                                         },

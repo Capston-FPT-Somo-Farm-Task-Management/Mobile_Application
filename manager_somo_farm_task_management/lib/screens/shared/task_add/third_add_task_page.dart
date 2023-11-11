@@ -653,6 +653,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
               MaterialPageRoute(
                   builder: (BuildContext context) => BottomNavBar(
                         farmId: farmId!,
+                        index: 1,
                       )),
               (route) => false,
             );
@@ -672,6 +673,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (BuildContext context) => BottomNavBar(
+                  index: 1,
                   farmId: farmId!,
                 )),
         (route) => false, // Xóa tất cả các route khỏi stack

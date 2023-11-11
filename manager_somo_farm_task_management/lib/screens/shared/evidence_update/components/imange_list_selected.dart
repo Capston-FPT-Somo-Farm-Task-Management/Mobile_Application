@@ -11,11 +11,13 @@ class ImageListSelectedPage extends StatefulWidget {
   final List<dynamic> urlImages;
   final List<AssetEntity> selectedAssetList;
   final int indexFocus;
+  final bool viewOnly;
   const ImageListSelectedPage(
       {super.key,
       required this.selectedAssetList,
       required this.indexFocus,
-      required this.urlImages});
+      required this.urlImages,
+      required this.viewOnly});
   @override
   _ImageListPageState createState() => _ImageListPageState();
 }
@@ -207,27 +209,29 @@ class _ImageListPageState extends State<ImageListSelectedPage> {
             ),
           ),
           // Biểu tượng gỡ bỏ
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Tooltip(
-              message: "Xóa ảnh khỏi danh sách chọn",
-              child: Container(
-                padding: EdgeInsets.all(5),
-                color: Colors.black38,
-                child: GestureDetector(
-                  onTap: () {
-                    deleteImageAndUpdateUI(index);
-                  },
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
+          widget.viewOnly
+              ? Container()
+              : Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Tooltip(
+                    message: "Xóa ảnh khỏi danh sách chọn",
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      color: Colors.black38,
+                      child: GestureDetector(
+                        onTap: () {
+                          deleteImageAndUpdateUI(index);
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -257,27 +261,29 @@ class _ImageListPageState extends State<ImageListSelectedPage> {
             ),
           ),
           // Biểu tượng gỡ bỏ
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Tooltip(
-              message: "Xóa ảnh khỏi danh sách chọn",
-              child: Container(
-                padding: EdgeInsets.all(5),
-                color: Colors.black38,
-                child: GestureDetector(
-                  onTap: () {
-                    deleteImageUrlAndUpdateUI(index);
-                  },
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
+          widget.viewOnly
+              ? Container()
+              : Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Tooltip(
+                    message: "Xóa ảnh khỏi danh sách chọn",
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      color: Colors.black38,
+                      child: GestureDetector(
+                        onTap: () {
+                          deleteImageUrlAndUpdateUI(index);
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
     );

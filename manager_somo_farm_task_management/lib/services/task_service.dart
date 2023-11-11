@@ -73,14 +73,15 @@ class TaskService {
       int userId,
       DateTime? date,
       int status,
-      String search) async {
+      String search,
+      int? checkParent) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime&taskName=$search';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime&checkTaskParent=$checkParent&taskName=$search';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -105,14 +106,15 @@ class TaskService {
       int userId,
       DateTime? date,
       int status,
-      String? search) async {
+      String? search,
+      int? checkParent) async {
     var dateTime = "";
     if (date != null) {
       dateTime = DateFormat('yyyy-MM-dd').format(date);
     }
 
     final String getTasksUrl =
-        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime&taskName=$search';
+        '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Supervisor($userId)/Status($status)/Date?date=$dateTime&checkTaskParent=$checkParent&taskName=$search';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -315,6 +317,30 @@ class TaskService {
     } catch (error) {
       print('Error: $error');
       return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getTotalTaskOfWeekByMember(
+    int memberId,
+  ) async {
+    final String getTasksUrl =
+        '$baseUrl/FarmTask/GetTotalTaskOfWeekByMember($memberId)';
+
+    final http.Response response = await http.get(
+      Uri.parse(getTasksUrl),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> tasks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return tasks;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
     }
   }
 }
