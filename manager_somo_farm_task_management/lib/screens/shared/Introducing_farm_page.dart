@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/services/farm_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/app_bar.dart';
 
@@ -41,9 +42,36 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: CustomAppBar(),
+      appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Colors.grey[200],
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Container(
+          margin: EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Thông tin nông trại',
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                  color: kPrimaryColor,
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.menu),
+                color: Colors.black,
+                iconSize: 35,
+                onPressed: () {
+                  HamburgerMenu.showReusableBottomSheet(context);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
       body: Container(
         color: Colors.grey[200],

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
@@ -18,7 +19,6 @@ import 'package:manager_somo_farm_task_management/screens/supervisor/view_reject
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../widgets/app_bar.dart';
 import 'package:flutter/cupertino.dart';
 
 class ManagerHomePage extends StatefulWidget {
@@ -126,174 +126,208 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     var vietnameseDate = DateFormat.yMMMMd('vi_VN').format(DateTime.now());
 
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: CustomAppBar(),
+      appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Colors.grey[100],
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Container(
+          margin: EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(width: 25),
+              Expanded(
+                child: Text(
+                  'Công việc',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    color: kPrimaryColor,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.menu),
+                color: Colors.black,
+                iconSize: 35,
+                onPressed: () {
+                  HamburgerMenu.showReusableBottomSheet(context);
+                },
+              ),
+            ],
+          ),
+        ),
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      vietnameseDate,
-                      style: subHeadingStyle,
-                    ),
-                    Text(
-                      "Hôm nay",
-                      style: headingStyle.copyWith(color: kSecondColor),
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            // FirstAddTaskPage(farm: widget.farm),
-                            ChooseHabitantPage(farmId: widget.farmId),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 120,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: kPrimaryColor,
-                    ),
-                    alignment: Alignment
-                        .center, // Đặt alignment thành Alignment.center
-                    child: Text(
-                      "+ Thêm việc",
-                      style: TextStyle(
-                        color: kTextWhiteColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 20, left: 20),
-            child: DatePicker(
-              DateTime.now(),
-              height: 100,
-              width: 80,
-              initialSelectedDate: DateTime.now(),
-              selectionColor: kPrimaryColor,
-              selectedTextColor: kTextWhiteColor,
-              dateTextStyle: GoogleFonts.lato(
-                textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
-              ),
-              dayTextStyle: GoogleFonts.lato(
-                textStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
-              ),
-              monthTextStyle: GoogleFonts.lato(
-                textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
-              ),
-              onDateChange: (date) {
-                setState(() {
-                  _selectedDate = date;
-                  isLoading = true;
-                });
-                _getTasksForSelectedDateAndStatus(
-                    1, 10, date, groupValue, true);
-              },
-              locale: 'vi_VN',
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            alignment: Alignment.center,
-            child: !isMoreLeft
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        color: Colors.grey[100],
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: CupertinoSegmentedControl<int>(
-                          selectedColor: kSecondColor,
-                          borderColor: kSecondColor,
-                          pressedColor: Colors.blue[50],
-                          children: {
-                            5: Text("Từ chối"),
-                            0: Text("Chuẩn bị"),
-                            1: Text("Đang làm"),
-                            2: Text(">>>")
-                            // Thêm các option khác nếu cần
-                          },
-                          onValueChanged: (int newValue) {
-                            if (newValue == 2)
-                              setState(() {
-                                isMoreLeft = true;
-                              });
-
-                            setState(() {
-                              groupValue = newValue;
-                              isLoading = true;
-                            });
-                            _getTasksForSelectedDateAndStatus(
-                                1, 10, _selectedDate, groupValue, true);
-                          },
-                          groupValue: groupValue,
-                        ),
+                      Text(
+                        vietnameseDate,
+                        style: subHeadingStyle,
                       ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: CupertinoSegmentedControl<int>(
-                          selectedColor: kSecondColor,
-                          borderColor: kSecondColor,
-                          pressedColor: Colors.blue[50],
-                          children: {
-                            0: Text("<<<"),
-                            1: Text('Đang làm'),
-                            2: Text('Hoàn thành'),
-                            3: Text(' Không h.thành ',
-                                textAlign: TextAlign.center),
-
-                            // Thêm các option khác nếu cần
-                          },
-                          onValueChanged: (int newValue) {
-                            if (newValue == 0)
-                              setState(() {
-                                isMoreLeft = false;
-                              });
-
-                            setState(() {
-                              isLoading = true;
-                              groupValue = newValue;
-                            });
-                            _getTasksForSelectedDateAndStatus(
-                                1, 10, _selectedDate, groupValue, true);
-                          },
-                          groupValue: groupValue,
-                        ),
+                      Text(
+                        "Hôm nay",
+                        style: headingStyle.copyWith(color: kSecondColor),
                       ),
                     ],
                   ),
-          ),
-          const SizedBox(height: 10),
-          _showTask(),
-        ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              // FirstAddTaskPage(farm: widget.farm),
+                              ChooseHabitantPage(farmId: widget.farmId),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 120,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: kPrimaryColor,
+                      ),
+                      alignment: Alignment
+                          .center, // Đặt alignment thành Alignment.center
+                      child: Text(
+                        "+ Thêm việc",
+                        style: TextStyle(
+                          color: kTextWhiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 20, left: 20),
+              child: DatePicker(
+                DateTime.now(),
+                height: 100,
+                width: 80,
+                initialSelectedDate: DateTime.now(),
+                selectionColor: kPrimaryColor,
+                selectedTextColor: kTextWhiteColor,
+                dateTextStyle: GoogleFonts.lato(
+                  textStyle: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey),
+                ),
+                dayTextStyle: GoogleFonts.lato(
+                  textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey),
+                ),
+                monthTextStyle: GoogleFonts.lato(
+                  textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey),
+                ),
+                onDateChange: (date) {
+                  setState(() {
+                    _selectedDate = date;
+                    isLoading = true;
+                  });
+                  _getTasksForSelectedDateAndStatus(
+                      1, 10, date, groupValue, true);
+                },
+                locale: 'vi_VN',
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              alignment: Alignment.center,
+              child: !isMoreLeft
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CupertinoSegmentedControl<int>(
+                            selectedColor: kSecondColor,
+                            borderColor: kSecondColor,
+                            pressedColor: Colors.blue[50],
+                            children: {
+                              5: Text("Từ chối"),
+                              0: Text("Chuẩn bị"),
+                              1: Text("Đang làm"),
+                              2: Text(">>>")
+                              // Thêm các option khác nếu cần
+                            },
+                            onValueChanged: (int newValue) {
+                              if (newValue == 2)
+                                setState(() {
+                                  isMoreLeft = true;
+                                });
+
+                              setState(() {
+                                groupValue = newValue;
+                                isLoading = true;
+                              });
+                              _getTasksForSelectedDateAndStatus(
+                                  1, 10, _selectedDate, groupValue, true);
+                            },
+                            groupValue: groupValue,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CupertinoSegmentedControl<int>(
+                            selectedColor: kSecondColor,
+                            borderColor: kSecondColor,
+                            pressedColor: Colors.blue[50],
+                            children: {
+                              0: Text("<<<"),
+                              1: Text('Đang làm'),
+                              2: Text('Hoàn thành'),
+                              3: Text(' Không h.thành ',
+                                  textAlign: TextAlign.center),
+
+                              // Thêm các option khác nếu cần
+                            },
+                            onValueChanged: (int newValue) {
+                              if (newValue == 0)
+                                setState(() {
+                                  isMoreLeft = false;
+                                });
+
+                              setState(() {
+                                isLoading = true;
+                                groupValue = newValue;
+                              });
+                              _getTasksForSelectedDateAndStatus(
+                                  1, 10, _selectedDate, groupValue, true);
+                            },
+                            groupValue: groupValue,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+            const SizedBox(height: 10),
+            _showTask(),
+          ],
+        ),
       ),
     );
   }
