@@ -1571,7 +1571,6 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
           _selectedEndDate != null &&
           employeesSelected.isNotEmpty &&
           _titleController.text.trim().isNotEmpty &&
-          areaSelected!.isNotEmpty &&
           taskTypeSelected!.isNotEmpty &&
           _selectedRemind != null &&
           (_hoursController.text.isNotEmpty ||
@@ -1615,8 +1614,9 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
               "liveStockId": widget.task['liveStockId'] == null
                   ? null
                   : externalSelected!['id'],
-              "addressDetail": areaSelected!['name'] +
-                  ", " +
+              "addressDetail": (areaSelected == null
+                      ? ""
+                      : areaSelected!['name'] + ", ") +
                   (zoneSelected == null ? "" : zoneSelected!['name'] + ", ") +
                   (fieldSelected == null ? "" : fieldSelected!['name'] + ", ") +
                   _addressDetailController.text.trim(),
