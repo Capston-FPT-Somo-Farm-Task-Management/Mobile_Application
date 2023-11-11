@@ -37,8 +37,12 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
   List<Map<String, dynamic>> filteredField = [];
   List<Map<String, dynamic>> filteredExternalId = [];
 
-  Future<List<Map<String, dynamic>>> getAreasbyFarmId() {
-    return AreaService().getAreasActiveByFarmId(widget.farmId);
+  Future<List<Map<String, dynamic>>> getAreasActiveZoneLiveStockByFarmId() {
+    return AreaService().getAreasActiveZoneLiveStockByFarmId(widget.farmId);
+  }
+
+  Future<List<Map<String, dynamic>>> getAreasActiveZonePlantByFarmId() {
+    return AreaService().getAreasActiveZonePlantByFarmId(widget.farmId);
   }
 
   Future<List<Map<String, dynamic>>> getZonesbyAreaPlantId(int areaId) {
@@ -65,12 +69,19 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
   @override
   void initState() {
     super.initState();
-    getAreasbyFarmId().then((a) {
-      setState(() {
-        filteredArea = a;
-        _selectedArea = "Chọn";
-      });
-    });
+    widget.isPlant
+        ? getAreasActiveZonePlantByFarmId().then((a) {
+            setState(() {
+              filteredArea = a;
+              _selectedArea = "Chọn";
+            });
+          })
+        : getAreasActiveZoneLiveStockByFarmId().then((a) {
+            setState(() {
+              filteredArea = a;
+              _selectedArea = "Chọn";
+            });
+          });
   }
 
   @override

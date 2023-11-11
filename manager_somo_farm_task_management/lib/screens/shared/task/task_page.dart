@@ -854,7 +854,7 @@ class TaskPageState extends State<TaskPage> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${task['fieldName']}',
+                                                                      '${task['fieldName'] ?? task['addressDetail']}',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
