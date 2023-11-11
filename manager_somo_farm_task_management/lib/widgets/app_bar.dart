@@ -10,7 +10,6 @@ import 'package:manager_somo_farm_task_management/screens/manager/material/mater
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/supervisor/supervisor_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
@@ -813,40 +812,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                     width: 15),
                                                                 Text(
                                                                   "Nhân viên",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          20),
-                                                                ),
-                                                              ]),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 25),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: padingForAll,
-                                                          right: padingForAll),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(
-                                                                    MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  SupervisorPage(),
-                                                            ));
-                                                          },
-                                                          child: const Row(
-                                                              children: [
-                                                                Icon(Icons
-                                                                    .supervisor_account),
-                                                                SizedBox(
-                                                                    width: 15),
-                                                                Text(
-                                                                  "Người giám sát",
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           20),
