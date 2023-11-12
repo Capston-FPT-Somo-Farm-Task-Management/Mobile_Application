@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/dashboard/dashboard_page.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,6 +61,7 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
                 : BottomNavBar(
                     farmId: farmId!,
                     index: 0,
+                    page: StatisticsPage(),
                   ),
       ),
     );

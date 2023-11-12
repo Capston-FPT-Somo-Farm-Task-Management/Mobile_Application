@@ -12,7 +12,9 @@ import '../screens/shared/settings_page.dart';
 class BottomNavBar extends StatefulWidget {
   final int farmId;
   final int index;
-  const BottomNavBar({super.key, required this.farmId, required this.index});
+  final dynamic page;
+  const BottomNavBar(
+      {super.key, required this.farmId, required this.index, this.page});
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
@@ -22,6 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   int myCurrentIndex = 0;
   int notificationCount = 0;
   int? userId;
+  dynamic p;
   void getNewNotiCount() {
     NotiService().getCountNewNotificationByMemberId(userId!).then((value) {
       setState(() {
@@ -41,6 +44,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   @override
   void initState() {
     super.initState();
+    p = widget.page;
     WidgetsBinding.instance.addObserver(this);
     getUserId().then((_) {
       getNewNotiCount();
@@ -68,15 +72,15 @@ class _BottomNavBarState extends State<BottomNavBar>
 
   @override
   Widget build(BuildContext context) {
-    List pages = [
-      StatisticsPage(),
-      ManagerHomePage(
-        farmId: widget.farmId,
-      ),
-      IntroducingFarmPage(farmId: widget.farmId),
-      NotificationPage(),
-      SettingsPage(),
-    ];
+    // List pages = [
+    //   StatisticsPage(),
+    //   ManagerHomePage(
+    //     farmId: widget.farmId,
+    //   ),
+    //   IntroducingFarmPage(farmId: widget.farmId),
+    //   NotificationPage(),
+    //   SettingsPage(),
+    // ];
     return Scaffold(
       bottomNavigationBar: Container(
         height: 70,
@@ -106,6 +110,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 0;
+                    p = StatisticsPage();
                   });
                 }),
             IconButton(
@@ -117,6 +122,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 1;
+                    p = ManagerHomePage(
+                      farmId: widget.farmId,
+                    );
                   });
                 }),
             IconButton(
@@ -129,6 +137,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 2;
+                    p = IntroducingFarmPage(farmId: widget.farmId);
                   });
                 }),
             IconButton(
@@ -175,6 +184,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                   });
                   setState(() {
                     myCurrentIndex = 3;
+                    p = NotificationPage();
                   });
                 }),
             IconButton(
@@ -186,12 +196,13 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 4;
+                    p = SettingsPage();
                   });
                 }),
           ],
         ),
       ),
-      body: pages[myCurrentIndex],
+      body: p,
     );
   }
 

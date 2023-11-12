@@ -20,8 +20,6 @@ import 'package:manager_somo_farm_task_management/screens/supervisor/view_reject
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../widgets/app_bar.dart';
-
 class ManagerHomePage extends StatefulWidget {
   final int farmId;
   const ManagerHomePage({Key? key, required this.farmId}) : super(key: key);
@@ -49,6 +47,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   GlobalKey _keyReject = GlobalKey();
   double _offsetX = 0.0;
   final scrollControllerOption = ScrollController();
+  final TextEditingController searchController = TextEditingController();
+  String searchValue = "";
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -89,10 +89,10 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     List<Map<String, dynamic>> selectedDateTasks;
     if (role == "Manager") {
       selectedDateTasks = await TaskService().getTasksByManagerIdDateStatus(
-          index, pageSize, userId!, selectedDate, status, "", 1);
+          index, pageSize, userId!, selectedDate, status, searchValue, 1);
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
-          index, pageSize, userId!, selectedDate, status, "", 1);
+          index, pageSize, userId!, selectedDate, status, searchValue, 1);
     }
     if (reset) {
       setState(() {
@@ -137,45 +137,63 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 70,
-        backgroundColor: Colors.grey[100],
+        backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: Container(
-          margin: EdgeInsets.only(top: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(width: 30),
-              Expanded(
-                child: Text(
-                  'Công việc',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                    color: kPrimaryColor,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.menu),
-                color: Colors.black,
-                iconSize: 35,
-                onPressed: () {
-                  HamburgerMenu.showReusableBottomSheet(context);
-                },
-              ),
-            ],
+        title: Text(
+          'Lịch trình',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: kPrimaryColor,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu),
+            color: Colors.black,
+            iconSize: 35,
+            onPressed: () {
+              HamburgerMenu.showReusableBottomSheet(context);
+            },
+          ),
+        ],
       ),
       body: Container(
-        color: Colors.grey[100],
+        color: Colors.white,
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              margin: const EdgeInsets.only(left: 20, right: 20),
+              height: 42,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: TextField(
+                  controller: searchController,
+                  onChanged: (keyword) {
+                    setState(() {
+                      searchValue = keyword.trim();
+                    });
+                    ;
+                    _getTasksForSelectedDateAndStatus(
+                        1, 10, _selectedDate, groupValue, true);
+                  },
+                  decoration: const InputDecoration(
+                    hintText: "Tìm kiếm...",
+                    border: InputBorder.none,
+                    icon: Icon(Icons.search),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -184,11 +202,12 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                     children: [
                       Text(
                         vietnameseDate,
-                        style: subHeadingStyle,
+                        style: subHeadingStyle.copyWith(fontSize: 22),
                       ),
                       Text(
                         "Hôm nay",
-                        style: headingStyle.copyWith(color: kSecondColor),
+                        style: headingStyle.copyWith(
+                            color: kSecondColor, fontSize: 27),
                       ),
                     ],
                   ),
@@ -203,8 +222,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       );
                     },
                     child: Container(
-                      width: 120,
-                      height: 55,
+                      width: 100,
+                      height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: kPrimaryColor,
@@ -223,11 +242,11 @@ class ManagerHomePageState extends State<ManagerHomePage> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(top: 20, left: 20),
+              margin: const EdgeInsets.only(top: 10, left: 20),
               child: DatePicker(
                 DateTime.now(),
-                height: 100,
-                width: 80,
+                height: 90,
+                width: 70,
                 initialSelectedDate: DateTime.now(),
                 selectionColor: kPrimaryColor,
                 selectedTextColor: kTextWhiteColor,
@@ -342,7 +361,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
             Expanded(
               child: GestureDetector(
                   onHorizontalDragUpdate: (details) {
@@ -443,6 +461,8 @@ class ManagerHomePageState extends State<ManagerHomePage> {
 
   _showTask() {
     return Container(
+        padding: EdgeInsets.only(top: 10),
+        color: Colors.grey[200],
         child: isLoading
             ? Center(
                 child: CircularProgressIndicator(color: kPrimaryColor),

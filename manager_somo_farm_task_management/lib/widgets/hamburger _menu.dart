@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/area/area_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee/employee_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock/livestockField_page.dart';
@@ -65,36 +64,6 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                padding: EdgeInsets.only(
-                  top: padingForAll,
-                  left: padingForAll,
-                  right: padingForAll,
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Row(children: [
-                      Icon(Icons.home),
-                      SizedBox(width: 15),
-                      Text(
-                        "Trang chủ",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ]),
-                  ),
-                ),
-              ),
               if (role == "Supervisor") ...[
                 SizedBox(height: 25),
                 Container(
@@ -105,7 +74,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const TaskPage(),
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: TaskPage(),
+                          ),
                         ));
                       },
                       child: const Row(children: [
@@ -128,7 +101,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => EmployeekPage(role: role!),
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: EmployeekPage(role: role!),
+                          ),
                         ));
                       },
                       child: const Row(children: [
@@ -145,7 +122,6 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                 const SizedBox(height: 25),
               ],
               if (role == "Manager") ...[
-                SizedBox(height: 10),
                 Container(
                   padding: EdgeInsets.only(
                       top: padingForAll,
@@ -156,8 +132,12 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AreaPage(
+                          builder: (context) => BottomNavBar(
                             farmId: farmId!,
+                            index: 0,
+                            page: AreaPage(
+                              farmId: farmId!,
+                            ),
                           ),
                         ));
                       },
@@ -181,8 +161,12 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ZonePage(
+                          builder: (context) => BottomNavBar(
                             farmId: farmId!,
+                            index: 0,
+                            page: ZonePage(
+                              farmId: farmId!,
+                            ),
                           ),
                         ));
                       },
@@ -206,7 +190,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const TaskPage(),
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: TaskPage(),
+                          ),
                         ));
                       },
                       child: const Row(children: [
@@ -214,44 +202,6 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Công việc",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {},
-                      child: const Row(children: [
-                        Icon(Icons.map),
-                        SizedBox(width: 15),
-                        Text(
-                          "Trang trại",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {},
-                      child: const Row(children: [
-                        Icon(Icons.pie_chart_rounded),
-                        SizedBox(width: 15),
-                        Text(
-                          "Báo cáo",
                           style: TextStyle(fontSize: 20),
                         ),
                       ]),
@@ -276,8 +226,12 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => LiveStockPage(
+                                  builder: (context) => BottomNavBar(
                                     farmId: farmId!,
+                                    index: 0,
+                                    page: LiveStockPage(
+                                      farmId: farmId!,
+                                    ),
                                   ),
                                 ),
                               );
@@ -350,8 +304,12 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 onTap: () {
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          LiveStockFieldPage(farmId: farmId!),
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page:
+                                            LiveStockFieldPage(farmId: farmId!),
+                                      ),
                                     ),
                                   );
                                 },
@@ -370,8 +328,12 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 onTap: () {
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          LiveStockTypePage(farmId: farmId!),
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page:
+                                            LiveStockTypePage(farmId: farmId!),
+                                      ),
                                     ),
                                   );
                                 },
@@ -406,8 +368,12 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => PlantPage(
+                                  builder: (context) => BottomNavBar(
                                     farmId: farmId!,
+                                    index: 0,
+                                    page: PlantPage(
+                                      farmId: farmId!,
+                                    ),
                                   ),
                                 ),
                               );
@@ -481,8 +447,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 onTap: () {
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          PlantFieldPage(farmId: farmId!),
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page: PlantFieldPage(farmId: farmId!),
+                                      ),
                                     ),
                                   );
                                 },
@@ -501,8 +470,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 onTap: () {
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          PlantTypePage(farmId: farmId!),
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page: PlantTypePage(farmId: farmId!),
+                                      ),
                                     ),
                                   );
                                 },
@@ -529,7 +501,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => EmployeekPage(role: role!),
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: EmployeekPage(role: role!),
+                          ),
                         ));
                       },
                       child: const Row(children: [
@@ -552,7 +528,11 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MaterialsPage(farmId: farmId!),
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: MaterialsPage(farmId: farmId!),
+                          ),
                         ));
                       },
                       child: const Row(children: [
