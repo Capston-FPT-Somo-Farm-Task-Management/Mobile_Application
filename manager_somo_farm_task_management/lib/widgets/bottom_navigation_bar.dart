@@ -72,15 +72,6 @@ class _BottomNavBarState extends State<BottomNavBar>
 
   @override
   Widget build(BuildContext context) {
-    // List pages = [
-    //   StatisticsPage(),
-    //   ManagerHomePage(
-    //     farmId: widget.farmId,
-    //   ),
-    //   IntroducingFarmPage(farmId: widget.farmId),
-    //   NotificationPage(),
-    //   SettingsPage(),
-    // ];
     return Scaffold(
       bottomNavigationBar: Container(
         height: 70,
@@ -122,9 +113,9 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 1;
-                    p = ManagerHomePage(
-                      farmId: widget.farmId,
-                    );
+                    //p = ManagerHomePage(
+                    //  farmId: widget.farmId,
+                    //);
                   });
                 }),
             IconButton(
@@ -137,7 +128,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 2;
-                    p = IntroducingFarmPage(farmId: widget.farmId);
+                    //p = IntroducingFarmPage(farmId: widget.farmId);
                   });
                 }),
             IconButton(
@@ -184,7 +175,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                   });
                   setState(() {
                     myCurrentIndex = 3;
-                    p = NotificationPage();
+                    //p = NotificationPage();
                   });
                 }),
             IconButton(
@@ -196,13 +187,22 @@ class _BottomNavBarState extends State<BottomNavBar>
                 onPressed: () {
                   setState(() {
                     myCurrentIndex = 4;
-                    p = SettingsPage();
+                    //p = SettingsPage();
                   });
                 }),
           ],
         ),
       ),
-      body: p,
+      body: IndexedStack(
+        index: myCurrentIndex,
+        children: [
+          p,
+          ManagerHomePage(farmId: widget.farmId),
+          IntroducingFarmPage(farmId: widget.farmId),
+          NotificationPage(),
+          SettingsPage(),
+        ],
+      ),
     );
   }
 
