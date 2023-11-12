@@ -96,7 +96,7 @@ class UpdateUserState extends State<UpdateUser> {
   }
 
   Future<bool> updateUser(
-      int userId, Map<String, dynamic> userData, File image) {
+      int userId, Map<String, dynamic> userData, File? image) {
     return UserService().updateUser(userId, userData, image);
   }
 
@@ -566,8 +566,26 @@ class UpdateUserState extends State<UpdateUser> {
             "birthday": DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(_dateTime!)
           }
         };
-        convertAssetsToFiles(selectedAssetList).then((value) {
-          updateUser(widget.user['id'], userData, selectedFile!).then((value) {
+        if (selectedAssetList.isNotEmpty)
+          convertAssetsToFiles(selectedAssetList).then((value) {
+            updateUser(widget.user['id'], userData, selectedFile!)
+                .then((value) {
+              if (value) {
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.pop(context, "newEmployee");
+                SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+              }
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+              SnackbarShowNoti.showSnackbar(e.toString(), true);
+            });
+          });
+        else {
+          updateUser(widget.user['id'], userData, null).then((value) {
             if (value) {
               setState(() {
                 isLoading = false;
@@ -581,7 +599,7 @@ class UpdateUserState extends State<UpdateUser> {
             });
             SnackbarShowNoti.showSnackbar(e.toString(), true);
           });
-        });
+        }
       }
     } else {
       setState(() {

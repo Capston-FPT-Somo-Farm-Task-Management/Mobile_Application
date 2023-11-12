@@ -374,39 +374,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             if (userData!['roleName'] == "Manager")
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(
+                                  Navigator.of(context)
+                                      .push(
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           UpdateUser(user: userData!),
                                     ),
-                                  );
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          kPrimaryColor),
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      Size(100, 50)),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                  ),
-                                ),
-                                child: Text('Chỉnh sửa thông tin'),
-                              ),
-                            if (userData!['roleName'] == "Supervisor")
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Navigator.of(context).push(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => UpdateEmployee(
-                                  //         employee: userData!,
-                                  //         farmId: widget.farmId),
-                                  //   ),
-                                  // );
-                                  print('Button pressed!');
+                                  )
+                                      .then((value) {
+                                    if (value != null) {
+                                      _loadUserData();
+                                    }
+                                  });
                                 },
                                 style: ButtonStyle(
                                   backgroundColor:
