@@ -115,7 +115,7 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
   }
 
   Future<bool> updateEmployee(
-      int employeeId, Map<String, dynamic> employeeData, File image) {
+      int employeeId, Map<String, dynamic> employeeData, File? image) {
     return EmployeeService().updateEmployee(employeeId, employeeData, image);
   }
 
@@ -704,8 +704,26 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                 DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(_dateTime!)
           }
         };
-        convertAssetsToFiles(selectedAssetList).then((value) {
-          updateEmployee(widget.employee['id'], employeekData, selectedFile!)
+        if (selectedAssetList.isNotEmpty)
+          convertAssetsToFiles(selectedAssetList).then((value) {
+            updateEmployee(widget.employee['id'], employeekData, selectedFile!)
+                .then((value) {
+              if (value) {
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.pop(context, "newEmployee");
+                SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+              }
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+              SnackbarShowNoti.showSnackbar(e.toString(), true);
+            });
+          });
+        else {
+          updateEmployee(widget.employee['id'], employeekData, null)
               .then((value) {
             if (value) {
               setState(() {
@@ -720,7 +738,7 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
             });
             SnackbarShowNoti.showSnackbar(e.toString(), true);
           });
-        });
+        }
       }
     } else {
       setState(() {

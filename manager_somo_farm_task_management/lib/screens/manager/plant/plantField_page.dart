@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
@@ -91,29 +92,40 @@ class PlantFieldPageState extends State<PlantFieldPage> {
       );
     }
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: CustomAppBar(),
+      appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Colors.grey[200],
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text(
+          'Vườn cây',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: kPrimaryColor,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu),
+            color: Colors.black,
+            iconSize: 35,
+            onPressed: () {
+              HamburgerMenu.showReusableBottomSheet(context);
+            },
+          ),
+        ],
       ),
       body: Container(
         color: Colors.grey[200],
-        padding: EdgeInsets.only(left: 15, right: 15, top: 30, bottom: 20),
+        padding: EdgeInsets.only(left: 15, right: 15, bottom: 20),
         child: Column(
           children: [
             SingleChildScrollView(
               child: Column(
                 children: [
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Vườn cây",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
