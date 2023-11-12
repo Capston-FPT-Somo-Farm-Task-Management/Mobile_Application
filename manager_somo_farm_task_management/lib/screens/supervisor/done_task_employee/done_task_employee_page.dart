@@ -14,8 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DoneTaskEmployeePage extends StatefulWidget {
   final int employeeId;
   final String employeeName;
-  DateTime? startDate;
-  DateTime? endDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
   DoneTaskEmployeePage(
       {Key? key,
       required this.employeeId,
@@ -323,7 +323,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                             endDate: task['endDate'],
                                                                             taskId: task['id'],
                                                                             taskName: task['name'],
-                                                                            taskCode: task['code']),
+                                                                            taskCode: task['codeTask']),
                                                                       ),
                                                                     );
                                                                   },
@@ -398,7 +398,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                         children: [
                                                           Flexible(
                                                             child: Text(
-                                                              '#${task['code']}',
+                                                              '#${task['codeTask']}',
                                                               style: GoogleFonts
                                                                   .lato(
                                                                 textStyle:
@@ -743,7 +743,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => TimeKeepingInTask(
-                          codeTask: task['code'],
+                          codeTask: task['codeTask'],
                           taskId: task['id'],
                           taskName: task['name'],
                           isCreate: false,
