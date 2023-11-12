@@ -13,8 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/app_bar.dart';
 
 class EmployeekPage extends StatefulWidget {
+  final bool viewTime;
   final String role;
-  const EmployeekPage({super.key, required this.role});
+  const EmployeekPage({super.key, required this.viewTime, required this.role});
 
   @override
   EmployeekPageState createState() => EmployeekPageState();
@@ -97,10 +98,10 @@ class EmployeekPageState extends State<EmployeekPage> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Nhân viên",
+                      widget.viewTime ? "Tổng thời gian làm việc" : "Nhân viên",
                       style: TextStyle(
                         fontSize: 28, // Thay đổi kích thước phù hợp
                         fontWeight: FontWeight.bold,
@@ -108,7 +109,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  if (widget.role == "Manager")
+                  if (!widget.viewTime)
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Row(
@@ -268,7 +269,7 @@ class EmployeekPageState extends State<EmployeekPage> {
 
                               return GestureDetector(
                                 onTap: () {
-                                  widget.role == "Manager"
+                                  !widget.viewTime
                                       ? showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
@@ -288,20 +289,9 @@ class EmployeekPageState extends State<EmployeekPage> {
                                         ));
                                 },
                                 onLongPress: () {
-                                  widget.role == "Manager"
+                                  widget.role == "Manager" && !widget.viewTime
                                       ? _showBottomSheet(context, employee)
-                                      : showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return EmployeeDetailsPopup(
-                                              employee: employee,
-                                              farmId: farmId!,
-                                            );
-                                          },
-                                        ).then((value) => {
-                                            if (value != null) {getEmployees()}
-                                          });
-                                  ;
+                                      : null;
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

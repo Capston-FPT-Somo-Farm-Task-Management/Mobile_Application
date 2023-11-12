@@ -164,8 +164,10 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                           'Mã nhân viên', data!["employeeCode"], Icons.tag),
                       _buildInfoCard('Tên nhân viên', data!["employeeName"],
                           Icons.person_outline),
-                      _buildInfoCard('Effort Time',
-                          '${data!["effortTime"]} giờ', Icons.timer),
+                      _buildInfoCard(
+                          'Thời gian làm thực tế',
+                          '${data!["actualEffortHour"]} giờ ${data!["actualEfforMinutes"]} phút',
+                          Icons.timer),
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(

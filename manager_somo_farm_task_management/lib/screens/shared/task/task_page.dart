@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/option.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
@@ -16,6 +17,7 @@ import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_r
 import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
+import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -164,9 +166,31 @@ class TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: CustomAppBar(),
+      appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text(
+          'Công việc',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: kPrimaryColor,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu),
+            color: Colors.black,
+            iconSize: 35,
+            onPressed: () {
+              HamburgerMenu.showReusableBottomSheet(context);
+            },
+          ),
+        ],
       ),
       body: Container(
         color: Colors.grey[200],
@@ -174,23 +198,15 @@ class TaskPageState extends State<TaskPage> {
           children: [
             Container(
               color: Colors.white,
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Công việc",
-                          style: TextStyle(
-                            fontSize: 28, // Thay đổi kích thước phù hợp
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).push(
@@ -244,7 +260,7 @@ class TaskPageState extends State<TaskPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -488,7 +504,6 @@ class TaskPageState extends State<TaskPage> {
                     child: _showTask(),
                   )),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),

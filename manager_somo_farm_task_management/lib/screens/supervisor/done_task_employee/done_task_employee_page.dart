@@ -200,12 +200,13 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           ),
                         )
                       : Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          padding: const EdgeInsets.only(left: 10, right: 10),
                           child: RefreshIndicator(
                             notificationPredicate: (_) => true,
                             onRefresh: () => getTask(groupValue, true),
                             child: ListView.separated(
                               physics: AlwaysScrollableScrollPhysics(),
+                              controller: scrollController,
                               itemCount: isLoadingMore
                                   ? filteredTaskList.length + 1
                                   : filteredTaskList.length,
@@ -219,15 +220,23 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
 
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).push(
+                                      Navigator.of(context)
+                                          .push(
                                         MaterialPageRoute(
                                           builder: (context) => TaskDetailsPage(
                                               taskId: task['id']),
                                         ),
-                                      );
+                                      )
+                                          .then((value) {
+                                        if (value != null)
+                                          getTask(groupValue, true);
+                                      });
                                     },
                                     onLongPress: () {
-                                      _showBottomSheet(context, task);
+                                      _showBottomSheet(
+                                        context,
+                                        task,
+                                      );
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -312,9 +321,9 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                                 task['status'],
                                                                             startDate: task['startDate'],
                                                                             endDate: task['endDate'],
-                                                                            taskCode: task['code'],
                                                                             taskId: task['id'],
-                                                                            taskName: task['name']),
+                                                                            taskName: task['name'],
+                                                                            taskCode: task['code']),
                                                                       ),
                                                                     );
                                                                   },
@@ -349,44 +358,60 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                     horizontal:
                                                                         35),
                                                             child: Tooltip(
-                                                              message: role ==
-                                                                      "Manager"
-                                                                  ? 'Công việc do người giám sát tạo'
-                                                                  : 'Công việc do người quản lí tạo',
-                                                              child: Icon(
-                                                                Icons
-                                                                    .account_circle_rounded,
-                                                                color: Colors
-                                                                    .black54,
-                                                              ),
-                                                            ),
+                                                                message: role ==
+                                                                        "Manager"
+                                                                    ? 'Công việc do người giám sát tạo'
+                                                                    : 'Công việc do người quản lí tạo',
+                                                                child: ClipOval(
+                                                                  child: Image
+                                                                      .network(
+                                                                    task['avatar'] ??
+                                                                        "String",
+                                                                    width: 25,
+                                                                    height: 25,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    errorBuilder: (BuildContext
+                                                                            context,
+                                                                        Object
+                                                                            error,
+                                                                        StackTrace?
+                                                                            stackTrace) {
+                                                                      return Icon(
+                                                                        Icons
+                                                                            .account_circle_rounded,
+                                                                        size:
+                                                                            25,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                )),
                                                           ),
                                                       ]),
-                                                      const SizedBox(
-                                                          height: 10),
+                                                      const SizedBox(height: 5),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .access_time_rounded,
-                                                            color: Colors.black,
-                                                            size: 18,
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 4),
                                                           Flexible(
                                                             child: Text(
-                                                              "${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['startDate']))}  -  ${DateFormat('HH:mm  dd/MM/yy').format(DateTime.parse(task['endDate']))}",
+                                                              '#${task['code']}',
                                                               style: GoogleFonts
                                                                   .lato(
-                                                                textStyle: const TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    color: Colors
-                                                                        .black),
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic, // Chữ in nghiêng
+                                                                  color: Priority
+                                                                      .getBGClr(
+                                                                          task[
+                                                                              'priority']),
+                                                                ),
                                                               ),
                                                               overflow:
                                                                   TextOverflow
@@ -400,18 +425,100 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
-                                                                .spaceBetween,
+                                                                .start,
                                                         children: [
+                                                          Icon(
+                                                            Icons
+                                                                .access_time_rounded,
+                                                            color:
+                                                                Colors.black87,
+                                                            size: 18,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
                                                           Flexible(
-                                                            child: Text(
-                                                              "Giờ làm thực tế (cá nhân): ${task['effort']} giờ",
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Bắt đầu: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .access_time_rounded,
+                                                            color:
+                                                                Colors.black87,
+                                                            size: 18,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 5),
+                                                          Flexible(
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Kết thúc: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                               overflow:
                                                                   TextOverflow
@@ -421,43 +528,81 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                         ],
                                                       ),
                                                       const SizedBox(
-                                                          height: 10),
+                                                          height: 30),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
                                                           Flexible(
-                                                            child: Text(
-                                                              "Giám sát: ${task['supervisorName']}",
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: const TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black),
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Giám sát: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        '${task['supervisorName']}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
                                                             ),
                                                           ),
-                                                          Flexible(
-                                                            child: Text(
-                                                              "Vị trí: ${task['fieldName']}",
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: const TextStyle(
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Vị trí: ',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                     fontSize:
                                                                         15,
                                                                     color: Colors
-                                                                        .black),
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                                        .black87,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      '${task['fieldName'] ?? task['addressDetail']}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .black87,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ],
                                                       ),
@@ -486,26 +631,60 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                       .spaceBetween,
                                               children: [
                                                 Flexible(
-                                                  child: Text(
-                                                    'Loại: ${task['taskTypeName']}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            Colors.grey[200]),
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Loại: ',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .grey[200],
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text:
+                                                              '${task['taskTypeName']}',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .grey[200],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                   ),
                                                 ),
-                                                Flexible(
-                                                  child: Text(
-                                                    'Ưu tiên: ${task['priority']}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            Colors.grey[200]),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
+                                                RichText(
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text: 'Ưu tiên: ',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.grey[200],
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            '${task['priority']}',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.grey[200],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),
