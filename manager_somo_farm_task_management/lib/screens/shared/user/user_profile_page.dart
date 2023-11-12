@@ -371,37 +371,36 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               ),
                             ),
                             SizedBox(height: 20),
-                            if (userData!['roleName'] == "Manager")
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          UpdateUser(user: userData!),
-                                    ),
-                                  )
-                                      .then((value) {
-                                    if (value != null) {
-                                      _loadUserData();
-                                    }
-                                  });
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          kPrimaryColor),
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      Size(100, 50)),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateUser(user: userData!),
+                                  ),
+                                )
+                                    .then((value) {
+                                  if (value != null) {
+                                    _loadUserData();
+                                  }
+                                });
+                              },
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        kPrimaryColor),
+                                minimumSize: MaterialStateProperty.all<Size>(
+                                    Size(100, 50)),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
-                                child: Text('Chỉnh sửa thông tin'),
                               ),
+                              child: Text('Chỉnh sửa thông tin'),
+                            ),
                           ],
                         ),
                       ],
