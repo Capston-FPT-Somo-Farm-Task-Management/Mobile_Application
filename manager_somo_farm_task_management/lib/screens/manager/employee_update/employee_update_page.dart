@@ -41,6 +41,7 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
   Map<String, dynamic>? _selectedProvinces;
   Map<String, dynamic>? _selectedDistrict;
   Map<String, dynamic>? _selectedWar;
+  Key _keyChange = UniqueKey();
   String? _selectedGender;
   String? provinces, district, ward;
   String? urlImage;
@@ -581,14 +582,13 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                             child: SingleChildScrollView(
                               child: ChipsInput(
                                 suggestionsBoxMaxHeight: 200,
-                                enabled: !selectedTaskTypes.isEmpty,
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: "Chọn các kĩ năng phù hợp",
                                     hintStyle:
                                         TextStyle(color: Colors.black45)),
                                 initialValue: selectedTaskTypes,
-                                key: GlobalKey(),
+                                key: _keyChange,
                                 findSuggestions: (String query) {
                                   if (query.length != 0) {
                                     var lowercaseQuery =

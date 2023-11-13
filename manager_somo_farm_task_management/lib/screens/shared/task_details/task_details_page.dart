@@ -1174,10 +1174,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                   // Đổi status sang đang thực hiện
                   if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
                   if (task['status'] == "Chuẩn bị" &&
-                      task['managerName'] != null &&
-                      DateTime.now()
-                          .add(Duration(minutes: 30))
-                          .isBefore(DateTime.parse(task['startDate'])))
+                      task['managerName'] != null)
                     ElevatedButton(
                       onPressed: () {
                         showDialog(
