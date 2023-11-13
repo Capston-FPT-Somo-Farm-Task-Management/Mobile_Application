@@ -135,6 +135,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     var vietnameseDate = DateFormat.yMMMMd('vi_VN').format(DateTime.now());
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.transparent,

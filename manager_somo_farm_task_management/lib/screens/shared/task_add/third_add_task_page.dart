@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -654,6 +655,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                   builder: (BuildContext context) => BottomNavBar(
                         farmId: farmId!,
                         index: 1,
+                        page: ManagerHomePage(farmId: farmId!),
                       )),
               (route) => false,
             );

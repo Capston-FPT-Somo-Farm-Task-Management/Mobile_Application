@@ -74,6 +74,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
       );
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.grey[200],
