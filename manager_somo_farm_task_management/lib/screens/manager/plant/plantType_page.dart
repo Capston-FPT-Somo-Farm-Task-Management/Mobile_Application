@@ -75,6 +75,7 @@ class PlantTypePageState extends State<PlantTypePage> {
       );
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.grey[200],
