@@ -1215,7 +1215,49 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ),
                       child: Text("Đang thực hiện"),
                     ),
-                  if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
+                  if (task['status'] == "Chuẩn bị" &&
+                      task['managerName'] == null)
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context1) {
+                            return ConfirmDeleteDialog(
+                              title: "Đổi trạng thái",
+                              content: 'Chuyển công việc sang "Đang thực hiện"',
+                              onConfirm: () {
+                                changeTaskStatus(task['id'], 1).then((value) {
+                                  if (value) {
+                                    getTask();
+                                    isChange = true;
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Đổi thành công!", false);
+                                  } else {
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Xảy ra lỗi!", true);
+                                  }
+                                });
+                              },
+                              buttonConfirmText: "Đồng ý",
+                            );
+                          },
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(kPrimaryColor),
+                        minimumSize:
+                            MaterialStateProperty.all<Size>(Size(100, 50)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      ),
+                      child: Text("Đang thực hiện"),
+                    ),
+                  SizedBox(width: 10),
                   if (task['status'] == "Hoàn thành") SizedBox(width: 10),
                   // Đánh giá
                   if (task['status'] == "Hoàn thành")
