@@ -166,9 +166,9 @@ class EmployeeService {
         .add(MapEntry('gender', employeeData['employee']['gender'].toString()));
     formData.fields.add(MapEntry(
         'dateOfBirth', employeeData['employee']['dateOfBirth'].toString()));
-    for (int i = 0; i < employeeData['taskTypeId'].length; i++) {
+    for (int i = 0; i < employeeData['taskTypeIds'].length; i++) {
       formData.fields.add(
-          MapEntry('taskTypeIds', employeeData['taskTypeId'][i].toString()));
+          MapEntry('taskTypeIds', employeeData['taskTypeIds'][i].toString()));
     }
     formData.fields
         .add(MapEntry('farmId', employeeData['employee']['farmId'].toString()));
