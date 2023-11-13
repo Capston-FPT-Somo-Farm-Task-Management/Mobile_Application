@@ -41,7 +41,9 @@ class EffortService {
   Future<bool> createEffortBySubtask(
       int subTaskId, Map<String, dynamic> data) async {
     final String apiUrl = "$baseUrl/FarmSubTask/(${subTaskId})/Effort";
+    print(apiUrl);
     var body = jsonEncode(data);
+    print(body);
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},

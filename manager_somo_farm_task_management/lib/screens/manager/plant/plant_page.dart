@@ -10,8 +10,6 @@ import 'package:manager_somo_farm_task_management/services/plant_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../widgets/app_bar.dart';
-
 class PlantPage extends StatefulWidget {
   final int farmId;
   const PlantPage({super.key, required this.farmId});

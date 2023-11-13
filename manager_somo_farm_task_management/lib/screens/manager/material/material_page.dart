@@ -8,8 +8,6 @@ import 'package:manager_somo_farm_task_management/screens/manager/material_updat
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
-import '../../../widgets/app_bar.dart';
-
 class MaterialsPage extends StatefulWidget {
   final int farmId;
   const MaterialsPage({super.key, required this.farmId});

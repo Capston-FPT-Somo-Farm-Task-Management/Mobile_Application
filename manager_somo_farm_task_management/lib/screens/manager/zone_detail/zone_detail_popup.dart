@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/area_update/area_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone_update/zone_update_pagge.dart';
 
 class ZoneDetail extends StatelessWidget {

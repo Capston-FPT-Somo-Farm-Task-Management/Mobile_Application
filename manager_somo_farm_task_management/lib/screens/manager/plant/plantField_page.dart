@@ -9,7 +9,6 @@ import 'package:manager_somo_farm_task_management/screens/manager/plant_detail/p
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../widgets/app_bar.dart';
 
 class PlantFieldPage extends StatefulWidget {
   final farmId;
