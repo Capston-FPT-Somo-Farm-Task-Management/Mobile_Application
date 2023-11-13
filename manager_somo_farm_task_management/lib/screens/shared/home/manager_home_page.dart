@@ -179,8 +179,9 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                   onChanged: (keyword) {
                     setState(() {
                       searchValue = keyword.trim();
+                      page = 1;
                     });
-                    ;
+
                     _getTasksForSelectedDateAndStatus(
                         1, 10, _selectedDate, groupValue, true);
                   },
@@ -296,6 +297,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         setState(() {
                           groupValue = 0;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(
                             1, 10, _selectedDate, groupValue, true);
@@ -310,6 +312,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         setState(() {
                           groupValue = 1;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(
                             1, 10, _selectedDate, groupValue, true);
@@ -324,6 +327,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         setState(() {
                           groupValue = 2;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(
                             1, 10, _selectedDate, groupValue, true);
@@ -338,6 +342,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         setState(() {
                           groupValue = 3;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(
                             1, 10, _selectedDate, groupValue, true);
@@ -352,6 +357,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                         setState(() {
                           groupValue = 5;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(
                             1, 10, _selectedDate, groupValue, true);

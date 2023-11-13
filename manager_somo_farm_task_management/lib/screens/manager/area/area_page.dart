@@ -9,8 +9,6 @@ import 'package:manager_somo_farm_task_management/screens/manager/area_detail/ar
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
-import '../../../widgets/app_bar.dart';
-
 class AreaPage extends StatefulWidget {
   final int farmId;
   const AreaPage({super.key, required this.farmId});

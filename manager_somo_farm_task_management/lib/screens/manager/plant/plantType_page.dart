@@ -7,8 +7,6 @@ import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../widgets/app_bar.dart';
 
 class PlantTypePage extends StatefulWidget {
   final int farmId;

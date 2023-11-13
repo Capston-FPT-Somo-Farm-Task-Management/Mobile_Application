@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/services/farm_service.dart';
-import 'package:manager_somo_farm_task_management/widgets/app_bar.dart';
 
 class IntroducingFarmPage extends StatefulWidget {
   final int farmId;

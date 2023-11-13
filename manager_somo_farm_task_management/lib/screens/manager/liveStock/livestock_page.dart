@@ -3,14 +3,12 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../widgets/app_bar.dart';
 
 class LiveStockPage extends StatefulWidget {
   final int farmId;
