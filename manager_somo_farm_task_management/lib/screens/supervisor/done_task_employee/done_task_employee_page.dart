@@ -749,6 +749,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           isCreate: false,
                           status: 0,
                           endDateTask: task['endDate'],
+                          task: task,
                         ),
                       ),
                     );

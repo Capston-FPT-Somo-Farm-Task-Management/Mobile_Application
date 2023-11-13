@@ -798,6 +798,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 isCreate: false,
                                 status: 0,
                                 endDateTask: task['endDate'],
+                                task: task,
                               ),
                             ),
                           );
@@ -1030,6 +1031,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                     isCreate: true,
                                     status: 2,
                                     endDateTask: task['endDate'],
+                                    task: task,
                                   ),
                                 ),
                               )
@@ -1055,6 +1057,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                     isCreate: true,
                                     status: 3,
                                     endDateTask: task['endDate'],
+                                    task: task,
                                   ),
                                 ),
                               )
@@ -1079,6 +1082,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 isCreate: false,
                                 status: 0,
                                 endDateTask: task['endDate'],
+                                task: task,
                               ),
                             ),
                           );
