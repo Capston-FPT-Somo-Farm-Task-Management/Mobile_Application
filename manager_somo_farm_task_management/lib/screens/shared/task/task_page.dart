@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -17,11 +16,8 @@ import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_r
 import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
-import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../widgets/app_bar.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key}) : super(key: key);
@@ -247,6 +243,7 @@ class TaskPageState extends State<TaskPage> {
                         onChanged: (keyword) {
                           setState(() {
                             searchValue = keyword.trim();
+                            page = 1;
                           });
                           ;
                           _getTasksForSelectedDateAndStatus(
@@ -354,6 +351,7 @@ class TaskPageState extends State<TaskPage> {
                         setState(() {
                           groupValue = 0;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
                             groupValue, true, searchValue);
@@ -368,6 +366,7 @@ class TaskPageState extends State<TaskPage> {
                         setState(() {
                           groupValue = 1;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
                             groupValue, true, searchValue);
@@ -382,6 +381,7 @@ class TaskPageState extends State<TaskPage> {
                         setState(() {
                           groupValue = 2;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
                             groupValue, true, searchValue);
@@ -396,6 +396,7 @@ class TaskPageState extends State<TaskPage> {
                         setState(() {
                           groupValue = 3;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
                             groupValue, true, searchValue);
@@ -410,6 +411,7 @@ class TaskPageState extends State<TaskPage> {
                         setState(() {
                           groupValue = 5;
                           isLoading = true;
+                          page = 1;
                         });
                         _getTasksForSelectedDateAndStatus(1, 10, _selectedDate,
                             groupValue, true, searchValue);
