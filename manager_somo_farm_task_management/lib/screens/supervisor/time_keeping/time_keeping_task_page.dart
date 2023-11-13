@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/effort_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,13 +14,15 @@ class TimeKeepingInTask extends StatefulWidget {
   final int status;
   final String endDateTask;
   final String codeTask;
+  final Map<String, dynamic> task;
   TimeKeepingInTask(
       {required this.taskId,
       required this.taskName,
       required this.isCreate,
       required this.status,
       required this.endDateTask,
-      required this.codeTask});
+      required this.codeTask,
+      required this.task});
 
   @override
   State<TimeKeepingInTask> createState() => _TimeKeepingInTaskState();
@@ -250,6 +253,49 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                     thickness: 1, // Độ dày của dòng gạch (có thể thay đổi)
                   ),
                 ),
+                if (isHaveSubtask!)
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    alignment: Alignment.centerLeft,
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text:
+                                "Chỉ được sửa chấm công ở các công việc con! ",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          WidgetSpan(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => SubTaskPage(
+                                        taskStatus: widget.task['status'],
+                                        startDate: widget.task['startDate'],
+                                        endDate: widget.task['endDate'],
+                                        taskId: widget.task['id'],
+                                        taskName: widget.task['name'],
+                                        taskCode: widget.task['code']),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Tại đây",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 SizedBox(height: 20),
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -445,7 +491,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                       },
                     ),
                   ),
-                )
+                ),
               ],
             ),
     );
