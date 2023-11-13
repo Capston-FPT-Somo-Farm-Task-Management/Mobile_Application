@@ -90,7 +90,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     onRefresh: () => _loadUserData(),
                     child: Column(
                       children: [
-                        SizedBox(height: 30),
+                        SizedBox(height: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
@@ -130,7 +130,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 25),
+                            SizedBox(height: 35),
                             Container(
                               padding: EdgeInsets.all(30),
                               constraints: BoxConstraints(
@@ -140,7 +140,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(45)),
+                                    BorderRadius.all(Radius.circular(15)),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -283,7 +283,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(45)),
+                                    BorderRadius.all(Radius.circular(15)),
                               ),
                               constraints: BoxConstraints(
                                 minHeight: 150, // Chiều cao tối thiểu
@@ -395,7 +395,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 shape: MaterialStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
+                                    borderRadius: BorderRadius.circular(15.0),
                                   ),
                                 ),
                               ),

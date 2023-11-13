@@ -3,6 +3,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/user/user_profile_page.dart';
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
+import 'package:manager_somo_farm_task_management/services/user_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_page.dart';
 
@@ -15,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isLoading = false;
   int? userId;
   int? farmId;
+  Map<String, dynamic>? userData;
   Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final storedUserId = prefs.getInt('userId');
@@ -27,11 +29,29 @@ class _SettingsPageState extends State<SettingsPage> {
     return storedFarmId;
   }
 
+  Future<void> _loadUserData() async {
+    GetUser(userId!).then((value) {
+      setState(() {
+        isLoading = false;
+        if (value.isNotEmpty) {
+          setState(() {
+            userData = value['data'];
+          });
+        }
+      });
+    });
+  }
+
+  Future<Map<String, dynamic>> GetUser(int userId) {
+    return UserService().getUserById(userId);
+  }
+
   @override
   initState() {
     super.initState();
     getUserId().then((value) {
       userId = value;
+      _loadUserData();
     });
     getFarmId().then((value) {
       farmId = value;
@@ -67,8 +87,50 @@ class _SettingsPageState extends State<SettingsPage> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                userData!['avatar'] != null
+                    ? Container(
+                        margin: EdgeInsets.only(top: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 120,
+                              width: 120,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100.0),
+                                child: Image.network(
+                                  userData!['avatar'],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : CircleAvatar(
+                        radius: 80,
+                        backgroundColor: Colors.grey,
+                        child: Icon(
+                          Icons.person,
+                          size: 100,
+                          color: Colors.white,
+                        ),
+                      ),
+                SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      userData != null ? userData!['name'] : '',
+                      style: const TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
                 Container(
-                  margin: const EdgeInsets.only(top: 80),
+                  margin: const EdgeInsets.only(top: 30),
                   padding: const EdgeInsets.fromLTRB(30, 16, 30, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
