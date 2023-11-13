@@ -13,7 +13,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool isLoading = false;
+  bool isLoading = true;
   int? userId;
   int? farmId;
   Map<String, dynamic>? userData;
