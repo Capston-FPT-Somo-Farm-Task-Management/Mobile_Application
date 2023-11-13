@@ -966,6 +966,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               isCreate: false,
                               status: 0,
                               endDateTask: task['endDate'],
+                              task: task,
                             ),
                           ),
                         );
@@ -1079,6 +1080,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               isCreate: false,
                               status: 0,
                               endDateTask: task['endDate'],
+                              task: task,
                             ),
                           ),
                         );
@@ -1113,6 +1115,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               isCreate: false,
                               status: 0,
                               endDateTask: task['endDate'],
+                              task: task,
                             ),
                           ),
                         );
@@ -1251,6 +1254,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               isCreate: false,
                               status: 0,
                               endDateTask: task['endDate'],
+                              task: task,
                             ),
                           ),
                         );

@@ -52,6 +52,7 @@ class SubTaskPageState extends State<SubTaskPage> {
       setState(() {
         isLoading = false;
         filteredTaskList = value;
+        print(filteredTaskList);
       });
     }).catchError((e) {
       // SnackbarShowNoti.showSnackbar(e.toString(), true);
@@ -253,15 +254,38 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Flexible(
-                                                        child: Text(
-                                                          task['name'],
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 22,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                kPrimaryColor,
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "#${task['code']}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      20.0, // Kích thước nhỏ hơn
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic,
+                                                                  color:
+                                                                      kPrimaryColor,
+                                                                ),
+                                                              ),
+                                                              TextSpan(
+                                                                text: " - " +
+                                                                    task[
+                                                                        'name'],
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 22,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      kPrimaryColor,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),

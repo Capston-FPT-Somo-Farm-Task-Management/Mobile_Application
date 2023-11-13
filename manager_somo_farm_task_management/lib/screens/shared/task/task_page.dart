@@ -1192,6 +1192,7 @@ class TaskPageState extends State<TaskPage> {
                                 isCreate: false,
                                 status: 0,
                                 endDateTask: task['endDate'],
+                                task: task,
                               ),
                             ),
                           );
@@ -1424,6 +1425,7 @@ class TaskPageState extends State<TaskPage> {
                                     isCreate: true,
                                     status: 2,
                                     endDateTask: task['endDate'],
+                                    task: task,
                                   ),
                                 ),
                               )
@@ -1449,6 +1451,7 @@ class TaskPageState extends State<TaskPage> {
                                     isCreate: true,
                                     status: 3,
                                     endDateTask: task['endDate'],
+                                    task: task,
                                   ),
                                 ),
                               )
@@ -1473,6 +1476,7 @@ class TaskPageState extends State<TaskPage> {
                                 isCreate: false,
                                 status: 0,
                                 endDateTask: task['endDate'],
+                                task: task,
                               ),
                             ),
                           );

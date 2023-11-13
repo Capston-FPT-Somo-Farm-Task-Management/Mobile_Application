@@ -32,12 +32,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _loadUserData() async {
     GetUser(userId!).then((value) {
       setState(() {
+        userData = value['data'];
         isLoading = false;
-        if (value.isNotEmpty) {
-          setState(() {
-            userData = value['data'];
-          });
-        }
       });
     });
   }
