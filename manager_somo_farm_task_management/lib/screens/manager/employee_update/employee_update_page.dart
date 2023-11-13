@@ -690,7 +690,7 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
         SnackbarShowNoti.showSnackbar("Số điện thoại không hợp lệ!", true);
       } else {
         Map<String, dynamic> employeekData = {
-          "taskTypeId":
+          "taskTypeIds":
               selectedTaskTypes.map<int>((t) => t['id'] as int).toList(),
           "employee": {
             "name": _fullnameController.text,
