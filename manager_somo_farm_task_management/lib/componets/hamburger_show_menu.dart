@@ -8,7 +8,7 @@ class HamburgerMenu {
       isScrollControlled: true, // Cho phép bottom sheet có thể cuộn
       builder: (context) => Container(
         constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height * 0.8,
+          minHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         child: ReusableBottomSheet(
           title: 'Reusable Bottom Sheet',
