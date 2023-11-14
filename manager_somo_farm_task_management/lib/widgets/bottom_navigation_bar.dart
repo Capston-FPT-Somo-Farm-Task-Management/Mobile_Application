@@ -1,10 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/Introducing_farm_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/dashboard/dashboard_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/notification_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/services/notificantion_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/shared/settings_page.dart';
@@ -74,124 +74,141 @@ class _BottomNavBarState extends State<BottomNavBar>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: kPrimaryColor,
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  // FirstAddTaskPage(farm: widget.farm),
+                  ChooseHabitantPage(farmId: widget.farmId),
             ),
-          ],
-          color: kTextWhiteColor,
-        ),
-        padding: const EdgeInsets.all(1.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-                icon: Icon(
-                  Icons.home,
-                  size: _getCurrentTabSize(0),
-                  color: _getCurrentTabColor(0),
-                ),
-                onPressed: () {
-                  setState(() {
-                    myCurrentIndex = 0;
-                    p = StatisticsPage();
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                  Icons.calendar_month,
-                  size: _getCurrentTabSize(1),
-                  color: _getCurrentTabColor(1),
-                ),
-                onPressed: () {
-                  setState(() {
-                    myCurrentIndex = 1;
-                    //p = ManagerHomePage(
-                    //  farmId: widget.farmId,
-                    //);
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                  Icons.info,
-                  size: _getCurrentTabSize(2),
-                  // size: 18,
-                  color: _getCurrentTabColor(2),
-                ),
-                onPressed: () {
-                  setState(() {
-                    myCurrentIndex = 2;
-                    //p = IntroducingFarmPage(farmId: widget.farmId);
-                  });
-                }),
-            IconButton(
-                icon: Stack(
-                  children: [
-                    Icon(
-                      Icons.notifications_rounded,
+          );
+        },
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.4),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ]),
+        child: BottomAppBar(
+          shape: CircularNotchedRectangle(),
+          notchMargin: 5,
+          child: Container(
+            padding: EdgeInsets.all(8),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                    icon: Icon(
+                      Icons.home,
+                      size: _getCurrentTabSize(0),
+                      color: _getCurrentTabColor(0),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        myCurrentIndex = 0;
+                        p = StatisticsPage();
+                      });
+                    }),
+                IconButton(
+                    icon: Icon(
+                      Icons.calendar_month,
+                      size: _getCurrentTabSize(1),
+                      color: _getCurrentTabColor(1),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        myCurrentIndex = 1;
+                        //p = ManagerHomePage(
+                        //  farmId: widget.farmId,
+                        //);
+                      });
+                    }),
+                // IconButton(
+                //     icon: Icon(
+                //       Icons.info,
+                //       size: _getCurrentTabSize(2),
+                //       // size: 18,
+                //       color: _getCurrentTabColor(2),
+                //     ),
+                //     onPressed: () {
+                //       setState(() {
+                //         myCurrentIndex = 2;
+                //         //p = IntroducingFarmPage(farmId: widget.farmId);
+                //       });
+                //     }),
+                SizedBox(width: 20),
+                IconButton(
+                    icon: Stack(
+                      children: [
+                        Icon(
+                          Icons.notifications_rounded,
+                          size: _getCurrentTabSize(2),
+                          color: _getCurrentTabColor(2),
+                        ),
+                        notificationCount > 0
+                            ? Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 12,
+                                    minHeight: 12,
+                                  ),
+                                  child: Text(
+                                    '$notificationCount',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+                    onPressed: () {
+                      NotiService().makeAllNotiIsOld(userId!).then((value) {
+                        if (value) {
+                          getNewNotiCount();
+                        }
+                      }).catchError((e) {
+                        print(e.toString());
+                      });
+                      setState(() {
+                        myCurrentIndex = 2;
+                        //p = NotificationPage();
+                      });
+                    }),
+                IconButton(
+                    icon: Icon(
+                      Icons.settings,
                       size: _getCurrentTabSize(3),
                       color: _getCurrentTabColor(3),
                     ),
-                    notificationCount > 0
-                        ? Positioned(
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(1),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: 12,
-                                minHeight: 12,
-                              ),
-                              child: Text(
-                                '$notificationCount',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )
-                        : SizedBox(),
-                  ],
-                ),
-                onPressed: () {
-                  NotiService().makeAllNotiIsOld(userId!).then((value) {
-                    if (value) {
-                      getNewNotiCount();
-                    }
-                  }).catchError((e) {
-                    print(e.toString());
-                  });
-                  setState(() {
-                    myCurrentIndex = 3;
-                    //p = NotificationPage();
-                  });
-                }),
-            IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  size: _getCurrentTabSize(4),
-                  color: _getCurrentTabColor(4),
-                ),
-                onPressed: () {
-                  setState(() {
-                    myCurrentIndex = 4;
-                    //p = SettingsPage();
-                  });
-                }),
-          ],
+                    onPressed: () {
+                      setState(() {
+                        myCurrentIndex = 3;
+                        //p = SettingsPage();
+                      });
+                    }),
+              ],
+            ),
+          ),
         ),
       ),
       body: IndexedStack(
@@ -199,7 +216,7 @@ class _BottomNavBarState extends State<BottomNavBar>
         children: [
           p,
           ManagerHomePage(farmId: widget.farmId),
-          IntroducingFarmPage(farmId: widget.farmId),
+          //IntroducingFarmPage(farmId: widget.farmId),
           NotificationPage(),
           SettingsPage(),
         ],
@@ -208,7 +225,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   }
 
   double _getCurrentTabSize(int tabIndex) {
-    return myCurrentIndex == tabIndex ? 30.0 : 22.0;
+    return myCurrentIndex == tabIndex ? 27.0 : 22.0;
   }
 
   Color _getCurrentTabColor(int tabIndex) {

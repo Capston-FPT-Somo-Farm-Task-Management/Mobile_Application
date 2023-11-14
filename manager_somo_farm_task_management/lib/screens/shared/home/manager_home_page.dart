@@ -10,7 +10,6 @@ import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/componets/option.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/components/task_tile.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
@@ -213,33 +212,33 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                       ),
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              // FirstAddTaskPage(farm: widget.farm),
-                              ChooseHabitantPage(farmId: widget.farmId),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: kPrimaryColor,
-                      ),
-                      alignment: Alignment
-                          .center, // Đặt alignment thành Alignment.center
-                      child: Text(
-                        "+ Thêm việc",
-                        style: TextStyle(
-                          color: kTextWhiteColor,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.of(context).push(
+                  //       MaterialPageRoute(
+                  //         builder: (context) =>
+                  //             // FirstAddTaskPage(farm: widget.farm),
+                  //             ChooseHabitantPage(farmId: widget.farmId),
+                  //       ),
+                  //     );
+                  //   },
+                  //   child: Container(
+                  //     width: 100,
+                  //     height: 50,
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(20),
+                  //       color: kPrimaryColor,
+                  //     ),
+                  //     alignment: Alignment
+                  //         .center, // Đặt alignment thành Alignment.center
+                  //     child: Text(
+                  //       "+ Thêm việc",
+                  //       style: TextStyle(
+                  //         color: kTextWhiteColor,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
