@@ -79,7 +79,7 @@ class SubTaskPageState extends State<SubTaskPage> {
         backgroundColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop("ok");
           },
           child: const Icon(
             Icons.arrow_back_ios,
