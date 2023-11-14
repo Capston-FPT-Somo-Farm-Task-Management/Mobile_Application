@@ -10,6 +10,7 @@ import 'package:manager_somo_farm_task_management/screens/manager/plant/plantFie
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plantType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/Introducing_farm_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +29,8 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
   bool isVisibleLiveStock = false;
 
   bool isVisiblePlant = false;
+
+  bool isVisibleArea = false;
 
   double padingForAll = 16;
 
@@ -127,67 +130,10 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
               if (role == "Manager") ...[
                 Container(
                   padding: EdgeInsets.only(
-                      top: padingForAll,
-                      left: padingForAll,
-                      right: padingForAll),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                            page: AreaPage(
-                              farmId: farmId!,
-                            ),
-                          ),
-                        ));
-                      },
-                      child: const Row(children: [
-                        Icon(FontAwesomeIcons.mapPin),
-                        SizedBox(width: 15),
-                        Text(
-                          "Khu vực",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                    ),
+                    left: padingForAll,
+                    right: padingForAll,
+                    top: padingForAll,
                   ),
-                ),
-                const SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                            page: ZonePage(
-                              farmId: farmId!,
-                            ),
-                          ),
-                        ));
-                      },
-                      child: const Row(children: [
-                        Icon(Icons.border_inner_outlined),
-                        SizedBox(width: 15),
-                        Text(
-                          "Vùng",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
                   child: Align(
                     alignment: Alignment.centerLeft, // Căn lề trái
                     child: InkWell(
@@ -212,6 +158,124 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                   ),
                 ),
                 SizedBox(height: 10),
+                Stack(children: [
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: padingForAll - 9,
+                      left: padingForAll,
+                      right: padingForAll,
+                    ),
+                    color: isVisibleArea ? Colors.grey[300] : null,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => BottomNavBar(
+                                    farmId: farmId!,
+                                    index: 0,
+                                    page: AreaPage(
+                                      farmId: farmId!,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Icon(FontAwesomeIcons.mapPin),
+                                SizedBox(width: 15),
+                                Text(
+                                  "Khu vực",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isVisibleArea = !isVisibleArea;
+                                isVisiblePlant = false;
+                                isVisibleLiveStock = false;
+                              });
+                            },
+                            icon: Icon(FontAwesomeIcons.chevronDown, size: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    decoration: isVisibleArea
+                        ? BoxDecoration(
+                            border: Border(
+                                top: BorderSide(
+                              color: Colors.grey,
+                            )),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey, // Màu của bóng
+                                offset: Offset(0, 1),
+                                blurRadius: 1.0,
+                                spreadRadius: 1, // Độ mờ của bóng
+                              ),
+                            ],
+                          )
+                        : BoxDecoration(
+                            border:
+                                Border(top: BorderSide(color: Colors.white10))),
+                  ),
+                ]),
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
+                  height: isVisibleArea ? 55 : 0,
+                  child: Visibility(
+                    visible: isVisibleArea,
+                    maintainSize: false,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: Container(
+                      padding: EdgeInsets.only(top: 8, left: 56, bottom: 20),
+                      color: Colors.grey[300],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page: ZonePage(farmId: farmId!),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Row(children: [
+                                  Text(
+                                    "Vùng",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ]),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Stack(children: [
                   Container(
                     padding: EdgeInsets.only(
@@ -258,6 +322,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                               setState(() {
                                 isVisibleLiveStock = !isVisibleLiveStock;
                                 isVisiblePlant = false;
+                                isVisibleArea = false;
                               });
                             },
                             icon: Icon(FontAwesomeIcons.chevronDown, size: 18),
@@ -400,6 +465,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                               setState(() {
                                 isVisiblePlant = !isVisiblePlant;
                                 isVisibleLiveStock = false;
+                                isVisibleArea = false;
                               });
                             },
                             icon: Icon(FontAwesomeIcons.chevronDown, size: 18),
@@ -576,6 +642,33 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Dụng cụ",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ]),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Container(
+                  padding:
+                      EdgeInsets.only(left: padingForAll, right: padingForAll),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: IntroducingFarmPage(farmId: farmId!),
+                          ),
+                        ));
+                      },
+                      child: const Row(children: [
+                        Icon(Icons.info_outline),
+                        SizedBox(width: 15),
+                        Text(
+                          "Thông tin nông trại",
                           style: TextStyle(fontSize: 20),
                         ),
                       ]),
