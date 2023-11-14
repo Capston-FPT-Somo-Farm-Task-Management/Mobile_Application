@@ -48,6 +48,8 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   void getEmployees() {
     EffortService().getEffortByTaskId(widget.taskId).then((value) {
       setState(() {
+        _minutesController.clear();
+        _hoursController.clear();
         employees = List<Map<String, dynamic>>.from(value['subtasks']);
         isHaveSubtask = value['isHaveSubtask'];
         if (isHaveSubtask!) isSaveEnabled = true;
@@ -271,7 +273,8 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                           WidgetSpan(
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.of(context).push(
+                                Navigator.of(context)
+                                    .push(
                                   MaterialPageRoute(
                                     builder: (context) => SubTaskPage(
                                         taskStatus: widget.task['status'],
@@ -281,7 +284,12 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                         taskName: widget.task['name'],
                                         taskCode: widget.task['code']),
                                   ),
-                                );
+                                )
+                                    .then((value) {
+                                  if (value != null) {
+                                    getEmployees();
+                                  }
+                                });
                               },
                               child: Text(
                                 "Tại đây",

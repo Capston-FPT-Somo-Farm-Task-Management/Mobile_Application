@@ -1071,19 +1071,26 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                   if (task['status'] == "Đang thực hiện")
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context)
+                            .push(
                           MaterialPageRoute(
                             builder: (context) => TimeKeepingInTask(
                               codeTask: task['code'],
                               taskId: task['id'],
                               taskName: task['name'],
-                              isCreate: false,
-                              status: 0,
+                              isCreate: true,
+                              status: 3,
                               endDateTask: task['endDate'],
                               task: task,
                             ),
                           ),
-                        );
+                        )
+                            .then((value) {
+                          if (value != null) {
+                            getTask();
+                            isChange = true;
+                          }
+                        });
                       },
                       style: ButtonStyle(
                         backgroundColor:
@@ -1106,19 +1113,26 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                   if (task['status'] == "Đang thực hiện")
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context)
+                            .push(
                           MaterialPageRoute(
                             builder: (context) => TimeKeepingInTask(
                               codeTask: task['code'],
                               taskId: task['id'],
                               taskName: task['name'],
-                              isCreate: false,
-                              status: 0,
+                              isCreate: true,
+                              status: 2,
                               endDateTask: task['endDate'],
                               task: task,
                             ),
                           ),
-                        );
+                        )
+                            .then((value) {
+                          if (value != null) {
+                            getTask();
+                            isChange = true;
+                          }
+                        });
                       },
                       style: ButtonStyle(
                         backgroundColor:

@@ -492,7 +492,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                       (Map<String, dynamic> value) {
                                 return DropdownMenuItem<Map<String, dynamic>>(
                                   value: value,
-                                  child: Text(value['name']),
+                                  child: Text(value['nameCode']),
                                 );
                               }).toList(),
                             ),
@@ -552,7 +552,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                       (Map<String, dynamic> value) {
                                 return DropdownMenuItem<Map<String, dynamic>>(
                                   value: value,
-                                  child: Text(value['name']),
+                                  child: Text(value['nameCode']),
                                 );
                               }).toList(),
                             ),
@@ -615,7 +615,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                       (Map<String, dynamic> value) {
                                 return DropdownMenuItem<Map<String, dynamic>>(
                                   value: value,
-                                  child: Text(value['name']),
+                                  child: Text(value['nameCode']),
                                 );
                               }).toList(),
                             ),
