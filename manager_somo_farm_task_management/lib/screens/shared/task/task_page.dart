@@ -9,7 +9,6 @@ import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
@@ -204,30 +203,30 @@ class TaskPageState extends State<TaskPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  // FirstAddTaskPage(farm: widget.farm),
-                                  ChooseHabitantPage(farmId: farmId!),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                          minimumSize: Size(120, 45),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Thêm việc",
-                            style: TextStyle(fontSize: 19),
-                          ),
-                        ),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             // FirstAddTaskPage(farm: widget.farm),
+                      //             ChooseHabitantPage(farmId: farmId!),
+                      //       ),
+                      //     );
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: kPrimaryColor,
+                      //     minimumSize: Size(120, 45),
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10.0),
+                      //     ),
+                      //   ),
+                      //   child: const Center(
+                      //     child: Text(
+                      //       "Thêm việc",
+                      //       style: TextStyle(fontSize: 19),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 15),
