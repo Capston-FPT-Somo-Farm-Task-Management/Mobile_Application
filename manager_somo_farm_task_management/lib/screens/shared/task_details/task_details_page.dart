@@ -195,26 +195,63 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Center(
-                                  child: Text(
-                                    "${task['priority']}",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: Priority.getBGClr(
-                                            task['priority'])),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Center(
+                                    child: RichText(
+                                      text: TextSpan(children: [
+                                        TextSpan(
+                                          text: "Ưu tiên: ",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black87),
+                                        ),
+                                        TextSpan(
+                                          text: "${task['priority']}",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                              color: Priority.getBGClr(
+                                                  task['priority'])),
+                                        )
+                                      ]),
+                                    ),
                                   ),
                                 ),
+                                SizedBox(width: 5),
                                 Center(
                                   child: Text(
-                                    " - ${task['status']}",
+                                    "-",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
-                                        color: Priority.getBGClr(
-                                            task['priority'])),
+                                        color: Colors.black),
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Center(
+                                    child: Text(
+                                      "${task['status']}",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -430,7 +467,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                           ],
                         ),
                       ),
-                      // const SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       if (task['plantName'] != null ||
                           task['liveStockName'] != null)
                         Container(

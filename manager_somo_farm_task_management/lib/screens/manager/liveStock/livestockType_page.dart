@@ -4,6 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockType_page.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -190,14 +191,15 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                     return Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: GestureDetector(
-                        // onTap: () {
-                        //   showDialog(
-                        //     context: context,
-                        //     builder: (BuildContext context) {
-                        //       return LiveStockDetailsPopup(liveStock: liveStock);
-                        //     },
-                        //   );
-                        // },
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return HabitantTypeDetailPopup(
+                                  habitantType: liveStock);
+                            },
+                          );
+                        },
                         onLongPress: () {
                           // _showBottomSheet(context, liveStock);
                         },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/habitantType_update/habitantType_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_update/plant_update_page.dart';
 
 class HabitantTypeDetailPopup extends StatelessWidget {
@@ -40,7 +41,8 @@ class HabitantTypeDetailPopup extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => UpdatePlant(plant: habitantType),
+                  builder: (context) =>
+                      UpdateHabitantType(habitantType: habitantType),
                 ),
               );
             },
@@ -128,7 +130,9 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Xuất xứ: ${habitantType['origin']}',
+                  habitantType['origin'] == null
+                      ? 'Xuất xứ: chưa có'
+                      : 'Xuất xứ: ${habitantType['origin']}',
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -145,7 +149,9 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Môi trường sống: ${habitantType['environment']}',
+                  habitantType['environment'] == null
+                      ? 'Môi trường sống: chưa có'
+                      : 'Môi trường sống: ${habitantType['environment']}',
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -162,7 +168,9 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Mô tả: ${habitantType['description']}',
+                  habitantType['description'] == null
+                      ? 'Mô tả: chưa có'
+                      : 'Mô tả: ${habitantType['description']}',
                   style: const TextStyle(
                     fontSize: 18,
                   ),

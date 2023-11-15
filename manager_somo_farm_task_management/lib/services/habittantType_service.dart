@@ -63,4 +63,22 @@ class HabitantTypeService {
       throw Exception('Failed to create habitant type');
     }
   }
+
+  Future<bool> UpdateHabitantType(
+      Map<String, dynamic> habitantType, int id) async {
+    final String updateHabitantTypeUrl = '$baseUrl/HabitantType/${id}';
+    var body = jsonEncode(habitantType);
+    final response = await http.put(Uri.parse(updateHabitantTypeUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
