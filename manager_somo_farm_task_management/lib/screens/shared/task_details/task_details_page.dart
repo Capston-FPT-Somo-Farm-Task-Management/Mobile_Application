@@ -204,23 +204,30 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                           Radius.circular(20))),
                                   child: Center(
                                     child: RichText(
-                                      text: TextSpan(children: [
-                                        TextSpan(
-                                          text: "Ưu tiên: ",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black87),
-                                        ),
-                                        TextSpan(
-                                          text: "${task['priority']}",
-                                          style: TextStyle(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: "Ưu tiên ",
+                                            style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w700,
                                               color: Priority.getBGClr(
-                                                  task['priority'])),
-                                        )
-                                      ]),
+                                                task['priority'],
+                                              ),
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: "${task['priority']}",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                              color: Priority.getBGClr(
+                                                task['priority'],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
