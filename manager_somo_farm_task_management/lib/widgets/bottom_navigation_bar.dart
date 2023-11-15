@@ -74,18 +74,21 @@ class _BottomNavBarState extends State<BottomNavBar>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimaryColor,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  // FirstAddTaskPage(farm: widget.farm),
-                  ChooseHabitantPage(farmId: widget.farmId),
-            ),
-          );
-        },
+      floatingActionButton: Container(
+        child: FloatingActionButton(
+          tooltip: "Thêm công việc",
+          backgroundColor: kPrimaryColor,
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    // FirstAddTaskPage(farm: widget.farm),
+                    ChooseHabitantPage(farmId: widget.farmId),
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterDocked,

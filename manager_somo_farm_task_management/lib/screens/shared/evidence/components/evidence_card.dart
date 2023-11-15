@@ -3,6 +3,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/components/imgList.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_update/components/imange_list_selected.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_update/evidence_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
@@ -25,28 +26,28 @@ class EvidenceCard extends StatefulWidget {
   State<EvidenceCard> createState() => _EvidenceCardState();
 }
 
-class _EvidenceCardState extends State<EvidenceCard> {
-  //List<dynamic> urlImages = [];
+class _EvidenceCardState extends State<EvidenceCard>
+    with AutomaticKeepAliveClientMixin {
+  List<dynamic> urlImages = [];
   bool isExpanded = false;
   int currentPage = 0;
   //PageController _pageController = PageController();
+  String? supAvatar;
   @override
   void initState() {
     super.initState();
-    // if (widget.evidence['urlImage'] != null)
-    //   urlImages = widget.evidence['urlImage'];
+    supAvatar = widget.task['avatarSupervisor'];
+    if (widget.evidence['urlImage'] != null)
+      urlImages = widget.evidence['urlImage'];
   }
 
   Widget buildUrlImagetWidget(String imageUrl, int index) {
     return GestureDetector(
-      onTap: () async {
-        await Navigator.of(context).push(
+      onTap: () {
+        Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ImageListSelectedPage(
-                viewOnly: true,
-                urlImages: widget.evidence['urlImage'],
-                selectedAssetList: [],
-                indexFocus: index),
+            builder: (context) => ImageListPage(
+                viewOnly: true, urlImages: urlImages, indexFocus: index),
           ),
         );
       },
@@ -73,6 +74,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4.0),
       decoration: BoxDecoration(
@@ -95,9 +97,25 @@ class _EvidenceCardState extends State<EvidenceCard> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.account_circle_sharp,
-                      size: 45,
+                    // Icon(
+                    //   Icons.account_circle_sharp,
+                    //   size: 45,
+                    // ),
+                    ClipOval(
+                      child: Image.network(
+                        supAvatar ?? "string",
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     SizedBox(width: 10),
                     Column(
@@ -235,323 +253,294 @@ class _EvidenceCardState extends State<EvidenceCard> {
               ),
             ),
           ),
-          // if (widget.evidence['urlImage'] != null) ...[
-          //   SizedBox(height: 8.0),
-          //   Container(
-          //     constraints: BoxConstraints(maxHeight: 230.0),
-          //     child: PageView.builder(
-          //       controller: _pageController,
-          //       itemCount: widget.evidence['urlImage'].length,
-          //       onPageChanged: (int page) {
-          //         setState(() {
-          //           currentPage = page;
-          //         });
-          //       },
-          //       itemBuilder: (BuildContext context, int index) {
-          //         return buildEvidenceImage(
-          //             widget.evidence['urlImage'][index], index);
-          //       },
-          //     ),
-          //   ),
-          //   SizedBox(height: 8.0),
-          //   if (widget.evidence['urlImage'].length > 1) ...[
-          //     Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: List.generate(
-          //         widget.evidence['urlImage'].length,
-          //         (index) => Container(
-          //           margin: EdgeInsets.symmetric(horizontal: 4.0),
-          //           width: 8.0,
-          //           height: 8.0,
-          //           decoration: BoxDecoration(
-          //             shape: BoxShape.circle,
-          //             color: currentPage == index ? Colors.blue : Colors.grey,
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ],
-          if (widget.evidence['urlImage'].length == 1)
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: buildUrlImagetWidget(widget.evidence['urlImage'][0], 0),
-            ),
-          if (widget.evidence['urlImage'].length == 2)
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Row(
-                children: [
-                  // Cột 1 của Hàng đầu chiếm 50%
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 1, bottom: 1),
-                      child: buildUrlImagetWidget(
-                          widget.evidence['urlImage'][0], 0),
-                    ),
-                  ),
-                  // Cột 2 của Hàng đầu chiếm 50%
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 1, bottom: 1),
-                      child: buildUrlImagetWidget(
-                          widget.evidence['urlImage'][1], 1),
-                    ),
-                  ),
-                ],
+          if (widget.evidence['urlImage'] != null) ...[
+            if (widget.evidence['urlImage'].length == 1)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: buildUrlImagetWidget(widget.evidence['urlImage'][0], 0),
               ),
-            ),
-          if (widget.evidence['urlImage'].length == 3)
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Row(
-                children: [
-                  // Cột 1 chiếm 70%
-                  Expanded(
-                    flex: 7,
-                    child: Container(
-                        padding: EdgeInsets.only(right: 1),
+            if (widget.evidence['urlImage'].length == 2)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Row(
+                  children: [
+                    // Cột 1 của Hàng đầu chiếm 50%
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 1, bottom: 1),
                         child: buildUrlImagetWidget(
-                            widget.evidence['urlImage'][0], 0)),
-                  ),
-                  // Cột 2 chiếm 30%
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      padding: EdgeInsets.only(left: 1),
-                      child: Column(
+                            widget.evidence['urlImage'][0], 0),
+                      ),
+                    ),
+                    // Cột 2 của Hàng đầu chiếm 50%
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 1, bottom: 1),
+                        child: buildUrlImagetWidget(
+                            widget.evidence['urlImage'][1], 1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (widget.evidence['urlImage'].length == 3)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Row(
+                  children: [
+                    // Cột 1 chiếm 70%
+                    Expanded(
+                      flex: 7,
+                      child: Container(
+                          padding: EdgeInsets.only(right: 1),
+                          child: buildUrlImagetWidget(
+                              widget.evidence['urlImage'][0], 0)),
+                    ),
+                    // Cột 2 chiếm 30%
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 1),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 1),
+                                child: buildUrlImagetWidget(
+                                    widget.evidence['urlImage'][1], 1),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 1),
+                                child: buildUrlImagetWidget(
+                                    widget.evidence['urlImage'][2], 2),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (widget.evidence['urlImage'].length == 4)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Row(
+                  children: [
+                    // Cột 1 chiếm 70%
+                    Expanded(
+                      flex: 7,
+                      child: Container(
+                          padding: EdgeInsets.only(right: 1),
+                          child: buildUrlImagetWidget(
+                              widget.evidence['urlImage'][0], 0)),
+                    ),
+                    // Cột 2 chiếm 30%
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 1),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 1, left: 1),
+                                child: buildUrlImagetWidget(
+                                    widget.evidence['urlImage'][1], 1),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 1, left: 1),
+                                child: buildUrlImagetWidget(
+                                    widget.evidence['urlImage'][2], 2),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 1, left: 1),
+                                child: buildUrlImagetWidget(
+                                    widget.evidence['urlImage'][3], 3),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (widget.evidence['urlImage'].length == 5)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  children: [
+                    // Hàng đầu chiếm 70%
+                    Expanded(
+                      flex: 6,
+                      child: Row(
                         children: [
+                          // Cột 1 của Hàng đầu chiếm 50%
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 1),
+                              padding:
+                                  const EdgeInsets.only(right: 1, bottom: 1),
                               child: buildUrlImagetWidget(
-                                  widget.evidence['urlImage'][1], 1),
+                                  widget.evidence['urlImage'][0], 0),
                             ),
                           ),
+                          // Cột 2 của Hàng đầu chiếm 50%
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 1),
+                              padding:
+                                  const EdgeInsets.only(left: 1, bottom: 1),
                               child: buildUrlImagetWidget(
-                                  widget.evidence['urlImage'][2], 2),
+                                  widget.evidence['urlImage'][1], 1),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          if (widget.evidence['urlImage'].length == 4)
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Row(
-                children: [
-                  // Cột 1 chiếm 70%
-                  Expanded(
-                    flex: 7,
-                    child: Container(
-                        padding: EdgeInsets.only(right: 1),
-                        child: buildUrlImagetWidget(
-                            widget.evidence['urlImage'][0], 0)),
-                  ),
-                  // Cột 2 chiếm 30%
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      padding: EdgeInsets.only(left: 1),
-                      child: Column(
+                    // Hàng thứ hai chiếm 30%
+                    Expanded(
+                      flex: 4,
+                      child: Row(
                         children: [
+                          // Cột 1 của Hàng thứ hai chiếm 33.33%
                           Expanded(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 1, left: 1),
-                              child: buildUrlImagetWidget(
-                                  widget.evidence['urlImage'][1], 1),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 1, left: 1),
+                              padding: const EdgeInsets.only(right: 1, top: 1),
                               child: buildUrlImagetWidget(
                                   widget.evidence['urlImage'][2], 2),
                             ),
                           ),
+                          // Cột 2 của Hàng thứ hai chiếm 33.33%
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 1, left: 1),
+                              padding: const EdgeInsets.only(
+                                  left: 1, right: 1, top: 1),
                               child: buildUrlImagetWidget(
                                   widget.evidence['urlImage'][3], 3),
                             ),
                           ),
+                          // Cột 3 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 1, top: 1),
+                              child: buildUrlImagetWidget(
+                                  widget.evidence['urlImage'][4], 4),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          if (widget.evidence['urlImage'].length == 5)
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Column(
-                children: [
-                  // Hàng đầu chiếm 70%
-                  Expanded(
-                    flex: 6,
-                    child: Row(
-                      children: [
-                        // Cột 1 của Hàng đầu chiếm 50%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 1, bottom: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][0], 0),
+            if (widget.evidence['urlImage'].length > 5)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  children: [
+                    // Hàng đầu chiếm 70%
+                    Expanded(
+                      flex: 6,
+                      child: Row(
+                        children: [
+                          // Cột 1 của Hàng đầu chiếm 50%
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 1, bottom: 1),
+                              child: buildUrlImagetWidget(
+                                  widget.evidence['urlImage'][0], 0),
+                            ),
                           ),
-                        ),
-                        // Cột 2 của Hàng đầu chiếm 50%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 1, bottom: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][1], 1),
+                          // Cột 2 của Hàng đầu chiếm 50%
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 1, bottom: 1),
+                              child: buildUrlImagetWidget(
+                                  widget.evidence['urlImage'][1], 1),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  // Hàng thứ hai chiếm 30%
-                  Expanded(
-                    flex: 4,
-                    child: Row(
-                      children: [
-                        // Cột 1 của Hàng thứ hai chiếm 33.33%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 1, top: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][2], 2),
+                    // Hàng thứ hai chiếm 30%
+                    Expanded(
+                      flex: 4,
+                      child: Row(
+                        children: [
+                          // Cột 1 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 1, top: 1),
+                              child: buildUrlImagetWidget(
+                                  widget.evidence['urlImage'][2], 2),
+                            ),
                           ),
-                        ),
-                        // Cột 2 của Hàng thứ hai chiếm 33.33%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 1, right: 1, top: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][3], 3),
+                          // Cột 2 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 1, right: 1, top: 1),
+                              child: buildUrlImagetWidget(
+                                  widget.evidence['urlImage'][3], 3),
+                            ),
                           ),
-                        ),
-                        // Cột 3 của Hàng thứ hai chiếm 33.33%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 1, top: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][4], 4),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          if (widget.evidence['urlImage'].length > 5)
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Column(
-                children: [
-                  // Hàng đầu chiếm 70%
-                  Expanded(
-                    flex: 6,
-                    child: Row(
-                      children: [
-                        // Cột 1 của Hàng đầu chiếm 50%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 1, bottom: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][0], 0),
-                          ),
-                        ),
-                        // Cột 2 của Hàng đầu chiếm 50%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 1, bottom: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][1], 1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Hàng thứ hai chiếm 30%
-                  Expanded(
-                    flex: 4,
-                    child: Row(
-                      children: [
-                        // Cột 1 của Hàng thứ hai chiếm 33.33%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 1, top: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][2], 2),
-                          ),
-                        ),
-                        // Cột 2 của Hàng thứ hai chiếm 33.33%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 1, right: 1, top: 1),
-                            child: buildUrlImagetWidget(
-                                widget.evidence['urlImage'][3], 3),
-                          ),
-                        ),
-                        // Cột 3 của Hàng thứ hai chiếm 33.33%
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 1, top: 1),
-                            child: GestureDetector(
-                              onTap: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageListSelectedPage(
-                                        viewOnly: true,
-                                        urlImages: widget.evidence['urlImage'],
-                                        selectedAssetList: [],
-                                        indexFocus: 4),
-                                  ),
-                                );
-                              },
-                              child: Stack(
-                                children: [
-                                  buildUrlImagetWidget(
-                                      widget.evidence['urlImage'][4], 4),
-                                  Container(
-                                    color: Colors.black.withOpacity(
-                                        0.4), // Điều chỉnh độ mờ tại đây
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "+ ${widget.evidence['urlImage'].length - 5}",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600),
+                          // Cột 3 của Hàng thứ hai chiếm 33.33%
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 1, top: 1),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ImageListSelectedPage(
+                                              viewOnly: true,
+                                              urlImages:
+                                                  widget.evidence['urlImage'],
+                                              selectedAssetList: [],
+                                              indexFocus: 4),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
+                                child: Stack(
+                                  children: [
+                                    buildUrlImagetWidget(
+                                        widget.evidence['urlImage'][4], 4),
+                                    Container(
+                                      color: Colors.black.withOpacity(
+                                          0.4), // Điều chỉnh độ mờ tại đây
+                                    ),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "+ ${widget.evidence['urlImage'].length - 5}",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+          ],
           SizedBox(height: 8.0),
         ],
       ),
@@ -606,4 +595,8 @@ class _EvidenceCardState extends State<EvidenceCard> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
