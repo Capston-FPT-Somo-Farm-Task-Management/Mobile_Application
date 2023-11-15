@@ -277,17 +277,78 @@ class PlantPageState extends State<PlantPage> {
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              '${plant['areaName']}',
-                                              style:
-                                                  const TextStyle(fontSize: 16),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  margin:
+                                                      EdgeInsets.only(left: 7),
+                                                  height: 60,
+                                                  width: 4,
+                                                  decoration: BoxDecoration(
+                                                    color: kPrimaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(20),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: "Ngày tạo: ",
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .black87),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                '${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors
+                                                                    .black87),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 7),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: "Địa điểm: ",
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .black87),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                '${plant['areaName']}',
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors
+                                                                    .black87),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),

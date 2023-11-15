@@ -16,10 +16,11 @@ class EmployeeDetailsPopup extends StatelessWidget {
       insetPadding: EdgeInsets.all(20),
       contentPadding: EdgeInsets.all(20),
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 employee['avatar'] != null
                     ? Container(

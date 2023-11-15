@@ -3,7 +3,9 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -182,14 +184,15 @@ class PlantTypePageState extends State<PlantTypePage> {
                     return Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: GestureDetector(
-                        // onTap: () {
-                        //   showDialog(
-                        //     context: context,
-                        //     builder: (BuildContext context) {
-                        //       return LiveStockDetailsPopup(liveStock: liveStock);
-                        //     },
-                        //   );
-                        // },
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return HabitantTypeDetailPopup(
+                                  habitantType: plant);
+                            },
+                          );
+                        },
                         onLongPress: () {
                           // _showBottomSheet(context, liveStock);
                         },
@@ -210,7 +213,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(15)),
-                            height: 80,
+                            height: 150,
                             width: double.infinity,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,6 +256,79 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white),
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.only(left: 7),
+                                            height: 70,
+                                            width: 4,
+                                            decoration: BoxDecoration(
+                                              color: kPrimaryColor,
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(20),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: "Xuất xứ: ",
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color:
+                                                              Colors.black87),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          '${plant['origin']}',
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color:
+                                                              Colors.black87),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(height: 10),
+                                              RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: "Môi trường sống: ",
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color:
+                                                              Colors.black87),
+                                                    ),
+                                                    TextSpan(
+                                                      text: plant['environment'] ==
+                                                              null
+                                                          ? "chưa có"
+                                                          : wrapWordsWithEllipsis(
+                                                              '${plant['environment']}',
+                                                              20),
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color:
+                                                              Colors.black87),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),

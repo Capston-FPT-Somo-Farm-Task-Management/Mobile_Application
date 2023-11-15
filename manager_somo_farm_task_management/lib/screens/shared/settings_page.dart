@@ -143,10 +143,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         leading: const Icon(Icons.person),
                         title: const Text('Thông tin cá nhân'),
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => UserProfilePage(
-                                userId: userId!, farmId: farmId!),
-                          ));
+                          Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (context) => UserProfilePage(
+                                  userId: userId!, farmId: farmId!),
+                            ),
+                          )
+                              .then(
+                            (value) {
+                              _loadUserData();
+                            },
+                          );
                         },
                       ),
                       ListTile(
