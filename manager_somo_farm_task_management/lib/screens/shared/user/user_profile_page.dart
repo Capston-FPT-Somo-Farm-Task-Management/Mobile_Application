@@ -54,7 +54,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         elevation: 0,
         leading: GestureDetector(
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop("ok");
             },
             child: Icon(Icons.arrow_back, color: kSecondColor)),
       ),
