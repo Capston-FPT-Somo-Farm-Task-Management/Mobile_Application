@@ -708,8 +708,17 @@ class TaskPageState extends State<TaskPage> {
                                                             : 'Công việc do người quản lí tạo',
                                                         child: ClipOval(
                                                           child: Image.network(
-                                                            task['avatar'] ??
-                                                                "String",
+                                                            (role == "Manager" &&
+                                                                    task['managerName'] ==
+                                                                        null)
+                                                                ? task[
+                                                                    'avatarSupervisor']
+                                                                : (role == "Supervisor" &&
+                                                                        task['managerName'] !=
+                                                                            null)
+                                                                    ? task[
+                                                                        'avatarManager']
+                                                                    : "string",
                                                             width: 25,
                                                             height: 25,
                                                             fit: BoxFit.cover,
@@ -871,6 +880,7 @@ class TaskPageState extends State<TaskPage> {
                                                         .spaceBetween,
                                                 children: [
                                                   Flexible(
+                                                    flex: 2,
                                                     child: RichText(
                                                       text: TextSpan(
                                                         children: [
@@ -900,32 +910,36 @@ class TaskPageState extends State<TaskPage> {
                                                           TextOverflow.ellipsis,
                                                     ),
                                                   ),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text: 'Vị trí: ',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 15,
-                                                            color:
-                                                                Colors.black87,
+                                                  Flexible(
+                                                    flex: 1,
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: 'Vị trí: ',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 15,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        TextSpan(
-                                                          text:
-                                                              '${task['fieldName'] ?? task['addressDetail']}',
-                                                          style: TextStyle(
-                                                            fontSize: 15,
-                                                            color:
-                                                                Colors.black87,
+                                                          TextSpan(
+                                                            text:
+                                                                '${task['fieldName'] ?? task['addressDetail']}',
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ],
                                               ),

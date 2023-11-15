@@ -21,6 +21,7 @@ class EvidencePageState extends State<EvidencePage> {
 
   Future<void> getEvdidence() async {
     EvidenceService().getEvidencebyTaskId(widget.task['id']).then((value) {
+      print(value);
       setState(() {
         evidences = value;
         isLoading = false;
@@ -30,6 +31,7 @@ class EvidencePageState extends State<EvidencePage> {
 
   @override
   void initState() {
+    print(widget.role);
     super.initState();
     getEvdidence();
   }
@@ -158,20 +160,17 @@ class EvidencePageState extends State<EvidencePage> {
                       )
                     : RefreshIndicator(
                         onRefresh: () => getEvdidence(),
-                        child: ListView.builder(
-                          itemCount: evidences.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                EvidenceCard(
-                                  role: widget.role,
-                                  evidence: evidences[index],
-                                  task: widget.task,
-                                  updateEvidence: getEvdidence,
-                                ),
-                              ],
-                            );
-                          },
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: evidences.map((evidence) {
+                              return EvidenceCard(
+                                role: widget.role,
+                                evidence: evidence,
+                                task: widget.task,
+                                updateEvidence: getEvdidence,
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
           ),

@@ -532,13 +532,17 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                             ),
                                           )
                                               .then((value) {
-                                            if (value != null)
+                                            if (value != null) {
+                                              setState(() {
+                                                page = 1;
+                                              });
                                               _getTasksForSelectedDateAndStatus(
                                                   1,
                                                   10,
                                                   _selectedDate,
                                                   groupValue,
                                                   true);
+                                            }
                                           });
                                         },
                                         onLongPress: () {
@@ -567,8 +571,17 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                                         : 'Công việc do người quản lí tạo',
                                                     child: ClipOval(
                                                       child: Image.network(
-                                                        task['avatar'] ??
-                                                            "String",
+                                                        (role == "Manager" &&
+                                                                task['managerName'] ==
+                                                                    null)
+                                                            ? task[
+                                                                'avatarSupervisor']
+                                                            : (role == "Supervisor" &&
+                                                                    task['managerName'] !=
+                                                                        null)
+                                                                ? task[
+                                                                    'avatarManager']
+                                                                : "string",
                                                         width: 25,
                                                         height: 25,
                                                         fit: BoxFit.cover,
