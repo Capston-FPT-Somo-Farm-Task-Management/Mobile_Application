@@ -21,12 +21,10 @@ TextStyle get subHeadingStyle {
 }
 
 TextStyle get headingStyle {
-  return GoogleFonts.lato(
-    textStyle: const TextStyle(
-      fontSize: 30,
-      fontWeight: FontWeight.bold,
-      color: kSecondColor,
-    ),
+  return TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.w600,
+    color: kSecondColor,
   );
 }
 
