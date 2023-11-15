@@ -26,8 +26,7 @@ class EvidenceCard extends StatefulWidget {
   State<EvidenceCard> createState() => _EvidenceCardState();
 }
 
-class _EvidenceCardState extends State<EvidenceCard>
-    with AutomaticKeepAliveClientMixin {
+class _EvidenceCardState extends State<EvidenceCard> {
   List<dynamic> urlImages = [];
   bool isExpanded = false;
   int currentPage = 0;
@@ -74,7 +73,6 @@ class _EvidenceCardState extends State<EvidenceCard>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4.0),
       decoration: BoxDecoration(
@@ -97,10 +95,6 @@ class _EvidenceCardState extends State<EvidenceCard>
               children: [
                 Row(
                   children: [
-                    // Icon(
-                    //   Icons.account_circle_sharp,
-                    //   size: 45,
-                    // ),
                     ClipOval(
                       child: Image.network(
                         supAvatar ?? "string",
@@ -595,8 +589,4 @@ class _EvidenceCardState extends State<EvidenceCard>
       ),
     );
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
