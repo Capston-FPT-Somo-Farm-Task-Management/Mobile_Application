@@ -235,7 +235,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                       borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(10),
                                           topRight: Radius.circular(10))),
-                                  height: 110,
+                                  height: 120,
                                   width: double.infinity,
                                   child: Flexible(
                                     child: Row(
@@ -292,23 +292,81 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                   ),
                                                 ],
                                               ),
-                                              const SizedBox(height: 5),
-                                              Flexible(
-                                                child: Text(
-                                                  'Mã vật nuôi: ${liveStock['externalId']}',
-                                                  style: const TextStyle(
-                                                      fontSize: 16),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              Flexible(
-                                                child: Text(
-                                                  '${liveStock['areaName']}',
-                                                  style: const TextStyle(
-                                                      fontSize: 16),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 7),
+                                                    height: 60,
+                                                    width: 4,
+                                                    decoration: BoxDecoration(
+                                                      color: kPrimaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(20),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                                  "Mã vật vuôi: ",
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87),
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                                  '${liveStock['externalId']}',
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black87),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                                  "Địa điểm: ",
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: Colors
+                                                                      .black87),
+                                                            ),
+                                                            TextSpan(
+                                                              text:
+                                                                  '${liveStock['areaName']}',
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black87),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
                                               ),
                                             ],
                                           ),

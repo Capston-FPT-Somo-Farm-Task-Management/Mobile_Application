@@ -330,7 +330,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                                       text: TextSpan(
                                                         children: [
                                                           TextSpan(
-                                                            text: "Đại điểm: ",
+                                                            text: "Địa điểm: ",
                                                             style: TextStyle(
                                                                 fontSize: 16,
                                                                 fontWeight:
