@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/liveStock_update/livestock_field_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/habitantType_update/habitantType_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/taskType_update/taskType_update_page.dart';
 
-class LiveStockFieldDetailsPopup extends StatelessWidget {
-  final Map<String, dynamic> liveStockField;
-  const LiveStockFieldDetailsPopup({required this.liveStockField});
+class TaskTypeDetailPopup extends StatelessWidget {
+  final Map<String, dynamic> taskType;
+
+  const TaskTypeDetailPopup({required this.taskType});
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +17,10 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            wrapWords(liveStockField['name'], 10),
+            "Chi tiết loại công việc",
             style: const TextStyle(
               color: kPrimaryColor,
-              fontSize: 30,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -31,8 +32,7 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      UpdateLiveStockField(livestockFied: liveStockField),
+                  builder: (context) => UpdateTaskType(taskType: taskType),
                 ),
               );
             },
@@ -44,69 +44,56 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.tree,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Tên loại công việc: ${taskType['name']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.rulerVertical,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Loại công việc: ${taskType['status']}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
-                  FontAwesomeIcons.tag,
+                  FontAwesomeIcons.scroll,
                   color: kSecondColor,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  wrapWords('Mã chuồng: ${liveStockField['code']}', 30),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.chartArea,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Diện tích: ${liveStockField['area']} mét vuông',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 45),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.map,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Khu vực: ${liveStockField['areaName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.locationDot,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Vùng: ${liveStockField['zoneName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
+                Flexible(
+                  child: Text(
+                    taskType['description'] == null
+                        ? 'Mô tả: chưa có'
+                        : 'Mô tả: ${taskType['description']}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ],

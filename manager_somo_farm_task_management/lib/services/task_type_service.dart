@@ -126,4 +126,22 @@ class TaskTypeService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> UpdateTaskType(Map<String, dynamic> taskType, int id) async {
+    final String updateTasktypeUrl = '$baseUrl/TaskType/{$id}';
+    var body = jsonEncode(taskType);
+    final response = await http.put(Uri.parse(updateTasktypeUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

@@ -12,7 +12,7 @@ class PlantDetailPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      insetPadding: EdgeInsets.zero,
+      insetPadding: EdgeInsets.symmetric(horizontal: 20),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
