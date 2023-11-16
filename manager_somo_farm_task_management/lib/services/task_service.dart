@@ -11,6 +11,7 @@ class TaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -34,6 +35,7 @@ class TaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -54,6 +56,7 @@ class TaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -87,6 +90,7 @@ class TaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -120,6 +124,7 @@ class TaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -138,7 +143,10 @@ class TaskService {
     var body = jsonEncode(taskData);
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
       body: body,
     );
 
@@ -159,6 +167,7 @@ class TaskService {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
 
@@ -181,6 +190,7 @@ class TaskService {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
         body: jsonEncode(description),
       );
@@ -205,6 +215,7 @@ class TaskService {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
 
@@ -230,6 +241,7 @@ class TaskService {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
         body: body,
       );
@@ -267,6 +279,7 @@ class TaskService {
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -306,6 +319,7 @@ class TaskService {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
       );
 
@@ -330,6 +344,7 @@ class TaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 

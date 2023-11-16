@@ -222,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: const Center(
                           child: Text(
-                            'Login',
+                            'Đăng nhập',
                             style: TextStyle(
                               color: kTextWhiteColor,
                               fontSize: 18.0,
