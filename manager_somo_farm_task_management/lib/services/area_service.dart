@@ -10,6 +10,7 @@ class AreaService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -31,6 +32,7 @@ class AreaService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -54,6 +56,7 @@ class AreaService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -77,6 +80,7 @@ class AreaService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -96,7 +100,10 @@ class AreaService {
     var body = jsonEncode(areaData);
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
       body: body,
     );
 
@@ -115,6 +122,7 @@ class AreaService {
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -132,6 +140,7 @@ class AreaService {
     final response = await http.put(Uri.parse(updateAreaUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
         body: body);
 

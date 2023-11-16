@@ -23,9 +23,9 @@ class LoginService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-      final String accessToken = responseData['accessToken'];
+      final String aToken = responseData['accessToken'];
       final String refreshToken = responseData['refreshToken'];
-
+      accessToken = aToken;
       Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
 
       final String role = decodedToken[

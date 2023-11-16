@@ -12,6 +12,7 @@ class UserService {
       Uri.parse(getUserUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
