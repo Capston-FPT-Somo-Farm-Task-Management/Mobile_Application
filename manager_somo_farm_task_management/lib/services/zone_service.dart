@@ -32,6 +32,7 @@ class ZoneService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
