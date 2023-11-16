@@ -31,7 +31,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   int groupValue = 0;
   DateTime _selectedDate = DateTime.now();
   List<Map<String, dynamic>> tasks = [];
-  bool isLoading = false;
+  bool isLoading = true;
   bool isMoreLeft = false;
   String? role;
   int? userId;

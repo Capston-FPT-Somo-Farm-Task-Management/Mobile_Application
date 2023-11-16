@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/dashboard/dashboard_page.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,7 +44,9 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
     final storedUsername = prefs.getInt('userId');
     final storedFarmId = prefs.getInt('farmId');
     final storedRole = prefs.getString('role');
+    final aT = prefs.getString('accessToken');
     setState(() {
+      accessToken = aT!;
       userId = storedUsername;
       farmId = storedFarmId;
       role = storedRole;
