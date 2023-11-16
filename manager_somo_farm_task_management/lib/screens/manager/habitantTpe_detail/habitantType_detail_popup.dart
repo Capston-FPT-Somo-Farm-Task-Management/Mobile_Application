@@ -11,7 +11,7 @@ class HabitantTypeDetailPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      insetPadding: EdgeInsets.zero,
+      insetPadding: EdgeInsets.symmetric(horizontal: 20),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -159,6 +159,7 @@ class HabitantTypeDetailPopup extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.scroll,
@@ -166,12 +167,14 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  habitantType['description'] == null
-                      ? 'Mô tả: chưa có'
-                      : 'Mô tả: ${habitantType['description']}',
-                  style: const TextStyle(
-                    fontSize: 18,
+                Flexible(
+                  child: Text(
+                    habitantType['description'] == null
+                        ? 'Mô tả: chưa có'
+                        : 'Mô tả: ${habitantType['description']}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ],
