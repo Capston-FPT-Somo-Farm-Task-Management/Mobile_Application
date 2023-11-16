@@ -4,7 +4,6 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/taskType/taskType_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../componets/input_field.dart';
 
@@ -19,24 +18,14 @@ class UpdateTaskType extends StatefulWidget {
 class UpdateTaskTypeState extends State<UpdateTaskType> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  List<String> filterStatus = ["Cây trồng", "Vật nuôi"];
+  List<String> filterStatus = ["Công việc cây trồng", "Công việc chăn nuôi"];
   String _selectedStatus = "";
 
-  String name = "";
-  String description = "";
   int? status;
   int? farmId;
   int? id;
   bool isLoading = true;
   bool isUpdating = false;
-
-  Future<void> getFarmId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedFarmId = prefs.getInt('farmId');
-    setState(() {
-      farmId = storedFarmId;
-    });
-  }
 
   Future<bool> UpdateTaskType(Map<String, dynamic> taskType, int id) {
     return TaskTypeService().UpdateTaskType(taskType, id);
@@ -210,8 +199,8 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
       });
       Map<String, dynamic> taskTpye = {
         'name': _nameController.text,
-        if (_selectedStatus == "Động vật") 'status': 1,
-        if (_selectedStatus == "Thực vật") 'status': 0,
+        if (_selectedStatus == "Công việc chăn nuôi") 'status': 1,
+        if (_selectedStatus == "Công việc cây trồng") 'status': 0,
         'description': _descriptionController.text
       };
       UpdateTaskType(taskTpye, widget.taskType['id']).then((value) {
