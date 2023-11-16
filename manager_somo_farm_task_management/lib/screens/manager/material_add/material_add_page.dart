@@ -189,7 +189,7 @@ class CreateMaterialState extends State<CreateMaterial> {
     setState(() {
       isLoading = true;
     });
-    if (_nameController.text.isNotEmpty || selectedAssetList.isNotEmpty) {
+    if (_nameController.text.isNotEmpty && selectedAssetList.isNotEmpty) {
       convertAssetsToFiles(selectedAssetList).then((value) {
         createMaterial(_nameController.text.trim(), selectedFiles!)
             .then((value) {
@@ -210,8 +210,7 @@ class CreateMaterialState extends State<CreateMaterial> {
       setState(() {
         isLoading = false;
       });
-      SnackbarShowNoti.showSnackbar(
-          'Vui lòng điền đầy đủ thông tin của nhân viên', true);
+      SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin!', true);
     }
   }
 }
