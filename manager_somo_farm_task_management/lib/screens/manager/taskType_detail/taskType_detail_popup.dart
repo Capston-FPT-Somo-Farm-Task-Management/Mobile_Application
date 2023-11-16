@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantType_update/habitantType_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/taskType_update/taskType_update_page.dart';
 
 class TaskTypeDetailPopup extends StatelessWidget {
   final Map<String, dynamic> taskType;
@@ -31,8 +32,7 @@ class TaskTypeDetailPopup extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      UpdateHabitantType(habitantType: taskType),
+                  builder: (context) => UpdateTaskType(taskType: taskType),
                 ),
               );
             },
