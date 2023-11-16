@@ -22,7 +22,7 @@ class LiveStockFieldPage extends StatefulWidget {
 
 class LiveStockFieldPageState extends State<LiveStockFieldPage> {
   int? farmId;
-  List<LiveStock> SearchliveStock = plantList;
+  List<LiveStock> SearchliveStock = taskList;
   bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
@@ -34,7 +34,7 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      SearchliveStock = plantList
+      SearchliveStock = taskList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();

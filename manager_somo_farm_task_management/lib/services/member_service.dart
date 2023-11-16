@@ -12,6 +12,7 @@ class MemberService {
       Uri.parse(getSupervisorsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -34,6 +35,7 @@ class MemberService {
       Uri.parse(getSupervisorsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -52,7 +54,10 @@ class MemberService {
     var body = jsonEncode(data);
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken'
+      },
       body: body,
     );
 
@@ -71,6 +76,7 @@ class MemberService {
       Uri.parse(getSupervisorsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
