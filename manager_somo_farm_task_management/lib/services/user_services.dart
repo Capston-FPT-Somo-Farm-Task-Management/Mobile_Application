@@ -46,7 +46,16 @@ class UserService {
         await MultipartFile.fromFile(image.path),
       ));
 
-    Response response = await dio.put(apiUrl, data: formData);
+    Response response = await dio.put(
+      apiUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
 
     if (response.statusCode == 200) {
       return true;
