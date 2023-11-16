@@ -34,6 +34,7 @@ class EvidenceService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -52,7 +53,10 @@ class EvidenceService {
     final String url = '$baseUrl/TaskEvidence/${evidenceId}';
     final response = await http.delete(
       Uri.parse(url),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken'
+      },
     );
 
     if (response.statusCode == 200) {
@@ -85,7 +89,16 @@ class EvidenceService {
 
     try {
       // Gửi request POST với FormData
-      Response response = await dio.post(url, data: formData);
+      Response response = await dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
 
       // Kiểm tra status code
       if (response.statusCode == 200) {
@@ -129,7 +142,16 @@ class EvidenceService {
     }
     try {
       // Gửi request POST với FormData
-      Response response = await dio.put(url, data: formData);
+      Response response = await dio.put(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
 
       // Kiểm tra status code
       if (response.statusCode == 200) {

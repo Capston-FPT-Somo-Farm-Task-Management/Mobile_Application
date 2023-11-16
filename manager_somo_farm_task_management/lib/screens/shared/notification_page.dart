@@ -233,187 +233,186 @@ class _NotificationPageState extends State<NotificationPage>
             ),
             SizedBox(height: 10),
             Expanded(
-                child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(color: kPrimaryColor),
-                      )
-                    : filteredNoti.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.notifications_off,
-                                  size:
-                                      80, // Kích thước biểu tượng có thể điều chỉnh
-                                  color: Colors.grey, // Màu của biểu tượng
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    )
+                  : filteredNoti.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.notifications_off,
+                                size:
+                                    80, // Kích thước biểu tượng có thể điều chỉnh
+                                color: Colors.grey, // Màu của biểu tượng
+                              ),
+                              SizedBox(
+                                  height:
+                                      16), // Khoảng cách giữa biểu tượng và văn bản
+                              Text(
+                                "Bạn không có thông báo nào",
+                                style: TextStyle(
+                                  fontSize:
+                                      18, // Kích thước văn bản có thể điều chỉnh
+                                  color: Colors.grey, // Màu văn bản
                                 ),
-                                SizedBox(
-                                    height:
-                                        16), // Khoảng cách giữa biểu tượng và văn bản
-                                Text(
-                                  "Bạn không có thông báo nào",
-                                  style: TextStyle(
-                                    fontSize:
-                                        18, // Kích thước văn bản có thể điều chỉnh
-                                    color: Colors.grey, // Màu văn bản
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : RefreshIndicator(
-                            onRefresh: () async {
-                              if (showUnreadOnly) {
-                                getNotSeenNoti(1, 10, true);
-                              } else {
-                                getAllNoti(1, 10, true);
-                              }
-                              // Add a return statement or throw an error here if needed.
-                            },
-                            child: ListView.builder(
-                                itemCount: isLoadingMore
-                                    ? filteredNoti.length + 1
-                                    : filteredNoti.length,
-                                controller: scrollController,
-                                itemExtent: 90,
-                                itemBuilder: (_, index) {
-                                  if (index < filteredNoti.length) {
-                                    Map<String, dynamic> noti =
-                                        filteredNoti[index];
-                                    bool isRead = noti['isRead'] ?? false;
-                                    String message = noti['message'];
-                                    return AnimationConfiguration.staggeredList(
-                                      position: index,
-                                      child: SlideAnimation(
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TaskDetailsPage(
-                                                        taskId: noti['taskId']),
-                                              ),
-                                            );
-                                            NotiService()
-                                                .isReadNoti(noti['id'])
-                                                .then((value) {
-                                              showUnreadOnly
-                                                  ? getNotSeenNoti(1, 10, true)
-                                                  : getAllNoti(1, 10, true);
-                                            }).catchError((e) {
-                                              SnackbarShowNoti.showSnackbar(
-                                                  e.toString(), true);
-                                            });
-                                          },
+                              ),
+                            ],
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () async {
+                            if (showUnreadOnly) {
+                              getNotSeenNoti(1, 10, true);
+                            } else {
+                              getAllNoti(1, 10, true);
+                            }
+                            // Add a return statement or throw an error here if needed.
+                          },
+                          child: ListView.builder(
+                              itemCount: isLoadingMore
+                                  ? filteredNoti.length + 1
+                                  : filteredNoti.length,
+                              controller: scrollController,
+                              itemExtent: 90,
+                              itemBuilder: (_, index) {
+                                if (index < filteredNoti.length) {
+                                  Map<String, dynamic> noti =
+                                      filteredNoti[index];
+                                  bool isRead = noti['isRead'] ?? false;
+                                  String message = noti['message'];
+                                  return AnimationConfiguration.staggeredList(
+                                    position: index,
+                                    child: SlideAnimation(
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TaskDetailsPage(
+                                                      taskId: noti['taskId']),
+                                            ),
+                                          );
+                                          NotiService()
+                                              .isReadNoti(noti['id'])
+                                              .then((value) {
+                                            showUnreadOnly
+                                                ? getNotSeenNoti(1, 10, true)
+                                                : getAllNoti(1, 10, true);
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        child: Container(
+                                          color: isRead
+                                              ? Colors.white
+                                              : Color.fromARGB(
+                                                  255, 209, 222, 233),
                                           child: Container(
-                                            color: isRead
-                                                ? Colors.white
-                                                : Color.fromARGB(
-                                                    255, 209, 222, 233),
-                                            child: Container(
-                                              margin: EdgeInsets.only(top: 10),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  ListTile(
-                                                    leading: Icon(
-                                                      Icons.notifications,
-                                                      color: Colors.black,
-                                                    ),
-                                                    title: message.contains("'")
-                                                        ? RichText(
-                                                            text: TextSpan(
-                                                              style: DefaultTextStyle
-                                                                      .of(
-                                                                          context)
-                                                                  .style
-                                                                  .copyWith(
-                                                                      fontSize:
-                                                                          16),
-                                                              children: [
-                                                                TextSpan(
-                                                                  text: message
-                                                                      .substring(
-                                                                          0,
-                                                                          message.indexOf("'") +
-                                                                              1),
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ListTile(
+                                                  leading: Icon(
+                                                    Icons.notifications,
+                                                    color: Colors.black,
+                                                  ),
+                                                  title: message.contains("'")
+                                                      ? RichText(
+                                                          text: TextSpan(
+                                                            style: DefaultTextStyle
+                                                                    .of(context)
+                                                                .style
+                                                                .copyWith(
+                                                                    fontSize:
+                                                                        16),
+                                                            children: [
+                                                              TextSpan(
+                                                                text: message
+                                                                    .substring(
+                                                                        0,
+                                                                        message.indexOf("'") +
+                                                                            1),
+                                                              ),
+                                                              TextSpan(
+                                                                text: message
+                                                                    .substring(
+                                                                  message.indexOf(
+                                                                          "'") +
+                                                                      1,
+                                                                  message
+                                                                      .lastIndexOf(
+                                                                          "'"),
                                                                 ),
-                                                                TextSpan(
-                                                                  text: message
-                                                                      .substring(
-                                                                    message.indexOf(
-                                                                            "'") +
-                                                                        1,
-                                                                    message
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              TextSpan(
+                                                                text: message
+                                                                    .substring(message
                                                                         .lastIndexOf(
-                                                                            "'"),
-                                                                  ),
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: message
-                                                                      .substring(
-                                                                          message
-                                                                              .lastIndexOf("'")),
-                                                                  // Không cần style ở đây vì đã được thiết lập ở style chung
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        : Text(noti['message']),
-                                                    subtitle: Text(
-                                                      noti['time'],
-                                                      style: TextStyle(
-                                                        height: 2,
-                                                        color: Colors.grey[700],
-                                                      ),
-                                                    ),
-                                                    trailing:
-                                                        PopupMenuButton<String>(
-                                                      icon: Icon(
-                                                        Icons.more_horiz,
-                                                        color: Colors.grey[700],
-                                                      ),
-                                                      onSelected:
-                                                          (String selected) {},
-                                                      itemBuilder: (BuildContext
-                                                          context) {
-                                                        return [
-                                                          PopupMenuItem<String>(
-                                                            value: 'delete',
-                                                            child: Text(
-                                                                'Xóa thông báo'),
+                                                                            "'")),
+                                                                // Không cần style ở đây vì đã được thiết lập ở style chung
+                                                              ),
+                                                            ],
                                                           ),
-                                                          PopupMenuItem<String>(
-                                                            value:
-                                                                'markAsUnread',
-                                                            child: Text(
-                                                                'Đánh dấu chưa đọc'),
-                                                          ),
-                                                        ];
-                                                      },
+                                                        )
+                                                      : Text(noti['message']),
+                                                  subtitle: Text(
+                                                    noti['time'],
+                                                    style: TextStyle(
+                                                      height: 2,
+                                                      color: Colors.grey[700],
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                  trailing:
+                                                      PopupMenuButton<String>(
+                                                    icon: Icon(
+                                                      Icons.more_horiz,
+                                                      color: Colors.grey[700],
+                                                    ),
+                                                    onSelected:
+                                                        (String selected) {},
+                                                    itemBuilder:
+                                                        (BuildContext context) {
+                                                      return [
+                                                        PopupMenuItem<String>(
+                                                          value: 'delete',
+                                                          child: Text(
+                                                              'Xóa thông báo'),
+                                                        ),
+                                                        PopupMenuItem<String>(
+                                                          value: 'markAsUnread',
+                                                          child: Text(
+                                                              'Đánh dấu chưa đọc'),
+                                                        ),
+                                                      ];
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
                                       ),
-                                    );
-                                  } else {
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                          color: kPrimaryColor),
-                                    );
-                                  }
-                                }),
-                          )),
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                        color: kPrimaryColor),
+                                  );
+                                }
+                              }),
+                        ),
+            ),
           ],
         ),
       ),

@@ -15,6 +15,7 @@ class EmployeeService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -36,6 +37,7 @@ class EmployeeService {
       Uri.parse(getEmsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -57,6 +59,7 @@ class EmployeeService {
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -79,6 +82,7 @@ class EmployeeService {
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -123,7 +127,16 @@ class EmployeeService {
         await MultipartFile.fromFile(image.path),
       ));
 
-    Response response = await dio.post(apiUrl, data: formData);
+    Response response = await dio.post(
+      apiUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
 
     if (response.statusCode == 200) {
       return true;
@@ -179,7 +192,16 @@ class EmployeeService {
         await MultipartFile.fromFile(image.path),
       ));
 
-    Response response = await dio.put(apiUrl, data: formData);
+    Response response = await dio.put(
+      apiUrl,
+      data: formData,
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
 
     if (response.statusCode == 200) {
       return true;

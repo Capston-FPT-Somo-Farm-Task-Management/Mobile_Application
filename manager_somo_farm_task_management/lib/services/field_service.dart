@@ -11,6 +11,7 @@ class FieldService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -30,6 +31,7 @@ class FieldService {
     final response = await http.post(Uri.parse(createField),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
         },
         body: body);
 
@@ -48,6 +50,7 @@ class FieldService {
       Uri.parse(getPlantFieldUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -68,6 +71,7 @@ class FieldService {
       Uri.parse(getLivestockFieldUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -88,6 +92,7 @@ class FieldService {
       Uri.parse(getFieldUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -106,6 +111,7 @@ class FieldService {
     final response = await http.put(Uri.parse(updateFieldUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
         },
         body: body);
 
@@ -124,6 +130,7 @@ class FieldService {
       Uri.parse(deleteLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 

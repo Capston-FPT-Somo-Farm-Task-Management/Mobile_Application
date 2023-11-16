@@ -11,6 +11,7 @@ class LiveStockService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -31,6 +32,7 @@ class LiveStockService {
       Uri.parse(getLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -50,6 +52,7 @@ class LiveStockService {
       Uri.parse(deleteLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -66,6 +69,7 @@ class LiveStockService {
     final response = await http.post(Uri.parse(createLiveStockUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
         },
         body: body);
 
@@ -84,6 +88,7 @@ class LiveStockService {
       Uri.parse(getLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -103,6 +108,7 @@ class LiveStockService {
     final response = await http.put(Uri.parse(updateLiveStockUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
         },
         body: body);
 
