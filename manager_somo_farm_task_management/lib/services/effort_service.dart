@@ -8,7 +8,10 @@ class EffortService {
     final String apiUrl = "$baseUrl/FarmSubTask/Task(${taskId})/Effort";
     final response = await http.get(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken'
+      },
     );
 
     if (response.statusCode == 200) {
@@ -26,7 +29,10 @@ class EffortService {
     var body = jsonEncode(data);
     final response = await http.put(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken'
+      },
       body: body,
     );
     print(response.body);
@@ -46,7 +52,10 @@ class EffortService {
     print(body);
     final response = await http.put(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken'
+      },
       body: body,
     );
     print(response.body);
@@ -72,7 +81,10 @@ class EffortService {
         "$baseUrl/FarmSubTask/Employee(${employeeId})/TotalEffort?startDay=$dateTimeStart&endDay=$dateTimeEnd";
     final response = await http.get(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken'
+      },
     );
 
     if (response.statusCode == 200) {

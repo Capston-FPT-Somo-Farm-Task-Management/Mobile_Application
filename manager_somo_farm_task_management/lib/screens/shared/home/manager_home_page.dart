@@ -31,7 +31,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   int groupValue = 0;
   DateTime _selectedDate = DateTime.now();
   List<Map<String, dynamic>> tasks = [];
-  bool isLoading = true;
+  bool isLoading = false;
   bool isMoreLeft = false;
   String? role;
   int? userId;
@@ -92,6 +92,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
           index, pageSize, userId!, selectedDate, status, searchValue, 1);
+      print(selectedDateTasks);
     }
     if (reset) {
       setState(() {

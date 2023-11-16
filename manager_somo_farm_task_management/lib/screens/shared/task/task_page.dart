@@ -268,6 +268,7 @@ class TaskPageState extends State<TaskPage> {
                             onChanged: (value) {
                               setState(() {
                                 showRepeatedTasks = value!;
+                                page = 1;
                               });
                               _getTasksForSelectedDateAndStatus(1, 10,
                                   _selectedDate, groupValue, true, searchValue);

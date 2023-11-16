@@ -10,6 +10,7 @@ class FarmService {
       Uri.parse(getFarmUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 

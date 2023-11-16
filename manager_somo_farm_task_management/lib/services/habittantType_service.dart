@@ -13,6 +13,7 @@ class HabitantTypeService {
       Uri.parse(getPlantTypeUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -35,6 +36,7 @@ class HabitantTypeService {
       Uri.parse(getLLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
       },
     );
 
@@ -54,6 +56,7 @@ class HabitantTypeService {
     final response = await http.post(Uri.parse(createHabitantTypekUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
         },
         body: body);
 
@@ -71,6 +74,7 @@ class HabitantTypeService {
     final response = await http.put(Uri.parse(updateHabitantTypeUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
         },
         body: body);
 
