@@ -11,6 +11,7 @@ class PlantService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -31,6 +32,7 @@ class PlantService {
       Uri.parse(getPlantUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -50,6 +52,7 @@ class PlantService {
       Uri.parse(getLiveStockUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -67,6 +70,7 @@ class PlantService {
     final http.Response response =
         await http.put(Uri.parse(deletePlantUrl), headers: {
       'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
     });
 
     if (response.statusCode == 200) {
@@ -82,6 +86,7 @@ class PlantService {
     final response = await http.post(Uri.parse(createPlantUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
         body: body);
 
@@ -102,6 +107,7 @@ class PlantService {
       Uri.parse(getPlantUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -121,6 +127,7 @@ class PlantService {
     final response = await http.put(Uri.parse(updatePlantUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
         body: body);
 

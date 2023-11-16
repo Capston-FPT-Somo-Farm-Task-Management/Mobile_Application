@@ -11,6 +11,7 @@ class ZoneService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -52,6 +53,7 @@ class ZoneService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -72,6 +74,7 @@ class ZoneService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -92,6 +95,7 @@ class ZoneService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -110,7 +114,10 @@ class ZoneService {
     var body = jsonEncode(zoneData);
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
       body: body,
     );
 
@@ -128,6 +135,7 @@ class ZoneService {
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -144,6 +152,7 @@ class ZoneService {
     final response = await http.put(Uri.parse(updateZoneUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
         body: body);
 

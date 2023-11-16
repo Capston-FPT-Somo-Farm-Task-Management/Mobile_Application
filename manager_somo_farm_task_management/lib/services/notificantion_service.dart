@@ -11,6 +11,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -33,6 +34,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -55,6 +57,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -78,6 +81,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -100,6 +104,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -118,6 +123,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -137,6 +143,7 @@ class NotiService {
       Uri.parse(getAreasUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
