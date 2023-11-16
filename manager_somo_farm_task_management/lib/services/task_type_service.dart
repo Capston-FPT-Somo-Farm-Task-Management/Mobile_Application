@@ -128,12 +128,12 @@ class TaskTypeService {
   }
 
   Future<bool> UpdateTaskType(Map<String, dynamic> taskType, int id) async {
-    final String updateTasktypeUrl = '$baseUrl/TaskType/{$id}';
+    final String updateTasktypeUrl = '$baseUrl/TaskType/${id}';
     var body = jsonEncode(taskType);
     final response = await http.put(Uri.parse(updateTasktypeUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
+          'Authorization': 'Bearer $accessToken',
         },
         body: body);
 
