@@ -87,4 +87,43 @@ class TaskTypeService {
       throw Exception('Failed to get list TaskTypeActive');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getListTaskType() async {
+    final String getTaskTypesUrl = '$baseUrl/TaskType';
+
+    final http.Response response = await http.get(
+      Uri.parse(getTaskTypesUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<Map<String, dynamic>> listTaskTypeLivestocks =
+          List<Map<String, dynamic>>.from(data['data']);
+      return listTaskTypeLivestocks;
+    } else {
+      throw Exception('Failed to get list TaskTypeActive');
+    }
+  }
+
+  Future<bool> CreateTaskType(Map<String, dynamic> taskType) async {
+    final String createTasktypeUrl = '$baseUrl/TaskType';
+    var body = jsonEncode(taskType);
+    final response = await http.post(Uri.parse(createTasktypeUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

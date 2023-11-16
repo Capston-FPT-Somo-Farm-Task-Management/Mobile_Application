@@ -19,13 +19,13 @@ class LiveStockTypePage extends StatefulWidget {
 }
 
 class LiveStockTypePageState extends State<LiveStockTypePage> {
-  List<LiveStock> SearchliveStock = plantList;
+  List<LiveStock> SearchliveStock = taskList;
   bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      SearchliveStock = plantList
+      SearchliveStock = taskList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();

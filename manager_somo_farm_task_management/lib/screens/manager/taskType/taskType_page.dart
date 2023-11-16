@@ -6,45 +6,41 @@ import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
-import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
+import 'package:manager_somo_farm_task_management/screens/manager/tasktype_add/taskType_add_page.dart';
+import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
-class PlantTypePage extends StatefulWidget {
-  final int farmId;
-  const PlantTypePage({Key? key, required this.farmId}) : super(key: key);
+class TaskTypePage extends StatefulWidget {
+  const TaskTypePage({Key? key}) : super(key: key);
 
   @override
-  PlantTypePageState createState() => PlantTypePageState();
+  TaskTypePageState createState() => TaskTypePageState();
 }
 
-class PlantTypePageState extends State<PlantTypePage> {
-  List<LiveStock> Searchplant = taskList;
+class TaskTypePageState extends State<TaskTypePage> {
+  List<LiveStock> SearchTaskType = taskList;
   bool isLoading = true;
-
   final TextEditingController searchController = TextEditingController();
 
   void searchLiveStocks(String keyword) {
     setState(() {
-      Searchplant = taskList
+      SearchTaskType = taskList
           .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
 
-  List<Map<String, dynamic>> plants = [];
+  List<Map<String, dynamic>> taskTypes = [];
 
-  Future<void> GetAllPlantType() async {
-    HabitantTypeService()
-        .getPlantTypeFromHabitantType(widget.farmId)
-        .then((value) {
+  Future<void> GetAllTaskType() async {
+    TaskTypeService().getListTaskType().then((value) {
       setState(() {
         isLoading = false;
       });
       if (value.isNotEmpty) {
         setState(() {
-          plants = value;
+          taskTypes = value;
         });
       } else {
         throw Exception();
@@ -53,7 +49,7 @@ class PlantTypePageState extends State<PlantTypePage> {
   }
 
   Future<void> _initializeData() async {
-    await GetAllPlantType();
+    await GetAllTaskType();
   }
 
   @override
@@ -85,7 +81,7 @@ class PlantTypePageState extends State<PlantTypePage> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
-          'Loại cây trồng',
+          'Loại công việc',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 25.0,
@@ -121,10 +117,15 @@ class PlantTypePageState extends State<PlantTypePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlantType(
-                                        farmId: widget.farmId,
-                                      )),
-                            );
+                                  builder: (context) => CreateTaskType()),
+                            ).then((value) {
+                              if (value != null) {
+                                GetAllTaskType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo thành công!', false);
+                              }
+                            });
+                            ;
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
@@ -135,7 +136,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Tạo loại cây",
+                              "Tạo loại công việc",
                               style: TextStyle(fontSize: 19),
                             ),
                           ),
@@ -174,22 +175,21 @@ class PlantTypePageState extends State<PlantTypePage> {
               flex: 2,
               child: RefreshIndicator(
                 notificationPredicate: (_) => true,
-                onRefresh: () => GetAllPlantType(),
+                onRefresh: () => GetAllTaskType(),
                 child: ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: plants.length,
+                  itemCount: taskTypes.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> plant = plants[index];
-
+                    Map<String, dynamic> taskType = taskTypes[index];
                     return Container(
-                      margin: EdgeInsets.only(bottom: 15),
+                      margin: EdgeInsets.only(bottom: 10),
                       child: GestureDetector(
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return HabitantTypeDetailPopup(
-                                  habitantType: plant);
+                                  habitantType: taskType);
                             },
                           );
                         },
@@ -198,8 +198,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.grey,
@@ -213,7 +212,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(15)),
-                            height: 150,
+                            height: 140,
                             width: double.infinity,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +229,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                                         children: [
                                           Flexible(
                                             child: Text(
-                                              plant['name'],
+                                              taskType['name'],
                                               style: const TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
@@ -240,15 +239,16 @@ class PlantTypePageState extends State<PlantTypePage> {
                                           ),
                                           Container(
                                             decoration: BoxDecoration(
-                                              color: plant['isActive'] == false
-                                                  ? Colors.red[400]
-                                                  : kPrimaryColor,
+                                              color:
+                                                  taskType['isDelete'] == true
+                                                      ? Colors.red[400]
+                                                      : kPrimaryColor,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             padding: const EdgeInsets.all(10),
                                             child: Text(
-                                              plant['isActive'] == true
+                                              taskType['isDelete'] == false
                                                   ? "Active"
                                                   : "Inactive",
                                               style: const TextStyle(
@@ -259,11 +259,12 @@ class PlantTypePageState extends State<PlantTypePage> {
                                           ),
                                         ],
                                       ),
+                                      SizedBox(height: 4),
                                       Row(
                                         children: [
                                           Container(
                                             margin: EdgeInsets.only(left: 7),
-                                            height: 70,
+                                            height: 60,
                                             width: 4,
                                             decoration: BoxDecoration(
                                               color: kPrimaryColor,
@@ -281,9 +282,9 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                 text: TextSpan(
                                                   children: [
                                                     TextSpan(
-                                                      text: "Xuất xứ: ",
+                                                      text: "Loại công việc: ",
                                                       style: TextStyle(
-                                                          fontSize: 18,
+                                                          fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           color:
@@ -291,9 +292,9 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                     ),
                                                     TextSpan(
                                                       text:
-                                                          '${plant['origin']}',
+                                                          '${taskType['status']}',
                                                       style: TextStyle(
-                                                          fontSize: 18,
+                                                          fontSize: 16,
                                                           color:
                                                               Colors.black87),
                                                     )
@@ -305,23 +306,24 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                 text: TextSpan(
                                                   children: [
                                                     TextSpan(
-                                                      text: "Môi trường sống: ",
+                                                      text: "Mô tả: ",
                                                       style: TextStyle(
-                                                          fontSize: 18,
+                                                          fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           color:
                                                               Colors.black87),
                                                     ),
                                                     TextSpan(
-                                                      text: plant['environment'] ==
+                                                      text: taskType[
+                                                                  'description'] ==
                                                               null
                                                           ? "chưa có"
                                                           : wrapWordsWithEllipsis(
-                                                              '${plant['environment']}',
-                                                              20),
+                                                              '${taskType['description']}',
+                                                              32),
                                                       style: TextStyle(
-                                                          fontSize: 18,
+                                                          fontSize: 16,
                                                           color:
                                                               Colors.black87),
                                                     ),
@@ -377,20 +379,18 @@ class PlantTypePageState extends State<PlantTypePage> {
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa loại cây trồng",
-                          content: "Bạn có chắc muốn xóa loại cây này?",
+                          title: "Xóa con vật",
+                          content: "Bạn có chắc muốn xóa con vật này?",
                           onConfirm: () {
                             Navigator.of(context).pop();
                             setState(() {});
-                            plants.remove(liveStock);
-                            // deleteLiveStock(
-                            //     liveStock['id'], liveStock['status']);
+                            taskTypes.remove(liveStock);
                           },
                           buttonConfirmText: "Xóa",
                         );
                       });
                   SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công loại cây trồng', false);
+                      'Xóa thành công vật nuôi', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,
