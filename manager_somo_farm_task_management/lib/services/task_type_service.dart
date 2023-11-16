@@ -11,6 +11,7 @@ class TaskTypeService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -31,6 +32,7 @@ class TaskTypeService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -51,6 +53,7 @@ class TaskTypeService {
       Uri.parse(getZonesUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 

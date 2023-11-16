@@ -299,7 +299,10 @@ class TaskService {
     var body = jsonEncode(taskData);
     final response = await http.put(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
       body: body,
     );
 

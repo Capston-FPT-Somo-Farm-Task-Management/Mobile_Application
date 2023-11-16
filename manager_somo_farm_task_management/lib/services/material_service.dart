@@ -13,6 +13,7 @@ class MaterialService {
       Uri.parse(getMaterialsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -34,6 +35,7 @@ class MaterialService {
       Uri.parse(getMaterialsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -54,6 +56,7 @@ class MaterialService {
       Uri.parse(getMaterialsUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -86,7 +89,16 @@ class MaterialService {
 
     try {
       // Gửi request POST với FormData
-      Response response = await dio.post(url, data: formData);
+      Response response = await dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
 
       // Kiểm tra status code
       if (response.statusCode == 200) {
@@ -107,6 +119,7 @@ class MaterialService {
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -138,7 +151,16 @@ class MaterialService {
 
     try {
       // Gửi request POST với FormData
-      Response response = await dio.put(url, data: formData);
+      Response response = await dio.put(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
       print(response);
       // Kiểm tra status code
       if (response.statusCode == 200) {
