@@ -58,8 +58,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
     return TaskTypeService().getTaskTypePlants();
   }
 
-  Future<List<Map<String, dynamic>>> getListTaskTypeActive() {
-    return TaskTypeService().getListTaskTypeActive();
+  Future<List<Map<String, dynamic>>> getTaskTypeOther() {
+    return TaskTypeService().getTaskTypeOther();
   }
 
   Future<List<Map<String, dynamic>>> getEmployeesbyFarmIdAndTaskTypeId(
@@ -116,7 +116,7 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
       });
     });
     widget.isPlant == null
-        ? getListTaskTypeActive().then((value) {
+        ? getTaskTypeOther().then((value) {
             setState(() {
               taskTypes = value;
             });
