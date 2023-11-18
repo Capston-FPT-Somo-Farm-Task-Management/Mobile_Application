@@ -90,7 +90,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Công việc",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),
@@ -120,7 +120,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Thời gian làm việc",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),
@@ -158,97 +158,145 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Stack(children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                      top: padingForAll - 9,
-                      left: padingForAll,
-                      right: padingForAll,
+                const SizedBox(height: 25),
+                Container(
+                  padding:
+                      EdgeInsets.only(left: padingForAll, right: padingForAll),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: TaskTypePage(),
+                          ),
+                        ));
+                      },
+                      child: const Row(children: [
+                        Icon(Icons.list, size: 30),
+                        SizedBox(width: 15),
+                        Text(
+                          "Loại công việc",
+                          style: TextStyle(fontSize: 21),
+                        ),
+                      ]),
                     ),
-                    color: isVisibleArea ? Colors.grey[300] : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => BottomNavBar(
-                                    farmId: farmId!,
-                                    index: 0,
-                                    page: AreaPage(
-                                      farmId: farmId!,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                  ),
+                ),
+                SizedBox(height: 15),
+                Stack(children: [
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: padingForAll - 13,
+                          left: padingForAll,
+                          right: padingForAll,
+                          bottom: padingForAll - 13),
+                      color: isVisibleArea ? Colors.grey[300] : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
-                                Icon(FontAwesomeIcons.mapPin),
+                                Icon(FontAwesomeIcons.locationDot, size: 23),
                                 SizedBox(width: 15),
                                 Text(
-                                  "Khu vực",
-                                  style: TextStyle(fontSize: 20),
+                                  "Vị trí",
+                                  style: TextStyle(fontSize: 21),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isVisibleArea = !isVisibleArea;
-                                isVisiblePlant = false;
-                                isVisibleLiveStock = false;
-                              });
-                            },
-                            icon: Icon(FontAwesomeIcons.chevronDown, size: 18),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isVisibleArea = !isVisibleArea;
+                                  isVisiblePlant = false;
+                                  isVisibleLiveStock = false;
+                                });
+                              },
+                              icon: isVisibleArea == false
+                                  ? Icon(FontAwesomeIcons.chevronDown, size: 18)
+                                  : Icon(FontAwesomeIcons.chevronUp, size: 18),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                    onTap: () {
+                      setState(() {
+                        isVisibleArea = !isVisibleArea;
+                        isVisiblePlant = false;
+                        isVisibleLiveStock = false;
+                      });
+                    },
                   ),
-                  Container(
-                    decoration: isVisibleArea
-                        ? BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                              color: Colors.grey,
-                            )),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey, // Màu của bóng
-                                offset: Offset(0, 1),
-                                blurRadius: 1.0,
-                                spreadRadius: 1, // Độ mờ của bóng
-                              ),
-                            ],
-                          )
-                        : BoxDecoration(
-                            border:
-                                Border(top: BorderSide(color: Colors.white10))),
-                  ),
+                  // Container(
+                  //   decoration: isVisibleArea
+                  //       ? BoxDecoration(
+                  //           border: Border(
+                  //               top: BorderSide(
+                  //             color: Colors.grey,
+                  //           )),
+                  //           boxShadow: [
+                  //             BoxShadow(
+                  //               color: Colors.grey, // Màu của bóng
+                  //               offset: Offset(0, 1),
+                  //               blurRadius: 1.0,
+                  //               spreadRadius: 1, // Độ mờ của bóng
+                  //             ),
+                  //           ],
+                  //         )
+                  //       : BoxDecoration(
+                  //           border: Border(
+                  //             top: BorderSide(color: Colors.white10),
+                  //           ),
+                  //         ),
+                  // ),
                 ]),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: isVisibleArea ? 55 : 0,
+                  height: isVisibleArea ? 105 : 0,
                   child: Visibility(
                     visible: isVisibleArea,
                     maintainSize: false,
                     maintainAnimation: true,
                     maintainState: true,
                     child: Container(
-                      padding: EdgeInsets.only(top: 8, left: 56, bottom: 20),
-                      color: Colors.grey[300],
+                      padding: EdgeInsets.only(top: 15, left: 70, bottom: 20),
+                      color: Colors.grey[200],
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page: AreaPage(farmId: farmId!),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Row(children: [
+                                  Text(
+                                    "Khu vực",
+                                    style: TextStyle(fontSize: 19),
+                                  ),
+                                ]),
+                              ),
+                            ),
+                            SizedBox(height: 20),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: InkWell(
@@ -266,7 +314,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 child: const Row(children: [
                                   Text(
                                     "Vùng",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 19),
                                   ),
                                 ]),
                               ),
@@ -278,95 +326,93 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                   ),
                 ),
                 Stack(children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                      top: padingForAll - 9,
-                      left: padingForAll,
-                      right: padingForAll,
-                    ),
-                    color: isVisibleLiveStock ? Colors.grey[300] : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => BottomNavBar(
-                                    farmId: farmId!,
-                                    index: 0,
-                                    page: LiveStockPage(
-                                      farmId: farmId!,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: padingForAll - 13,
+                          left: padingForAll,
+                          right: padingForAll,
+                          bottom: padingForAll - 13),
+                      color: isVisibleLiveStock ? Colors.grey[300] : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
                                 Icon(FontAwesomeIcons.paw),
                                 SizedBox(width: 15),
                                 Text(
-                                  "Vật nuôi",
-                                  style: TextStyle(fontSize: 20),
+                                  "Động vật",
+                                  style: TextStyle(fontSize: 21),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isVisibleLiveStock = !isVisibleLiveStock;
-                                isVisiblePlant = false;
-                                isVisibleArea = false;
-                              });
-                            },
-                            icon: Icon(FontAwesomeIcons.chevronDown, size: 18),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isVisibleLiveStock = !isVisibleLiveStock;
+                                  isVisiblePlant = false;
+                                  isVisibleArea = false;
+                                });
+                              },
+                              icon: isVisibleLiveStock == false
+                                  ? Icon(FontAwesomeIcons.chevronDown, size: 18)
+                                  : Icon(FontAwesomeIcons.chevronUp, size: 18),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    decoration: isVisibleLiveStock
-                        ? BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                              color: Colors.grey,
-                            )),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey, // Màu của bóng
-                                offset: Offset(0, 1),
-                                blurRadius: 1.0,
-                                spreadRadius: 1, // Độ mờ của bóng
-                              ),
-                            ],
-                          )
-                        : BoxDecoration(
-                            border:
-                                Border(top: BorderSide(color: Colors.white10))),
+                    onTap: () {
+                      setState(() {
+                        isVisibleLiveStock = !isVisibleLiveStock;
+                        isVisiblePlant = false;
+                        isVisibleArea = false;
+                      });
+                    },
                   ),
                 ]),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: isVisibleLiveStock ? 100 : 0,
+                  height: isVisibleLiveStock ? 143 : 0,
                   child: Visibility(
                     visible: isVisibleLiveStock,
                     maintainSize: false,
                     maintainAnimation: true,
                     maintainState: true,
                     child: Container(
-                      padding: EdgeInsets.only(top: 8, left: 56, bottom: 20),
-                      color: Colors.grey[300],
+                      padding: EdgeInsets.only(top: 15, left: 70, bottom: 20),
+                      color: Colors.grey[200],
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page: LiveStockPage(farmId: farmId!),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                splashColor: Colors.grey,
+                                child: Text(
+                                  "Vật nuôi",
+                                  style: TextStyle(fontSize: 19),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: InkWell(
@@ -385,7 +431,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 child: const Row(children: [
                                   Text(
                                     "Chuồng",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 19),
                                   ),
                                 ]),
                               ),
@@ -409,7 +455,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 child: const Row(children: [
                                   Text(
                                     "Loại vật nuôi",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 19),
                                   ),
                                 ]),
                               ),
@@ -421,96 +467,114 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                   ),
                 ),
                 Stack(children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                      top: padingForAll - 9,
-                      left: padingForAll,
-                      right: padingForAll,
-                    ),
-                    color: isVisiblePlant ? Colors.grey[300] : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => BottomNavBar(
-                                    farmId: farmId!,
-                                    index: 0,
-                                    page: PlantPage(
-                                      farmId: farmId!,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                  InkWell(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          top: padingForAll - 13,
+                          left: padingForAll,
+                          right: padingForAll,
+                          bottom: padingForAll - 13),
+                      color: isVisiblePlant ? Colors.grey[300] : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
                                 Icon(FontAwesomeIcons.pagelines),
                                 SizedBox(width: 15),
                                 Text(
-                                  "Cây trồng",
-                                  style: TextStyle(fontSize: 20),
+                                  "Thực vật",
+                                  style: TextStyle(fontSize: 21),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isVisiblePlant = !isVisiblePlant;
-                                isVisibleLiveStock = false;
-                                isVisibleArea = false;
-                              });
-                            },
-                            icon: Icon(FontAwesomeIcons.chevronDown, size: 18),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isVisiblePlant = !isVisiblePlant;
+                                  isVisibleLiveStock = false;
+                                  isVisibleArea = false;
+                                });
+                              },
+                              icon:
+                                  Icon(FontAwesomeIcons.chevronDown, size: 18),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                    onTap: () {
+                      setState(() {
+                        isVisiblePlant = !isVisiblePlant;
+                        isVisibleLiveStock = false;
+                        isVisibleArea = false;
+                      });
+                    },
                   ),
-                  Container(
-                    decoration: isVisiblePlant
-                        ? BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                              color: Colors.grey,
-                            )),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey, // Màu của bóng
-                                offset: Offset(0,
-                                    1), // Điều chỉnh vị trí của bóng theo chiều dọc
-                                blurRadius: 1.0,
-                                spreadRadius: 1, // Độ mờ của bóng
-                              ),
-                            ],
-                          )
-                        : BoxDecoration(
-                            border:
-                                Border(top: BorderSide(color: Colors.white))),
-                  ),
+                  // Container(
+                  //   decoration: isVisiblePlant
+                  //       ? BoxDecoration(
+                  //           border: Border(
+                  //               top: BorderSide(
+                  //             color: Colors.grey,
+                  //           )),
+                  //           boxShadow: [
+                  //             BoxShadow(
+                  //               color: Colors.grey, // Màu của bóng
+                  //               offset: Offset(0,
+                  //                   1), // Điều chỉnh vị trí của bóng theo chiều dọc
+                  //               blurRadius: 1.0,
+                  //               spreadRadius: 1, // Độ mờ của bóng
+                  //             ),
+                  //           ],
+                  //         )
+                  //       : BoxDecoration(
+                  //           border:
+                  //               Border(top: BorderSide(color: Colors.white))),
+                  // ),
                 ]),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: isVisiblePlant ? 100 : 0,
+                  height: isVisiblePlant ? 150 : 0,
                   child: Visibility(
                     visible: isVisiblePlant,
                     maintainSize: false,
                     maintainAnimation: true,
                     maintainState: true,
                     child: Container(
-                      padding: EdgeInsets.only(top: 8, left: 56, bottom: 20),
-                      color: Colors.grey[300],
+                      padding: EdgeInsets.only(top: 15, left: 70, bottom: 20),
+                      color: Colors.grey[200],
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => BottomNavBar(
+                                        farmId: farmId!,
+                                        index: 0,
+                                        page: PlantPage(farmId: farmId!),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Row(children: [
+                                  Text(
+                                    "Cây trồng",
+                                    style: TextStyle(fontSize: 19),
+                                  ),
+                                ]),
+                              ),
+                            ),
+                            SizedBox(height: 20),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: InkWell(
@@ -528,7 +592,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 child: const Row(children: [
                                   Text(
                                     "Vườn cây",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 19),
                                   ),
                                 ]),
                               ),
@@ -551,7 +615,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 child: const Row(children: [
                                   Text(
                                     "Loại cây",
-                                    style: TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 19),
                                   ),
                                 ]),
                               ),
@@ -562,7 +626,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 Container(
                   padding:
                       EdgeInsets.only(left: padingForAll, right: padingForAll),
@@ -586,7 +650,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Nhân viên",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),
@@ -616,7 +680,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Thời gian làm việc",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),
@@ -643,7 +707,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Dụng cụ",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),
@@ -670,7 +734,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Loại công việc",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),
@@ -697,7 +761,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Thông tin nông trại",
-                          style: TextStyle(fontSize: 20),
+                          style: TextStyle(fontSize: 21),
                         ),
                       ]),
                     ),

@@ -236,26 +236,26 @@ class TaskTypePageState extends State<TaskTypePage> {
                                               ),
                                             ),
                                           ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  taskType['isDelete'] == true
-                                                      ? Colors.red[400]
-                                                      : kPrimaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: const EdgeInsets.all(10),
-                                            child: Text(
-                                              taskType['isDelete'] == false
-                                                  ? "Active"
-                                                  : "Inactive",
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
+                                          // Container(
+                                          //   decoration: BoxDecoration(
+                                          //     color:
+                                          //         taskType['isDelete'] == true
+                                          //             ? Colors.red[400]
+                                          //             : kPrimaryColor,
+                                          //     borderRadius:
+                                          //         BorderRadius.circular(10),
+                                          //   ),
+                                          //   padding: const EdgeInsets.all(10),
+                                          //   child: Text(
+                                          //     taskType['isDelete'] == false
+                                          //         ? "Active"
+                                          //         : "Inactive",
+                                          //     style: const TextStyle(
+                                          //         fontSize: 14,
+                                          //         fontWeight: FontWeight.bold,
+                                          //         color: Colors.white),
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                       SizedBox(height: 4),
