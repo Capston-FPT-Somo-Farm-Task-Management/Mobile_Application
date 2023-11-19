@@ -48,6 +48,10 @@ class TaskTypePageState extends State<TaskTypePage> {
     });
   }
 
+  Future<bool> deleteTaskType(int id) {
+    return TaskTypeService().DeleteTaskType(id);
+  }
+
   Future<void> _initializeData() async {
     await GetAllTaskType();
   }
@@ -193,7 +197,7 @@ class TaskTypePageState extends State<TaskTypePage> {
                           );
                         },
                         onLongPress: () {
-                          // _showBottomSheet(context, liveStock);
+                          _showBottomSheet(context, taskType);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -236,26 +240,6 @@ class TaskTypePageState extends State<TaskTypePage> {
                                               ),
                                             ),
                                           ),
-                                          // Container(
-                                          //   decoration: BoxDecoration(
-                                          //     color:
-                                          //         taskType['isDelete'] == true
-                                          //             ? Colors.red[400]
-                                          //             : kPrimaryColor,
-                                          //     borderRadius:
-                                          //         BorderRadius.circular(10),
-                                          //   ),
-                                          //   padding: const EdgeInsets.all(10),
-                                          //   child: Text(
-                                          //     taskType['isDelete'] == false
-                                          //         ? "Active"
-                                          //         : "Inactive",
-                                          //     style: const TextStyle(
-                                          //         fontSize: 14,
-                                          //         fontWeight: FontWeight.bold,
-                                          //         color: Colors.white),
-                                          //   ),
-                                          // ),
                                         ],
                                       ),
                                       SizedBox(height: 4),
@@ -352,7 +336,7 @@ class TaskTypePageState extends State<TaskTypePage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> liveStock) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> taskType) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -372,24 +356,31 @@ class TaskTypePageState extends State<TaskTypePage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: "Xóa loại công việc",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Xóa loại công việc",
+                          content: "Bạn có chắc muốn xóa loại công việc này?",
                           onConfirm: () {
+                            deleteTaskType(taskType['id']).then((value) {
+                              if (value) {
+                                GetAllTaskType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Xóa thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Không thể xóa loại công việc đang được sử dụng',
+                                    true);
+                              }
+                            });
                             Navigator.of(context).pop();
-                            setState(() {});
-                            taskTypes.remove(liveStock);
                           },
                           buttonConfirmText: "Xóa",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
                 },
                 cls: Colors.red[300]!,
                 context: context,

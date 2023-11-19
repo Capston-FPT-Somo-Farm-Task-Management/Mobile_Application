@@ -17,7 +17,11 @@ class CreateTaskType extends StatefulWidget {
 class CreateTaskTypeState extends State<CreateTaskType> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  List<String> filterStatus = ["Cây trồng", "Vật nuôi"];
+  List<String> filterStatus = [
+    "Công việc cây trồng",
+    "Công việc chăn nuôi",
+    "Công việc khác"
+  ];
   String? _selectedStatus = "Chọn";
   bool isCreating = false;
 
@@ -72,7 +76,7 @@ class CreateTaskTypeState extends State<CreateTaskType> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Loại công việc dành cho",
+                      "Loại công việc",
                       style: titileStyle,
                     ),
                     SizedBox(height: 5),
@@ -166,8 +170,9 @@ class CreateTaskTypeState extends State<CreateTaskType> {
       Map<String, dynamic> liveStock = {
         'name': _nameController.text,
         'description': _descriptionController.text,
-        if (_selectedStatus == "Cây trồng") 'status': 0,
-        if (_selectedStatus == "Vật nuôi") 'status': 1,
+        if (_selectedStatus == "Công việc cây trồng") 'status': 0,
+        if (_selectedStatus == "Công việc chăn nuôi") 'status': 1,
+        if (_selectedStatus == "Công việc khác") 'status': 2,
       };
       CreateTaskType(liveStock).then((value) {
         if (value) {
