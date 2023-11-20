@@ -4,7 +4,6 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
-import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';
@@ -19,15 +18,15 @@ class PlantTypePage extends StatefulWidget {
 }
 
 class PlantTypePageState extends State<PlantTypePage> {
-  List<LiveStock> Searchplant = taskList;
+  List<Map<String, dynamic>> filteredPlantList = [];
   bool isLoading = true;
 
   final TextEditingController searchController = TextEditingController();
 
-  void searchLiveStocks(String keyword) {
+  void searchPlant(String keyword) {
     setState(() {
-      Searchplant = taskList
-          .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
+      filteredPlantList = plants
+          .where((a) => removeDiacritics(a['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
@@ -45,6 +44,8 @@ class PlantTypePageState extends State<PlantTypePage> {
       if (value.isNotEmpty) {
         setState(() {
           plants = value;
+          filteredPlantList = plants;
+          isLoading = false;
         });
       } else {
         throw Exception();
@@ -121,10 +122,17 @@ class PlantTypePageState extends State<PlantTypePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlantType(
-                                        farmId: widget.farmId,
-                                      )),
-                            );
+                                builder: (context) => CreatePlantType(
+                                  farmId: widget.farmId,
+                                ),
+                              ),
+                            ).then((value) {
+                              if (value != null) {
+                                GetAllPlantType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo cây trồng thành công!', false);
+                              }
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
@@ -156,7 +164,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchLiveStocks(keyword);
+                          searchPlant(keyword);
                         },
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -172,178 +180,234 @@ class PlantTypePageState extends State<PlantTypePage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: RefreshIndicator(
-                notificationPredicate: (_) => true,
-                onRefresh: () => GetAllPlantType(),
-                child: ListView.builder(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: plants.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> plant = plants[index];
-
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return HabitantTypeDetailPopup(
-                                  habitantType: plant);
-                            },
-                          );
-                        },
-                        onLongPress: () {
-                          // _showBottomSheet(context, liveStock);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.teal,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 8,
-                                offset: Offset(2, 4), // Shadow position
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    )
+                  : filteredPlantList.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.not_interested,
+                                size:
+                                    75, // Kích thước biểu tượng có thể điều chỉnh
+                                color: Colors.grey, // Màu của biểu tượng
+                              ),
+                              SizedBox(
+                                  height:
+                                      16), // Khoảng cách giữa biểu tượng và văn bản
+                              Text(
+                                "Không có loại cây",
+                                style: TextStyle(
+                                  fontSize:
+                                      20, // Kích thước văn bản có thể điều chỉnh
+                                  color: Colors.grey, // Màu văn bản
+                                ),
                               ),
                             ],
                           ),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            height: 150,
-                            width: double.infinity,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                        )
+                      : RefreshIndicator(
+                          notificationPredicate: (_) => true,
+                          onRefresh: () => GetAllPlantType(),
+                          child: ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: filteredPlantList.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> plant =
+                                  filteredPlantList[index];
+
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 15),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return HabitantTypeDetailPopup(
+                                            habitantType: plant);
+                                      },
+                                    );
+                                  },
+                                  onLongPress: () {
+                                    // _showBottomSheet(context, liveStock);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.teal,
+                                      borderRadius: BorderRadius.circular(25),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 8,
+                                          offset:
+                                              Offset(2, 4), // Shadow position
+                                        ),
+                                      ],
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      height: 150,
+                                      width: double.infinity,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Flexible(
-                                            child: Text(
-                                              plant['name'],
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: plant['isActive'] == false
-                                                  ? Colors.red[400]
-                                                  : kPrimaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: const EdgeInsets.all(10),
-                                            child: Text(
-                                              plant['isActive'] == true
-                                                  ? "Active"
-                                                  : "Inactive",
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        plant['name'],
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            plant['isActive'] ==
+                                                                    false
+                                                                ? Colors
+                                                                    .red[400]
+                                                                : kPrimaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Text(
+                                                        plant['isActive'] ==
+                                                                true
+                                                            ? "Active"
+                                                            : "Inactive",
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 7),
+                                                      height: 70,
+                                                      width: 4,
+                                                      decoration: BoxDecoration(
+                                                        color: kPrimaryColor,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(20),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "Xuất xứ: ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${plant['origin']}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "Môi trường sống: ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                              TextSpan(
+                                                                text: plant['environment'] ==
+                                                                        null
+                                                                    ? "chưa có"
+                                                                    : wrapWordsWithEllipsis(
+                                                                        '${plant['environment']}',
+                                                                        20),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(left: 7),
-                                            height: 70,
-                                            width: 4,
-                                            decoration: BoxDecoration(
-                                              color: kPrimaryColor,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "Xuất xứ: ",
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                    TextSpan(
-                                                      text:
-                                                          '${plant['origin']}',
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          color:
-                                                              Colors.black87),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 10),
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "Môi trường sống: ",
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                    TextSpan(
-                                                      text: plant['environment'] ==
-                                                              null
-                                                          ? "chưa có"
-                                                          : wrapWordsWithEllipsis(
-                                                              '${plant['environment']}',
-                                                              20),
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
             ),
           ],
         ),
