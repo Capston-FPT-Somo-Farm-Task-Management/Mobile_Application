@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantType_update/habitantType_update_page.dart';
 
 class HabitantTypeDetailPopup extends StatelessWidget {
@@ -38,12 +40,18 @@ class HabitantTypeDetailPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) =>
                       UpdateHabitantType(habitantType: habitantType),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -54,6 +62,7 @@ class HabitantTypeDetailPopup extends StatelessWidget {
           children: [
             habitantType['status'] == "Thực vật"
                 ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(
                         FontAwesomeIcons.tree,
@@ -61,15 +70,12 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 12),
-                      Text(
-                        'Loại cây: ${habitantType['name']}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
+                      TitleText.titleText("Loại cây trồng",
+                          wrapWords("${habitantType['name']}", 22), 18),
                     ],
                   )
                 : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(
                         FontAwesomeIcons.paw,
@@ -77,12 +83,8 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 12),
-                      Text(
-                        'Loại vật nuôi: ${habitantType['name']}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
+                      TitleText.titleText("Loại vật nuôi",
+                          wrapWords(" ${habitantType['name']}", 22), 18),
                     ],
                   ),
             const SizedBox(height: 25),
@@ -94,16 +96,13 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'ĐV/TV: ${habitantType['status']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Thuộc loại",
+                    wrapWords(" ${habitantType['status']}", 22), 18),
               ],
             ),
             const SizedBox(height: 25),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.locationDot,
@@ -111,11 +110,9 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Nông trại: ${habitantType['farmName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Nông trại", " ${habitantType['farmName']}", 18),
                 ),
               ],
             ),
@@ -128,18 +125,19 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  habitantType['origin'] == null
-                      ? 'Xuất xứ: chưa có'
-                      : 'Xuất xứ: ${habitantType['origin']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Xuất xứ",
+                      habitantType['origin'] == null
+                          ? 'chưa có'
+                          : '${habitantType['origin']}',
+                      18),
                 ),
               ],
             ),
             const SizedBox(height: 25),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.cloud,
@@ -147,13 +145,13 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  habitantType['environment'] == null
-                      ? 'Môi trường sống: chưa có'
-                      : 'Môi trường sống: ${habitantType['environment']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Môi trường sống",
+                      habitantType['environment'] == null
+                          ? 'chưa có'
+                          : '${habitantType['environment']}',
+                      18),
                 ),
               ],
             ),
@@ -168,14 +166,12 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Flexible(
-                  child: Text(
-                    habitantType['description'] == null
-                        ? 'Mô tả: chưa có'
-                        : 'Mô tả: ${habitantType['description']}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
+                  child: TitleText.titleText(
+                      "Mô tả",
+                      habitantType['description'] == null
+                          ? 'chưa có'
+                          : '${habitantType['description']}',
+                      18),
                 ),
               ],
             ),

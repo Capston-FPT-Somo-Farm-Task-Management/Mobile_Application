@@ -195,6 +195,10 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                               return HabitantTypeDetailPopup(
                                   habitantType: liveStock);
                             },
+                          ).then(
+                            (value) => {
+                              if (value != null) {GetAllLiveStockType()}
+                            },
                           );
                         },
                         onLongPress: () {
