@@ -386,7 +386,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                             BoxDecoration(
                                                           color: employee[
                                                                       'status'] ==
-                                                                  "Inactive"
+                                                                  "Đã nghĩ việc"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
                                                           borderRadius:

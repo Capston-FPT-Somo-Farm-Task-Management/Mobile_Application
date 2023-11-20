@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/area_update/area_update_page.dart';
 
@@ -51,10 +52,21 @@ class AreaDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Mã khu vực: ${area['code']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Mã khu vực: ",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87),
+                      ),
+                      TextSpan(
+                        text: '${area['code']}',
+                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                      )
+                    ],
                   ),
                 ),
               ],
@@ -68,10 +80,21 @@ class AreaDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Nông trại: ${area['farmName']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Nông trại: ",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87),
+                      ),
+                      TextSpan(
+                        text: wrapWords('${area['farmName']}', 35),
+                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                      )
+                    ],
                   ),
                 ),
               ],
@@ -85,12 +108,8 @@ class AreaDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Diện tích: ${area['fArea']} mét vuông', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Diện tích", wrapWords('${area['fArea']} mét vuông', 35)),
               ],
             ),
             const SizedBox(height: 16),
@@ -102,11 +121,9 @@ class AreaDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Trạng thái: ${area['status']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
+                TitleText.titleText(
+                  "Trạng thái",
+                  wrapWords('${area['status']}', 35),
                 ),
               ],
             ),
