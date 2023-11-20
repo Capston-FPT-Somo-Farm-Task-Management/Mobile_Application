@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_one_or_many.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/componets/option.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_add/first_add_task_other_page.dart';
 
 class ChooseHabitantPage extends StatefulWidget {
   final int farmId;
@@ -84,7 +84,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        FirstAddTaskOtherPage(farmId: widget.farmId),
+                        AddTaskPage(farmId: widget.farmId, isOne: false),
                   ),
                 );
               },
