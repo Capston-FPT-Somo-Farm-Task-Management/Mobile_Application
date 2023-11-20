@@ -816,7 +816,7 @@ class _AddTaskPage extends State<AddTaskPage> {
                                 titileStyle, // Đảm bảo bạn đã định nghĩa titileStyle
                           ),
                           Container(
-                            height: 52,
+                            constraints: BoxConstraints(minHeight: 52),
                             margin: const EdgeInsets.only(top: 8.0),
                             padding: const EdgeInsets.only(left: 14),
                             decoration: BoxDecoration(
