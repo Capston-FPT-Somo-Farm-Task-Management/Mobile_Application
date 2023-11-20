@@ -85,7 +85,6 @@ class TaskService {
 
     final String getTasksUrl =
         '$baseUrl/FarmTask/PageIndex($index)/PageSize($pagesize)/Manager($userId)/Status($status)/Date?date=$dateTime&checkTaskParent=$checkParent&taskName=$search';
-
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
       headers: {
@@ -140,6 +139,47 @@ class TaskService {
 
   Future<bool> createTask(Map<String, dynamic> taskData, int managerId) async {
     final String apiUrl = "$baseUrl/FarmTask?memberId=${managerId}";
+    var body = jsonEncode(taskData);
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> createTaskDraft(Map<String, dynamic> taskData) async {
+    final String apiUrl = "$baseUrl/FarmTask/CreateTaskDraft";
+    var body = jsonEncode(taskData);
+    print(body);
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> createTaskTodo(Map<String, dynamic> taskData) async {
+    final String apiUrl = "$baseUrl/FarmTask/CreateTaskToDo";
     var body = jsonEncode(taskData);
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -295,7 +335,7 @@ class TaskService {
   }
 
   Future<bool> updateTask(Map<String, dynamic> taskData, int taskId) async {
-    final String apiUrl = "$baseUrl/FarmTask/${taskId}";
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTask";
     var body = jsonEncode(taskData);
     final response = await http.put(
       Uri.parse(apiUrl),
@@ -314,18 +354,100 @@ class TaskService {
     }
   }
 
+  Future<bool> updateTaskandChangeTodo(
+      Map<String, dynamic> taskData, int taskId) async {
+    final String apiUrl =
+        "$baseUrl/FarmTask/(${taskId})/UpdateTaskDraftAndToPrePare";
+    var body = jsonEncode(taskData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> updateStatusFormTodoToDraft(int taskId) async {
+    final String apiUrl =
+        "$baseUrl/FarmTask/(${taskId})/UpdateStatusFormTodoToDraft";
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> addEmployeeToTaskAsign(
+      Map<String, dynamic> taskData, int taskId) async {
+    final String apiUrl =
+        "$baseUrl/FarmTask/(${taskId})/AddEmployeeToTaskAsign";
+    var body = jsonEncode(taskData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> hideTask(int taskId) async {
+    final String apiUrl = "$baseUrl/FarmTask/DeleteTask/$taskId";
+
+    final http.Response response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> deleteTask(int taskId) async {
     try {
-      final String apiUrl = "$baseUrl/FarmTask/DeleteTask/$taskId";
+      final String apiUrl = "$baseUrl/FarmTask/($taskId)";
 
-      final http.Response response = await http.put(
+      final http.Response response = await http.delete(
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $accessToken',
         },
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         return true;
       } else {
