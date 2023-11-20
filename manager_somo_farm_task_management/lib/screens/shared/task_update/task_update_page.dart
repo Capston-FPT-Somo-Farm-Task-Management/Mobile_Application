@@ -224,7 +224,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
 
   Future<void> getTaskTypes() async {
     widget.task['areaId'] == null
-        ? await TaskTypeService().getListTaskTypeActive().then((value) {
+        ? await TaskTypeService().getTaskTypeOther().then((value) {
             setState(() {
               taskTypes = value;
               taskTypeSelected = taskTypes
