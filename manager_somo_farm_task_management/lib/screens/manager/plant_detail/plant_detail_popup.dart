@@ -30,11 +30,17 @@ class PlantDetailPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdatePlant(plant: plant),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],

@@ -431,11 +431,17 @@ class UpdatePlantState extends State<UpdatePlant> {
       };
       UpdatePlant(plant, widget.plant['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => PlantPage(farmId: farmId!),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newPlant");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => PlantPage(farmId: farmId!),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

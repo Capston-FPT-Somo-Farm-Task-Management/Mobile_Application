@@ -130,7 +130,6 @@ class LiveStockPageState extends State<LiveStockPage> {
                                     'Tạo con vật thành công!', false);
                               }
                             });
-                            ;
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,

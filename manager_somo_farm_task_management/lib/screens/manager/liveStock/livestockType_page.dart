@@ -45,6 +45,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
         setState(() {
           liveStocks = value;
           filteredLivestockList = liveStocks;
+          isLoading = false;
         });
       } else {
         throw Exception();
