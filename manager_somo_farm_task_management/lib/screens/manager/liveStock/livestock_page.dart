@@ -121,9 +121,8 @@ class LiveStockPageState extends State<LiveStockPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateLiveStock(
-                                        farmId: widget.farmId,
-                                      )),
+                                  builder: (context) =>
+                                      CreateLiveStock(farmId: widget.farmId)),
                             ).then((value) {
                               if (value != null) {
                                 GetLiveStocks();
@@ -229,7 +228,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                             liveStock: liveStock);
                                       },
                                     ).then((value) => {
-                                          if (value! - null) {GetLiveStocks()}
+                                          if (value != null) {GetLiveStocks()}
                                         });
                                   },
                                   onLongPress: () {
