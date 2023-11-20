@@ -535,7 +535,20 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                                             inputFormatters: <TextInputFormatter>[
                                               FilteringTextInputFormatter
                                                   .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
                                             ],
+                                            onChanged: (value) {
+                                              // Kiểm tra giá trị sau khi người dùng nhập
+                                              if (value.isNotEmpty) {
+                                                int numericValue =
+                                                    int.parse(value);
+                                                if (numericValue > 59) {
+                                                  _minutesController.text =
+                                                      "59";
+                                                }
+                                              }
+                                            },
                                             style: TextStyle(fontSize: 14),
                                             decoration: InputDecoration(
                                               hintText: "0",

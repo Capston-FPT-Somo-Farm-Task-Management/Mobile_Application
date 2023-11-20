@@ -258,7 +258,6 @@ class TaskService {
           'Authorization': 'Bearer $accessToken',
         },
       );
-
       if (response.statusCode == 200) {
         return true;
       } else {
@@ -376,9 +375,27 @@ class TaskService {
     }
   }
 
-  Future<bool> updateStatusFormTodoToDraft(int taskId) async {
+  Future<bool> updateStatusFromTodoToDraft(int taskId) async {
     final String apiUrl =
-        "$baseUrl/FarmTask/(${taskId})/UpdateStatusFormTodoToDraft";
+        "$baseUrl/FarmTask/(${taskId})/updateStatusFromTodoToDraft";
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> changeStatusToDoing(int taskId) async {
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/ChangeStatusToDoing";
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: {
