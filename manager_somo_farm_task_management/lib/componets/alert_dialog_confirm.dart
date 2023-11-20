@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
 class ConfirmDeleteDialog extends StatelessWidget {
   final String title;
@@ -19,8 +20,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(
         title,
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       content: Text(
         content,
@@ -37,9 +37,13 @@ class ConfirmDeleteDialog extends StatelessWidget {
             onConfirm(); // Gọi hàm xác nhận
             Navigator.of(context).pop(); // Đóng hộp thoại sau khi xóa
           },
-          child: Text(
-            buttonConfirmText,
-            style: const TextStyle(fontSize: 17),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            color: Colors.blue,
+            child: Text(
+              buttonConfirmText,
+              style: const TextStyle(color: kBackgroundColor),
+            ),
           ),
         ),
       ],

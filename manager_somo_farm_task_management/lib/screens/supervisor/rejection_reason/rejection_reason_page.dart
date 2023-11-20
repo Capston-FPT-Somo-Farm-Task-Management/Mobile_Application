@@ -70,6 +70,9 @@ class _RejectionPopupState extends State<RejectionReasonPopup> {
                                       Navigator.of(context).pop("Change");
                                     }
                                   }).catchError((e) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
                                     SnackbarShowNoti.showSnackbar(
                                         e.toString(), true);
                                   });
