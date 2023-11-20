@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/componets/option.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_add/first_add_task_page.dart';
 
 class ChooseOneOrMany extends StatefulWidget {
   final int farmId;
@@ -50,7 +50,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => FirstAddTaskPage(
+                          builder: (context) => AddTaskPage(
                             farmId: widget.farmId,
                             isOne: true,
                             isPlant: false,
@@ -68,7 +68,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => FirstAddTaskPage(
+                          builder: (context) => AddTaskPage(
                             farmId: widget.farmId,
                             isOne: true,
                             isPlant: true,
@@ -88,7 +88,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => FirstAddTaskPage(
+                          builder: (context) => AddTaskPage(
                             farmId: widget.farmId,
                             isOne: false,
                             isPlant: false,
@@ -106,7 +106,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => FirstAddTaskPage(
+                          builder: (context) => AddTaskPage(
                             farmId: widget.farmId,
                             isOne: false,
                             isPlant: true,
