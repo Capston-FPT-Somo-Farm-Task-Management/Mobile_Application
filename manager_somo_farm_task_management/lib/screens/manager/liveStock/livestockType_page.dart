@@ -19,14 +19,14 @@ class LiveStockTypePage extends StatefulWidget {
 }
 
 class LiveStockTypePageState extends State<LiveStockTypePage> {
-  List<LiveStock> SearchliveStock = taskList;
   bool isLoading = true;
+  List<Map<String, dynamic>> filteredLivestockList = [];
   final TextEditingController searchController = TextEditingController();
 
-  void searchLiveStocks(String keyword) {
+  void searchLiveStockType(String keyword) {
     setState(() {
-      SearchliveStock = taskList
-          .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
+      filteredLivestockList = liveStocks
+          .where((a) => removeDiacritics(a['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
@@ -44,11 +44,16 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
       if (value.isNotEmpty) {
         setState(() {
           liveStocks = value;
+          filteredLivestockList = liveStocks;
         });
       } else {
         throw Exception();
       }
     });
+  }
+
+  Future<bool> deleteHabitantType(int id) {
+    return HabitantTypeService().DeleteHabitantType(id);
   }
 
   Future<void> _initializeData() async {
@@ -68,13 +73,6 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -161,7 +159,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchLiveStocks(keyword);
+                          searchLiveStockType(keyword);
                         },
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -182,13 +180,11 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                 onRefresh: () => GetAllLiveStockType(),
                 child: ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: liveStocks.length,
+                  itemCount: filteredLivestockList.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> liveStock = liveStocks[index];
+                    Map<String, dynamic> liveStock =
+                        filteredLivestockList[index];
 
-                    if (liveStock['status'] == 'Inactive') {
-                      return SizedBox.shrink();
-                    }
                     return Container(
                       margin: EdgeInsets.only(bottom: 10),
                       child: GestureDetector(
@@ -202,7 +198,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                           );
                         },
                         onLongPress: () {
-                          // _showBottomSheet(context, liveStock);
+                          _showBottomSheet(context, liveStock);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -257,8 +253,8 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                             padding: const EdgeInsets.all(10),
                                             child: Text(
                                               liveStock['isActive'] == true
-                                                  ? "Active"
-                                                  : "Inactive",
+                                                  ? "Hiện"
+                                                  : "Ẩn",
                                               style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold,
@@ -381,26 +377,38 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: liveStock['isActive'] == false
+                    ? "Hiện vật nuôi"
+                    : "Ẩn vật nuôi",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa con vật",
-                          content: "Bạn có chắc muốn xóa con vật này?",
+                          title: "Thay đổi trạng thái loại vật nuôi",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của loại vật nuôi này?",
                           onConfirm: () {
+                            deleteHabitantType(liveStock['id']).then((value) {
+                              if (value) {
+                                GetAllLiveStockType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Loại vật nuôi đang được sử dụng. Không thể thay đổi trạng thái',
+                                    true);
+                              }
+                            });
                             Navigator.of(context).pop();
-                            setState(() {});
-                            liveStocks.remove(liveStock);
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công vật nuôi', false);
                 },
-                cls: Colors.red[300]!,
+                cls: liveStock['isActive'] == false
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),

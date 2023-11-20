@@ -85,4 +85,22 @@ class HabitantTypeService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> DeleteHabitantType(int id) async {
+    final String deleteLiveStockUrl = '$baseUrl/HabitantType/Delete/${id}';
+
+    final http.Response response = await http.put(
+      Uri.parse(deleteLiveStockUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
