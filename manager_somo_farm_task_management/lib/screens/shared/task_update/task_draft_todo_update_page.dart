@@ -1472,7 +1472,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
 
   void updateTaskandChangeTdo(isPlant) {
     TaskService()
-        .updateTaskandChangeTdo(createTaskData(isPlant), widget.task['id'])
+        .updateTaskandChangeTodo(createTaskData(isPlant), widget.task['id'])
         .then((value) {
       if (value) {
         setState(() {
