@@ -24,4 +24,4 @@ class TitleText {
 }
 
 // Sử dụng:
-// CustomRichText.buildRichText('Mã khu vực', area['code']);
+// CustomRichText.buildRichText('Mã khu vực', area['code']); -> Mã khu vực: 123
