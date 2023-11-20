@@ -202,7 +202,7 @@ class PlantPageState extends State<PlantPage> {
                                   height:
                                       16), // Khoảng cách giữa biểu tượng và văn bản
                               Text(
-                                "Không có con vật nào",
+                                "Không có cây trồng nào",
                                 style: TextStyle(
                                   fontSize:
                                       20, // Kích thước văn bản có thể điều chỉnh
