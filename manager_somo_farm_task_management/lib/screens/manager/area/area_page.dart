@@ -214,7 +214,9 @@ class AreaPageState extends State<AreaPage> {
                                     builder: (BuildContext context) {
                                       return AreaDetail(area: area);
                                     },
-                                  );
+                                  ).then((value) => {
+                                        if (value != null) {getAreas()}
+                                      });
                                 },
                                 onLongPress: () {
                                   _showBottomSheet(context, area);
@@ -256,17 +258,9 @@ class AreaPageState extends State<AreaPage> {
                                                       Flexible(
                                                         child: Row(
                                                           children: [
-                                                            Text(
-                                                              '${area['code']} - ',
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
                                                             Flexible(
                                                               child: Text(
-                                                                '${area['name']}',
+                                                                '${area['nameCode']}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontSize: 20,

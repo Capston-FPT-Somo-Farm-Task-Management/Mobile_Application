@@ -148,12 +148,13 @@ class UpdateAreaState extends State<UpdateArea> {
           setState(() {
             isLoading = false;
           });
-          // Navigator.pop(context, "newArea");
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => AreaPage(farmId: farmId!),
-            ),
-          );
+          Navigator.pop(context, "newArea");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => AreaPage(farmId: farmId!),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

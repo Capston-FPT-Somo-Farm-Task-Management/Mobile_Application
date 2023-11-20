@@ -31,11 +31,17 @@ class AreaDetail extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdateArea(area: area),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
