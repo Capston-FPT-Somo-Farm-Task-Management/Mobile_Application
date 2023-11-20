@@ -114,8 +114,8 @@ class AreaDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                TitleText.titleText(
-                    "Diện tích", wrapWords('${area['fArea']} mét vuông', 35)),
+                TitleText.titleText("Diện tích",
+                    wrapWords('${area['fArea']} mét vuông', 35), 16),
               ],
             ),
             const SizedBox(height: 16),
@@ -128,9 +128,7 @@ class AreaDetail extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 TitleText.titleText(
-                  "Trạng thái",
-                  wrapWords('${area['status']}', 35),
-                ),
+                    "Trạng thái", wrapWords('${area['status']}', 35), 16),
               ],
             ),
           ],

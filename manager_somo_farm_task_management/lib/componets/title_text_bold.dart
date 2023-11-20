@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
 class TitleText {
-  static Widget titleText(String label, String text) {
+  static Widget titleText(String label, String text, double size) {
     return RichText(
       text: TextSpan(
         children: [
           TextSpan(
             text: "$label: ",
             style: TextStyle(
-              fontSize: 16,
+              fontSize: size,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
           TextSpan(
             text: text,
-            style: TextStyle(fontSize: 16, color: Colors.black87),
+            style: TextStyle(fontSize: size, color: Colors.black87),
           ),
         ],
       ),
@@ -24,4 +24,4 @@ class TitleText {
 }
 
 // Sử dụng:
-// CustomRichText.buildRichText('Mã khu vực', area['code']); -> Mã khu vực: 123
+// CustomRichText.buildRichText('Mã khu vực', area['code'], 16); -> Mã khu vực: 123 fontSize 16

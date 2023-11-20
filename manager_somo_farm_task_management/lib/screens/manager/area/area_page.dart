@@ -280,7 +280,7 @@ class AreaPageState extends State<AreaPage> {
                                                         decoration:
                                                             BoxDecoration(
                                                           color: area['status'] ==
-                                                                  "Inactive"
+                                                                  "Ẩn"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
                                                           borderRadius:
@@ -375,7 +375,7 @@ class AreaPageState extends State<AreaPage> {
                       builder: (BuildContext context1) {
                         return ConfirmDeleteDialog(
                           title: "Đổi trạng thái",
-                          content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
+                          content: "Bạn có chắc muốn đổi trạng thái khu vực?",
                           onConfirm: () {
                             changeStatusArea(employee['id']).then((value) {
                               if (value) {

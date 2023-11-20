@@ -295,11 +295,16 @@ class UpdateZoneState extends State<UpdateZone> {
       };
       UpdateZone(plant, widget.zone['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => ZonePage(farmId: farmId!),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newZone");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => ZonePage(farmId: farmId!),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

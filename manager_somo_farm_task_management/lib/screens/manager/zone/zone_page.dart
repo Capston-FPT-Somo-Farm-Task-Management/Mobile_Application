@@ -227,7 +227,7 @@ class ZonePageState extends State<ZonePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng
@@ -265,6 +265,10 @@ class ZonePageState extends State<ZonePage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return ZoneDetail(zone: zone);
+                                    },
+                                  ).then(
+                                    (value) => {
+                                      if (value != null) {getZones()}
                                     },
                                   );
                                 },
@@ -305,36 +309,32 @@ class ZonePageState extends State<ZonePage> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            '${zone['code']} - ',
-                                                            style: TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          Text(
-                                                            zone['name'].length >
-                                                                    20
-                                                                ? '${zone['name'].substring(0, 20)}...'
-                                                                : zone['name'],
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                      Flexible(
+                                                        child: Row(
+                                                          children: [
+                                                            Flexible(
+                                                              child: Text(
+                                                                zone[
+                                                                    'nameCode'],
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
                                                       Container(
                                                         decoration:
                                                             BoxDecoration(
                                                           color: zone['status'] ==
-                                                                  "Inactive"
+                                                                  "Ẩn"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
                                                           borderRadius:
@@ -374,7 +374,7 @@ class ZonePageState extends State<ZonePage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 14,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -397,7 +397,7 @@ class ZonePageState extends State<ZonePage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 14,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -444,16 +444,14 @@ class ZonePageState extends State<ZonePage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: employee['status'] == "Inactive"
-                    ? "Đổi sang Actice"
-                    : "Đổi sang Inactive",
+                label: employee['status'] == "Ẩn" ? "Hiện vùng" : "Ẩn vùng",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context1) {
                         return ConfirmDeleteDialog(
                           title: "Đổi trạng thái",
-                          content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
+                          content: "Bạn có chắc muốn đổi trạng thái vùng?",
                           onConfirm: () {
                             changeStatusZone(employee['id']).then((value) {
                               if (value) {
@@ -471,7 +469,7 @@ class ZonePageState extends State<ZonePage> {
                         );
                       });
                 },
-                cls: employee['status'] == "Inactive"
+                cls: employee['status'] == "Ẩn"
                     ? kPrimaryColor
                     : Colors.red[300]!,
                 context: context,
