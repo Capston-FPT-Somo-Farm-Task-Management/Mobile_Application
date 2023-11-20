@@ -376,9 +376,9 @@ class TaskService {
     }
   }
 
-  Future<bool> updateStatusFormTodoToDraft(int taskId) async {
+  Future<bool> updateStatusFromTodoToDraft(int taskId) async {
     final String apiUrl =
-        "$baseUrl/FarmTask/(${taskId})/UpdateStatusFormTodoToDraft";
+        "$baseUrl/FarmTask/(${taskId})/updateStatusFromTodoToDraft";
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: {

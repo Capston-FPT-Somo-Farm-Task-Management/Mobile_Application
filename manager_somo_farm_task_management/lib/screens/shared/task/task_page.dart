@@ -1184,7 +1184,7 @@ class TaskPageState extends State<TaskPage> {
                           onTap: () {
                             Navigator.of(context).pop();
                             TaskService()
-                                .updateStatusFormTodoToDraft(task['id'])
+                                .updateStatusFromTodoToDraft(task['id'])
                                 .then((value) {
                               if (value) {
                                 SnackbarShowNoti.showSnackbar(
@@ -1246,9 +1246,52 @@ class TaskPageState extends State<TaskPage> {
               );
             })
         : showModalBottomSheet(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(
+                    15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+                topRight: Radius.circular(
+                    15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+              ),
+            ),
             context: context,
             builder: (BuildContext context) {
-              return Container();
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                        15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+                    topRight: Radius.circular(
+                        15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+                  ),
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      if (isPreparing) ...[
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: buildOptionTask(
+                              Icons.change_circle, "Tiến hành giao việc", null),
+                        ),
+                        buildDivider(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: buildOptionTask(Icons.change_circle,
+                              "Từ chối công việc", Colors.red),
+                        ),
+                      ] else
+                        Container(),
+                      SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              );
             });
   }
 }
