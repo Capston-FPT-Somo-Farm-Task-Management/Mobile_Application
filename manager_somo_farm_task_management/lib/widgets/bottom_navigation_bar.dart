@@ -2,8 +2,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/dashboard/dashboard_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/notification_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_habitant.dart';
 import 'package:manager_somo_farm_task_management/services/notificantion_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,24 +74,6 @@ class _BottomNavBarState extends State<BottomNavBar>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      floatingActionButton: Container(
-        child: FloatingActionButton(
-          tooltip: "Thêm công việc",
-          backgroundColor: kPrimaryColor,
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) =>
-                    // FirstAddTaskPage(farm: widget.farm),
-                    ChooseHabitantPage(farmId: widget.farmId),
-              ),
-            );
-          },
-        ),
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(boxShadow: [
           BoxShadow(
@@ -136,20 +118,28 @@ class _BottomNavBarState extends State<BottomNavBar>
                         //);
                       });
                     }),
-                // IconButton(
-                //     icon: Icon(
-                //       Icons.info,
-                //       size: _getCurrentTabSize(2),
-                //       // size: 18,
-                //       color: _getCurrentTabColor(2),
-                //     ),
-                //     onPressed: () {
-                //       setState(() {
-                //         myCurrentIndex = 2;
-                //         //p = IntroducingFarmPage(farmId: widget.farmId);
-                //       });
-                //     }),
-                SizedBox(width: 20),
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: kPrimaryColor,
+                      border: Border.all(width: 1, color: kTextGreyColor),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ChooseHabitantPage(farmId: widget.farmId),
+                      ),
+                    );
+                  },
+                ),
                 IconButton(
                     icon: Stack(
                       children: [
@@ -218,7 +208,8 @@ class _BottomNavBarState extends State<BottomNavBar>
         index: myCurrentIndex,
         children: [
           p,
-          ManagerHomePage(farmId: widget.farmId),
+          //ManagerHomePage(farmId: widget.farmId),
+          TaskPage(),
           //IntroducingFarmPage(farmId: widget.farmId),
           NotificationPage(),
           SettingsPage(),

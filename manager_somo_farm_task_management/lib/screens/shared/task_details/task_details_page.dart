@@ -6,6 +6,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_draft_todo_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
@@ -130,7 +131,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         role != "Manager" && task['managerName'] == null
                     ? (task['status'] == "Từ chối" ||
                             task['status'] == "Chuẩn bị" ||
-                            task['status'] == "Đang thực hiện")
+                            task['status'] == "Bản nháp")
                         ? IconButton(
                             icon: const Icon(
                               Icons.mode_edit_outline_outlined,
@@ -140,8 +141,10 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               Navigator.of(context)
                                   .push(
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      UpdateTaskPage(task: task, role: role!),
+                                  builder: (context) => UpdateTaskDraftTodoPage(
+                                      changeTodo: false,
+                                      task: task,
+                                      role: role!),
                                 ),
                               )
                                   .then((value) {
@@ -207,7 +210,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                       text: TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: "Ưu tiên ",
+                                            text: "Ưu tiên: ",
                                             style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w700,
@@ -269,9 +272,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            if (task['areaName'] != null)
+                            if (task['isPlant'] != null)
                               const SizedBox(height: 14),
-                            if (task['areaName'] != null)
+                            if (task['isPlant'] != null)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -283,7 +286,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      'Khu vực: ${task['areaName']}',
+                                      'Khu vực: ${task['areaName'] ?? "Chưa có"}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       ),
@@ -291,9 +294,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   ),
                                 ],
                               ),
-                            if (task['zoneName'] != null)
+                            if (task['isPlant'] != null)
                               const SizedBox(height: 16),
-                            if (task['zoneName'] != null)
+                            if (task['isPlant'] != null)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -305,7 +308,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      'Vùng: ${task['zoneName']}',
+                                      'Vùng: ${task['zoneName'] ?? "Chưa có"}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       ),
@@ -313,9 +316,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   ),
                                 ],
                               ),
-                            if (task['fieldName'] != null)
+                            if (task['isPlant'] != null)
                               const SizedBox(height: 16),
-                            if (task['fieldName'] != null)
+                            if (task['isPlant'] != null)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -327,7 +330,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      'Chuồng: ${task['fieldName']}',
+                                      task['isPlant']
+                                          ? 'Vườn: ${task['fieldName'] ?? "Chưa có"}'
+                                          : 'Chuồng: ${task['fieldName'] ?? "Chưa có"}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       ),
@@ -335,9 +340,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   ),
                                 ],
                               ),
-                            if (task['addressDetail'] != null)
+                            if (task['isPlant'] == null)
                               const SizedBox(height: 16),
-                            if (task['addressDetail'] != null)
+                            if (task['isPlant'] == null)
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -349,7 +354,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      'Địa chỉ chi tiết: ${task['addressDetail']}',
+                                      'Địa chỉ chi tiết: ${(task['addressDetail'].toString().isEmpty || task['addressDetail'] == null ? "Chưa có" : task['addressDetail'])}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       ),
@@ -425,7 +430,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
-                                    'Bắt đầu: ${DateFormat('dd/MM/yyyy - HH:mm a').format(DateTime.parse(task['startDate']))}',
+                                    'Bắt đầu: ${task['startDate'] == null ? "Chưa có" : '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}'}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),
@@ -444,7 +449,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
-                                    'Kết thúc: ${DateFormat('dd/MM/yyyy - HH:mm a').format(DateTime.parse(task['endDate']))}',
+                                    'Kết thúc: ${task['endDate'] == null ? "Chưa có" : '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}'}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),
@@ -452,31 +457,35 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 16),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  Icons.timer_rounded,
-                                  color: kSecondColor,
-                                ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    'Thời gian làm việc dự kiến phải bỏ ra: ${task['overallEffortHour']} giờ ${task['overallEfforMinutes']} phút',
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                            if (task['status'] != "Bản nháp" &&
+                                task['status'] != "Chuẩn bị")
+                              SizedBox(height: 16),
+                            if (task['status'] != "Bản nháp" &&
+                                task['status'] != "Chuẩn bị")
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    Icons.timer_rounded,
+                                    color: kSecondColor,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'Thời gian làm việc dự kiến phải bỏ ra: ${task['overallEffortHour']} giờ ${task['overallEfforMinutes']} phút',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      if (task['plantName'] != null ||
-                          task['liveStockName'] != null)
+                      if (task['isPlant'] != null && task['isSpecific'])
+                        const SizedBox(height: 10),
+                      if (task['isPlant'] != null && task['isSpecific'])
                         Container(
                           color: Colors.white,
                           padding: EdgeInsets.symmetric(
@@ -485,8 +494,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              if (task['plantName'] != null ||
-                                  task['liveStockName'] != null) ...[
+                              if (task['isPlant'] != null) ...[
                                 Text(
                                   "Đối tượng",
                                   style: TextStyle(
@@ -496,28 +504,29 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(height: 14),
                               ] else
                                 Container(),
-                              if (task['plantName'] != null)
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.home,
-                                      color: kSecondColor,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Flexible(
-                                      child: Text(
-                                        'Cây: ${task['plantName']}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.home,
+                                    color: kSecondColor,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      task['isPlant']
+                                          ? 'Cây trồng: ${task['plantName'] ?? "Chưa có"}'
+                                          : 'Con vật: ${task['plantName'] ?? "Chưa có"}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              if (task['plantName'] != null)
+                                  ),
+                                ],
+                              ),
+                              if (task['isSpecific'])
                                 const SizedBox(height: 16),
-                              if (task['plantName'] != null)
+                              if (task['isSpecific'])
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -528,47 +537,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                     const SizedBox(width: 8),
                                     Flexible(
                                       child: Text(
-                                        'Mã cây: ${task['externalId']}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              if (task['liveStockName'] != null)
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.home,
-                                      color: kSecondColor,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Flexible(
-                                      child: Text(
-                                        'Con vật: ${task['liveStockName']}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              if (task['liveStockName'] != null)
-                                const SizedBox(height: 16),
-                              if (task['liveStockName'] != null)
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.tag,
-                                      color: kSecondColor,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Flexible(
-                                      child: Text(
-                                        'Mã con vật: ${task['externalId']}',
+                                        task['isPlant']
+                                            ? 'Mã cây: ${task['externalId'] ?? "Chưa có"}'
+                                            : 'Mã con vật: ${task['externalId'] ?? "Chưa có"}',
                                         style: const TextStyle(
                                           fontSize: 16,
                                         ),
@@ -660,7 +631,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
-                                    'Người giám sát: ${task['supervisorName']}',
+                                    'Người giám sát: ${task['supervisorName'] ?? "Chưa có"}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),
@@ -681,7 +652,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      'Người thực hiện: ${task['employeeName']}',
+                                      'Người thực hiện: ${task['employeeName'] == null || task['employeeName'].toString().isEmpty ? "Chưa có" : task['employeeName']}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       ),
@@ -754,7 +725,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
-                                    'Loại công việc: ${task['taskTypeName']}',
+                                    'Loại công việc: ${task['taskTypeName'] ?? "Chưa có"}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),

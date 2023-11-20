@@ -1,13 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
-import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
 import 'package:manager_somo_farm_task_management/services/material_service.dart';
@@ -20,18 +18,22 @@ import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class UpdateTaskPage extends StatefulWidget {
+class UpdateTaskDraftTodoPage extends StatefulWidget {
   final Map<String, dynamic> task;
   final String role;
-  const UpdateTaskPage({super.key, required this.task, required this.role});
+  final bool changeTodo;
+  const UpdateTaskDraftTodoPage(
+      {super.key,
+      required this.task,
+      required this.role,
+      required this.changeTodo});
 
   @override
-  State<UpdateTaskPage> createState() => _FirstUpdateTaskPage();
+  State<UpdateTaskDraftTodoPage> createState() => _UpdateTaskDraftTodoPage();
 }
 
-class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
-  final TextEditingController _minutesController = TextEditingController();
-  final TextEditingController _hoursController = TextEditingController();
+class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
+  bool isCheck = true;
   List<DateTime> disabledDates = [];
   int? rangeDate;
   int? farmId;
@@ -52,7 +54,6 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   Map<String, dynamic>? taskTypeSelected;
   List<Map<String, dynamic>> employees = [];
   List<Map<String, dynamic>> employeesSelected = [];
-  Key _keyChange = UniqueKey();
   Map<String, dynamic>? supervisorSelected;
   List<Map<String, dynamic>> supervisors = [];
   List<Map<String, dynamic>> materials = [];
@@ -109,17 +110,13 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getAreas() async {
-    widget.task['areaId'] == null
+    widget.task['isPlant'] == null
         ? await AreaService().getAreasActiveByFarmId(farmId!).then((value) {
             setState(() {
               areas = value;
-              if (widget.task['areaId'] != null)
-                areaSelected = areas
-                    .where((element) => element['id'] == widget.task['areaId'])
-                    .firstOrNull;
             });
           })
-        : widget.task['fieldStatus'] == "Động vật"
+        : widget.task['isPlant'] == false
             ? await AreaService()
                 .getAreasActiveZoneLiveStockByFarmId(farmId!)
                 .then((value) {
@@ -147,22 +144,27 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getZones(int areaId, bool init) async {
-    widget.task['areaId'] == null
+    setState(() {
+      isCheck = true;
+    });
+    widget.task['isPlant'] == null
         ? await ZoneService().getZonesActivebyAreaId(areaId).then((value) {
             setState(() {
               zones = value;
+              isCheck = false;
               if (init)
                 zoneSelected = zones
                     .where((element) => element['id'] == widget.task['zoneId'])
                     .firstOrNull;
             });
           })
-        : widget.task['fieldStatus'] == "Động vật"
+        : widget.task['isPlant'] == false
             ? await ZoneService()
                 .getZonesbyAreaLivestockId(areaId)
                 .then((value) {
                 setState(() {
                   zones = value;
+                  isCheck = false;
                   if (init)
                     zoneSelected = zones
                         .where(
@@ -173,6 +175,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
             : await ZoneService().getZonesbyAreaPlantId(areaId).then((value) {
                 setState(() {
                   zones = value;
+                  isCheck = false;
                   if (init)
                     zoneSelected = zones
                         .where(
@@ -183,9 +186,13 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getFields(int zoneId, bool init) async {
+    setState(() {
+      isCheck = true;
+    });
     await FieldService().getFieldsActivebyZoneId(zoneId).then((value) {
       setState(() {
         fields = value;
+        isCheck = false;
         if (init)
           fieldSelected = fields
               .where((element) => element['id'] == widget.task['fieldId'])
@@ -195,12 +202,16 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getExternalIds(int fieldId, bool init) async {
-    widget.task['fieldStatus'] == "Động vật"
+    setState(() {
+      isCheck = true;
+    });
+    widget.task['isPlant'] == false
         ? await LiveStockService()
             .getLiveStockExternalIdsByFieldId(fieldId)
             .then((value) {
             setState(() {
               externalIds = value;
+              isCheck = false;
               if (init)
                 externalSelected = externalIds
                     .where((element) =>
@@ -213,6 +224,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
             .then((value) {
             setState(() {
               externalIds = value;
+              isCheck = false;
               if (init)
                 externalSelected = externalIds
                     .where((element) =>
@@ -223,7 +235,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   }
 
   Future<void> getTaskTypes() async {
-    widget.task['areaId'] == null
+    widget.task['isPlant'] == null
         ? await TaskTypeService().getTaskTypeOther().then((value) {
             setState(() {
               taskTypes = value;
@@ -233,7 +245,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                   .firstOrNull;
             });
           })
-        : widget.task['fieldStatus'] == "Động vật"
+        : widget.task['isPlant'] == false
             ? await TaskTypeService().getListTaskTypeLivestock().then((value) {
                 setState(() {
                   taskTypes = value;
@@ -252,22 +264,6 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                       .firstOrNull;
                 });
               });
-  }
-
-  Future<void> getEmployeesbyFarmIdAndTaskTypeId(
-      int taskTypeId, bool init) async {
-    await EmployeeService()
-        .getEmployeesbyFarmIdAndTaskTypeId(farmId!, taskTypeId)
-        .then((value) {
-      setState(() {
-        employees = value;
-        if (init)
-          employeesSelected = employees
-              .where((element) =>
-                  widget.task['employeeId'].contains(element['id']))
-              .toList();
-      });
-    });
   }
 
   Future<void> getSupervisors() async {
@@ -307,15 +303,15 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
   Future<void> initData() async {
     await getFarmId().then((_) {
       getAreas();
-      if (widget.task['areaId'] != null) {
-        getZones(widget.task['areaId'], true);
-        getFields(widget.task['zoneId'], true);
-        if (widget.task['externalId'] != null)
-          getExternalIds(widget.task['fieldId'], true);
-      }
+      if (widget.task['areaId'] != null)
+        getZones(widget.task['areaId'], widget.task['zoneId'] != null);
+      if (widget.task['zoneId'] != null)
+        getFields(widget.task['zoneId'], widget.task['fieldId'] != null);
+      if (widget.task['fieldId'] != null && widget.task['isSpecific'])
+        getExternalIds(
+            widget.task['fieldId'], widget.task['externalId'] != null);
     });
     await getTaskTypes();
-    await getEmployeesbyFarmIdAndTaskTypeId(widget.task['taskTypeId'], true);
     await getSupervisors();
     await getMaterials(true);
   }
@@ -374,6 +370,10 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
     }
   }
 
+  Future<bool> updateTask(Map<String, dynamic> data) async {
+    return TaskService().updateTask(data, widget.task['id']);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -385,24 +385,28 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
     });
     if (widget.task['addressDetail'] != null)
       _addressDetailController.text = widget.task['addressDetail'];
-    _minutesController.text = widget.task['overallEfforMinutes'].toString();
-    _hoursController.text = widget.task['overallEffortHour'].toString();
     _titleController.text = widget.task['name'];
     _desController.text = widget.task['description'];
-    _selectedStartDate = DateTime.parse((widget.task['startDate']));
+    if (widget.task['startDate'] != null) {
+      _selectedStartDate = DateTime.parse((widget.task['startDate']));
+    }
 
-    _selectedEndDate = DateTime.parse(widget.task['endDate']);
+    if (widget.task['endDate'] != null) {
+      _selectedEndDate = DateTime.parse(widget.task['endDate']);
+      _focusedDay = _selectedEndDate!.add(Duration(days: 1));
+    }
+
     prioritySelected = widget.task['priority'];
     _selectedRepeat = widget.task['isRepeat'] ? "Có" : "Không";
-    _focusedDay = _selectedEndDate!.add(Duration(days: 1));
+
     List<dynamic> dateStrings = widget.task['dateRepeate'];
     selectedDatesRepeat =
         dateStrings.map((dateString) => DateTime.parse(dateString)).toList();
 
     _selectedRemind = widget.task['remind'];
-
-    calculateDateDifference(DateTime.parse(widget.task['startDate']),
-        DateTime.parse(widget.task['endDate']));
+    if (widget.task['startDate'] != null && widget.task['endDate'] != null)
+      calculateDateDifference(DateTime.parse(widget.task['startDate']),
+          DateTime.parse(widget.task['endDate']));
 
     getDisabledDates();
   }
@@ -440,15 +444,68 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Chỉnh sửa công việc",
+                      widget.changeTodo
+                          ? "Xác nhận thông tin"
+                          : "Chỉnh sửa công việc",
                       style: headingStyle,
+                    ),
+                    MyInputField(
+                      title: "Tên công việc",
+                      hint: "Nhập tên công việc",
+                      controller: _titleController,
+                      hintColor: Colors.grey,
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          widget.task['areaId'] != null
+                          Text(
+                            "Loại công việc",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButton2<Map<String, dynamic>>(
+                              hint: Text("Chọn"),
+                              isExpanded: true,
+                              underline: Container(height: 0),
+                              value: taskTypeSelected,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  taskTypeSelected = newValue;
+                                });
+                              },
+                              items: taskTypes
+                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
+                                      (Map<String, dynamic> value) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: value,
+                                  child: Text(value['name']),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          widget.task['isPlant'] != null
                               ? Text(
                                   "Khu vực",
                                   style: titileStyle,
@@ -471,6 +528,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: DropdownButton2<Map<String, dynamic>>(
+                              hint: Text("Chọn"),
                               isExpanded: true,
                               underline: Container(height: 0),
                               value: areaSelected,
@@ -480,10 +538,8 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                   zoneSelected = null;
                                   getZones(newValue!['id'], false);
                                   fieldSelected = null;
-                                  getFields(newValue['id'], false);
                                   externalSelected = null;
-                                  getExternalIds(newValue['id'], false);
-                                  if (widget.task['areaId'] == null)
+                                  if (widget.task['isPlant'] == null)
                                     _addressDetailController.text = "";
                                 });
                               },
@@ -505,7 +561,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          widget.task['areaId'] != null
+                          widget.task['isPlant'] != null
                               ? Text(
                                   "Vùng",
                                   style: titileStyle,
@@ -544,7 +600,6 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                   fieldSelected = null;
                                   getFields(newValue!['id'], false);
                                   externalSelected = null;
-                                  getExternalIds(newValue['id'], false);
                                 });
                               },
                               items: zones
@@ -560,22 +615,24 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                         ],
                       ),
                     ),
-                    if (zones.isEmpty &&
-                        areaSelected != null &&
-                        widget.task['areaId'] != null)
-                      Text(
-                        "Khu vực chưa có vùng. Hãy chọn khu vực khác!",
-                        style: TextStyle(
-                            fontSize: 11, color: Colors.red, height: 2),
-                      ),
+                    if (!isCheck)
+                      if (widget.task['isPlant'] != null &&
+                          zones.isEmpty &&
+                          areaSelected != null &&
+                          widget.task['status'] != "Bản nháp")
+                        Text(
+                          "Khu vực chưa có vùng. Hãy chọn khu vực khác!",
+                          style: TextStyle(
+                              fontSize: 11, color: Colors.red, height: 2),
+                        ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          widget.task['areaId'] != null
+                          widget.task['isPlant'] != null
                               ? Text(
-                                  widget.task['fieldStatus'] == "Động vật"
+                                  widget.task['isPlant'] == false
                                       ? "Chuồng"
                                       : "Vườn",
                                   style: titileStyle,
@@ -606,6 +663,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                               onChanged: (newValue) {
                                 setState(() {
                                   fieldSelected = newValue;
+                                  print(newValue!['id']);
                                   externalSelected = null;
                                   getExternalIds(newValue!['id'], false);
                                 });
@@ -623,28 +681,30 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                         ],
                       ),
                     ),
-                    if (fields.isEmpty &&
-                        zoneSelected != null &&
-                        widget.task['areaId'] != null)
-                      widget.task['fieldStatus'] == "Động vật"
-                          ? Text(
-                              "Vùng này chưa có chuồng. Hãy chọn vùng khác!",
-                              style: TextStyle(
-                                  fontSize: 11, color: Colors.red, height: 2),
-                            )
-                          : Text(
-                              "Vùng này chưa có Vườn. Hãy chọn vùng khác!",
-                              style: TextStyle(
-                                  fontSize: 11, color: Colors.red, height: 2),
-                            ),
-                    if (widget.task['externalId'] != null)
+                    if (!isCheck)
+                      if (fields.isEmpty &&
+                          zoneSelected != null &&
+                          widget.task['isPlant'] != null &&
+                          widget.task['status'] != "Bản nháp")
+                        widget.task['isPlant'] == true
+                            ? Text(
+                                "Vùng này chưa có chuồng. Hãy chọn vùng khác!",
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.red, height: 2),
+                              )
+                            : Text(
+                                "Vùng này chưa có Vườn. Hãy chọn vùng khác!",
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.red, height: 2),
+                              ),
+                    if (widget.task['isSpecific'] == true)
                       Container(
                         margin: const EdgeInsets.only(top: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.task['fieldStatus'] == "Động vật"
+                              widget.task['isPlant'] == false
                                   ? "Mã con vật"
                                   : "Mã cây trồng",
                               style: titileStyle,
@@ -663,6 +723,11 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: DropdownButton2<Map<String, dynamic>>(
+                                hint: externalIds.isEmpty
+                                    ? Text("Chưa có",
+                                        style: TextStyle(fontSize: 14))
+                                    : Text("Chọn",
+                                        style: TextStyle(fontSize: 14)),
                                 isExpanded: true,
                                 underline: Container(height: 0),
                                 value: externalSelected,
@@ -684,162 +749,27 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                           ],
                         ),
                       ),
-                    if (widget.task['externalId'] != null &&
-                        externalIds.isEmpty)
-                      widget.task['fieldStatus'] == "Động vật"
-                          ? Text(
-                              "Chuồng này không có con vật nào. Hãy chọn chuồng khác!",
-                              style: TextStyle(
-                                  fontSize: 11, color: Colors.red, height: 2),
-                            )
-                          : Text(
-                              "Vườn này chưa có cây trồng nào. Hãy chọn vườn khác!",
-                              style: TextStyle(
-                                  fontSize: 11, color: Colors.red, height: 2),
-                            ),
-                    if (widget.task['addressDetail'] != null)
+                    if (!isCheck)
+                      if (widget.task['isSpecific'] == true &&
+                          externalIds.isEmpty &&
+                          widget.task['status'] != "Bản nháp")
+                        widget.task['isPlant'] == false
+                            ? Text(
+                                "Chuồng này không có con vật nào. Hãy chọn chuồng khác!",
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.red, height: 2),
+                              )
+                            : Text(
+                                "Vườn này chưa có cây trồng nào. Hãy chọn vườn khác!",
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.red, height: 2),
+                              ),
+                    if (widget.task['isPlant'] == null)
                       MyInputField(
                         title: "Địa chỉ chi tiết",
                         hint: "Nhập địa chỉ chi tiết",
                         controller: _addressDetailController,
                         hintColor: Colors.grey,
-                      ),
-                    MyInputField(
-                      title: "Tên công việc",
-                      hint: "Nhập tên công việc",
-                      controller: _titleController,
-                      hintColor: Colors.grey,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Loại công việc",
-                            style: titileStyle,
-                          ),
-                          SizedBox(height: 5),
-                          Container(
-                            constraints: BoxConstraints(
-                              minHeight:
-                                  50.0, // Đặt giá trị minHeight theo ý muốn của bạn
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: DropdownButton2<Map<String, dynamic>>(
-                              isExpanded: true,
-                              underline: Container(height: 0),
-                              value: taskTypeSelected,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  taskTypeSelected = newValue;
-                                  employeesSelected.clear();
-                                  getEmployeesbyFarmIdAndTaskTypeId(
-                                      newValue!['id'], false);
-                                  _keyChange = UniqueKey();
-                                });
-                              },
-                              items: taskTypes
-                                  .map<DropdownMenuItem<Map<String, dynamic>>>(
-                                      (Map<String, dynamic> value) {
-                                return DropdownMenuItem<Map<String, dynamic>>(
-                                  value: value,
-                                  child: Text(value['name']),
-                                );
-                              }).toList(),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Người thực hiện",
-                            style: titileStyle,
-                          ),
-                          Container(
-                            height: 52,
-                            margin: const EdgeInsets.only(top: 8.0),
-                            padding: const EdgeInsets.only(left: 14),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SingleChildScrollView(
-                              child: ChipsInput(
-                                suggestionsBoxMaxHeight: 200,
-                                key: _keyChange,
-                                enabled: !employees.isEmpty,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Chọn người thực hiện",
-                                    hintStyle:
-                                        TextStyle(color: Colors.black45)),
-                                initialValue: employeesSelected,
-                                findSuggestions: (String query) {
-                                  if (query.length != 0) {
-                                    var lowercaseQuery =
-                                        removeDiacritics(query.toLowerCase());
-                                    return employees.where((e) {
-                                      return removeDiacritics(
-                                              e['nameCode'].toLowerCase())
-                                          .contains(lowercaseQuery);
-                                    }).toList(growable: false)
-                                      ..sort((a, b) => removeDiacritics(
-                                              a['nameCode'].toLowerCase())
-                                          .indexOf(lowercaseQuery)
-                                          .compareTo(removeDiacritics(
-                                                  b['nameCode'].toLowerCase())
-                                              .indexOf(lowercaseQuery)));
-                                  } else {
-                                    return const <Map<String, dynamic>>[];
-                                  }
-                                },
-                                onChanged: (data) {
-                                  employeesSelected =
-                                      data.cast<Map<String, dynamic>>();
-                                },
-                                chipBuilder: (context, state, employee) {
-                                  return InputChip(
-                                    key: ObjectKey(employee),
-                                    label: Text(employee['nameCode']),
-                                    onDeleted: () => state.deleteChip(employee),
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  );
-                                },
-                                suggestionBuilder: (context, state, profile) {
-                                  return ListTile(
-                                    key: ObjectKey(profile),
-                                    title: Text(profile['nameCode']),
-                                    onTap: () =>
-                                        state.selectSuggestion(profile),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (employees.isEmpty)
-                      Text(
-                        "Hãy chọn loại công việc khác",
-                        style: TextStyle(
-                            fontSize: 11, color: Colors.red, height: 2),
                       ),
                     Container(
                       margin: const EdgeInsets.only(top: 16),
@@ -864,6 +794,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: DropdownButton2<Map<String, dynamic>>(
+                              hint: Text("Chọn"),
                               isExpanded: true,
                               underline: Container(height: 0),
                               value: supervisorSelected,
@@ -1016,9 +947,12 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          widget.task['status'] == "Đang thực hiện" ||
-                                  _selectedStartDate!.isBefore(DateTime.now())
-                              ? null
+                          _selectedStartDate != null
+                              ? widget.task['status'] == "Đang thực hiện" ||
+                                      _selectedStartDate!
+                                          .isBefore(DateTime.now())
+                                  ? null
+                                  : _getDateTimeFromUser(true)
                               : _getDateTimeFromUser(true);
                         },
                       ),
@@ -1278,95 +1212,6 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                         ],
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Thời gian làm việc dự kiến phải bỏ ra",
-                            style: titileStyle,
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 50,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: TextField(
-                                            textAlign: TextAlign.right,
-                                            controller: _hoursController,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                            style: TextStyle(fontSize: 14),
-                                            decoration: InputDecoration(
-                                              hintText: "0",
-                                              border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.blue,
-                                                    width: 1.0),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text("Giờ")
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 50),
-                              Expanded(
-                                child: Container(
-                                  height: 50,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: TextField(
-                                            textAlign: TextAlign.right,
-                                            controller: _minutesController,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                            style: TextStyle(fontSize: 14),
-                                            decoration: InputDecoration(
-                                              hintText: "0",
-                                              border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.blue,
-                                                    width: 1.0),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text("Phút")
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
                     SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1375,13 +1220,22 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                         Container(),
                         GestureDetector(
                           onTap: () {
-                            _validateDate();
+                            if (widget.changeTodo &&
+                                widget.task['status'] == "Bản nháp")
+                              validateUpdateTodo(
+                                  context, widget.task['isPlant']);
+                            else if (widget.task['status'] == "Bản nháp")
+                              validateUpdateDraft(
+                                  context, widget.task['isPlant']);
+                            else
+                              validateUpdateTodo(
+                                  context, widget.task['isPlant']);
                           },
                           child: Container(
-                            width: 120,
-                            height: 60,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(15),
                               color: kPrimaryColor,
                             ),
                             alignment: Alignment
@@ -1474,189 +1328,165 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
     return;
   }
 
-  _validateDate() {
+  Map<String, dynamic> createTaskData(isPlant) {
+    List<String> formattedDates = selectedDatesRepeat.map((date) {
+      return DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(date);
+    }).toList();
+    Map<String, dynamic> taskData = {
+      "materialIds": listIds(materialsSelected),
+      "dates": formattedDates,
+      // "dates":
+      "taskModel": {
+        "name": _titleController.text,
+        "startDate": _selectedStartDate != null
+            ? DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedStartDate!)
+            : null,
+        "endDate": _selectedEndDate != null
+            ? DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!)
+            : null,
+        "description": _desController.text,
+        "priority": prioritySelected,
+        "isRepeat": _selectedRepeat == "Không" ? false : true,
+        "supervisorId": supervisorSelected != null
+            ? (widget.role == "Manager" ? supervisorSelected!['id'] : userId!)
+            : null,
+        "fieldId": fieldSelected != null ? fieldSelected!['id'] : null,
+        "taskTypeId": taskTypeSelected != null ? taskTypeSelected!['id'] : null,
+        "managerId": widget.role == "Manager" ? userId : null,
+        "plantId": widget.task['isSpecific'] && widget.task['isPlant']
+            ? externalSelected != null
+                ? externalSelected!['id']
+                : null
+            : null,
+        "liveStockId":
+            (widget.task['isSpecific'] && widget.task['isPlant'] == false)
+                ? externalSelected != null
+                    ? externalSelected!['id']
+                    : null
+                : null,
+        "addressDetail": isPlant == null
+            ? (areaSelected == null ? "" : areaSelected!['name']) +
+                (zoneSelected == null
+                    ? ""
+                    : (areaSelected == null ? "" : ", ") +
+                        zoneSelected!['name']) +
+                (fieldSelected == null
+                    ? ""
+                    : (areaSelected == null && zoneSelected == null
+                            ? ""
+                            : ", ") +
+                        fieldSelected!['name']) +
+                (_addressDetailController.text.trim().isEmpty
+                    ? ""
+                    : (areaSelected == null &&
+                                zoneSelected == null &&
+                                fieldSelected == null
+                            ? ""
+                            : ", ") +
+                        _addressDetailController.text.trim())
+            : null,
+        "remind": _selectedRemind,
+      }
+    };
+    print(taskData);
+    return taskData;
+  }
+
+  validateUpdateDraft(context, isPlant) {
     setState(() {
       isLoading = true;
     });
-    if (widget.task['areaId'] != null) {
-      if (_selectedStartDate != null &&
-          _selectedEndDate != null &&
-          employeesSelected.isNotEmpty &&
-          _titleController.text.trim().isNotEmpty &&
-          fieldSelected!.isNotEmpty &&
-          areaSelected!.isNotEmpty &&
-          zoneSelected!.isNotEmpty &&
-          taskTypeSelected!.isNotEmpty &&
-          _selectedRemind != null &&
-          (_hoursController.text.isNotEmpty ||
-              _minutesController.text.isNotEmpty)) {
-        if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty ||
-            widget.role == "Manager" && supervisorSelected == null ||
-            widget.task['externalId'] != null && externalSelected!.isEmpty) {
-          setState(() {
-            isLoading = false;
-          });
-          SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
-        } else {
-          List<String> formattedDates = selectedDatesRepeat.map((date) {
-            return DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(date);
-          }).toList();
-//add database
-          Map<String, dynamic> taskData = {
-            "employeeIds": listIds(employeesSelected),
-            "materialIds": listIds(materialsSelected),
-            "dates": formattedDates,
-            // "dates":
-            "farmTask": {
-              "name": _titleController.text,
-              "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-                  .format(_selectedStartDate!),
-              "endDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-                  .format(_selectedEndDate!),
-              "description": _desController.text,
-              "priority": prioritySelected,
-              "isRepeat": _selectedRepeat == "Không" ? false : true,
-              "suppervisorId":
-                  widget.role == "Manager" ? supervisorSelected!['id'] : userId,
-              "fieldId": fieldSelected!['id'],
-              "taskTypeId": taskTypeSelected!['id'],
-              "managerId": widget.role == "Manager" ? userId : null,
-              "otherId": null,
-              "plantId": widget.task['plantId'] == null
-                  ? null
-                  : externalSelected!['id'],
-              "liveStockId": widget.task['liveStockId'] == null
-                  ? null
-                  : externalSelected!['id'],
-              "addressDetail": _addressDetailController.text,
-              "overallEfforMinutes": _minutesController.text,
-              "overallEffortHour": _hoursController.text,
-            }
-          };
-          print(taskData);
-          print(userId!);
-          TaskService().updateTask(taskData, widget.task['id']).then((value) {
-            if (value) {
-              Navigator.of(context).pop("ok");
-              setState(() {
-                isLoading = false;
-              });
-              SnackbarShowNoti.showSnackbar(
-                  'Cập nhật công việc thành công', false);
-            }
-          }).catchError((e) {
-            setState(() {
-              isLoading = false;
-            });
-            SnackbarShowNoti.showSnackbar(e.toString(), true);
-          });
-        }
-      }
-      // else if (_selectedRepeat != "Không" && selectedDatesRepeat.isNotEmpty) {
-      //   setState(() {
-      //     isLoading = false;
-      //   });
-      //   Navigator.of(context).pop("ok");
-      //   SnackbarShowNoti.showSnackbar('Cập nhật công việc thành công111', false);
-      //}
-      else {
-        setState(() {
-          isLoading = false;
-        });
-        // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
-        SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
-      }
+    if (_titleController.text.isNotEmpty) {
+      update(isPlant);
     } else {
-      if (_selectedStartDate != null &&
+      setState(() {
+        isLoading = false;
+      });
+      SnackbarShowNoti.showSnackbar(
+          "Để lưu công việc bạn cần điền tên công việc", true);
+    }
+  }
+
+  validateUpdateTodo(context, isPlant) {
+    setState(() {
+      isLoading = true;
+    });
+
+    if (isPlant == null) {
+      if (_titleController.text.isNotEmpty &&
+          taskTypeSelected != null &&
+          _addressDetailController.text.isNotEmpty &&
+          (widget.role == "Supervisor" ||
+              widget.role == "Manager" && supervisorSelected != null) &&
+          _selectedStartDate != null &&
           _selectedEndDate != null &&
-          employeesSelected.isNotEmpty &&
-          _titleController.text.trim().isNotEmpty &&
-          taskTypeSelected!.isNotEmpty &&
-          _selectedRemind != null &&
-          (_hoursController.text.isNotEmpty ||
-              _minutesController.text.isNotEmpty) &&
-          _addressDetailController.text.isNotEmpty) {
-        if (_selectedRepeat != "Không" && selectedDatesRepeat.isEmpty ||
-            widget.role == "Manager" && supervisorSelected == null ||
-            widget.task['externalId'] != null && externalSelected!.isEmpty) {
-          setState(() {
-            isLoading = false;
-          });
-          SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
-        } else {
-          List<String> formattedDates = selectedDatesRepeat.map((date) {
-            return DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(date);
-          }).toList();
-//add database
-          Map<String, dynamic> taskData = {
-            "employeeIds": listIds(employeesSelected),
-            "materialIds": listIds(materialsSelected),
-            "dates": formattedDates,
-            // "dates":
-            "farmTask": {
-              "name": _titleController.text.trim(),
-              "startDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-                  .format(_selectedStartDate!),
-              "endDate": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
-                  .format(_selectedEndDate!),
-              "description": _desController.text,
-              "priority": prioritySelected,
-              "isRepeat": _selectedRepeat == "Không" ? false : true,
-              "suppervisorId":
-                  widget.role == "Manager" ? supervisorSelected!['id'] : userId,
-              "fieldId": null,
-              "taskTypeId": taskTypeSelected!['id'],
-              "managerId": widget.role == "Manager" ? userId : null,
-              "otherId": null,
-              "plantId": widget.task['plantId'] == null
-                  ? null
-                  : externalSelected!['id'],
-              "liveStockId": widget.task['liveStockId'] == null
-                  ? null
-                  : externalSelected!['id'],
-              "addressDetail": (areaSelected == null
-                      ? ""
-                      : areaSelected!['name'] + ", ") +
-                  (zoneSelected == null ? "" : zoneSelected!['name'] + ", ") +
-                  (fieldSelected == null ? "" : fieldSelected!['name'] + ", ") +
-                  _addressDetailController.text.trim(),
-              "overallEfforMinutes": _minutesController.text,
-              "overallEffortHour": _hoursController.text,
-            }
-          };
-          print(taskData);
-          print(userId!);
-          TaskService().updateTask(taskData, widget.task['id']).then((value) {
-            if (value) {
-              Navigator.of(context).pop("ok");
-              setState(() {
-                isLoading = false;
-              });
-              SnackbarShowNoti.showSnackbar(
-                  'Cập nhật công việc thành công', false);
-            }
-          }).catchError((e) {
-            setState(() {
-              isLoading = false;
-            });
-            SnackbarShowNoti.showSnackbar(e.toString(), true);
-          });
-        }
-      }
-      // else if (_selectedRepeat != "Không" && selectedDatesRepeat.isNotEmpty) {
-      //   setState(() {
-      //     isLoading = false;
-      //   });
-      //   Navigator.of(context).pop("ok");
-      //   SnackbarShowNoti.showSnackbar('Cập nhật công việc thành công111', false);
-      //}
-      else {
+          (_selectedRepeat!.toLowerCase() == "Có".toLowerCase() &&
+                  selectedDatesRepeat.isNotEmpty ||
+              _selectedRepeat!.toLowerCase() == "Không".toLowerCase())) {
+        widget.changeTodo ? updateTaskandChangeTdo(isPlant) : update(isPlant);
+      } else {
         setState(() {
           isLoading = false;
         });
-        // Nếu có ô trống, hiển thị Snackbar với biểu tượng cảnh báo và màu đỏ
-        SnackbarShowNoti.showSnackbar('Vui lòng điền đầy đủ thông tin', true);
+        SnackbarShowNoti.showSnackbar(
+            "Để giao việc bạn phải điền đầy đủ các dữ liệu cần thiết!", true);
       }
+    } else if (fieldSelected != null &&
+        (!widget.task['isSpecific'] ||
+            widget.task['isSpecific'] && externalSelected != null) &&
+        _titleController.text.isNotEmpty &&
+        taskTypeSelected != null &&
+        (widget.role == "Supervisor" ||
+            widget.role == "Manager" && supervisorSelected != null) &&
+        _selectedStartDate != null &&
+        _selectedEndDate != null &&
+        (_selectedRepeat!.toLowerCase() == "Có".toLowerCase() &&
+                selectedDatesRepeat.isNotEmpty ||
+            _selectedRepeat!.toLowerCase() == "Không".toLowerCase())) {
+      widget.changeTodo ? updateTaskandChangeTdo(isPlant) : update(isPlant);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      SnackbarShowNoti.showSnackbar(
+          "Để giao việc bạn phải điền đầy đủ các dữ liệu cần thiết!", true);
     }
+  }
+
+  void update(isPlant) {
+    updateTask(createTaskData(isPlant)).then((value) {
+      if (value) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop("ok");
+        SnackbarShowNoti.showSnackbar('Lưu công việc thành công', false);
+      }
+    }).catchError((e) {
+      setState(() {
+        isLoading = false;
+      });
+      SnackbarShowNoti.showSnackbar(e.toString(), true);
+    });
+  }
+
+  void updateTaskandChangeTdo(isPlant) {
+    TaskService()
+        .updateTaskandChangeTodo(createTaskData(isPlant), widget.task['id'])
+        .then((value) {
+      if (value) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop("ok");
+        SnackbarShowNoti.showSnackbar(
+            'Đã chuyển công việc sang chuẩn bị', false);
+      }
+    }).catchError((e) {
+      setState(() {
+        isLoading = false;
+      });
+      SnackbarShowNoti.showSnackbar(e.toString(), true);
+    });
   }
 }
