@@ -65,6 +65,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   dio: ^5.3.3
   fl_chart: ^0.64.0
+  skeletonizer: ^0.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
