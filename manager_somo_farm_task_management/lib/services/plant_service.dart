@@ -80,7 +80,7 @@ class PlantService {
     }
   }
 
-  Future<Map<String, dynamic>> createPlant(Map<String, dynamic> plant) async {
+  Future<bool> createPlant(Map<String, dynamic> plant) async {
     final String createPlantUrl = '$baseUrl/Plant';
     var body = jsonEncode(plant);
     final response = await http.post(Uri.parse(createPlantUrl),
@@ -91,9 +91,7 @@ class PlantService {
         body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> plant =
-          Map<String, dynamic>.from(json.decode(response.body));
-      return plant;
+      return true;
     } else {
       final Map<String, dynamic> data = json.decode(response.body);
       return Future.error(data['message']);

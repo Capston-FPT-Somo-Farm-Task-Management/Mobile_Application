@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone_update/zone_update_pagge.dart';
 
@@ -30,11 +31,17 @@ class ZoneDetail extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdateZone(zone: zone),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -51,12 +58,7 @@ class ZoneDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Mã vùng: ${zone['code']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                TitleText.titleText("Mã vùng", wrapWords(zone['code'], 35), 16),
               ],
             ),
             const SizedBox(height: 16),
@@ -68,12 +70,8 @@ class ZoneDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Khu vực: ${zone['areaName']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Khu vực", wrapWords('${zone['areaName']}', 35), 16),
               ],
             ),
             const SizedBox(height: 16),
@@ -85,12 +83,8 @@ class ZoneDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Loại vùng: ${zone['zoneTypeName']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Loại vùng", wrapWords('${zone['zoneTypeName']}', 35), 16),
               ],
             ),
             const SizedBox(height: 16),
@@ -102,12 +96,8 @@ class ZoneDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Diện tích: ${zone['farmArea']} mét vuông', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                TitleText.titleText("Diện tích",
+                    wrapWords('${zone['farmArea']} mét vuông', 35), 16),
               ],
             ),
             const SizedBox(height: 16),
@@ -119,12 +109,8 @@ class ZoneDetail extends StatelessWidget {
                   color: kSecondColor,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  wrapWords('Trạng thái: ${zone['status']}', 35),
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Trạng thái", wrapWords('${zone['status']}', 35), 16),
               ],
             ),
           ],

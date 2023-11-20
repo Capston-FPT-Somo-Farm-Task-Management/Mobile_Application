@@ -175,7 +175,7 @@ class AreaPageState extends State<AreaPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng
@@ -214,7 +214,9 @@ class AreaPageState extends State<AreaPage> {
                                     builder: (BuildContext context) {
                                       return AreaDetail(area: area);
                                     },
-                                  );
+                                  ).then((value) => {
+                                        if (value != null) {getAreas()}
+                                      });
                                 },
                                 onLongPress: () {
                                   _showBottomSheet(context, area);
@@ -256,17 +258,9 @@ class AreaPageState extends State<AreaPage> {
                                                       Flexible(
                                                         child: Row(
                                                           children: [
-                                                            Text(
-                                                              '${area['code']} - ',
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
                                                             Flexible(
                                                               child: Text(
-                                                                '${area['name']}',
+                                                                '${area['nameCode']}',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontSize: 20,
@@ -286,7 +280,7 @@ class AreaPageState extends State<AreaPage> {
                                                         decoration:
                                                             BoxDecoration(
                                                           color: area['status'] ==
-                                                                  "Inactive"
+                                                                  "Ẩn"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
                                                           borderRadius:
@@ -373,16 +367,15 @@ class AreaPageState extends State<AreaPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: employee['status'] == "Inactive"
-                    ? "Đổi sang Actice"
-                    : "Đổi sang Inactive",
+                label:
+                    employee['status'] == "Ẩn" ? "Hiện khu vực" : "Ẩn khu vực",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context1) {
                         return ConfirmDeleteDialog(
                           title: "Đổi trạng thái",
-                          content: "Bạn có chắc muốn đổi trạng thái nhân viên?",
+                          content: "Bạn có chắc muốn đổi trạng thái khu vực?",
                           onConfirm: () {
                             changeStatusArea(employee['id']).then((value) {
                               if (value) {
@@ -400,7 +393,7 @@ class AreaPageState extends State<AreaPage> {
                         );
                       });
                 },
-                cls: employee['status'] == "Inactive"
+                cls: employee['status'] == "Ẩn"
                     ? kPrimaryColor
                     : Colors.red[300]!,
                 context: context,

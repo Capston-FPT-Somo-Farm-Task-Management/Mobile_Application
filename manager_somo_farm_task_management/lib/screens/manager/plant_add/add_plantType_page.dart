@@ -134,11 +134,12 @@ class CreatePlantTypeState extends State<CreatePlantType> {
       };
       CreatePlantType(liveStock).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => PlantTypePage(farmId: widget.farmId),
-            ),
-          );
+          Navigator.of(context).pop("Ok");
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => PlantTypePage(farmId: widget.farmId),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

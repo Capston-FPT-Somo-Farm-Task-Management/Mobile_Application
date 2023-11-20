@@ -469,11 +469,17 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
       };
       UpdateLiveStock(liveStock, widget.livestock['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LiveStockPage(farmId: farmId!),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newZone");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => LiveStockPage(farmId: farmId!),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

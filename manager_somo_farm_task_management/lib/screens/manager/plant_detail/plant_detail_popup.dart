@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_update/plant_update_page.dart';
 
 class PlantDetailPopup extends StatelessWidget {
@@ -30,11 +31,17 @@ class PlantDetailPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdatePlant(plant: plant),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -51,16 +58,15 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Mã cây trồng: ${plant['externalId']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Mã cây trồng", '${plant['externalId']}', 18),
                 ),
               ],
             ),
             const SizedBox(height: 25),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.tree,
@@ -68,11 +74,9 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Loại cây: ${plant['habitantTypeName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Loại cây", '${plant['habitantTypeName']}', 18),
                 ),
               ],
             ),
@@ -85,11 +89,9 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Chiều cao: ${plant['height']} mét',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Chiều cao", '${plant['height']} mét', 18),
                 ),
               ],
             ),
@@ -102,11 +104,11 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Ngày tạo",
+                      '${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
+                      18),
                 ),
               ],
             ),
@@ -119,11 +121,9 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Khu vực: ${plant['areaName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Khu vực", '${plant['areaName']}', 18),
                 ),
               ],
             ),
@@ -136,11 +136,9 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Vùng: ${plant['zoneName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child:
+                      TitleText.titleText("Vùng", '${plant['zoneName']}', 18),
                 ),
               ],
             ),
@@ -153,11 +151,9 @@ class PlantDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Khu đất: ${plant['fieldName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Khu đất", '${plant['fieldName']}', 18),
                 ),
               ],
             ),

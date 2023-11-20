@@ -373,7 +373,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                           "${employee['name']}",
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 20,
+                                                            fontSize: 21,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
@@ -386,7 +386,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                             BoxDecoration(
                                                           color: employee[
                                                                       'status'] ==
-                                                                  "Inactive"
+                                                                  "Đã nghĩ việc"
                                                               ? Colors.red[400]
                                                               : kPrimaryColor,
                                                           borderRadius:
@@ -426,7 +426,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 15,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -450,7 +450,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 15,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -522,9 +522,7 @@ class EmployeekPageState extends State<EmployeekPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: employee['status'] == "Inactive"
-                    ? "Đổi sang Actice"
-                    : "Đổi sang Inactive",
+                label: "Đổi trạng thái của nhân viên",
                 onTap: () {
                   showDialog(
                       context: context,
@@ -549,9 +547,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                         );
                       });
                 },
-                cls: employee['status'] == "Inactive"
-                    ? kPrimaryColor
-                    : Colors.red[300]!,
+                cls: Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),

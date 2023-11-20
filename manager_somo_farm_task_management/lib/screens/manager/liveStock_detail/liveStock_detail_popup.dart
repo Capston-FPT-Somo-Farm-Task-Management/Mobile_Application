@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_update/livestock_update_page.dart';
 
@@ -30,11 +31,17 @@ class LiveStockDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdateLiveStock(livestock: liveStock),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -52,12 +59,8 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  wrapWords('Mã động vật: ${liveStock['externalId']}', 30),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Mã động vật",
+                    wrapWords('${liveStock['externalId']}', 30), 18),
               ],
             ),
             const SizedBox(height: 25),
@@ -69,15 +72,11 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  wrapWords('Loại: ${liveStock['habitantTypeName']}', 30),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Loại",
+                    wrapWords(' ${liveStock['habitantTypeName']}', 30), 18),
               ],
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 45),
             Row(
               children: [
                 const Icon(
@@ -86,12 +85,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Giới tính: ${liveStock['gender']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Giới tính", '${liveStock['gender']}', 18),
               ],
             ),
             const SizedBox(height: 25),
@@ -103,12 +97,8 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Cân nặng: ${liveStock['weight']} kg',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Cân nặng", '${liveStock['weight']} kg', 18),
               ],
             ),
             const SizedBox(height: 45),
@@ -120,12 +110,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Ngày tạo vật nuôi: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Ngày tạo vật nuôi",
+                    '${DateFormat('dd/MM/yyyy').format(DateTime.parse(liveStock['createDate']))}',
+                    18),
               ],
             ),
             const SizedBox(height: 45),
@@ -137,12 +125,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Khu vực: ${liveStock['areaName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Khu vực", '${liveStock['areaName']}', 18),
               ],
             ),
             const SizedBox(height: 25),
@@ -154,12 +137,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Vùng: ${liveStock['zoneName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Vùng", '${liveStock['zoneName']}', 18),
               ],
             ),
             const SizedBox(height: 25),
@@ -171,12 +149,7 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Khu đất: ${liveStock['fieldName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Khu đất", '${liveStock['fieldName']}', 18),
               ],
             ),
           ],

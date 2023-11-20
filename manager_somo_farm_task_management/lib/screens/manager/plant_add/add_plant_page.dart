@@ -61,7 +61,7 @@ class CreatePlantState extends State<CreatePlant> {
     return HabitantTypeService().getPlantTypeFromHabitantType(id);
   }
 
-  Future<Map<String, dynamic>> CreatePlant(Map<String, dynamic> plant) {
+  Future<bool> CreatePlant(Map<String, dynamic> plant) {
     return PlantService().createPlant(plant);
   }
 
@@ -420,11 +420,14 @@ class CreatePlantState extends State<CreatePlant> {
         'fieldId': fieldId
       };
       CreatePlant(plant).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PlantPage(farmId: widget.farmId),
-          ),
-        );
+        if (value) {
+          Navigator.of(context).pop("ok");
+        }
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => PlantPage(farmId: widget.farmId),
+        //   ),
+        // );
       }).catchError((e) {
         setState(() {
           isCreating = false;

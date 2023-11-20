@@ -218,13 +218,11 @@ class UpdateHabitantTypeState extends State<UpdateHabitantType> {
       };
       UpdateHabitantType(habitantTpye, widget.habitantType['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => widget.habitantType['status'] == "Thực vật"
-                  ? PlantTypePage(farmId: widget.habitantType['farmId'])
-                  : LiveStockTypePage(farmId: widget.habitantType['farmId']),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newType");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
         }
       }).catchError((e) {
         setState(() {

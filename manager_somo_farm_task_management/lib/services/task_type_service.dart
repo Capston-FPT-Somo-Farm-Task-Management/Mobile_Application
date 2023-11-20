@@ -144,4 +144,23 @@ class TaskTypeService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> DeleteTaskType(int id) async {
+    final String deleteTasktypeUrl = '$baseUrl/TaskType/${id}';
+    final response = await http.delete(
+      Uri.parse(deleteTasktypeUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      // final Map<String, dynamic> data = json.decode(response.body);
+      // return Future.error(data['message']);
+      return false;
+    }
+  }
 }
