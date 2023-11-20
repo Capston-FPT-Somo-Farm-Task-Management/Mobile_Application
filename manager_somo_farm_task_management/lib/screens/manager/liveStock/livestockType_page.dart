@@ -437,8 +437,8 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
               const Spacer(),
               _bottomSheetButton(
                 label: liveStock['isActive'] == false
-                    ? "Hiện vật nuôi"
-                    : "Ẩn vật nuôi",
+                    ? "Hiện loại vật nuôi"
+                    : "Ẩn loại vật nuôi",
                 onTap: () {
                   showDialog(
                       context: context,

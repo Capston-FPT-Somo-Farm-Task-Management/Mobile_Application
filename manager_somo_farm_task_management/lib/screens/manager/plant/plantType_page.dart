@@ -32,6 +32,10 @@ class PlantTypePageState extends State<PlantTypePage> {
     });
   }
 
+  Future<bool> deleteHabitantType(int id) {
+    return HabitantTypeService().DeleteHabitantType(id);
+  }
+
   List<Map<String, dynamic>> plants = [];
 
   Future<void> GetAllPlantType() async {
@@ -70,13 +74,6 @@ class PlantTypePageState extends State<PlantTypePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -229,10 +226,14 @@ class PlantTypePageState extends State<PlantTypePage> {
                                         return HabitantTypeDetailPopup(
                                             habitantType: plant);
                                       },
+                                    ).then(
+                                      (value) => {
+                                        if (value != null) {GetAllPlantType()}
+                                      },
                                     );
                                   },
                                   onLongPress: () {
-                                    // _showBottomSheet(context, liveStock);
+                                    _showBottomSheet(context, plant);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -274,7 +275,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                       child: Text(
                                                         plant['name'],
                                                         style: const TextStyle(
-                                                          fontSize: 20,
+                                                          fontSize: 21,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           overflow: TextOverflow
@@ -300,8 +301,8 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                       child: Text(
                                                         plant['isActive'] ==
                                                                 true
-                                                            ? "Active"
-                                                            : "Inactive",
+                                                            ? "Hiện"
+                                                            : "Ẩn",
                                                         style: const TextStyle(
                                                             fontSize: 14,
                                                             fontWeight:
@@ -415,7 +416,7 @@ class PlantTypePageState extends State<PlantTypePage> {
     );
   }
 
-  _showBottomSheet(BuildContext context, Map<String, dynamic> liveStock) {
+  _showBottomSheet(BuildContext context, Map<String, dynamic> plant) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -435,28 +436,38 @@ class PlantTypePageState extends State<PlantTypePage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: "Xóa",
+                label: plant['isActive'] == false
+                    ? "Hiện loại cây trông"
+                    : "Ẩn loại cây trồng",
                 onTap: () {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return ConfirmDeleteDialog(
-                          title: "Xóa loại cây trồng",
-                          content: "Bạn có chắc muốn xóa loại cây này?",
+                          title: "Thay đổi trạng thái loại cây trồng",
+                          content:
+                              "Bạn có chắc muốn thay đổi trạng thái của loại cây trồng này?",
                           onConfirm: () {
+                            deleteHabitantType(plant['id']).then((value) {
+                              if (value) {
+                                GetAllPlantType();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Đổi trạng thái thành công!', false);
+                              } else {
+                                SnackbarShowNoti.showSnackbar(
+                                    'Loại cây trồng đang được sử dụng. Không thể thay đổi trạng thái',
+                                    true);
+                              }
+                            });
                             Navigator.of(context).pop();
-                            setState(() {});
-                            plants.remove(liveStock);
-                            // deleteLiveStock(
-                            //     liveStock['id'], liveStock['status']);
                           },
-                          buttonConfirmText: "Xóa",
+                          buttonConfirmText: "Thay đổi",
                         );
                       });
-                  SnackbarShowNoti.showSnackbar(
-                      'Xóa thành công loại cây trồng', false);
                 },
-                cls: Colors.red[300]!,
+                cls: plant['isActive'] == false
+                    ? kPrimaryColor
+                    : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),
