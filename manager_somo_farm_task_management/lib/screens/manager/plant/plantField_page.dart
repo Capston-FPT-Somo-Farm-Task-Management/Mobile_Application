@@ -136,10 +136,17 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreatePlantField(
-                                        farmId: farmId!,
-                                      )),
-                            );
+                                builder: (context) => CreatePlantField(
+                                  farmId: farmId!,
+                                ),
+                              ),
+                            ).then((value) {
+                              if (value != null) {
+                                GetPlantFields();
+                                SnackbarShowNoti.showSnackbar(
+                                    'Tạo vườn thành công!', false);
+                              }
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kPrimaryColor,
@@ -197,7 +204,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng
@@ -236,7 +243,9 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                         return PlantFieldDetailsPopup(
                                             plantField: plant);
                                       },
-                                    );
+                                    ).then((value) => {
+                                          if (value != null) {GetPlantFields()}
+                                        });
                                   },
                                   onLongPress: () {
                                     _showBottomSheet(context, plant);

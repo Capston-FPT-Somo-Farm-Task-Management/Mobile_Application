@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_update/plant_field_update_page.dart';
 
 class PlantFieldDetailsPopup extends StatelessWidget {
@@ -15,12 +15,14 @@ class PlantFieldDetailsPopup extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            wrapWords(plantField['name'], 10),
-            style: const TextStyle(
-              color: kPrimaryColor,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              '${plantField['name']}',
+              style: const TextStyle(
+                color: kPrimaryColor,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           IconButton(
@@ -29,11 +31,17 @@ class PlantFieldDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdatePlantField(plantFied: plantField),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -51,11 +59,9 @@ class PlantFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  wrapWords('Mã vườn: ${plantField['code']}', 30),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Mã vườn", '${plantField['code']}', 18),
                 ),
               ],
             ),
@@ -68,11 +74,9 @@ class PlantFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Diện tích: ${plantField['area']} mét vuông',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Diện tích", '${plantField['area']} mét vuông', 18),
                 ),
               ],
             ),
@@ -85,11 +89,9 @@ class PlantFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Khu vực: ${plantField['areaName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Khu vực", '${plantField['areaName']}', 18),
                 ),
               ],
             ),
@@ -102,11 +104,9 @@ class PlantFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Vùng: ${plantField['zoneName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Vùng", '${plantField['zoneName']}', 18),
                 ),
               ],
             ),

@@ -175,7 +175,7 @@ class AreaPageState extends State<AreaPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng

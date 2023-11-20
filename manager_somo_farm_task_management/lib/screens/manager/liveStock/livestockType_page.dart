@@ -186,7 +186,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng
@@ -195,7 +195,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                   height:
                                       16), // Khoảng cách giữa biểu tượng và văn bản
                               Text(
-                                "Không có con vật nào",
+                                "Không có loại vật nuôi",
                                 style: TextStyle(
                                   fontSize:
                                       20, // Kích thước văn bản có thể điều chỉnh

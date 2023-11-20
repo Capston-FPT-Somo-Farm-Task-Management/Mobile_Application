@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/plant/plantField_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
@@ -297,11 +296,17 @@ class UpdatePlantFieldState extends State<UpdatePlantField> {
       };
       UpdateField(field, widget.plantFied['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => PlantFieldPage(),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newZone");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => PlantFieldPage(),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

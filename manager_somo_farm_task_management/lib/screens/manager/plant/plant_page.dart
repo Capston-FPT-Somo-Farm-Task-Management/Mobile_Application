@@ -4,6 +4,7 @@ import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plant_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_detail/plant_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/plant_service.dart';
@@ -193,7 +194,7 @@ class PlantPageState extends State<PlantPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng
@@ -347,32 +348,11 @@ class PlantPageState extends State<PlantPage> {
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              RichText(
-                                                                text: TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Ngày tạo: ",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight: FontWeight
-                                                                              .w600,
-                                                                          color:
-                                                                              Colors.black87),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${DateFormat('dd/MM/yyyy').format(DateTime.parse(plant['createDate']))}',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color:
-                                                                              Colors.black87),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
+                                                              TitleText.titleText(
+                                                                  "Mã cây",
+                                                                  plant[
+                                                                      'externalId'],
+                                                                  16),
                                                               const SizedBox(
                                                                   height: 7),
                                                               RichText(

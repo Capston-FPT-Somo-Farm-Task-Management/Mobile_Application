@@ -280,11 +280,14 @@ class CreatePlantFieldState extends State<CreatePlantField> {
         'zoneId': zoneId
       };
       CreatePlantField(plant).then((value) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PlantFieldPage(farmId: widget.farmId),
-          ),
-        );
+        if (value) {
+          Navigator.of(context).pop("Ok");
+        }
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => PlantFieldPage(farmId: widget.farmId),
+        //   ),
+        // );
       }).catchError((e) {
         setState(() {
           isCreating = false;
