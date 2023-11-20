@@ -297,11 +297,16 @@ class UpdateLiveStockFieldState extends State<UpdateLiveStockField> {
       };
       UpdateField(field, widget.livestockFied['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LiveStockFieldPage(farmId: farmId!),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newZone");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => LiveStockFieldPage(farmId: farmId!),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_update/livestock_field_update_page.dart';
 
@@ -16,7 +17,7 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            wrapWords(liveStockField['name'], 10),
+            liveStockField['name'],
             style: const TextStyle(
               color: kPrimaryColor,
               fontSize: 30,
@@ -29,12 +30,18 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) =>
                       UpdateLiveStockField(livestockFied: liveStockField),
                 ),
-              );
+              )
+                  .then((value) {
+                if (value != null) {
+                  Navigator.of(context).pop("ok");
+                }
+              });
             },
           )
         ],
@@ -52,12 +59,8 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  wrapWords('Mã chuồng: ${liveStockField['code']}', 30),
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Mã chuồng",
+                    wrapWords('${liveStockField['code']}', 30), 18),
               ],
             ),
             const SizedBox(height: 25),
@@ -69,16 +72,13 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Diện tích: ${liveStockField['area']} mét vuông',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Diện tích", '${liveStockField['area']} mét vuông', 18),
               ],
             ),
             const SizedBox(height: 45),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.map,
@@ -86,12 +86,8 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Khu vực: ${liveStockField['areaName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText("Khu vực",
+                    wrapWords('${liveStockField['areaName']}', 25), 18),
               ],
             ),
             const SizedBox(height: 25),
@@ -103,12 +99,8 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Vùng: ${liveStockField['zoneName']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                TitleText.titleText(
+                    "Vùng", wrapWords('${liveStockField['zoneName']}', 25), 18),
               ],
             ),
           ],
