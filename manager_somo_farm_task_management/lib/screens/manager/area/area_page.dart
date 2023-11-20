@@ -373,9 +373,8 @@ class AreaPageState extends State<AreaPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: employee['status'] == "Inactive"
-                    ? "Đổi sang Actice"
-                    : "Đổi sang Inactive",
+                label:
+                    employee['status'] == "Ẩn" ? "Hiện khu vực" : "Ẩn khu vực",
                 onTap: () {
                   showDialog(
                       context: context,
@@ -400,7 +399,7 @@ class AreaPageState extends State<AreaPage> {
                         );
                       });
                 },
-                cls: employee['status'] == "Inactive"
+                cls: employee['status'] == "Ẩn"
                     ? kPrimaryColor
                     : Colors.red[300]!,
                 context: context,
