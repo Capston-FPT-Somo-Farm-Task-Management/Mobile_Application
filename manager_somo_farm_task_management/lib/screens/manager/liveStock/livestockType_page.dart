@@ -175,185 +175,239 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: RefreshIndicator(
-                notificationPredicate: (_) => true,
-                onRefresh: () => GetAllLiveStockType(),
-                child: ListView.builder(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: filteredLivestockList.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> liveStock =
-                        filteredLivestockList[index];
-
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return HabitantTypeDetailPopup(
-                                  habitantType: liveStock);
-                            },
-                          ).then(
-                            (value) => {
-                              if (value != null) {GetAllLiveStockType()}
-                            },
-                          );
-                        },
-                        onLongPress: () {
-                          _showBottomSheet(context, liveStock);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 8,
-                                offset: Offset(2, 4), // Shadow position
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    )
+                  : filteredLivestockList.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.no_accounts_outlined,
+                                size:
+                                    75, // Kích thước biểu tượng có thể điều chỉnh
+                                color: Colors.grey, // Màu của biểu tượng
+                              ),
+                              SizedBox(
+                                  height:
+                                      16), // Khoảng cách giữa biểu tượng và văn bản
+                              Text(
+                                "Không có con vật nào",
+                                style: TextStyle(
+                                  fontSize:
+                                      20, // Kích thước văn bản có thể điều chỉnh
+                                  color: Colors.grey, // Màu văn bản
+                                ),
                               ),
                             ],
                           ),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            height: 150,
-                            width: double.infinity,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                        )
+                      : RefreshIndicator(
+                          notificationPredicate: (_) => true,
+                          onRefresh: () => GetAllLiveStockType(),
+                          child: ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: filteredLivestockList.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> liveStock =
+                                  filteredLivestockList[index];
+
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return HabitantTypeDetailPopup(
+                                            habitantType: liveStock);
+                                      },
+                                    ).then(
+                                      (value) => {
+                                        if (value != null)
+                                          {GetAllLiveStockType()}
+                                      },
+                                    );
+                                  },
+                                  onLongPress: () {
+                                    _showBottomSheet(context, liveStock);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 8,
+                                          offset:
+                                              Offset(2, 4), // Shadow position
+                                        ),
+                                      ],
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      height: 150,
+                                      width: double.infinity,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Flexible(
-                                            child: Text(
-                                              liveStock['name'],
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  liveStock['isActive'] == false
-                                                      ? Colors.red[400]
-                                                      : kPrimaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: const EdgeInsets.all(10),
-                                            child: Text(
-                                              liveStock['isActive'] == true
-                                                  ? "Hiện"
-                                                  : "Ẩn",
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        liveStock['name'],
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        color: liveStock[
+                                                                    'isActive'] ==
+                                                                false
+                                                            ? Colors.red[400]
+                                                            : kPrimaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Text(
+                                                        liveStock['isActive'] ==
+                                                                true
+                                                            ? "Hiện"
+                                                            : "Ẩn",
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 7),
+                                                      height: 70,
+                                                      width: 4,
+                                                      decoration: BoxDecoration(
+                                                        color: kPrimaryColor,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(20),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "Xuất xứ: ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${liveStock['origin']}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "Môi trường sống: ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                              TextSpan(
+                                                                text: liveStock[
+                                                                            'environment'] ==
+                                                                        null
+                                                                    ? "chưa có"
+                                                                    : wrapWordsWithEllipsis(
+                                                                        '${liveStock['environment']}',
+                                                                        20),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(left: 7),
-                                            height: 70,
-                                            width: 4,
-                                            decoration: BoxDecoration(
-                                              color: kPrimaryColor,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "Xuất xứ: ",
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                    TextSpan(
-                                                      text:
-                                                          '${liveStock['origin']}',
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          color:
-                                                              Colors.black87),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 10),
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "Môi trường sống: ",
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                    TextSpan(
-                                                      text: liveStock[
-                                                                  'environment'] ==
-                                                              null
-                                                          ? "chưa có"
-                                                          : wrapWordsWithEllipsis(
-                                                              '${liveStock['environment']}',
-                                                              20),
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
             ),
           ],
         ),
