@@ -373,7 +373,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                           "${employee['name']}",
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 20,
+                                                            fontSize: 21,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
@@ -426,7 +426,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 15,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -450,7 +450,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 13,
+                                                                  fontSize: 15,
                                                                   color: Colors
                                                                       .black),
                                                         ),
