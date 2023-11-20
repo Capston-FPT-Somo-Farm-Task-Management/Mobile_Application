@@ -21,11 +21,8 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
   List<String> filterStatus = ["Công việc cây trồng", "Công việc chăn nuôi"];
   String _selectedStatus = "";
 
-  int? status;
-  int? farmId;
-  int? id;
   bool isLoading = true;
-  bool isUpdating = false;
+  // bool isUpdating = false;
 
   Future<bool> UpdateTaskType(Map<String, dynamic> taskType, int id) {
     return TaskTypeService().UpdateTaskType(taskType, id);
@@ -53,13 +50,13 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
         ),
       );
     }
-    if (isUpdating) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    // if (isUpdating) {
+    //   return Scaffold(
+    //     body: Center(
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   );
+    // }
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
@@ -83,15 +80,10 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              widget.taskType['status'] == "Động vật"
-                  ? Text(
-                      "Chỉnh sửa loại vật nuôi",
-                      style: headingStyle,
-                    )
-                  : Text(
-                      "Chỉnh sửa loại cây trồng",
-                      style: headingStyle,
-                    ),
+              Text(
+                "Chỉnh sửa loại công việc",
+                style: headingStyle,
+              ),
               MyInputField(
                 title: "Tên loại",
                 hint: "Nhập tên loại",
@@ -133,12 +125,6 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedStatus = newValue!;
-                                if (_selectedStatus == 'Động vật') {
-                                  status = 1;
-                                }
-                                if (_selectedStatus == "Thực vật") {
-                                  status = 0;
-                                }
                               });
                             },
                             items: filterStatus
@@ -151,7 +137,7 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
                           ),
                         ),
                         Positioned(
-                            top: 17, left: 16, child: Text(_selectedStatus!))
+                            top: 17, left: 16, child: Text(_selectedStatus))
                       ],
                     ),
                   ],
@@ -194,9 +180,9 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
   _validateDate() {
     if (_nameController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty) {
-      setState(() {
-        isUpdating = true;
-      });
+      // setState(() {
+      //   isUpdating = true;
+      // });
       Map<String, dynamic> taskTpye = {
         'name': _nameController.text,
         if (_selectedStatus == "Công việc chăn nuôi") 'status': 1,
@@ -213,7 +199,7 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
         }
       }).catchError((e) {
         setState(() {
-          isUpdating = true;
+          // isUpdating = true;
         });
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
