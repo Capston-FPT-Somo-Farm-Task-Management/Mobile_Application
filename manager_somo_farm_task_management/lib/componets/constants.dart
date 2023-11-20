@@ -9,7 +9,7 @@ const kTextBlackColor = Colors.black;
 const kTextGreyColor = Color.fromARGB(255, 135, 135, 135);
 const kTextWhiteColor = Colors.white;
 const kTextBlueColor = Color(0xFF0582CA);
-const String baseUrl = "https://somotaskmanagementapi.azurewebsites.net/api";
+const String baseUrl = "https://somofarmmanagementtask.azurewebsites.net/api";
 String accessToken = "";
 TextStyle get subHeadingStyle {
   return GoogleFonts.lato(
