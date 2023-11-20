@@ -296,7 +296,7 @@ class PlantPageState extends State<PlantPage> {
                                                                 BoxDecoration(
                                                               color: plant[
                                                                           'status'] ==
-                                                                      "Inactive"
+                                                                      "Ẩn"
                                                                   ? Colors
                                                                       .red[400]
                                                                   : kPrimaryColor,
@@ -479,9 +479,8 @@ class PlantPageState extends State<PlantPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: plant['status'] == "Inactive"
-                    ? "Đổi sang Active"
-                    : "Đổi sang Inactive",
+                label:
+                    plant['status'] == "Ẩn" ? "Hiện cây trồng" : "Ẩn cây trồng",
                 onTap: () {
                   showDialog(
                       context: context,
@@ -507,9 +506,7 @@ class PlantPageState extends State<PlantPage> {
                         );
                       });
                 },
-                cls: plant['status'] == "Inactive"
-                    ? kPrimaryColor
-                    : Colors.red[300]!,
+                cls: plant['status'] == "Ẩn" ? kPrimaryColor : Colors.red[300]!,
                 context: context,
               ),
               const SizedBox(height: 20),
