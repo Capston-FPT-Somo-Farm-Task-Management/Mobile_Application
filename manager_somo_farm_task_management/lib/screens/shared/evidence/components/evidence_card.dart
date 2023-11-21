@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
@@ -123,11 +124,15 @@ class _EvidenceCardState extends State<EvidenceCard> {
                           ),
                         ),
                         SizedBox(height: 5),
-                        Text(
-                          widget.evidence['time'],
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 13,
+                        Tooltip(
+                          message: DateFormat('dd/MM/yyyy HH:mm aa').format(
+                              DateTime.parse(widget.evidence['submitDate'])),
+                          child: Text(
+                            widget.evidence['time'],
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ],

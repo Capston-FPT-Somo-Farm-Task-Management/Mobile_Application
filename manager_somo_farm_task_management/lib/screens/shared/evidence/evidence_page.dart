@@ -86,7 +86,7 @@ class EvidencePageState extends State<EvidencePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                padding: EdgeInsets.fromLTRB(15, 15, 15, 10),
                 width: double.infinity,
                 color: Colors.grey[200],
                 child: Text.rich(
@@ -104,7 +104,7 @@ class EvidencePageState extends State<EvidencePage> {
                       TextSpan(
                         text: " - " + widget.task['name'],
                         style: TextStyle(
-                          fontSize: 25.0,
+                          fontSize: 23.0,
                           fontWeight: FontWeight.bold,
                           color: kSecondColor,
                         ),
@@ -114,7 +114,6 @@ class EvidencePageState extends State<EvidencePage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(bottom: 4),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -159,8 +158,10 @@ class EvidencePageState extends State<EvidencePage> {
                         ),
                       )
                     : RefreshIndicator(
+                        notificationPredicate: (_) => true,
                         onRefresh: () => getEvdidence(),
                         child: SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
                           child: Column(
                             children: evidences.map((evidence) {
                               return EvidenceCard(
