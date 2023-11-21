@@ -1500,30 +1500,31 @@ class TaskPageState extends State<TaskPage> {
                         GestureDetector(
                           onTap: () {
                             showDialog(
-                                context: context,
-                                builder: (BuildContext context1) {
-                                  return ConfirmDeleteDialog(
-                                    title: "Hủy bỏ công việc",
-                                    content:
-                                        'Công việc sẽ chuyển sang trạng thái "Hủy bỏ"',
-                                    onConfirm: () {
-                                      Navigator.of(context).pop();
-                                      TaskService()
-                                          .changeStatusToDoing(task['id'])
-                                          .then((value) {
-                                        if (value) {
-                                          removeTask(task['id']);
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Đổi thành công!", false);
-                                        } else {
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Xảy ra lỗi!", true);
-                                        }
-                                      });
-                                    },
-                                    buttonConfirmText: "Đồng ý",
-                                  );
-                                });
+                              context: context,
+                              builder: (BuildContext context1) {
+                                return ConfirmDeleteDialog(
+                                  title: "Hủy bỏ công việc",
+                                  content:
+                                      'Công việc sẽ chuyển sang trạng thái "Hủy bỏ"',
+                                  onConfirm: () {
+                                    Navigator.of(context).pop();
+                                    TaskService()
+                                        .changeStatusToDoing(task['id'])
+                                        .then((value) {
+                                      if (value) {
+                                        removeTask(task['id']);
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Đổi thành công!", false);
+                                      } else {
+                                        SnackbarShowNoti.showSnackbar(
+                                            "Xảy ra lỗi!", true);
+                                      }
+                                    });
+                                  },
+                                  buttonConfirmText: "Đồng ý",
+                                );
+                              },
+                            );
                           },
                           child: buildOptionTask(Icons.cancel_outlined,
                               'Công việc bị hủy bỏ', Colors.red),
