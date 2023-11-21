@@ -46,7 +46,7 @@ class CheckKeepLoginState extends State<CheckKeepLogin> {
     final storedRole = prefs.getString('role');
     final aT = prefs.getString('accessToken');
     setState(() {
-      accessToken = aT!;
+      if (aT != null) accessToken = aT;
       userId = storedUsername;
       farmId = storedFarmId;
       role = storedRole;
