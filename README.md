@@ -1,2 +1,2 @@
 # Mobile_Application
-Mobile application for Admin and Manager
+Mobile application for Manager and Supervisor
