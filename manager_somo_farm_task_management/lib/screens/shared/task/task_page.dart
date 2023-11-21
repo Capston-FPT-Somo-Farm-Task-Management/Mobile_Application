@@ -7,6 +7,7 @@ import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.
 import 'package:manager_somo_farm_task_management/componets/option.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/components/divider_option.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/components/icon_option.dart';
@@ -91,8 +92,8 @@ class TaskPageState extends State<TaskPage> {
       farmId = value;
     });
     getRole().then((_) {
-      _getTasksForSelectedDateAndStatus(page, 10, null, 0, true, "");
       if (role == "Supervisor") groupValue = 1;
+      _getTasksForSelectedDateAndStatus(page, 10, null, groupValue, true, "");
     });
     scrollController.addListener(() {
       _scrollListener();
@@ -668,7 +669,9 @@ class TaskPageState extends State<TaskPage> {
                                                       ),
                                                     ),
                                                     if (task['status'] !=
-                                                        "Bản nháp")
+                                                            "Bản nháp" &&
+                                                        task['status'] !=
+                                                            "Chuẩn bị")
                                                       Flexible(
                                                         child: Container(
                                                             decoration:
@@ -735,9 +738,16 @@ class TaskPageState extends State<TaskPage> {
                                                             .width,
                                                     alignment:
                                                         Alignment.topRight,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 35),
+                                                    padding: task['status'] !=
+                                                                "Bản nháp" &&
+                                                            role ==
+                                                                "Supervisor" &&
+                                                            task['status'] !=
+                                                                "Chuẩn bị"
+                                                        ? const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 35)
+                                                        : null,
                                                     child: Tooltip(
                                                         message: role ==
                                                                 "Manager"
@@ -1381,8 +1391,21 @@ class TaskPageState extends State<TaskPage> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            buildIconOption(
-                                Icons.post_add, "Báo cáo công việc"),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => EvidencePage(
+                                      role: role,
+                                      task: task,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: buildIconOption(
+                                  Icons.post_add, "Báo cáo công việc"),
+                            ),
                             GestureDetector(
                                 onTap: () {
                                   Navigator.of(context).pop();
@@ -1390,10 +1413,7 @@ class TaskPageState extends State<TaskPage> {
                                       .push(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          UpdateTaskDraftTodoPage(
-                                              changeTodo: false,
-                                              task: task,
-                                              role: role),
+                                          AssignTaskPage(task: task),
                                     ),
                                   )
                                       .then((value) {

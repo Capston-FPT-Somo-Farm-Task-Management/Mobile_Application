@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/components/media_picker.dart';
@@ -37,6 +39,34 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
         isLoading = false;
       });
     });
+  }
+
+  Future<void> pickImageFromCamera() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+    );
+
+    if (pickedFile != null) {
+      // Lưu ảnh vào album
+      final result = await ImageGallerySaver.saveImage(
+        File(pickedFile.path).readAsBytesSync(),
+      );
+      // Lấy danh sách ảnh từ album
+      final List<AssetEntity> assets = await PhotoManager.getAssetPathList(
+        type: RequestType.image,
+      ).then((value) => value[0]
+          .getAssetListPaged(page: 0, size: 1)); // Số lượng ảnh có thể thay đổi
+
+      if (assets.isNotEmpty) {
+        final AssetEntity assetEntity = assets.first; // Lấy asset đầu tiên
+
+        setState(() {
+          selectedAssetList.add(assetEntity);
+          isCreateButtonEnabled = selectedAssetList.isNotEmpty &&
+              _descriptionController.text.trim().isNotEmpty;
+        });
+      }
+    }
   }
 
   int totalLengthImage() {
@@ -263,21 +293,35 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
                         ),
                       ),
                     ),
-                    alignment: Alignment.centerRight,
                     height: 40,
                     padding: const EdgeInsets.only(top: 4),
-                    child: Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: GestureDetector(
-                        onTap: () {
-                          pickAssets(
-                            maxCount: 20,
-                            requestType: RequestType.image,
-                          );
-                          setState(() {});
-                        },
-                        child: Icon(Icons.add_a_photo, size: 30),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: GestureDetector(
+                            onTap: () {
+                              pickImageFromCamera();
+                              setState(() {});
+                            },
+                            child: Icon(Icons.add_a_photo_sharp, size: 30),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Container(
+                          margin: EdgeInsets.only(right: 15),
+                          child: GestureDetector(
+                            onTap: () {
+                              pickAssets(
+                                maxCount: 30,
+                                requestType: RequestType.image,
+                              );
+                              setState(() {});
+                            },
+                            child: Icon(Icons.add_photo_alternate, size: 32),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
