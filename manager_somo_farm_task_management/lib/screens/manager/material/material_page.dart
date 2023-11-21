@@ -174,7 +174,7 @@ class MaterialPageState extends State<MaterialsPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.no_accounts_outlined,
+                                Icons.not_interested_outlined,
                                 size:
                                     75, // Kích thước biểu tượng có thể điều chỉnh
                                 color: Colors.grey, // Màu của biểu tượng
@@ -373,9 +373,8 @@ class MaterialPageState extends State<MaterialsPage> {
                 context: context,
               ),
               _bottomSheetButton(
-                label: employee['status'] == "Inactive"
-                    ? "Đổi sang Actice"
-                    : "Đổi sang Inactive",
+                label:
+                    employee['status'] == "Ẩn" ? "Hiện dụng cụ" : "Ẩn dụng cụ",
                 onTap: () {
                   showDialog(
                       context: context,
@@ -401,7 +400,7 @@ class MaterialPageState extends State<MaterialsPage> {
                         );
                       });
                 },
-                cls: employee['status'] == "Inactive"
+                cls: employee['status'] == "Ẩn"
                     ? kPrimaryColor
                     : Colors.red[300]!,
                 context: context,

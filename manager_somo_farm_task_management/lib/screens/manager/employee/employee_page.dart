@@ -27,8 +27,8 @@ class EmployeekPageState extends State<EmployeekPage> {
   List<Map<String, dynamic>> filteredEmployeeList = [];
   final List<String> filters = [
     "Tất cả",
-    "Active",
-    "Inactive",
+    "Đang làm việc",
+    "Đã nghỉ việc",
   ];
   String? selectedFilter;
   bool isLoading = true;
@@ -90,15 +90,25 @@ class EmployeekPageState extends State<EmployeekPage> {
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: Text(
-          'Nhân viên',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-            color: kPrimaryColor,
-          ),
-        ),
+        title: widget.viewTime == false
+            ? Text(
+                'Nhân viên',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                  color: kPrimaryColor,
+                ),
+              )
+            : Text(
+                'Thời gian làm việc',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                  color: kPrimaryColor,
+                ),
+              ),
         actions: [
           IconButton(
             icon: Icon(Icons.menu),
@@ -207,12 +217,13 @@ class EmployeekPageState extends State<EmployeekPage> {
                               }
                               if (selectedFilter == "Active") {
                                 filteredEmployeeList = employees
-                                    .where((t) => t['status'] == "Active")
+                                    .where(
+                                        (t) => t['status'] == "Đang làm việc")
                                     .toList();
                               }
                               if (selectedFilter == "Inactive") {
                                 filteredEmployeeList = employees
-                                    .where((t) => t['status'] == "Inactive")
+                                    .where((t) => t['status'] == "Đã nghi việc")
                                     .toList();
                               }
                             });
@@ -426,7 +437,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 15,
+                                                                  fontSize: 16,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -450,7 +461,7 @@ class EmployeekPageState extends State<EmployeekPage> {
                                                         style: GoogleFonts.lato(
                                                           textStyle:
                                                               const TextStyle(
-                                                                  fontSize: 15,
+                                                                  fontSize: 16,
                                                                   color: Colors
                                                                       .black),
                                                         ),
@@ -508,7 +519,7 @@ class EmployeekPageState extends State<EmployeekPage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.only(top: 4),
-          height: MediaQuery.of(context).size.height * 0.24,
+          height: MediaQuery.of(context).size.height * 0.3,
           color: kBackgroundColor,
           child: Column(
             children: [
@@ -521,6 +532,18 @@ class EmployeekPageState extends State<EmployeekPage> {
                 ),
               ),
               const Spacer(),
+              _bottomSheetButton(
+                label: "Xem thời gian làm việc của nhân viên",
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        TotalTimeEffortPage(employeeId: employee['id']),
+                  ));
+                },
+                cls: kPrimaryColor,
+                context: context,
+              ),
               _bottomSheetButton(
                 label: "Đổi trạng thái của nhân viên",
                 onTap: () {

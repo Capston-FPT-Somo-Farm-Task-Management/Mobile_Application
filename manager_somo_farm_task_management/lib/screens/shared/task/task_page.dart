@@ -748,13 +748,13 @@ class TaskPageState extends State<TaskPage> {
                                                             (role == "Manager" &&
                                                                     task['managerName'] ==
                                                                         null)
-                                                                ? task[
-                                                                    'avatarSupervisor']
+                                                                ? task['avatarSupervisor'] ??
+                                                                    "string"
                                                                 : (role == "Supervisor" &&
                                                                         task['managerName'] !=
                                                                             null)
-                                                                    ? task[
-                                                                        'avatarManager']
+                                                                    ? task['avatarManager'] ??
+                                                                        "string"
                                                                     : "string",
                                                             width: 25,
                                                             height: 25,
