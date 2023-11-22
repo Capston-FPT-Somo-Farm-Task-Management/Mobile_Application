@@ -323,10 +323,10 @@ class _FirstAddTaskOtherPage extends State<FirstAddTaskOtherPage> {
                     : _selectedField + ", ") +
                 _addressDetailController.text.trim(),
             fieldId: null,
-            otherId: null,
             liveStockId: null,
             plantId: null,
             isPlant: null,
+            isOne: false,
           ),
         ),
       );

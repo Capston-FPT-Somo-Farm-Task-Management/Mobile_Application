@@ -8,12 +8,13 @@ import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/components/media_picker.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/components/imange_list_selected.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
+import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class CreateEvidencePage extends StatefulWidget {
   final int taskId;
-
-  const CreateEvidencePage({super.key, required this.taskId});
+  final int? status;
+  const CreateEvidencePage({super.key, required this.taskId, this.status});
   @override
   _CreateEvidencePageState createState() => _CreateEvidencePageState();
 }
@@ -141,8 +142,13 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                     Navigator.of(context).pop();
                   },
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
-              title:
-                  Text('Tạo báo cáo', style: TextStyle(color: kPrimaryColor)),
+              title: Text(
+                  widget.status == null
+                      ? 'Tạo báo cáo'
+                      : widget.status == 5
+                          ? "Báo cáo tạm hoãn"
+                          : "Báo cáo hủy bỏ",
+                  style: TextStyle(color: kPrimaryColor)),
               centerTitle: true,
               actions: [
                 GestureDetector(
@@ -152,25 +158,55 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                             isLoading = true;
                           });
                           convertAssetsToFiles(selectedAssetList).then((_) {
-                            EvidenceService()
-                                .createEvidence(widget.taskId,
-                                    _descriptionController.text, selectedFiles)
-                                .then((value) {
-                              if (value) {
-                                SnackbarShowNoti.showSnackbar(
-                                    'Tạo báo cáo thành công!', false);
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                Navigator.pop(context, "newEvidence");
-                              }
-                            }).catchError((e) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              SnackbarShowNoti.showSnackbar(
-                                  e.toString(), false);
+                            widget.status == null
+                                ? EvidenceService()
+                                    .createEvidence(
+                                        widget.taskId,
+                                        _descriptionController.text,
+                                        selectedFiles)
+                                    .then((value) {
+                                    if (value) {
+                                      SnackbarShowNoti.showSnackbar(
+                                          'Tạo báo cáo thành công!', false);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Navigator.pop(context, "newEvidence");
+                                    }
+                                  }).catchError((e) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    SnackbarShowNoti.showSnackbar(
+                                        e.toString(), false);
+                                  })
+                                : TaskService()
+                                    .changeStatusToPendingAndCancel(
+                                        widget.taskId,
+                                        widget.status!,
+                                        _descriptionController.text,
+                                        selectedFiles)
+                                    .then((value) {
+                                    if (value) {
+                                      SnackbarShowNoti.showSnackbar(
+                                          'Tạo báo cáo thành công!', false);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Navigator.pop(context, "newEvidence");
+                                    }
+                                  }).catchError((e) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    SnackbarShowNoti.showSnackbar(
+                                        e.toString(), true);
+                                  });
+                          }).catchError((e) {
+                            setState(() {
+                              isLoading = true;
                             });
+                            SnackbarShowNoti.showSnackbar(e.toString(), true);
                           });
                         }
                       : null,

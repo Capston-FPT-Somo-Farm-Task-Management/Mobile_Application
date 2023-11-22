@@ -8,6 +8,7 @@ import 'package:manager_somo_farm_task_management/componets/option.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/evidence_add_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/components/divider_option.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/components/icon_option.dart';
@@ -16,6 +17,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/task_assign/tas
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_draft_todo_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
+import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
@@ -695,6 +697,8 @@ class TaskPageState extends State<TaskPage> {
                                                                     .push(
                                                                   MaterialPageRoute(
                                                                     builder: (context) => SubTaskPage(
+                                                                        isRecordTime:
+                                                                            false,
                                                                         taskStatus:
                                                                             task[
                                                                                 'status'],
@@ -712,7 +716,22 @@ class TaskPageState extends State<TaskPage> {
                                                                         taskCode:
                                                                             task['code']),
                                                                   ),
-                                                                );
+                                                                )
+                                                                    .then(
+                                                                        (value) {
+                                                                  if (value !=
+                                                                      null) {
+                                                                    print("ok");
+                                                                    _getTasksForSelectedDateAndStatus(
+                                                                        1,
+                                                                        10 *
+                                                                            page,
+                                                                        _selectedDate,
+                                                                        groupValue,
+                                                                        true,
+                                                                        searchValue);
+                                                                  }
+                                                                });
                                                               },
                                                               child: Icon(
                                                                 Icons
@@ -758,13 +777,13 @@ class TaskPageState extends State<TaskPage> {
                                                             (role == "Manager" &&
                                                                     task['managerName'] ==
                                                                         null)
-                                                                ? task['avatarSupervisor'] ??
-                                                                    "string"
+                                                                ? task[
+                                                                    'avatarSupervisor']
                                                                 : (role == "Supervisor" &&
                                                                         task['managerName'] !=
                                                                             null)
-                                                                    ? task['avatarManager'] ??
-                                                                        "string"
+                                                                    ? task[
+                                                                        'avatarManager']
                                                                     : "string",
                                                             width: 25,
                                                             height: 25,
@@ -1331,29 +1350,66 @@ class TaskPageState extends State<TaskPage> {
                               "Từ chối công việc", Colors.red),
                         ),
                       ] else if (isAsigned) ...[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AssignTaskPage(task: task),
-                              ),
-                            )
-                                .then((value) {
-                              if (value != null) {
-                                _getTasksForSelectedDateAndStatus(
-                                    1,
-                                    10 * page,
-                                    _selectedDate,
-                                    groupValue,
-                                    true,
-                                    searchValue);
-                              }
-                            });
-                          },
-                          child: buildOptionTask(Icons.edit, "Chỉnh sửa", null),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SubTaskPage(
+                                            isRecordTime: false,
+                                            taskStatus: task['status'],
+                                            startDate: task['startDate'],
+                                            endDate: task['endDate'],
+                                            taskId: task['id'],
+                                            taskName: task['name'],
+                                            taskCode: task['code']),
+                                      ),
+                                    )
+                                    .then((value) => {
+                                          if (value != null)
+                                            {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue),
+                                            }
+                                        });
+                              },
+                              child:
+                                  buildIconOption(Icons.task, "Công việc con"),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context)
+                                      .push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AssignTaskPage(task: task),
+                                    ),
+                                  )
+                                      .then((value) {
+                                    if (value != null) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          1,
+                                          10 * page,
+                                          _selectedDate,
+                                          groupValue,
+                                          true,
+                                          searchValue);
+                                    }
+                                  });
+                                },
+                                child: buildIconOption(
+                                    Icons.edit_square, "Chỉnh sửa")),
+                          ],
                         ),
                         buildDivider(),
                         GestureDetector(
@@ -1407,6 +1463,38 @@ class TaskPageState extends State<TaskPage> {
                                   Icons.post_add, "Báo cáo công việc"),
                             ),
                             GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SubTaskPage(
+                                            isRecordTime: false,
+                                            taskStatus: task['status'],
+                                            startDate: task['startDate'],
+                                            endDate: task['endDate'],
+                                            taskId: task['id'],
+                                            taskName: task['name'],
+                                            taskCode: task['code']),
+                                      ),
+                                    )
+                                    .then((value) => {
+                                          if (value != null)
+                                            {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue)
+                                            }
+                                        });
+                              },
+                              child:
+                                  buildIconOption(Icons.task, "Công việc con"),
+                            ),
+                            GestureDetector(
                                 onTap: () {
                                   Navigator.of(context).pop();
                                   Navigator.of(context)
@@ -1435,31 +1523,56 @@ class TaskPageState extends State<TaskPage> {
                         buildDivider(),
                         GestureDetector(
                           onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context1) {
-                                  return ConfirmDeleteDialog(
-                                    title: "Công việc hoàn thành",
-                                    content:
-                                        'Công việc sẽ chuyển sang trạng thái "Hoàn thành"',
-                                    onConfirm: () {
-                                      Navigator.of(context).pop();
-                                      TaskService()
-                                          .changeStatusToDoing(task['id'])
-                                          .then((value) {
-                                        if (value) {
-                                          removeTask(task['id']);
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Đổi thành công!", false);
-                                        } else {
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Xảy ra lỗi!", true);
-                                        }
-                                      });
-                                    },
-                                    buttonConfirmText: "Đồng ý",
-                                  );
-                                });
+                            Navigator.of(context).pop();
+                            task['isHaveSubtask']
+                                ? Navigator.of(context)
+                                    .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => SubTaskPage(
+                                          isRecordTime: true,
+                                          taskStatus: task['status'],
+                                          startDate: task['startDate'],
+                                          endDate: task['endDate'],
+                                          taskId: task['id'],
+                                          taskName: task['name'],
+                                          taskCode: task['code']),
+                                    ),
+                                  )
+                                    .then((value) {
+                                    if (value != null) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          1,
+                                          10 * page,
+                                          _selectedDate,
+                                          groupValue,
+                                          true,
+                                          searchValue);
+                                    }
+                                  })
+                                : Navigator.of(context)
+                                    .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => TimeKeepingInTask(
+                                        codeTask: task['code'],
+                                        taskId: task['id'],
+                                        taskName: task['name'],
+                                        isCreate: true,
+                                        status: 0,
+                                        task: task,
+                                      ),
+                                    ),
+                                  )
+                                    .then((value) {
+                                    if (value != null) {
+                                      _getTasksForSelectedDateAndStatus(
+                                          1,
+                                          10 * page,
+                                          _selectedDate,
+                                          groupValue,
+                                          true,
+                                          searchValue);
+                                    }
+                                  });
                           },
                           child: buildOptionTask(
                               Icons.done, 'Chuyển sang "Hoàn thành"', null),
@@ -1467,31 +1580,25 @@ class TaskPageState extends State<TaskPage> {
                         buildDivider(),
                         GestureDetector(
                           onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context1) {
-                                  return ConfirmDeleteDialog(
-                                    title: "Công việc tạm hoãn",
-                                    content:
-                                        'Công việc sẽ chuyển sang trạng thái "Tạm hoãn"',
-                                    onConfirm: () {
-                                      Navigator.of(context).pop();
-                                      TaskService()
-                                          .changeStatusToDoing(task['id'])
-                                          .then((value) {
-                                        if (value) {
-                                          removeTask(task['id']);
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Đổi thành công!", false);
-                                        } else {
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Xảy ra lỗi!", true);
-                                        }
-                                      });
-                                    },
-                                    buttonConfirmText: "Đồng ý",
-                                  );
-                                });
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateEvidencePage(
+                                        taskId: task['id'],
+                                        status: 5,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10 * page,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              }
+                            });
                           },
                           child: buildOptionTask(Icons.pending_actions,
                               'Chuyển sang "Tạm hoãn"', null),
@@ -1499,32 +1606,25 @@ class TaskPageState extends State<TaskPage> {
                         buildDivider(),
                         GestureDetector(
                           onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context1) {
-                                return ConfirmDeleteDialog(
-                                  title: "Hủy bỏ công việc",
-                                  content:
-                                      'Công việc sẽ chuyển sang trạng thái "Hủy bỏ"',
-                                  onConfirm: () {
-                                    Navigator.of(context).pop();
-                                    TaskService()
-                                        .changeStatusToDoing(task['id'])
-                                        .then((value) {
-                                      if (value) {
-                                        removeTask(task['id']);
-                                        SnackbarShowNoti.showSnackbar(
-                                            "Đổi thành công!", false);
-                                      } else {
-                                        SnackbarShowNoti.showSnackbar(
-                                            "Xảy ra lỗi!", true);
-                                      }
-                                    });
-                                  },
-                                  buttonConfirmText: "Đồng ý",
-                                );
-                              },
-                            );
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateEvidencePage(
+                                        taskId: task['id'],
+                                        status: 7,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10 * page,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              }
+                            });
                           },
                           child: buildOptionTask(Icons.cancel_outlined,
                               'Công việc bị hủy bỏ', Colors.red),

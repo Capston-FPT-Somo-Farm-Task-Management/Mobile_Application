@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
@@ -12,14 +13,12 @@ class CreateSubTask extends StatefulWidget {
   final int taskId;
   final String taskName;
   final String startDate;
-  final String endDate;
   final String taskCode;
   const CreateSubTask(
       {super.key,
       required this.taskId,
       required this.taskName,
       required this.startDate,
-      required this.endDate,
       required this.taskCode});
 
   @override
@@ -27,13 +26,14 @@ class CreateSubTask extends StatefulWidget {
 }
 
 class CreateSubTaskState extends State<CreateSubTask> {
+  final TextEditingController _minutesController = TextEditingController();
+  final TextEditingController _hoursController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _desController = TextEditingController();
   List<Map<String, dynamic>> employees = [];
   Map<String, dynamic>? employeeSelected;
   bool isLoading = true;
-  DateTime? _selectedStartDate;
-  DateTime? _selectedEndDate;
+  DateTime? _selectedDate;
   Future<bool> createSubTask(Map<String, dynamic> subTaskData) {
     return SubTaskService().createSubTask(subTaskData);
   }
@@ -53,8 +53,6 @@ class CreateSubTaskState extends State<CreateSubTask> {
   void initState() {
     super.initState();
     getEmployees();
-    print(widget.endDate);
-    print(widget.startDate);
   }
 
   @override
@@ -153,35 +151,120 @@ class CreateSubTaskState extends State<CreateSubTask> {
                       ),
                     ),
                     MyInputField(
-                      title: "Ngày giờ thực hiện",
-                      hint: _selectedStartDate == null
-                          ? "dd/MM/yyyy HH:mm a"
-                          : DateFormat('dd/MM/yyyy HH:mm a')
-                              .format(_selectedStartDate!),
+                      title: "Ngày thực hiện",
+                      hint: _selectedDate == null
+                          ? "dd/MM/yyyy"
+                          : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                       widget: IconButton(
                         icon: const Icon(
                           Icons.calendar_today_outlined,
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          _getDateTimeFromUser(true);
+                          _getDateTimeFromUser();
                         },
                       ),
                     ),
-                    MyInputField(
-                      title: "Ngày giờ kết thúc",
-                      hint: _selectedEndDate == null
-                          ? "dd/MM/yyyy HH:mm a"
-                          : DateFormat('dd/MM/yyyy HH:mm a')
-                              .format(_selectedEndDate!),
-                      widget: IconButton(
-                        icon: const Icon(
-                          Icons.calendar_today_outlined,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          _getDateTimeFromUser(false);
-                        },
+                    Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Thời gian làm việc thực tế",
+                            style: titileStyle,
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: _hoursController,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            style: TextStyle(fontSize: 14),
+                                            decoration: InputDecoration(
+                                              hintText: "0",
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 1.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Giờ")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 50),
+                              Expanded(
+                                child: Container(
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: _minutesController,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              LengthLimitingTextInputFormatter(
+                                                  2),
+                                            ],
+                                            onChanged: (value) {
+                                              // Kiểm tra giá trị sau khi người dùng nhập
+                                              if (value.isNotEmpty) {
+                                                int numericValue =
+                                                    int.parse(value);
+                                                if (numericValue > 59) {
+                                                  _minutesController.text =
+                                                      "59";
+                                                }
+                                              }
+                                            },
+                                            style: TextStyle(fontSize: 14),
+                                            decoration: InputDecoration(
+                                              hintText: "0",
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.blue,
+                                                    width: 1.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Phút")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     ),
                     Container(
@@ -269,25 +352,24 @@ class CreateSubTaskState extends State<CreateSubTask> {
     });
     if (_titleController.text.isNotEmpty &&
         employeeSelected != null &&
-        _selectedEndDate != null &&
-        _selectedStartDate != null) {
+        _selectedDate != null) {
       Map<String, dynamic> data = {
         'taskId': widget.taskId,
         'employeeId': employeeSelected!['id'],
         'description': _desController.text,
-        'startDay':
-            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedStartDate!),
-        'endDay':
-            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedEndDate!),
+        'daySubmit':
+            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(_selectedDate!),
         'name': _titleController.text,
+        "overallEfforMinutes":
+            _minutesController.text.isEmpty ? 0 : _minutesController.text,
+        "overallEffortHour":
+            _hoursController.text.isEmpty ? 0 : _hoursController.text,
       };
-      print(data);
       createSubTask(data).then((value) {
         if (value) {
           setState(() {
             isLoading = false;
           });
-          print(data);
           Navigator.pop(context, "newSubtask");
           SnackbarShowNoti.showSnackbar('Tạo công việc thành công', false);
         }
@@ -306,60 +388,18 @@ class CreateSubTaskState extends State<CreateSubTask> {
     }
   }
 
-  _getDateTimeFromUser(bool isStart) async {
+  _getDateTimeFromUser() async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.parse(widget.startDate),
+      initialDate: DateTime.now(),
       firstDate: DateTime.parse(widget.startDate),
-      lastDate: DateTime.parse(widget.endDate),
+      lastDate: DateTime.now().add(Duration(days: 30)),
     );
 
     if (selectedDate != null) {
-      // Nếu người dùng đã chọn một ngày, tiếp theo bạn có thể chọn giờ
-      TimeOfDay? selectedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-
-      if (selectedTime != null) {
-        // Người dùng đã chọn cả ngày và giờ
-        DateTime selectedDateTime = DateTime(
-          selectedDate.year,
-          selectedDate.month,
-          selectedDate.day,
-          selectedTime.hour,
-          selectedTime.minute,
-        );
-        if (selectedDateTime.isAfter(DateTime.parse(widget.endDate)) &&
-            isStart == false)
-          SnackbarShowNoti.showSnackbar(
-              "Giờ kết thúc phải nhỏ hơn giờ kết thúc của công việc cha", true);
-        else if (selectedDateTime.isBefore(DateTime.parse(widget.startDate)) &&
-            isStart)
-          SnackbarShowNoti.showSnackbar(
-              "Giờ bắt đầu phải lớn hơn giờ bắt đầu của công việc cha", true);
-        else if (isStart == false && _selectedStartDate == null) {
-          SnackbarShowNoti.showSnackbar("Chọn ngày giờ thực hiện trước", true);
-        } else if (isStart == false &&
-                selectedDateTime.isBefore(_selectedStartDate!) ||
-            isStart == false &&
-                selectedDateTime.isAtSameMomentAs(_selectedStartDate!)) {
-          SnackbarShowNoti.showSnackbar(
-              "Ngày giờ kết thúc phải lớn hơn ngày giờ thực hiện", true);
-        } else {
-          setState(() {
-            if (isStart) {
-              _selectedStartDate = selectedDateTime;
-              if (_selectedEndDate != null) {
-                if (_selectedStartDate!.isAfter(_selectedEndDate!))
-                  _selectedEndDate = null;
-              }
-            } else {
-              _selectedEndDate = selectedDateTime;
-            }
-          });
-        }
-      }
+      setState(() {
+        _selectedDate = selectedDate;
+      });
       return;
     }
     return;
