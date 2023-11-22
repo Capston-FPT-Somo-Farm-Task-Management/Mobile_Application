@@ -317,6 +317,8 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                         .push(
                                                                       MaterialPageRoute(
                                                                         builder: (context) => SubTaskPage(
+                                                                            isRecordTime:
+                                                                                false,
                                                                             taskStatus:
                                                                                 task['status'],
                                                                             startDate: task['startDate'],
@@ -748,7 +750,6 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           taskName: task['name'],
                           isCreate: false,
                           status: 0,
-                          endDateTask: task['endDate'],
                           task: task,
                         ),
                       ),

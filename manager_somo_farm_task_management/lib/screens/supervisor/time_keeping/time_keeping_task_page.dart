@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/effort_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +12,6 @@ class TimeKeepingInTask extends StatefulWidget {
   final String taskName;
   final bool isCreate;
   final int status;
-  final String endDateTask;
   final String codeTask;
   final Map<String, dynamic> task;
   TimeKeepingInTask(
@@ -20,7 +19,6 @@ class TimeKeepingInTask extends StatefulWidget {
       required this.taskName,
       required this.isCreate,
       required this.status,
-      required this.endDateTask,
       required this.codeTask,
       required this.task});
 
@@ -29,6 +27,7 @@ class TimeKeepingInTask extends StatefulWidget {
 }
 
 class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
+  List<String> _selectedDate = [];
   bool isLoading = true;
   List<Map<String, dynamic>> employees = [];
   List<TextEditingController> controllers = [];
@@ -55,9 +54,15 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
         if (isHaveSubtask!) isSaveEnabled = true;
         for (int i = 0; i < employees.length; i++) {
           TextEditingController minutesController = TextEditingController(
-              text: employees[i]['totalActualEfforMinutes'].toString());
+              text: employees[i]['totalActualEfforMinutes'].toString() == "0"
+                  ? ""
+                  : employees[i]['totalActualEfforMinutes'].toString());
           TextEditingController hoursController = TextEditingController(
-              text: employees[i]['totalActualEffortHour'].toString());
+              text: employees[i]['totalActualEffortHour'].toString() == "0"
+                  ? ""
+                  : employees[i]['totalActualEffortHour'].toString());
+
+          _selectedDate.add(value['daySubmit'] ?? "");
           _minutesController.add(minutesController);
           _hoursController.add(hoursController);
         }
@@ -71,6 +76,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   }
 
   bool areChangesMade() {
+    print(checkChanges());
     return checkEmpty() && checkChanges();
   }
 
@@ -87,6 +93,11 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
         return true;
       }
     }
+
+    for (int i = 0; i < employees.length; i++) {
+      if (employees[i]['daySubmit'] ?? "") if (_selectedDate[i] !=
+          employees[i]['daySubmit'].toString()) return true;
+    }
     return false;
   }
 
@@ -94,6 +105,9 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
     for (int i = 0; i < employees.length; i++) {
       if (_hoursController[i].text.isEmpty &&
           _minutesController[i].text.isEmpty) {
+        return false;
+      }
+      if (_selectedDate[i].isEmpty) {
         return false;
       }
     }
@@ -114,6 +128,8 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
         'employeeId': employeeId,
         'actualEfforMinutes': effortTimeM,
         'actualEffortHour': effortTimeH,
+        "daySubmit": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ')
+            .format(DateFormat('dd-MM-yyyy').parse(_selectedDate[i])),
       };
 
       updatedData.add(updatedEffort);
@@ -141,7 +157,8 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                     Navigator.of(context).pop();
                   },
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
-              title: Text("Chấm công", style: TextStyle(color: kPrimaryColor)),
+              title: Text("Ghi nhận thời gian làm việc",
+                  style: TextStyle(color: kPrimaryColor)),
               centerTitle: true,
               actions: [
                 GestureDetector(
@@ -170,25 +187,23 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                   SnackbarShowNoti.showSnackbar(
                                       e.toString(), true);
                                 })
-                              : isHaveSubtask!
-                                  ? Navigator.of(context).pop()
-                                  : createEffort(getUpdatedEffortData())
-                                      .then((value) {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      if (value) {
-                                        Navigator.of(context).pop();
-                                        SnackbarShowNoti.showSnackbar(
-                                            "Đã lưu thay đổi!", false);
-                                      }
-                                    }).catchError((e) {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      SnackbarShowNoti.showSnackbar(
-                                          e.toString(), true);
-                                    });
+                              : createEffort(getUpdatedEffortData())
+                                  .then((value) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (value) {
+                                    Navigator.of(context).pop();
+                                    SnackbarShowNoti.showSnackbar(
+                                        "Đã lưu thay đổi!", false);
+                                  }
+                                }).catchError((e) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  SnackbarShowNoti.showSnackbar(
+                                      e.toString(), true);
+                                });
                         }
                       : null,
                   child: Container(
@@ -255,55 +270,6 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                     thickness: 1, // Độ dày của dòng gạch (có thể thay đổi)
                   ),
                 ),
-                if (isHaveSubtask!)
-                  Container(
-                    margin: EdgeInsets.only(left: 20),
-                    alignment: Alignment.centerLeft,
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text:
-                                "Chỉ được sửa chấm công ở các công việc con! ",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          WidgetSpan(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SubTaskPage(
-                                        taskStatus: widget.task['status'],
-                                        startDate: widget.task['startDate'],
-                                        endDate: widget.task['endDate'],
-                                        taskId: widget.task['id'],
-                                        taskName: widget.task['name'],
-                                        taskCode: widget.task['code']),
-                                  ),
-                                )
-                                    .then((value) {
-                                  if (value != null) {
-                                    getEmployees();
-                                  }
-                                });
-                              },
-                              child: Text(
-                                "Tại đây",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 SizedBox(height: 20),
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -329,20 +295,52 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                           return Column(
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Mã NV',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700),
+                                  IntrinsicWidth(
+                                    child: Container(
+                                      child: Text(
+                                        'Mã NV',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
                                   ),
-                                  Text('Nhân viên',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700)),
-                                  Text('Giờ thực tế',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700)),
+                                  Expanded(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        'Nhân viên',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                  ),
+                                  IntrinsicWidth(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        'Ngày thực hiện',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  IntrinsicWidth(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        'Giờ thực tế',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Container(
@@ -363,139 +361,136 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                         Map<String, dynamic> employee = employees[dataIndex];
 
                         return Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                  width: 100,
-                                  child: Text(employee['employeeCode'])),
-                              Expanded(
-                                child: Container(
-                                  child: Text(
-                                    employee['employeeName'],
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
+                            margin: EdgeInsets.symmetric(vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 69,
+                                  child: Text(employee['employeeCode']),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Text(
+                                      employee['employeeName'],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
                                         fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                    softWrap: true,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      softWrap: true,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              // Container(
-                              //   width: 60,
-                              //   child: TextField(
-                              //     controller: controllers[dataIndex],
-                              //     keyboardType: TextInputType.number,
-                              //     inputFormatters: <TextInputFormatter>[
-                              //       FilteringTextInputFormatter.allow(
-                              //           RegExp(r'^\d+\.?\d{0,2}$')),
-                              //     ],
-                              //     style: TextStyle(fontSize: 14),
-                              //     decoration: InputDecoration(
-                              //       border: OutlineInputBorder(
-                              //         borderSide: BorderSide(
-                              //             color: Colors.blue, width: 1.0),
-                              //       ),
-                              //     ),
-                              //     onChanged: (value) {
-                              //       setState(() {
-                              //         isSaveEnabled = areChangesMade();
-                              //       });
-                              //     },
-                              //   ),
-                              // ),
-                              Container(
-                                width: 80,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                child: TextField(
-                                                  textAlign: TextAlign.right,
-                                                  readOnly: isHaveSubtask!,
-                                                  controller: _hoursController[
-                                                      dataIndex],
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  inputFormatters: <TextInputFormatter>[
-                                                    FilteringTextInputFormatter
-                                                        .digitsOnly,
-                                                  ],
-                                                  style:
-                                                      TextStyle(fontSize: 14),
-                                                  decoration: InputDecoration(
-                                                    hintText: "0",
-                                                  ),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      isSaveEnabled =
-                                                          areChangesMade();
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              "G",
-                                              style: TextStyle(fontSize: 12),
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _getDateTimeFromUser(dataIndex)
+                                        .then((value) {
+                                      isSaveEnabled = areChangesMade();
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 110,
+                                    child: Text(
+                                      _selectedDate[dataIndex].isEmpty
+                                          ? "dd/mm/yyy"
+                                          : _selectedDate[dataIndex],
                                     ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                child: TextField(
-                                                  textAlign: TextAlign.right,
-                                                  readOnly: isHaveSubtask!,
-                                                  controller:
-                                                      _minutesController[
-                                                          dataIndex],
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  inputFormatters: <TextInputFormatter>[
-                                                    FilteringTextInputFormatter
-                                                        .digitsOnly,
-                                                  ],
-                                                  style:
-                                                      TextStyle(fontSize: 14),
-                                                  decoration: InputDecoration(
-                                                    hintText: "0",
-                                                  ),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      isSaveEnabled =
-                                                          areChangesMade();
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              "p",
-                                              style: TextStyle(fontSize: 12),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              )
-                            ],
-                          ),
-                        );
+                                Container(
+                                  width: 70,
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: TextField(
+                                                    textAlign: TextAlign.right,
+                                                    readOnly: isHaveSubtask!,
+                                                    controller:
+                                                        _hoursController[
+                                                            dataIndex],
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: <TextInputFormatter>[
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly,
+                                                    ],
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                    decoration: InputDecoration(
+                                                      hintText: "0",
+                                                    ),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        isSaveEnabled =
+                                                            areChangesMade();
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                "G",
+                                                style: TextStyle(fontSize: 12),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: TextField(
+                                                    textAlign: TextAlign.right,
+                                                    readOnly: isHaveSubtask!,
+                                                    controller:
+                                                        _minutesController[
+                                                            dataIndex],
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: <TextInputFormatter>[
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly,
+                                                    ],
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                    decoration: InputDecoration(
+                                                      hintText: "0",
+                                                    ),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        isSaveEnabled =
+                                                            areChangesMade();
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                "p",
+                                                style: TextStyle(fontSize: 12),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ));
                       },
                     ),
                   ),
@@ -503,5 +498,22 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
               ],
             ),
     );
+  }
+
+  Future<void> _getDateTimeFromUser(index) async {
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.parse(widget.task['startDate']),
+      lastDate: DateTime.now().add(Duration(days: 30)),
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        _selectedDate[index] = DateFormat('dd-MM-yyyy').format(selectedDate);
+      });
+      return;
+    }
+    return;
   }
 }

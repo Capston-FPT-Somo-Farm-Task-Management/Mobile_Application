@@ -113,7 +113,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Thêm công việc (1/3)",
+                "Báo cáo công việc đã giao (1/3)",
                 style: headingStyle,
               ),
               Container(
@@ -463,10 +463,10 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
           builder: (context) => SecondAddTaskPage(
             addressDetail: null,
             fieldId: fiedlId!,
-            otherId: null,
             liveStockId: liveStockId,
             plantId: plantId,
             isPlant: widget.isPlant,
+            isOne: widget.isOne,
           ),
         ),
       );

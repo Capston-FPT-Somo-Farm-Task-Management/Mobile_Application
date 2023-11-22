@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
@@ -274,7 +276,7 @@ class TaskService {
       int taskId, int status, List<Map<String, dynamic>> data) async {
     try {
       final String apiUrl =
-          "$baseUrl/FarmSubTask/Task($taskId)/Status($status)";
+          "$baseUrl/FarmSubTask/Task($taskId)/UpdateEffortTimeAndStatusTask";
       var body = jsonEncode(data);
       final http.Response response = await http.put(
         Uri.parse(apiUrl),
@@ -412,6 +414,24 @@ class TaskService {
     }
   }
 
+  Future<bool> changeStatusToDone(int taskId) async {
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/ChangeStatusToDone";
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> addEmployeeToTaskAsign(
       Map<String, dynamic> taskData, int taskId) async {
     final String apiUrl =
@@ -498,6 +518,52 @@ class TaskService {
     } else {
       final Map<String, dynamic> data = json.decode(response.body);
       return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> changeStatusToPendingAndCancel(
+      int taskId, int status, String description, List<File> images) async {
+    final String url =
+        '$baseUrl/FarmTask/($taskId)/ChangeStatusToPendingAndCancel?status=$status';
+    Dio dio = Dio();
+
+    // Tạo FormData để chứa dữ liệu multipart
+    FormData formData = FormData();
+
+    // Thêm description vào FormData
+    formData.fields.add(MapEntry('description', description));
+    formData.fields.add(MapEntry('taskId', taskId.toString()));
+
+    // Thêm hình ảnh vào FormData
+    for (int i = 0; i < images.length; i++) {
+      formData.files.add(MapEntry(
+        'imageFile',
+        await MultipartFile.fromFile(images[i].path),
+      ));
+    }
+
+    try {
+      // Gửi request POST với FormData
+      Response response = await dio.put(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      // Kiểm tra status code
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
     }
   }
 }
