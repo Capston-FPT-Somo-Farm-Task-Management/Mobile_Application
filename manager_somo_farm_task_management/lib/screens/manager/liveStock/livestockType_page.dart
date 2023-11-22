@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
@@ -253,7 +255,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                           color: Colors.white,
                                           borderRadius:
                                               BorderRadius.circular(15)),
-                                      height: 150,
+                                      height: 145,
                                       width: double.infinity,
                                       child: Row(
                                         crossAxisAlignment:
@@ -274,7 +276,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                                       child: Text(
                                                         liveStock['name'],
                                                         style: const TextStyle(
-                                                          fontSize: 20,
+                                                          fontSize: 21,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           overflow: TextOverflow
@@ -317,7 +319,7 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                                     Container(
                                                       margin: EdgeInsets.only(
                                                           left: 7),
-                                                      height: 70,
+                                                      height: 60,
                                                       width: 4,
                                                       decoration: BoxDecoration(
                                                         color: kPrimaryColor,
@@ -333,65 +335,48 @@ class LiveStockTypePageState extends State<LiveStockTypePage> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    "Xuất xứ: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                              TextSpan(
-                                                                text:
-                                                                    '${liveStock['origin']}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              )
-                                                            ],
-                                                          ),
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              FontAwesomeIcons
+                                                                  .earthAfrica,
+                                                              color:
+                                                                  kSecondColor,
+                                                              size: 17,
+                                                            ),
+                                                            SizedBox(width: 8),
+                                                            TitleText.titleText(
+                                                                "Xuất xứ",
+                                                                liveStock['origin'] ==
+                                                                        null
+                                                                    ? "chưa có"
+                                                                    : liveStock[
+                                                                        'origin'],
+                                                                16),
+                                                          ],
                                                         ),
                                                         SizedBox(height: 10),
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    "Môi trường sống: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                              TextSpan(
-                                                                text: liveStock[
-                                                                            'environment'] ==
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              FontAwesomeIcons
+                                                                  .cloud,
+                                                              color:
+                                                                  kSecondColor,
+                                                              size: 17,
+                                                            ),
+                                                            SizedBox(width: 9),
+                                                            TitleText.titleText(
+                                                                "Môi trường sống",
+                                                                liveStock['environment'] ==
                                                                         null
                                                                     ? "chưa có"
                                                                     : wrapWordsWithEllipsis(
-                                                                        '${liveStock['environment']}',
+                                                                        liveStock[
+                                                                            'origin'],
                                                                         20),
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                            ],
-                                                          ),
+                                                                16),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
