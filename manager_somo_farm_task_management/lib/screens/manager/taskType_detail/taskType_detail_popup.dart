@@ -54,6 +54,21 @@ class TaskTypeDetailPopup extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Icon(
+                  FontAwesomeIcons.a,
+                  color: kSecondColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Tên loại công việc", "${taskType['name']}", 18),
+                )
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
                 if (taskType['status'] == "Công việc chăn nuôi")
                   const Icon(
                     FontAwesomeIcons.paw,
@@ -72,22 +87,7 @@ class TaskTypeDetailPopup extends StatelessWidget {
                     color: kSecondColor,
                     size: 20,
                   ),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: TitleText.titleText(
-                      "Tên loại công việc", "${taskType['name']}", 18),
-                )
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.rulerVertical,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Flexible(
                   child: TitleText.titleText(
                       "Loại công việc", "${taskType['status']}", 18),
@@ -99,11 +99,11 @@ class TaskTypeDetailPopup extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
-                  FontAwesomeIcons.scroll,
+                  Icons.description,
                   color: kSecondColor,
-                  size: 20,
+                  size: 25,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Flexible(
                   child: TitleText.titleText(
                       "Mô tả",

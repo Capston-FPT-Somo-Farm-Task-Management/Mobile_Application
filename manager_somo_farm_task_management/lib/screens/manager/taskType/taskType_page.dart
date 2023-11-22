@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/taskType_detail/taskType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/tasktype_add/taskType_add_page.dart';
@@ -266,7 +268,7 @@ class TaskTypePageState extends State<TaskTypePage> {
                                                       child: Text(
                                                         taskType['name'],
                                                         style: const TextStyle(
-                                                          fontSize: 20,
+                                                          fontSize: 21,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           overflow: TextOverflow
@@ -298,65 +300,63 @@ class TaskTypePageState extends State<TaskTypePage> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    "Loại công việc: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black87),
+                                                        Row(
+                                                          children: [
+                                                            if (taskType[
+                                                                    'status'] ==
+                                                                "Công việc chăn nuôi")
+                                                              const Icon(
+                                                                FontAwesomeIcons
+                                                                    .paw,
+                                                                color:
+                                                                    kSecondColor,
+                                                                size: 17,
                                                               ),
-                                                              TextSpan(
-                                                                text:
-                                                                    '${taskType['status']}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              )
-                                                            ],
-                                                          ),
+                                                            if (taskType[
+                                                                    'status'] ==
+                                                                "Công việc cây trồng")
+                                                              const Icon(
+                                                                FontAwesomeIcons
+                                                                    .tree,
+                                                                color:
+                                                                    kSecondColor,
+                                                                size: 17,
+                                                              ),
+                                                            if (taskType[
+                                                                    'status'] ==
+                                                                "Công việc khác")
+                                                              const Icon(
+                                                                FontAwesomeIcons
+                                                                    .hashtag,
+                                                                color:
+                                                                    kSecondColor,
+                                                                size: 17,
+                                                              ),
+                                                            SizedBox(width: 8),
+                                                            TitleText.titleText(
+                                                                "Loại công việc",
+                                                                "${taskType['status']}",
+                                                                17)
+                                                          ],
                                                         ),
                                                         SizedBox(height: 10),
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text: "Mô tả: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                              TextSpan(
-                                                                text: taskType[
-                                                                            'description'] ==
-                                                                        null
-                                                                    ? "chưa có"
-                                                                    : wrapWordsWithEllipsis(
-                                                                        '${taskType['description']}',
-                                                                        32),
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.description,
+                                                              color:
+                                                                  kSecondColor,
+                                                              size: 20,
+                                                            ),
+                                                            SizedBox(width: 8),
+                                                            TitleText.titleText(
+                                                                "Mô tả",
+                                                                wrapWordsWithEllipsis(
+                                                                    "${taskType['description']}",
+                                                                    27),
+                                                                17),
+                                                          ],
+                                                        )
                                                       ],
                                                     ),
                                                   ],
