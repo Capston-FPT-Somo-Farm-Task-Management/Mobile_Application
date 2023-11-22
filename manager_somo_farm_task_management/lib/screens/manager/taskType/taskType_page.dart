@@ -4,7 +4,6 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
-import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/taskType_detail/taskType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/tasktype_add/taskType_add_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
@@ -18,20 +17,19 @@ class TaskTypePage extends StatefulWidget {
 }
 
 class TaskTypePageState extends State<TaskTypePage> {
-  List<LiveStock> SearchTaskType = taskList;
   bool isLoading = true;
+  List<Map<String, dynamic>> taskTypes = [];
+  List<Map<String, dynamic>> filteredTaskTypeList = [];
   final TextEditingController searchController = TextEditingController();
 
-  void searchLiveStocks(String keyword) {
+  void searchTaskType(String keyword) {
     setState(() {
-      SearchTaskType = taskList
-          .where((liveStock) => removeDiacritics(liveStock.name.toLowerCase())
+      filteredTaskTypeList = taskTypes
+          .where((a) => removeDiacritics(a['name'].toLowerCase())
               .contains(removeDiacritics(keyword.toLowerCase())))
           .toList();
     });
   }
-
-  List<Map<String, dynamic>> taskTypes = [];
 
   Future<void> GetAllTaskType() async {
     TaskTypeService().getListTaskType().then((value) {
@@ -41,6 +39,8 @@ class TaskTypePageState extends State<TaskTypePage> {
       if (value.isNotEmpty) {
         setState(() {
           taskTypes = value;
+          filteredTaskTypeList = taskTypes;
+          isLoading = false;
         });
       } else {
         throw Exception();
@@ -69,13 +69,6 @@ class TaskTypePageState extends State<TaskTypePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -161,7 +154,7 @@ class TaskTypePageState extends State<TaskTypePage> {
                       child: TextField(
                         controller: searchController,
                         onChanged: (keyword) {
-                          searchLiveStocks(keyword);
+                          searchTaskType(keyword);
                         },
                         decoration: InputDecoration(
                           hintText: "Tìm kiếm...",
@@ -177,158 +170,209 @@ class TaskTypePageState extends State<TaskTypePage> {
             SizedBox(height: 30),
             Expanded(
               flex: 2,
-              child: RefreshIndicator(
-                notificationPredicate: (_) => true,
-                onRefresh: () => GetAllTaskType(),
-                child: ListView.builder(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: taskTypes.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> taskType = taskTypes[index];
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return TaskTypeDetailPopup(taskType: taskType);
-                            },
-                          );
-                        },
-                        onLongPress: () {
-                          _showBottomSheet(context, taskType);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 8,
-                                offset: Offset(2, 4), // Shadow position
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor),
+                    )
+                  : filteredTaskTypeList.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.not_interested,
+                                size:
+                                    75, // Kích thước biểu tượng có thể điều chỉnh
+                                color: Colors.grey, // Màu của biểu tượng
+                              ),
+                              SizedBox(
+                                  height:
+                                      16), // Khoảng cách giữa biểu tượng và văn bản
+                              Text(
+                                "Không có loại công việc",
+                                style: TextStyle(
+                                  fontSize:
+                                      20, // Kích thước văn bản có thể điều chỉnh
+                                  color: Colors.grey, // Màu văn bản
+                                ),
                               ),
                             ],
                           ),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15)),
-                            height: 140,
-                            width: double.infinity,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                        )
+                      : RefreshIndicator(
+                          notificationPredicate: (_) => true,
+                          onRefresh: () => GetAllTaskType(),
+                          child: ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: filteredTaskTypeList.length,
+                            itemBuilder: (context, index) {
+                              Map<String, dynamic> taskType =
+                                  filteredTaskTypeList[index];
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return TaskTypeDetailPopup(
+                                            taskType: taskType);
+                                      },
+                                    ).then(
+                                      (value) => {
+                                        if (value != null) {GetAllTaskType()}
+                                      },
+                                    );
+                                  },
+                                  onLongPress: () {
+                                    _showBottomSheet(context, taskType);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 8,
+                                          offset:
+                                              Offset(2, 4), // Shadow position
+                                        ),
+                                      ],
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      height: 140,
+                                      width: double.infinity,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Flexible(
-                                            child: Text(
-                                              taskType['name'],
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        taskType['name'],
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 7),
+                                                      height: 60,
+                                                      width: 4,
+                                                      decoration: BoxDecoration(
+                                                        color: kPrimaryColor,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(20),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    "Loại công việc: ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '${taskType['status']}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        RichText(
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: "Mô tả: ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                              TextSpan(
+                                                                text: taskType[
+                                                                            'description'] ==
+                                                                        null
+                                                                    ? "chưa có"
+                                                                    : wrapWordsWithEllipsis(
+                                                                        '${taskType['description']}',
+                                                                        32),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .black87),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(left: 7),
-                                            height: 60,
-                                            width: 4,
-                                            decoration: BoxDecoration(
-                                              color: kPrimaryColor,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "Loại công việc: ",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                    TextSpan(
-                                                      text:
-                                                          '${taskType['status']}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              Colors.black87),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 10),
-                                              RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: "Mô tả: ",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                    TextSpan(
-                                                      text: taskType[
-                                                                  'description'] ==
-                                                              null
-                                                          ? "chưa có"
-                                                          : wrapWordsWithEllipsis(
-                                                              '${taskType['description']}',
-                                                              32),
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
             ),
           ],
         ),
