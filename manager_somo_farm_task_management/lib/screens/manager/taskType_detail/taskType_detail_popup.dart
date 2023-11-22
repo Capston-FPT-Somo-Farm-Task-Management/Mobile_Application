@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/habitantType_update/habitantType_update_page.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/taskType_update/taskType_update_page.dart';
 
 class TaskTypeDetailPopup extends StatelessWidget {
@@ -30,10 +30,18 @@ class TaskTypeDetailPopup extends StatelessWidget {
               color: kPrimaryColor,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context)
+                  .push(
                 MaterialPageRoute(
                   builder: (context) => UpdateTaskType(taskType: taskType),
                 ),
+              )
+                  .then(
+                (value) {
+                  if (value != null) {
+                    Navigator.of(context).pop("ok");
+                  }
+                },
               );
             },
           )
@@ -44,36 +52,46 @@ class TaskTypeDetailPopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
-                  FontAwesomeIcons.tree,
+                  FontAwesomeIcons.a,
                   color: kSecondColor,
                   size: 20,
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  'Tên loại công việc: ${taskType['name']}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Tên loại công việc", "${taskType['name']}", 18),
+                )
               ],
             ),
             const SizedBox(height: 25),
             Row(
               children: [
-                const Icon(
-                  FontAwesomeIcons.rulerVertical,
-                  color: kSecondColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Loại công việc: ${taskType['status']}',
-                  style: const TextStyle(
-                    fontSize: 18,
+                if (taskType['status'] == "Công việc chăn nuôi")
+                  const Icon(
+                    FontAwesomeIcons.paw,
+                    color: kSecondColor,
+                    size: 20,
                   ),
-                ),
+                if (taskType['status'] == "Công việc cây trồng")
+                  const Icon(
+                    FontAwesomeIcons.tree,
+                    color: kSecondColor,
+                    size: 20,
+                  ),
+                if (taskType['status'] == "Công việc khác")
+                  const Icon(
+                    FontAwesomeIcons.hashtag,
+                    color: kSecondColor,
+                    size: 20,
+                  ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Loại công việc", "${taskType['status']}", 18),
+                )
               ],
             ),
             const SizedBox(height: 25),
@@ -81,20 +99,18 @@ class TaskTypeDetailPopup extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
-                  FontAwesomeIcons.scroll,
+                  Icons.description,
                   color: kSecondColor,
-                  size: 20,
+                  size: 25,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Flexible(
-                  child: Text(
-                    taskType['description'] == null
-                        ? 'Mô tả: chưa có'
-                        : 'Mô tả: ${taskType['description']}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
+                  child: TitleText.titleText(
+                      "Mô tả",
+                      taskType['description'] == null
+                          ? 'chưa có'
+                          : '${taskType['description']}',
+                      18),
                 ),
               ],
             ),

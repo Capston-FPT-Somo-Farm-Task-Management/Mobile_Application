@@ -16,12 +16,14 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            liveStockField['name'],
-            style: const TextStyle(
-              color: kPrimaryColor,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              liveStockField['name'],
+              style: const TextStyle(
+                color: kPrimaryColor,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           IconButton(
@@ -59,8 +61,10 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Mã chuồng",
-                    wrapWords('${liveStockField['code']}', 30), 18),
+                Flexible(
+                  child: TitleText.titleText("Mã chuồng",
+                      wrapWords('${liveStockField['code']}', 30), 18),
+                ),
               ],
             ),
             const SizedBox(height: 25),
@@ -72,8 +76,10 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText(
-                    "Diện tích", '${liveStockField['area']} mét vuông', 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Diện tích", '${liveStockField['area']} mét vuông', 18),
+                ),
               ],
             ),
             const SizedBox(height: 45),
@@ -86,8 +92,10 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Khu vực",
-                    wrapWords('${liveStockField['areaName']}', 25), 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Khu vực", '${liveStockField['areaName']}', 18),
+                ),
               ],
             ),
             const SizedBox(height: 25),
@@ -99,8 +107,10 @@ class LiveStockFieldDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText(
-                    "Vùng", wrapWords('${liveStockField['zoneName']}', 25), 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Vùng", '${liveStockField['zoneName']}', 18),
+                ),
               ],
             ),
           ],

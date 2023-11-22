@@ -59,8 +59,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Mã động vật",
-                    wrapWords('${liveStock['externalId']}', 30), 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Mã động vật", '${liveStock['externalId']}', 18),
+                ),
               ],
             ),
             const SizedBox(height: 25),
@@ -72,8 +74,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Loại",
-                    wrapWords(' ${liveStock['habitantTypeName']}', 30), 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Loại", ' ${liveStock['habitantTypeName']}', 18),
+                ),
               ],
             ),
             const SizedBox(height: 45),
@@ -125,7 +129,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Khu vực", '${liveStock['areaName']}', 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Khu vực", '${liveStock['areaName']}', 18),
+                ),
               ],
             ),
             const SizedBox(height: 25),
@@ -137,7 +144,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Vùng", '${liveStock['zoneName']}', 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Vùng", '${liveStock['zoneName']}', 18),
+                ),
               ],
             ),
             const SizedBox(height: 25),
@@ -149,7 +159,10 @@ class LiveStockDetailsPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Khu đất", '${liveStock['fieldName']}', 18),
+                Flexible(
+                  child: TitleText.titleText(
+                      "Khu đất", '${liveStock['fieldName']}', 18),
+                ),
               ],
             ),
           ],

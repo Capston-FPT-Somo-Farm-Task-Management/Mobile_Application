@@ -662,36 +662,6 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                   padding:
                       EdgeInsets.only(left: padingForAll, right: padingForAll),
                   child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                            page: EmployeekPage(
-                              viewTime: true,
-                              role: role!,
-                            ),
-                          ),
-                        ));
-                      },
-                      child: const Row(children: [
-                        Icon(Icons.timer),
-                        SizedBox(width: 15),
-                        Text(
-                          "Thời gian làm việc",
-                          style: TextStyle(fontSize: 21),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
-                  child: Align(
                     alignment: Alignment.centerLeft,
                     child: InkWell(
                       onTap: () {

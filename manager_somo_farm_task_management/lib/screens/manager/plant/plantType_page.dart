@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantType_page.dart';
@@ -254,7 +256,7 @@ class PlantTypePageState extends State<PlantTypePage> {
                                           color: Colors.white,
                                           borderRadius:
                                               BorderRadius.circular(15)),
-                                      height: 150,
+                                      height: 145,
                                       width: double.infinity,
                                       child: Row(
                                         crossAxisAlignment:
@@ -313,12 +315,13 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                     ),
                                                   ],
                                                 ),
+                                                SizedBox(height: 4),
                                                 Row(
                                                   children: [
                                                     Container(
                                                       margin: EdgeInsets.only(
                                                           left: 7),
-                                                      height: 70,
+                                                      height: 60,
                                                       width: 4,
                                                       decoration: BoxDecoration(
                                                         color: kPrimaryColor,
@@ -334,64 +337,48 @@ class PlantTypePageState extends State<PlantTypePage> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    "Xuất xứ: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                              TextSpan(
-                                                                text:
-                                                                    '${plant['origin']}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              )
-                                                            ],
-                                                          ),
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              FontAwesomeIcons
+                                                                  .earthAfrica,
+                                                              color:
+                                                                  kSecondColor,
+                                                              size: 17,
+                                                            ),
+                                                            SizedBox(width: 8),
+                                                            TitleText.titleText(
+                                                                "Xuất xứ",
+                                                                plant['origin'] ==
+                                                                        null
+                                                                    ? "chưa có"
+                                                                    : plant[
+                                                                        'origin'],
+                                                                16),
+                                                          ],
                                                         ),
                                                         SizedBox(height: 10),
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    "Môi trường sống: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                              TextSpan(
-                                                                text: plant['environment'] ==
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              FontAwesomeIcons
+                                                                  .cloud,
+                                                              color:
+                                                                  kSecondColor,
+                                                              size: 17,
+                                                            ),
+                                                            SizedBox(width: 9),
+                                                            TitleText.titleText(
+                                                                "Môi trường sống",
+                                                                plant['environment'] ==
                                                                         null
                                                                     ? "chưa có"
                                                                     : wrapWordsWithEllipsis(
-                                                                        '${plant['environment']}',
+                                                                        plant[
+                                                                            'origin'],
                                                                         20),
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        18,
-                                                                    color: Colors
-                                                                        .black87),
-                                                              ),
-                                                            ],
-                                                          ),
+                                                                16),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),

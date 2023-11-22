@@ -103,7 +103,7 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                 controller: _nameController,
               ),
               MyInputNumber(
-                title: "Diện tích của vườn cây (mét vuông)",
+                title: "Diện tích của chuồng (mét vuông)",
                 hint: "Nhập diện tích",
                 controller: _areaController,
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/user_update/user_update_profile_page.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
 
@@ -251,29 +252,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     ],
                                   ),
                                   SizedBox(height: 15),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Mật khẩu: ",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Text(
-                                        userData != null
-                                            ? userData!['password'] == null
-                                                ? '${'*' * userData!['password'].toString().length}'
-                                                : '***************'
-                                            : '',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  // Row(
+                                  //   children: [
+                                  //     Text(
+                                  //       "Mật khẩu: ",
+                                  //       style: TextStyle(
+                                  //         fontSize: 18,
+                                  //         fontWeight: FontWeight.bold,
+                                  //         color: Colors.black,
+                                  //       ),
+                                  //     ),
+                                  //     Text(
+                                  //       userData != null
+                                  //           ? userData!['password'] == null
+                                  //               ? '${'*' * userData!['password'].toString().length}'
+                                  //               : '***************'
+                                  //           : '',
+                                  //       style: TextStyle(
+                                  //         fontSize: 18,
+                                  //         color: Colors.black,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ],
                               ),
                             ),
@@ -344,26 +345,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "Địa chỉ: ",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          userData != null
-                                              ? userData!['address'] != null
-                                                  ? '${userData!['address']}'
-                                                  : 'chưa có'
-                                              : '',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                        ),
+                                      Flexible(
+                                        child: TitleText.titleText(
+                                            "Địa chỉ",
+                                            userData != null
+                                                ? userData!['address'] != null
+                                                    ? '${userData!['address']}'
+                                                    : 'chưa có'
+                                                : '',
+                                            18),
                                       ),
                                     ],
                                   ),

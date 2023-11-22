@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_livestock_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_detail/liveStock_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/livestock_service.dart';
@@ -248,7 +251,11 @@ class LiveStockPageState extends State<LiveStockPage> {
                                     child: Column(
                                       children: [
                                         Container(
-                                            padding: const EdgeInsets.all(10),
+                                            padding: const EdgeInsets.only(
+                                                top: 10,
+                                                bottom: 10,
+                                                left: 15,
+                                                right: 10),
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius: BorderRadius.only(
@@ -256,7 +263,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                         Radius.circular(10),
                                                     topRight:
                                                         Radius.circular(10))),
-                                            height: 120,
+                                            height: 130,
                                             width: double.infinity,
                                             child: Flexible(
                                               child: Row(
@@ -282,7 +289,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                                     'name'],
                                                                 style:
                                                                     const TextStyle(
-                                                                  fontSize: 20,
+                                                                  fontSize: 21,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -327,6 +334,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                             ),
                                                           ],
                                                         ),
+                                                        SizedBox(height: 5),
                                                         Row(
                                                           children: [
                                                             Container(
@@ -354,59 +362,45 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                RichText(
-                                                                  text:
-                                                                      TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            "Mã vật vuôi: ",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            color: Colors.black87),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${liveStock['externalId']}',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            color:
-                                                                                Colors.black87),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      FontAwesomeIcons
+                                                                          .tag,
+                                                                      color:
+                                                                          kSecondColor,
+                                                                      size: 17,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            7),
+                                                                    TitleText.titleText(
+                                                                        "Mã vật nuôi",
+                                                                        "${liveStock['externalId']}",
+                                                                        16),
+                                                                  ],
                                                                 ),
                                                                 SizedBox(
                                                                     height: 10),
-                                                                RichText(
-                                                                  text:
-                                                                      TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            "Địa điểm: ",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            color: Colors.black87),
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${liveStock['areaName']}',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            color:
-                                                                                Colors.black87),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      FontAwesomeIcons
+                                                                          .map,
+                                                                      color:
+                                                                          kSecondColor,
+                                                                      size: 17,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    TitleText.titleText(
+                                                                        "Khu vực",
+                                                                        wrapWordsWithEllipsis(
+                                                                            "${liveStock['areaName']}",
+                                                                            30),
+                                                                        16),
+                                                                  ],
                                                                 ),
                                                               ],
                                                             )
@@ -439,7 +433,9 @@ class LiveStockPageState extends State<LiveStockPage> {
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  '${liveStock['zoneName']}',
+                                                  wrapWordsWithEllipsis(
+                                                      '${liveStock['zoneName']}',
+                                                      25),
                                                   style: const TextStyle(
                                                       fontSize: 16),
                                                 ),
@@ -448,7 +444,9 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                 alignment:
                                                     Alignment.centerRight,
                                                 child: Text(
-                                                  '${liveStock['fieldName']}',
+                                                  wrapWordsWithEllipsis(
+                                                      '${liveStock['fieldName']}',
+                                                      20),
                                                   style: const TextStyle(
                                                       fontSize: 16),
                                                 ),

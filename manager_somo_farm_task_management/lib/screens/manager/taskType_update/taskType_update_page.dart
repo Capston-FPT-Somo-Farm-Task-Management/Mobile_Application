@@ -184,9 +184,6 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
   _validateDate() {
     if (_nameController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty) {
-      // setState(() {
-      //   isUpdating = true;
-      // });
       Map<String, dynamic> taskTpye = {
         'name': _nameController.text,
         if (_selectedStatus == "Công việc cây trồng") 'status': 0,
@@ -196,11 +193,17 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
       };
       UpdateTaskType(taskTpye, widget.taskType['id']).then((value) {
         if (value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => TaskTypePage(),
-            ),
-          );
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context, "newTaskType");
+          SnackbarShowNoti.showSnackbar("Cập nhật thành công", false);
+
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => TaskTypePage(),
+          //   ),
+          // );
         }
       }).catchError((e) {
         setState(() {
