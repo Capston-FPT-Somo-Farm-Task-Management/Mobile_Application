@@ -278,7 +278,7 @@ class TaskTypePageState extends State<TaskTypePage> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 4),
+                                                SizedBox(height: 8),
                                                 Row(
                                                   children: [
                                                     Container(
