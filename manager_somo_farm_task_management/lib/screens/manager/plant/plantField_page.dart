@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/models/livestock.dart';
+import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
+import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_add/add_plantField_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/plant_detail/plant_field_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/services/field_service.dart';
@@ -265,15 +267,19 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                     child: Column(
                                       children: [
                                         Container(
-                                            padding: const EdgeInsets.all(10),
+                                            padding: const EdgeInsets.only(
+                                                top: 10,
+                                                bottom: 10,
+                                                right: 10,
+                                                left: 15),
                                             decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(10),
-                                                    topRight:
-                                                        Radius.circular(10))),
-                                            height: 120,
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                            ),
+                                            height: 130,
                                             width: double.infinity,
                                             child: Row(
                                               crossAxisAlignment:
@@ -296,7 +302,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                                             plant['name'],
                                                             style:
                                                                 const TextStyle(
-                                                              fontSize: 20,
+                                                              fontSize: 21,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -322,8 +328,8 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                                             child: Text(
                                                               plant['isDelete'] ==
                                                                       false
-                                                                  ? "Active"
-                                                                  : "Inactive",
+                                                                  ? "Hiện"
+                                                                  : "Ẩn",
                                                               style: const TextStyle(
                                                                   fontSize: 14,
                                                                   fontWeight:
@@ -335,6 +341,7 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                                           ),
                                                         ],
                                                       ),
+                                                      SizedBox(height: 5),
                                                       Row(
                                                         children: [
                                                           Container(
@@ -361,59 +368,43 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              RichText(
-                                                                text: TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Mã vườn: ",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight: FontWeight
-                                                                              .w600,
-                                                                          color:
-                                                                              Colors.black87),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${plant['code']}',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color:
-                                                                              Colors.black87),
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                              Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    FontAwesomeIcons
+                                                                        .tag,
+                                                                    color:
+                                                                        kSecondColor,
+                                                                    size: 17,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 7),
+                                                                  TitleText.titleText(
+                                                                      "Mã vườn",
+                                                                      "${plant['code']}",
+                                                                      16),
+                                                                ],
                                                               ),
                                                               SizedBox(
                                                                   height: 10),
-                                                              RichText(
-                                                                text: TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "Địa điểm: ",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight: FontWeight
-                                                                              .w600,
-                                                                          color:
-                                                                              Colors.black87),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${plant['areaName']}',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          color:
-                                                                              Colors.black87),
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                              Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    FontAwesomeIcons
+                                                                        .map,
+                                                                    color:
+                                                                        kSecondColor,
+                                                                    size: 17,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 8),
+                                                                  TitleText.titleText(
+                                                                      "Khu vực",
+                                                                      wrapWordsWithEllipsis(
+                                                                          "${plant['areaName']}",
+                                                                          30),
+                                                                      16),
+                                                                ],
                                                               ),
                                                             ],
                                                           )
@@ -441,7 +432,20 @@ class PlantFieldPageState extends State<PlantFieldPage> {
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  '${plant['zoneName']}',
+                                                  wrapWordsWithEllipsis(
+                                                      '${plant['zoneName']}',
+                                                      25),
+                                                  style: const TextStyle(
+                                                      fontSize: 16),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  wrapWordsWithEllipsis(
+                                                      '${plant['area']} mét vuông',
+                                                      20),
                                                   style: const TextStyle(
                                                       fontSize: 16),
                                                 ),
@@ -484,9 +488,8 @@ class PlantFieldPageState extends State<PlantFieldPage> {
               ),
               const Spacer(),
               _bottomSheetButton(
-                label: plant['isDelete'] == true
-                    ? "Đổi sang Active"
-                    : "Đổi sang Inactive",
+                label:
+                    plant['isDelete'] == true ? "Hiện vườn cây" : "Ẩn vườn cây",
                 onTap: () {
                   showDialog(
                       context: context,

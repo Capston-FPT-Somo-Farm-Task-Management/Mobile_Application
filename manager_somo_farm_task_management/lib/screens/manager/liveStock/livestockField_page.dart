@@ -273,9 +273,9 @@ class LiveStockFieldPageState extends State<LiveStockFieldPage> {
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight:
-                                                      Radius.circular(10)),
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
                                             ),
                                             height: 130,
                                             width: double.infinity,
