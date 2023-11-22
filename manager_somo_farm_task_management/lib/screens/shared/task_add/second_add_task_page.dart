@@ -17,16 +17,16 @@ class SecondAddTaskPage extends StatefulWidget {
   final bool? isPlant;
   final int? fieldId;
   final int? plantId;
-  final int? otherId;
   final int? liveStockId;
+  final bool isOne;
   SecondAddTaskPage(
       {super.key,
       this.isPlant,
       required this.fieldId,
-      this.otherId,
       this.liveStockId,
       this.plantId,
-      this.addressDetail});
+      this.addressDetail,
+      required this.isOne});
 
   @override
   State<SecondAddTaskPage> createState() => _SecondAddTaskPage();
@@ -569,6 +569,8 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
               selectedMaterials.map<int>((m) => m['id'] as int).toList(),
           description: _desController.text,
           role: role!,
+          isOne: widget.isOne,
+          isPlant: widget.isPlant,
         ),
       ),
     );

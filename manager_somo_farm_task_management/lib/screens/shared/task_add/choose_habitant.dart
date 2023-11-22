@@ -4,6 +4,8 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/choose_one_or_many.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/componets/option.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/first_add_task_other_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChooseHabitantPage extends StatefulWidget {
   final int farmId;
@@ -14,7 +16,20 @@ class ChooseHabitantPage extends StatefulWidget {
 }
 
 class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
-  bool remindMe = true;
+  String? role;
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getRole();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +64,8 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        ChooseOneOrMany(farmId: widget.farmId, isPlant: false),
+                    builder: (context) => ChooseOneOrMany(
+                        farmId: widget.farmId, isPlant: false, role: role!),
                   ),
                 );
               },
@@ -67,8 +82,8 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        ChooseOneOrMany(farmId: widget.farmId, isPlant: true),
+                    builder: (context) => ChooseOneOrMany(
+                        farmId: widget.farmId, isPlant: true, role: role!),
                   ),
                 );
               },
@@ -83,8 +98,12 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        AddTaskPage(farmId: widget.farmId, isOne: false),
+                    builder: (context) => role == "Manager"
+                        ? AddTaskPage(
+                            farmId: widget.farmId,
+                            isOne: false,
+                          )
+                        : FirstAddTaskOtherPage(farmId: widget.farmId),
                   ),
                 );
               },

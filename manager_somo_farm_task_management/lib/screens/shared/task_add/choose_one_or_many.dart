@@ -3,12 +3,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/add_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_add/componets/option.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_add/first_add_task_page.dart';
 
 class ChooseOneOrMany extends StatefulWidget {
   final int farmId;
   final bool isPlant;
+  final String role;
   const ChooseOneOrMany(
-      {super.key, required this.farmId, required this.isPlant});
+      {super.key,
+      required this.farmId,
+      required this.isPlant,
+      required this.role});
   @override
   _ChooseOneOrManyState createState() => _ChooseOneOrManyState();
 }
@@ -50,11 +55,16 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AddTaskPage(
-                            farmId: widget.farmId,
-                            isOne: true,
-                            isPlant: false,
-                          ),
+                          builder: (context) => widget.role == "Manager"
+                              ? AddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: true,
+                                  isPlant: false,
+                                )
+                              : FirstAddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: true,
+                                  isPlant: false),
                         ),
                       );
                     },
@@ -68,11 +78,16 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AddTaskPage(
-                            farmId: widget.farmId,
-                            isOne: true,
-                            isPlant: true,
-                          ),
+                          builder: (context) => widget.role == "Manager"
+                              ? AddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: true,
+                                  isPlant: true,
+                                )
+                              : FirstAddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: true,
+                                  isPlant: true),
                         ),
                       );
                     },
@@ -88,11 +103,16 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AddTaskPage(
-                            farmId: widget.farmId,
-                            isOne: false,
-                            isPlant: false,
-                          ),
+                          builder: (context) => widget.role == "Manager"
+                              ? AddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: false,
+                                  isPlant: false,
+                                )
+                              : FirstAddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: false,
+                                  isPlant: false),
                         ),
                       );
                     },
@@ -106,11 +126,16 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AddTaskPage(
-                            farmId: widget.farmId,
-                            isOne: false,
-                            isPlant: true,
-                          ),
+                          builder: (context) => widget.role == "Manager"
+                              ? AddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: false,
+                                  isPlant: true,
+                                )
+                              : FirstAddTaskPage(
+                                  farmId: widget.farmId,
+                                  isOne: false,
+                                  isPlant: true),
                         ),
                       );
                     },

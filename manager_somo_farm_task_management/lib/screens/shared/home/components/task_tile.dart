@@ -225,6 +225,7 @@ class TaskTile extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => SubTaskPage(
+                      isRecordTime: false,
                       taskStatus: task['status'],
                       startDate: task['startDate'],
                       endDate: task['endDate'],

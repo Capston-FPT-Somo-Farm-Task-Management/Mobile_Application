@@ -10,6 +10,7 @@ class SubTaskService {
       Uri.parse(getTasksUrl),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -29,7 +30,10 @@ class SubTaskService {
     var body = jsonEncode(taskData);
     final response = await http.post(
       Uri.parse(apiUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
       body: body,
     );
     if (response.statusCode == 200) {
