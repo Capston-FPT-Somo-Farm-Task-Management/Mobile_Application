@@ -70,8 +70,10 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 12),
-                      TitleText.titleText("Loại cây trồng",
-                          wrapWords("${habitantType['name']}", 22), 18),
+                      Flexible(
+                        child: TitleText.titleText(
+                            "Loại cây trồng", "${habitantType['name']}", 18),
+                      ),
                     ],
                   )
                 : Row(
@@ -83,8 +85,10 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 12),
-                      TitleText.titleText("Loại vật nuôi",
-                          wrapWords(" ${habitantType['name']}", 22), 18),
+                      Flexible(
+                        child: TitleText.titleText(
+                            "Loại vật nuôi", " ${habitantType['name']}", 18),
+                      ),
                     ],
                   ),
             const SizedBox(height: 25),

@@ -97,6 +97,7 @@ class PlantDetailPopup extends StatelessWidget {
             ),
             const SizedBox(height: 45),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.access_time,
@@ -114,6 +115,7 @@ class PlantDetailPopup extends StatelessWidget {
             ),
             const SizedBox(height: 45),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.map,
@@ -129,6 +131,7 @@ class PlantDetailPopup extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.locationDot,
@@ -144,6 +147,7 @@ class PlantDetailPopup extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   FontAwesomeIcons.tree,
