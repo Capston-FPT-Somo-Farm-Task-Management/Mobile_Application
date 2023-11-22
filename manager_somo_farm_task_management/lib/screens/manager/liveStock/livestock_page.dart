@@ -373,7 +373,7 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                                     ),
                                                                     SizedBox(
                                                                         width:
-                                                                            5),
+                                                                            7),
                                                                     TitleText.titleText(
                                                                         "Mã vật nuôi",
                                                                         "${liveStock['externalId']}",
@@ -386,14 +386,14 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                                   children: [
                                                                     Icon(
                                                                       FontAwesomeIcons
-                                                                          .locationDot,
+                                                                          .map,
                                                                       color:
                                                                           kSecondColor,
                                                                       size: 17,
                                                                     ),
                                                                     SizedBox(
                                                                         width:
-                                                                            5),
+                                                                            8),
                                                                     TitleText.titleText(
                                                                         "Khu vực",
                                                                         wrapWordsWithEllipsis(
