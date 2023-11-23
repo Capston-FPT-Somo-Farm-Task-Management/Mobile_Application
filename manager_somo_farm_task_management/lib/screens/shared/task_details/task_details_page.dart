@@ -943,7 +943,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       child: Text("Chuẩn bị"),
                     ),
 
-                  // Statuschuẩn bị -> Manager bấm xóa công việc
+                  // Status chuẩn bị -> Manager bấm xóa công việc
                   if (task['status'] == "Chuẩn bị")
                     ElevatedButton(
                       onPressed: () {
@@ -991,7 +991,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       child: Text("Xóa"),
                     ),
 
-                  // Statuschuẩn bị -> Manager bấm sang status bản nháp
+                  // Status chuẩn bị -> Manager bấm sang status bản nháp
                   if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
                   if (task['status'] == "Chuẩn bị")
                     ElevatedButton(
@@ -1035,6 +1035,38 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         ),
                       ),
                       child: Text("Bản nháp"),
+                    ),
+
+                  // Status đã giao -> Manager bấm xem công việc con
+                  if (task['status'] == "Đã giao")
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SubTaskPage(
+                                isRecordTime: false,
+                                taskStatus: task['status'],
+                                startDate: task['startDate'],
+                                endDate: task['endDate'],
+                                taskId: task['id'],
+                                taskName: task['name'],
+                                taskCode: task['code']),
+                          ),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(kPrimaryColor),
+                        minimumSize:
+                            MaterialStateProperty.all<Size>(Size(100, 50)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      ),
+                      child: Text("Xem công việc con"),
                     ),
 
                   // Status từ chối -> Manager bấm chỉnh sửa lại công việc
