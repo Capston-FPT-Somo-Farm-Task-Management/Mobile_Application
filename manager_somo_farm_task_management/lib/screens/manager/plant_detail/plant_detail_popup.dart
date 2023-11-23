@@ -17,12 +17,14 @@ class PlantDetailPopup extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            plant['name'],
-            style: const TextStyle(
-              color: kPrimaryColor,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              plant['name'],
+              style: const TextStyle(
+                color: kPrimaryColor,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           IconButton(

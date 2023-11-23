@@ -6,6 +6,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_assign/task_assign_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_draft_todo_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
@@ -1256,7 +1257,40 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       child: Text("Giao công việc"),
                     ),
 
+                  // Status đã giao -> Supervisor bấm tạo công việc con
+                  if (task['status'] == "Đã giao")
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SubTaskPage(
+                                isRecordTime: false,
+                                taskStatus: task['status'],
+                                startDate: task['startDate'],
+                                endDate: task['endDate'],
+                                taskId: task['id'],
+                                taskName: task['name'],
+                                taskCode: task['code']),
+                          ),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(kPrimaryColor),
+                        minimumSize:
+                            MaterialStateProperty.all<Size>(Size(100, 50)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      ),
+                      child: Text("Công việc con"),
+                    ),
+
                   // Status đã giao -> Supervisor bấm chuyển sang đang thực hiện
+                  if (task['status'] == "Đã giao") SizedBox(width: 10),
                   if (task['status'] == "Đã giao")
                     ElevatedButton(
                       onPressed: () {

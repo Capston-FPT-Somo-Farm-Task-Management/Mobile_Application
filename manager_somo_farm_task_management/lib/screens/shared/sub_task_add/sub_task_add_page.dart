@@ -392,7 +392,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.parse(widget.startDate),
+      firstDate: DateTime.now().subtract(Duration(days: 30)),
       lastDate: DateTime.now().add(Duration(days: 30)),
     );
 
