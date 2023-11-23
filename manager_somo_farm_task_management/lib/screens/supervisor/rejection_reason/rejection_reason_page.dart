@@ -88,7 +88,6 @@ class _RejectionPopupState extends State<RejectionReasonPopup> {
                                                 content:
                                                     'Công việc sẽ được chuyển sang "Đang thực hiện" ?',
                                                 onConfirm: () {
-                                                  Navigator.of(context).pop();
                                                   setState(() {
                                                     isLoading = true;
                                                   });
@@ -99,12 +98,15 @@ class _RejectionPopupState extends State<RejectionReasonPopup> {
                                                           _desController.text)
                                                       .then((value) {
                                                     if (value) {
-                                                      Navigator.of(context)
-                                                          .pop("Change");
                                                       SnackbarShowNoti
                                                           .showSnackbar(
                                                               "Đổi thành công!",
                                                               false);
+                                                      setState(() {
+                                                        isLoading = false;
+                                                        Navigator.of(context)
+                                                            .pop("ok");
+                                                      });
                                                     } else {
                                                       SnackbarShowNoti
                                                           .showSnackbar(
