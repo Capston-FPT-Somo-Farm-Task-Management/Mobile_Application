@@ -288,14 +288,19 @@ class PlantPageState extends State<PlantPage> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            plant['name'],
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 21,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                          Flexible(
+                                                            child: Text(
+                                                              plant['name'],
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                           Container(
@@ -388,8 +393,9 @@ class PlantPageState extends State<PlantPage> {
                                                                       width: 7),
                                                                   TitleText.titleText(
                                                                       "Khu vực",
-                                                                      plant[
-                                                                          'areaName'],
+                                                                      wrapWordsWithEllipsis(
+                                                                          "${plant['areaName']}",
+                                                                          30),
                                                                       16),
                                                                 ],
                                                               ),

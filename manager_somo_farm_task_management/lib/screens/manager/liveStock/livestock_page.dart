@@ -265,152 +265,145 @@ class LiveStockPageState extends State<LiveStockPage> {
                                                         Radius.circular(10))),
                                             height: 130,
                                             width: double.infinity,
-                                            child: Flexible(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Flexible(
-                                                              child: Text(
-                                                                liveStock[
-                                                                    'name'],
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 21,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              liveStock['name'],
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 21,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: liveStock[
+                                                                          'status'] ==
+                                                                      "Ẩn"
+                                                                  ? Colors
+                                                                      .red[400]
+                                                                  : kPrimaryColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            child: Text(
+                                                              liveStock[
+                                                                  'status'],
+                                                              style: const TextStyle(
+                                                                  fontSize: 14,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                                  color: Colors
+                                                                      .white),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 5),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 7),
+                                                            height: 60,
+                                                            width: 4,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  kPrimaryColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .all(
+                                                                Radius.circular(
+                                                                    20),
                                                               ),
                                                             ),
-                                                            Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: liveStock[
-                                                                            'status'] ==
-                                                                        "Ẩn"
-                                                                    ? Colors
-                                                                        .red[400]
-                                                                    : kPrimaryColor,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
+                                                          ),
+                                                          SizedBox(width: 8),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    FontAwesomeIcons
+                                                                        .tag,
+                                                                    color:
+                                                                        kSecondColor,
+                                                                    size: 17,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 7),
+                                                                  TitleText.titleText(
+                                                                      "Mã vật nuôi",
+                                                                      "${liveStock['externalId']}",
+                                                                      16),
+                                                                ],
                                                               ),
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(10),
-                                                              child: Text(
-                                                                liveStock[
-                                                                    'status'],
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .white),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                              SizedBox(
+                                                                  height: 10),
+                                                              Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    FontAwesomeIcons
+                                                                        .map,
+                                                                    color:
+                                                                        kSecondColor,
+                                                                    size: 17,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 8),
+                                                                  TitleText.titleText(
+                                                                      "Khu vực",
+                                                                      wrapWordsWithEllipsis(
+                                                                          "${liveStock['areaName']}",
+                                                                          30),
+                                                                      16),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(height: 5),
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              margin: EdgeInsets
-                                                                  .only(
-                                                                      left: 7),
-                                                              height: 60,
-                                                              width: 4,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color:
-                                                                    kPrimaryColor,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          20),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 8),
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      FontAwesomeIcons
-                                                                          .tag,
-                                                                      color:
-                                                                          kSecondColor,
-                                                                      size: 17,
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            7),
-                                                                    TitleText.titleText(
-                                                                        "Mã vật nuôi",
-                                                                        "${liveStock['externalId']}",
-                                                                        16),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                    height: 10),
-                                                                Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      FontAwesomeIcons
-                                                                          .map,
-                                                                      color:
-                                                                          kSecondColor,
-                                                                      size: 17,
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    TitleText.titleText(
-                                                                        "Khu vực",
-                                                                        wrapWordsWithEllipsis(
-                                                                            "${liveStock['areaName']}",
-                                                                            30),
-                                                                        16),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             )),
                                         Container(
                                           padding: const EdgeInsets.all(10),

@@ -382,6 +382,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                 ),
                                 Expanded(
                                   child: Container(
+                                    padding: EdgeInsets.only(right: 10),
                                     child: Text(
                                       employee['employeeName'],
                                       textAlign: TextAlign.left,
@@ -515,7 +516,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.parse(widget.task['startDate']),
+      firstDate: DateTime.now().subtract(Duration(days: 30)),
       lastDate: DateTime.now().add(Duration(days: 30)),
     );
 
