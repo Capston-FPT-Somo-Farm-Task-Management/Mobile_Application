@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task/components/icon_option.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
@@ -52,7 +54,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
         isLoadingMore = true;
       });
       page = page + 1;
-      await getTask(groupValue, false);
+      await getTask(groupValue, false, 10);
       setState(() {
         isLoadingMore = false;
       });
@@ -63,7 +65,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
   initState() {
     super.initState();
     selectedFilter = filters[0];
-    getTask(2, true);
+    getTask(2, true, 10);
     getRole();
     scrollController.addListener(() {
       _scrollListener();
@@ -87,10 +89,10 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
     });
   }
 
-  Future<void> getTask(int status, bool reset) async {
+  Future<void> getTask(int status, bool reset, int pageSize) async {
     await TaskService()
-        .getTasksByDateEmployeeId(widget.employeeId, widget.startDate,
-            widget.endDate, 1, page, status)
+        .getTasksByDateEmployeeId(
+            widget.employeeId, widget.startDate, widget.endDate, 1, pageSize)
         .then((value) {
       if (reset) {
         setState(() {
@@ -129,43 +131,10 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
           children: [
             Container(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.employeeName,
-                    style: headingStyle,
-                  ),
-                  const SizedBox(height: 25),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CupertinoSegmentedControl<int>(
-                            selectedColor: kSecondColor,
-                            borderColor: kSecondColor,
-                            pressedColor: Colors.blue[50],
-                            children: {
-                              2: Text("Hoàn thành"),
-                              3: Text("Không hoàn thành"),
-                              // Thêm các option khác nếu cần
-                            },
-                            onValueChanged: (int newValue) {
-                              setState(() {
-                                groupValue = newValue;
-                                isLoading = true;
-                              });
-                              getTask(groupValue, true);
-                            },
-                            groupValue: groupValue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: Text(
+                widget.employeeName,
+                style: headingStyle,
+                textAlign: TextAlign.left,
               ),
             ),
             const SizedBox(height: 20),
@@ -203,7 +172,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: RefreshIndicator(
                             notificationPredicate: (_) => true,
-                            onRefresh: () => getTask(groupValue, true),
+                            onRefresh: () => getTask(groupValue, true, 10),
                             child: ListView.separated(
                               physics: AlwaysScrollableScrollPhysics(),
                               controller: scrollController,
@@ -229,14 +198,11 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                       )
                                           .then((value) {
                                         if (value != null)
-                                          getTask(groupValue, true);
+                                          getTask(groupValue, true, 10 * page);
                                       });
                                     },
                                     onLongPress: () {
-                                      _showBottomSheet(
-                                        context,
-                                        task,
-                                      );
+                                      _showBottomSheet(context, task, role!);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -590,8 +556,16 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                   ),
                                                                 ),
                                                                 TextSpan(
-                                                                  text:
-                                                                      '${task['fieldName'] ?? task['addressDetail']}',
+                                                                  text: task['isPlant'] !=
+                                                                          null
+                                                                      ? task['fieldName'] ??
+                                                                          "Chưa có"
+                                                                      : (task['addressDetail'].toString().isEmpty ||
+                                                                              task['addressDetail'] ==
+                                                                                  null
+                                                                          ? "Chưa có"
+                                                                          : task[
+                                                                              'addressDetail']),
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
@@ -713,101 +687,124 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
   }
 
   _showBottomSheet(
-    BuildContext context,
-    Map<String, dynamic> task,
-  ) {
+      BuildContext context, Map<String, dynamic> task, String role) {
     showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+              15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+          topRight: Radius.circular(
+              15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+        ),
+      ),
       context: context,
       builder: (BuildContext context) {
-        bool isCompleted = task['status'] == "Hoàn thành";
-        bool isNotCompleted = task['status'] == "Không hoàn thành";
-
         return Container(
-          padding: const EdgeInsets.only(top: 4),
-          height: MediaQuery.of(context).size.height * 0.25,
-          color: kBackgroundColor,
-          child: Column(
-            children: [
-              Container(
-                height: 6,
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kTextGreyColor,
-                ),
-              ),
-              const Spacer(),
-              if (isCompleted || isNotCompleted)
-                _bottomSheetButton(
-                  label: "Xem chấm công",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TimeKeepingInTask(
-                          codeTask: task['codeTask'],
-                          taskId: task['id'],
-                          taskName: task['name'],
-                          isCreate: false,
-                          status: 0,
-                          task: task,
-                        ),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(
+                  15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+              topRight: Radius.circular(
+                  15.0), // Điều chỉnh giá trị theo mong muốn của bạn
+            ),
+          ),
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        child: buildIconOption(Icons.post_add, "Xem báo cáo"),
                       ),
-                    );
-                  },
-                  cls: kPrimaryColor,
-                  context: context,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(groupValue, true, 10 * page)}
+                                  });
+                        },
+                        child: buildIconOption(Icons.task, "Công việc con"),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          task['isHaveSubtask']
+                              ? Navigator.of(context)
+                                  .push(
+                                  MaterialPageRoute(
+                                    builder: (context) => SubTaskPage(
+                                        isRecordTime: true,
+                                        taskStatus: task['status'],
+                                        startDate: task['startDate'],
+                                        endDate: task['endDate'],
+                                        taskId: task['id'],
+                                        taskName: task['name'],
+                                        taskCode: task['code']),
+                                  ),
+                                )
+                                  .then((value) {
+                                  if (value != null) {
+                                    getTask(groupValue, true, 10 * page);
+                                  }
+                                })
+                              : Navigator.of(context)
+                                  .push(
+                                  MaterialPageRoute(
+                                    builder: (context) => TimeKeepingInTask(
+                                      codeTask: task['code'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      isCreate: false,
+                                      status: 0,
+                                      task: task,
+                                    ),
+                                  ),
+                                )
+                                  .then((value) {
+                                  if (value != null) {
+                                    getTask(groupValue, true, 10 * page);
+                                  }
+                                });
+                        },
+                        child: buildIconOption(Icons.timer, "Xem giờ làm"),
+                      ),
+                    ],
+                  ),
                 ),
-              const SizedBox(height: 20),
-              _bottomSheetButton(
-                label: "Đóng",
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                cls: Colors.white,
-                isClose: true,
-                context: context,
-              ),
-              const SizedBox(height: 10),
-            ],
+                SizedBox(height: 30),
+              ],
+            ),
           ),
         );
       },
-    );
-  }
-
-  _bottomSheetButton({
-    required String label,
-    required Function()? onTap,
-    required Color cls,
-    bool isClose = false,
-    required BuildContext context,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4.0),
-        height: 55,
-        width: MediaQuery.of(context).size.width * 0.9,
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 2,
-            color: isClose == true ? Colors.grey[300]! : cls,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          color: isClose == true ? Colors.transparent : cls,
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: isClose
-                ? titileStyle
-                : titileStyle.copyWith(
-                    color: Colors.white,
-                  ),
-          ),
-        ),
-      ),
     );
   }
 }

@@ -50,6 +50,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
         _minutesController.clear();
         _hoursController.clear();
         employees = List<Map<String, dynamic>>.from(value['subtasks']);
+        print(value);
         isHaveSubtask = value['isHaveSubtask'];
         if (isHaveSubtask!) isSaveEnabled = true;
         for (int i = 0; i < employees.length; i++) {
@@ -61,11 +62,14 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
               text: employees[i]['totalActualEffortHour'].toString() == "0"
                   ? ""
                   : employees[i]['totalActualEffortHour'].toString());
-
-          _selectedDate.add(value['daySubmit'] ?? "");
+          if (value['subtasks'][i]['daySubmit'] != null)
+            _selectedDate.add(DateFormat('dd/MM/yyyy')
+                .format(DateTime.parse(value['subtasks'][i]['daySubmit'])));
+          _selectedDate.add("");
           _minutesController.add(minutesController);
           _hoursController.add(hoursController);
         }
+        print(_selectedDate);
         isLoading = false;
       });
     });
