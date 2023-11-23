@@ -521,18 +521,22 @@ class TaskService {
     }
   }
 
-  Future<bool> changeStatusToPendingAndCancel(
-      int taskId, int status, String description, List<File> images) async {
-    final String url =
-        '$baseUrl/FarmTask/($taskId)/ChangeStatusToPendingAndCancel?status=$status';
+  Future<bool> changeStatusToPendingAndCancel(int taskId, int status,
+      int? managerId, String description, List<File> images) async {
+    final String url;
+    if (managerId != null)
+      url =
+          '$baseUrl/FarmTask/($taskId)/ChangeStatusToPendingAndCancel?status=$status&managerId=$managerId';
+    else
+      url =
+          '$baseUrl/FarmTask/($taskId)/ChangeStatusToPendingAndCancel?status=$status';
     Dio dio = Dio();
-
+    print(url);
     // Tạo FormData để chứa dữ liệu multipart
     FormData formData = FormData();
 
     // Thêm description vào FormData
     formData.fields.add(MapEntry('description', description));
-    formData.fields.add(MapEntry('taskId', taskId.toString()));
 
     // Thêm hình ảnh vào FormData
     for (int i = 0; i < images.length; i++) {
@@ -560,6 +564,57 @@ class TaskService {
         return true;
       } else {
         return false;
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> changeStatusFromDoneToDoing(
+      int taskId, int managerId, String description) async {
+    try {
+      final String apiUrl =
+          "$baseUrl/FarmTask/($taskId)/ChangeStatusFromDoneToDoing?managerId=$managerId";
+
+      final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode(description),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Future.error(data['message']);
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> changeStatusToClose(int taskId) async {
+    try {
+      final String apiUrl = "$baseUrl/FarmTask/($taskId)/ChangeStatusToClose";
+
+      final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Future.error(data['message']);
       }
     } catch (error) {
       print('Error: $error');
