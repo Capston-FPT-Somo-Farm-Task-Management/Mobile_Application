@@ -7,6 +7,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/sub_task_add/su
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task_update/sub_task_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/sub_task_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SubTaskPage extends StatefulWidget {
   final int taskId;
@@ -36,10 +37,21 @@ class SubTaskPageState extends State<SubTaskPage> {
 
   List<Map<String, dynamic>> filteredTaskList = [];
   bool isLoading = true;
+  String? role;
   @override
   initState() {
     super.initState();
+    getRole();
     _getSubTask();
+  }
+
+  Future<void> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    setState(() {
+      role = roleStored;
+    });
+    print(role);
   }
 
   void removeTask(int subTaskId) {
@@ -65,31 +77,37 @@ class SubTaskPageState extends State<SubTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: kPrimaryColor,
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context)
-                .push(
-              MaterialPageRoute(
-                builder: (context) => CreateSubTask(
-                  taskCode: widget.taskCode,
-                  taskId: widget.taskId,
-                  taskName: widget.taskName,
-                  startDate: widget.startDate,
-                ),
-              ),
-            )
-                .then((value) {
-              if (value != null) {
-                _getSubTask();
-              }
-            });
-          }),
+      floatingActionButton: !isLoading && role != "Manager"
+          ? FloatingActionButton(
+              backgroundColor: kPrimaryColor,
+              child: Icon(Icons.add),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(
+                  MaterialPageRoute(
+                    builder: (context) => CreateSubTask(
+                      taskCode: widget.taskCode,
+                      taskId: widget.taskId,
+                      taskName: widget.taskName,
+                      startDate: widget.startDate,
+                    ),
+                  ),
+                )
+                    .then((value) {
+                  if (value != null) {
+                    _getSubTask();
+                  }
+                });
+              })
+          : null,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget.isRecordTime ? "Xác nhận giờ làm" : widget.taskName,
+          widget.isRecordTime
+              ? role == "Manager"
+                  ? "Giờ làm"
+                  : "Xác nhận giờ làm"
+              : widget.taskName,
           style: TextStyle(
             fontSize: 23.0,
             fontWeight: FontWeight.bold,
@@ -108,50 +126,54 @@ class SubTaskPageState extends State<SubTaskPage> {
             color: kSecondColor,
           ),
         ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context1) {
-                    return ConfirmDeleteDialog(
-                      title: "Xác nhận giờ làm",
-                      content:
-                          'Công việc sẽ chuyển sang trạng thái ""Hoàn thành"',
-                      onConfirm: () {
-                        TaskService()
-                            .changeStatusToDone(widget.taskId)
-                            .then((value) {
-                          if (value) {
-                            Navigator.of(context).pop("ok");
-                            SnackbarShowNoti.showSnackbar(
-                                "Đổi thành công!", false);
-                          } else {
-                            SnackbarShowNoti.showSnackbar("Xảy ra lỗi!", true);
-                          }
-                        }).catchError((e) {
-                          SnackbarShowNoti.showSnackbar(e.toString(), true);
+        actions: role == "Manager"
+            ? null
+            : [
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context1) {
+                          return ConfirmDeleteDialog(
+                            title: "Xác nhận giờ làm",
+                            content:
+                                'Công việc sẽ chuyển sang trạng thái ""Hoàn thành"',
+                            onConfirm: () {
+                              TaskService()
+                                  .changeStatusToDone(widget.taskId)
+                                  .then((value) {
+                                if (value) {
+                                  Navigator.of(context).pop("ok");
+                                  SnackbarShowNoti.showSnackbar(
+                                      "Đổi thành công!", false);
+                                } else {
+                                  SnackbarShowNoti.showSnackbar(
+                                      "Xảy ra lỗi!", true);
+                                }
+                              }).catchError((e) {
+                                SnackbarShowNoti.showSnackbar(
+                                    e.toString(), true);
+                              });
+                            },
+                            buttonConfirmText: "Đồng ý",
+                          );
                         });
-                      },
-                      buttonConfirmText: "Đồng ý",
-                    );
-                  });
-            },
-            child: widget.isRecordTime
-                ? Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: kPrimaryColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
-                      ),
-                    ),
-                    child: Center(child: Text("Lưu")),
-                  )
-                : Container(),
-          ),
-        ],
+                  },
+                  child: widget.isRecordTime
+                      ? Container(
+                          margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: kPrimaryColor,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(7),
+                            ),
+                          ),
+                          child: Center(child: Text("Lưu")),
+                        )
+                      : Container(),
+                ),
+              ],
       ),
       body: Column(
         children: [
@@ -279,6 +301,8 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                   CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
+                                                if (role == "Manager")
+                                                  SizedBox(height: 10),
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -318,120 +342,126 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    PopupMenuButton<String>(
-                                                      icon:
-                                                          Icon(Icons.more_vert),
-                                                      onSelected: (value) {
-                                                        if (value == 'Delete') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context1) {
-                                                              return ConfirmDeleteDialog(
-                                                                title:
-                                                                    "Xóa công việc",
-                                                                content:
-                                                                    "Bạn có chắc muốn xóa công việc này?",
-                                                                onConfirm: () {
-                                                                  SubTaskService()
-                                                                      .deleteSubTask(
-                                                                          task[
-                                                                              'subtaskId'])
-                                                                      .then(
-                                                                          (value) {
-                                                                    if (value) {
-                                                                      removeTask(
-                                                                          task[
-                                                                              'subtaskId']);
+                                                    if (role != "Manager")
+                                                      PopupMenuButton<String>(
+                                                        icon: Icon(
+                                                            Icons.more_vert),
+                                                        onSelected: (value) {
+                                                          if (value ==
+                                                              'Delete') {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context1) {
+                                                                return ConfirmDeleteDialog(
+                                                                  title:
+                                                                      "Xóa công việc",
+                                                                  content:
+                                                                      "Bạn có chắc muốn xóa công việc này?",
+                                                                  onConfirm:
+                                                                      () {
+                                                                    SubTaskService()
+                                                                        .deleteSubTask(task[
+                                                                            'subtaskId'])
+                                                                        .then(
+                                                                            (value) {
+                                                                      if (value) {
+                                                                        removeTask(
+                                                                            task['subtaskId']);
 
+                                                                        SnackbarShowNoti.showSnackbar(
+                                                                            "Xóa thành công!",
+                                                                            false);
+                                                                      }
+                                                                    }).catchError(
+                                                                            (e) {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
                                                                       SnackbarShowNoti.showSnackbar(
-                                                                          "Xóa thành công!",
-                                                                          false);
-                                                                    }
-                                                                  }).catchError(
-                                                                          (e) {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                    SnackbarShowNoti
-                                                                        .showSnackbar(
-                                                                            e.toString(),
-                                                                            true);
-                                                                  });
-                                                                },
-                                                                buttonConfirmText:
-                                                                    "Xóa",
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                        if (value == 'Edit') {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  UpdateSubTask(
-                                                                startDate: widget
-                                                                    .startDate,
-                                                                taskCode: widget
-                                                                    .taskCode,
-                                                                taskId: widget
-                                                                    .taskId,
-                                                                taskName: widget
-                                                                    .taskName,
-                                                                subtask: task,
+                                                                          e.toString(),
+                                                                          true);
+                                                                    });
+                                                                  },
+                                                                  buttonConfirmText:
+                                                                      "Xóa",
+                                                                );
+                                                              },
+                                                            );
+                                                          }
+                                                          if (value == 'Edit') {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        UpdateSubTask(
+                                                                  startDate: widget
+                                                                      .startDate,
+                                                                  taskCode: widget
+                                                                      .taskCode,
+                                                                  taskId: widget
+                                                                      .taskId,
+                                                                  taskName: widget
+                                                                      .taskName,
+                                                                  subtask: task,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          )
-                                                              .then((value) {
-                                                            if (value != null) {
-                                                              _getSubTask();
-                                                            }
-                                                          });
-                                                        }
-                                                      },
-                                                      itemBuilder: (BuildContext
-                                                          context) {
-                                                        return <PopupMenuEntry<
-                                                            String>>[
-                                                          PopupMenuItem<String>(
-                                                            value: 'Delete',
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    color: Colors
-                                                                        .red),
-                                                                SizedBox(
-                                                                    width: 5),
-                                                                Text(
-                                                                  'Xóa',
-                                                                  style: TextStyle(
+                                                            )
+                                                                .then((value) {
+                                                              if (value !=
+                                                                  null) {
+                                                                _getSubTask();
+                                                              }
+                                                            });
+                                                          }
+                                                        },
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                context) {
+                                                          return <PopupMenuEntry<
+                                                              String>>[
+                                                            PopupMenuItem<
+                                                                String>(
+                                                              value: 'Delete',
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .delete,
                                                                       color: Colors
                                                                           .red),
-                                                                ),
-                                                              ],
+                                                                  SizedBox(
+                                                                      width: 5),
+                                                                  Text(
+                                                                    'Xóa',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .red),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                          PopupMenuItem<String>(
-                                                            value: 'Edit',
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(Icons
-                                                                    .edit_note_rounded),
-                                                                SizedBox(
-                                                                    width: 5),
-                                                                Text(
-                                                                  'Chỉnh sửa',
-                                                                ),
-                                                              ],
+                                                            PopupMenuItem<
+                                                                String>(
+                                                              value: 'Edit',
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .edit_note_rounded),
+                                                                  SizedBox(
+                                                                      width: 5),
+                                                                  Text(
+                                                                    'Chỉnh sửa',
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ];
-                                                      },
-                                                    ),
+                                                          ];
+                                                        },
+                                                      ),
                                                   ],
                                                 ),
                                                 const SizedBox(height: 10),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/components/evidence_card.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/evidence_add_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
@@ -21,11 +22,15 @@ class EvidencePageState extends State<EvidencePage> {
 
   Future<void> getEvdidence() async {
     EvidenceService().getEvidencebyTaskId(widget.task['id']).then((value) {
-      print(value);
       setState(() {
         evidences = value;
         isLoading = false;
       });
+    }).catchError((e) {
+      setState(() {
+        isLoading = false;
+      });
+      SnackbarShowNoti.showSnackbar(e.toString(), true);
     });
   }
 

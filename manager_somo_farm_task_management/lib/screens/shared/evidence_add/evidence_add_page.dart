@@ -10,6 +10,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/co
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateEvidencePage extends StatefulWidget {
   final int taskId;
@@ -25,6 +26,25 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
   bool isCreateButtonEnabled = false;
   List<File> selectedFiles = [];
   bool isLoading = false;
+  int? userId;
+  String? role;
+  @override
+  void initState() {
+    super.initState();
+    // Khởi tạo dữ liệu định dạng cho ngôn ngữ Việt Nam
+
+    getRoleAndUserId();
+  }
+
+  Future<void> getRoleAndUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? roleStored = prefs.getString('role');
+    int? userIdStored = prefs.getInt('userId');
+    setState(() {
+      role = roleStored;
+      userId = userIdStored;
+    });
+  }
 
   Future<void> pickImageFromCamera() async {
     final pickedFile = await ImagePicker().pickImage(
@@ -184,6 +204,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                                     .changeStatusToPendingAndCancel(
                                         widget.taskId,
                                         widget.status!,
+                                        role == "Manager" ? userId! : null,
                                         _descriptionController.text,
                                         selectedFiles)
                                     .then((value) {
