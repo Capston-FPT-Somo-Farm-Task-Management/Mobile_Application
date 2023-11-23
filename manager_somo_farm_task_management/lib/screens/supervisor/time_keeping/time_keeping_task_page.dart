@@ -160,66 +160,71 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
               title: Text("Ghi nhận thời gian làm việc",
                   style: TextStyle(color: kPrimaryColor)),
               centerTitle: true,
-              actions: [
-                GestureDetector(
-                  onTap: isSaveEnabled
-                      ? () {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          widget.isCreate
-                              ? TaskService()
-                                  .endTaskAndTimeKeeping(widget.taskId,
-                                      widget.status, getUpdatedEffortData())
-                                  .then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  if (value) {
-                                    Navigator.of(context).pop("ok");
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đã lưu thay đổi!", false);
-                                  }
-                                }).catchError((e) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
-                                })
-                              : createEffort(getUpdatedEffortData())
-                                  .then((value) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  if (value) {
-                                    Navigator.of(context).pop();
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đã lưu thay đổi!", false);
-                                  }
-                                }).catchError((e) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
+              actions: role == "Manager"
+                  ? null
+                  : [
+                      GestureDetector(
+                        onTap: isSaveEnabled
+                            ? () {
+                                setState(() {
+                                  isLoading = true;
                                 });
-                        }
-                      : null,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: isSaveEnabled ? kPrimaryColor : Colors.black26,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
+                                widget.isCreate
+                                    ? TaskService()
+                                        .endTaskAndTimeKeeping(
+                                            widget.taskId,
+                                            widget.status,
+                                            getUpdatedEffortData())
+                                        .then((value) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        if (value) {
+                                          Navigator.of(context).pop("ok");
+                                          SnackbarShowNoti.showSnackbar(
+                                              "Đã lưu thay đổi!", false);
+                                        }
+                                      }).catchError((e) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        SnackbarShowNoti.showSnackbar(
+                                            e.toString(), true);
+                                      })
+                                    : createEffort(getUpdatedEffortData())
+                                        .then((value) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        if (value) {
+                                          Navigator.of(context).pop();
+                                          SnackbarShowNoti.showSnackbar(
+                                              "Đã lưu thay đổi!", false);
+                                        }
+                                      }).catchError((e) {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        SnackbarShowNoti.showSnackbar(
+                                            e.toString(), true);
+                                      });
+                              }
+                            : null,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color:
+                                isSaveEnabled ? kPrimaryColor : Colors.black26,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(7),
+                            ),
+                          ),
+                          child: Center(
+                              child: Text(isHaveSubtask! ? "Xác nhận" : "Lưu")),
+                        ),
                       ),
-                    ),
-                    child: Center(
-                        child: Text(isHaveSubtask! ? "Xác nhận" : "Lưu")),
-                  ),
-                ),
-              ],
+                    ],
             ),
       body: isLoading
           ? Center(
@@ -366,8 +371,10 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
-                                  width: 69,
-                                  child: Text(employee['employeeCode']),
+                                  padding: EdgeInsets.only(right: 10),
+                                  width: 65,
+                                  child: Flexible(
+                                      child: Text(employee['employeeCode'])),
                                 ),
                                 Expanded(
                                   child: Container(
@@ -413,7 +420,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                                 child: Container(
                                                   child: TextField(
                                                     textAlign: TextAlign.right,
-                                                    readOnly: isHaveSubtask!,
+                                                    readOnly: role == "Manager",
                                                     controller:
                                                         _hoursController[
                                                             dataIndex],
@@ -454,7 +461,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                                 child: Container(
                                                   child: TextField(
                                                     textAlign: TextAlign.right,
-                                                    readOnly: isHaveSubtask!,
+                                                    readOnly: role == "Manager",
                                                     controller:
                                                         _minutesController[
                                                             dataIndex],

@@ -36,7 +36,9 @@ class _EvidenceCardState extends State<EvidenceCard> {
   @override
   void initState() {
     super.initState();
-    supAvatar = widget.task['avatarSupervisor'];
+    supAvatar = widget.evidence['avatarManager'].toString().isEmpty
+        ? widget.task['avatarSupervisor']
+        : widget.evidence['avatarManager'];
     if (widget.evidence['urlImage'] != null)
       urlImages = widget.evidence['urlImage'];
   }
@@ -117,23 +119,59 @@ class _EvidenceCardState extends State<EvidenceCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          wrapWords(widget.task['supervisorName'], 20),
+                          wrapWords(
+                              widget.evidence['managerName']
+                                      .toString()
+                                      .isNotEmpty
+                                  ? widget.evidence['managerName']
+                                  : widget.task['supervisorName'],
+                              22),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
                         SizedBox(height: 5),
-                        Tooltip(
-                          message: DateFormat('dd/MM/yyyy HH:mm aa').format(
-                              DateTime.parse(widget.evidence['submitDate'])),
-                          child: Text(
-                            widget.evidence['time'],
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 13,
+                        Row(
+                          children: [
+                            Tooltip(
+                              message: DateFormat('dd/MM/yyyy HH:mm aa').format(
+                                  DateTime.parse(
+                                      widget.evidence['submitDate'])),
+                              child: Text(
+                                widget.evidence['time'],
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ),
-                          ),
+                            SizedBox(width: 10),
+                            if (widget.evidence['evidenceType'] == 2)
+                              Text(
+                                "Hủy bỏ",
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            if (widget.evidence['evidenceType'] == 3)
+                              Text(
+                                "Tạm hoãn",
+                                style: TextStyle(
+                                  color: Colors.amber[700],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            if (widget.evidence['evidenceType'] == 4)
+                              Text(
+                                "Làm lại",
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 14,
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),

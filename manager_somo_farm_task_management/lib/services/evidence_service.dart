@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class EvidenceService {
   Future<List<Map<String, dynamic>>> getEvidencebyTaskId(int taskId) async {
     final String getZonesUrl = '$baseUrl/TaskEvidence/Task($taskId)';
-
+    print(getZonesUrl);
     final http.Response response = await http.get(
       Uri.parse(getZonesUrl),
       headers: {

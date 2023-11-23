@@ -98,7 +98,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                               ),
                             );
                           },
-                          child: Text("Chỉnh sửa"),
+                          child: Text("Giao lại"),
                         ),
                         SizedBox(width: 20),
                         ElevatedButton(
