@@ -165,7 +165,7 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                       _buildInfoCard('Tên nhân viên', data!["employeeName"],
                           Icons.person_outline),
                       _buildInfoCard(
-                          'Thời gian làm thực tế',
+                          'Tổng thời gian làm thực tế',
                           '${data!["actualEffortHour"]} giờ ${data!["actualEfforMinutes"]} phút',
                           Icons.timer),
                       GestureDetector(
@@ -182,7 +182,7 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                           );
                         },
                         child: _buildInfoCard(
-                            'Tổng số công việc đã làm',
+                            'Tổng số công việc đã hoàn thành',
                             data!["totalTask"].toString(),
                             Icons.sticky_note_2_sharp),
                       ),

@@ -299,13 +299,8 @@ class TaskService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getTasksByDateEmployeeId(
-      int employeeId,
-      DateTime? start,
-      DateTime? end,
-      int index,
-      int pageSize,
-      int status) async {
+  Future<List<Map<String, dynamic>>> getTasksByDateEmployeeId(int employeeId,
+      DateTime? start, DateTime? end, int index, int pageSize) async {
     var startDate = "";
     if (start != null) {
       startDate = DateFormat('yyyy-MM-dd').format(start);
@@ -315,7 +310,7 @@ class TaskService {
       endDate = DateFormat('yyyy-MM-dd').format(end);
     }
     final String apiUrl =
-        "$baseUrl/FarmTask/PageIndex($index)/PageSize($pageSize)/Done/Employee($employeeId)?startDay=$startDate&endDay=$endDate&status=$status";
+        "$baseUrl/FarmTask/PageIndex($index)/PageSize($pageSize)/Done/Employee($employeeId)?startDay=$startDate&endDay=$endDate";
     final http.Response response = await http.get(
       Uri.parse(apiUrl),
       headers: {

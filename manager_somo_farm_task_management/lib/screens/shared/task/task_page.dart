@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/explosion.dart';
 import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.dart';
 import 'package:manager_somo_farm_task_management/componets/option.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
@@ -808,29 +809,48 @@ class TaskPageState extends State<TaskPage> {
                                                   ),
                                               ]),
                                               const SizedBox(height: 5),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Flexible(
-                                                    child: Text(
-                                                      '#${task['code']}',
-                                                      style: GoogleFonts.lato(
-                                                        textStyle: TextStyle(
-                                                          fontSize: 15,
-                                                          fontStyle: FontStyle
-                                                              .italic, // Chữ in nghiêng
-                                                          color: Priority
-                                                              .getBGClr(task[
-                                                                  'priority']),
+                                              Stack(children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        '#${task['code']}',
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                            fontSize: 15,
+                                                            fontStyle: FontStyle
+                                                                .italic, // Chữ in nghiêng
+                                                            color: Priority
+                                                                .getBGClr(task[
+                                                                    'priority']),
+                                                          ),
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                CustomPaint(
+                                                  painter: ExplosionPainter(),
+                                                  child: Container(
+                                                    width: 25,
+                                                    height: 20,
+                                                    color: Colors.amber,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Trễ",
+                                                        style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
                                                         ),
                                                       ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ]),
                                               const SizedBox(height: 20),
                                               Stack(children: [
                                                 Row(
@@ -998,9 +1018,11 @@ class TaskPageState extends State<TaskPage> {
                                                             ),
                                                           ),
                                                           TextSpan(
-                                                            text: task[
-                                                                    'fieldName'] ??
-                                                                (task['addressDetail']
+                                                            text: task['isPlant'] !=
+                                                                    null
+                                                                ? task['fieldName'] ??
+                                                                    "Chưa có"
+                                                                : (task['addressDetail']
                                                                             .toString()
                                                                             .isEmpty ||
                                                                         task['addressDetail'] ==
