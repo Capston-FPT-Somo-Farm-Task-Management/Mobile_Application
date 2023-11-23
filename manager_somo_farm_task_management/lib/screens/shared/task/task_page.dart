@@ -2520,6 +2520,169 @@ class TaskPageState extends State<TaskPage> {
                           child: buildOptionTask(
                               Icons.change_circle, "Hủy từ chối", Colors.red),
                         ),
+                      ] else if (isCanceled) ...[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => EvidencePage(
+                                      role: role,
+                                      task: task,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: buildIconOption(
+                                  Icons.post_add, "Xem báo cáo"),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SubTaskPage(
+                                            isRecordTime: false,
+                                            taskStatus: task['status'],
+                                            startDate: task['startDate'],
+                                            endDate: task['endDate'],
+                                            taskId: task['id'],
+                                            taskName: task['name'],
+                                            taskCode: task['code']),
+                                      ),
+                                    )
+                                    .then((value) => {
+                                          if (value != null)
+                                            {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue)
+                                            }
+                                        });
+                              },
+                              child:
+                                  buildIconOption(Icons.task, "Công việc con"),
+                            ),
+                          ],
+                        ),
+                      ] else if (isClosed) ...[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => EvidencePage(
+                                      role: role,
+                                      task: task,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: buildIconOption(
+                                  Icons.post_add, "Xem báo cáo"),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SubTaskPage(
+                                            isRecordTime: false,
+                                            taskStatus: task['status'],
+                                            startDate: task['startDate'],
+                                            endDate: task['endDate'],
+                                            taskId: task['id'],
+                                            taskName: task['name'],
+                                            taskCode: task['code']),
+                                      ),
+                                    )
+                                    .then((value) => {
+                                          if (value != null)
+                                            {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue)
+                                            }
+                                        });
+                              },
+                              child:
+                                  buildIconOption(Icons.task, "Công việc con"),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                task['isHaveSubtask']
+                                    ? Navigator.of(context)
+                                        .push(
+                                        MaterialPageRoute(
+                                          builder: (context) => SubTaskPage(
+                                              isRecordTime: true,
+                                              taskStatus: task['status'],
+                                              startDate: task['startDate'],
+                                              endDate: task['endDate'],
+                                              taskId: task['id'],
+                                              taskName: task['name'],
+                                              taskCode: task['code']),
+                                        ),
+                                      )
+                                        .then((value) {
+                                        if (value != null) {
+                                          _getTasksForSelectedDateAndStatus(
+                                              1,
+                                              10 * page,
+                                              _selectedDate,
+                                              groupValue,
+                                              true,
+                                              searchValue);
+                                        }
+                                      })
+                                    : Navigator.of(context)
+                                        .push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TimeKeepingInTask(
+                                            codeTask: task['code'],
+                                            taskId: task['id'],
+                                            taskName: task['name'],
+                                            isCreate: false,
+                                            status: 0,
+                                            task: task,
+                                          ),
+                                        ),
+                                      )
+                                        .then((value) {
+                                        if (value != null) {
+                                          _getTasksForSelectedDateAndStatus(
+                                              1,
+                                              10 * page,
+                                              _selectedDate,
+                                              groupValue,
+                                              true,
+                                              searchValue);
+                                        }
+                                      });
+                              },
+                              child:
+                                  buildIconOption(Icons.timer, "Xem giờ làm"),
+                            ),
+                          ],
+                        ),
                       ] else
                         Container(),
                       SizedBox(height: 30),
