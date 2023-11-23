@@ -409,7 +409,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDate!,
-      firstDate: DateTime.parse(widget.startDate),
+      firstDate: DateTime.now().subtract(Duration(days: 30)),
       lastDate: DateTime.now().add(Duration(days: 30)),
     );
 
