@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/explosion.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
@@ -125,11 +126,42 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     // : Navigator.of(context).pop();
                   },
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
-              title: Text("# ${task['code']}",
-                  style: TextStyle(
-                      color: kPrimaryColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold)),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      "# ${task['code']}",
+                      style: TextStyle(
+                          color: kPrimaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  if (task['isExpired'])
+                    Container(
+                      margin: EdgeInsets.only(left: 15),
+                      child: CustomPaint(
+                        painter: ExplosionPainter(),
+                        child: Container(
+                          width: 30,
+                          height: 25,
+                          color: Colors.amber,
+                          child: Center(
+                            child: Text(
+                              "Trễ",
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 15,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  SizedBox(width: 50),
+                ],
+              ),
               centerTitle: true,
               actions: [
                 role == "Manager" && task['managerName'] != null ||
@@ -189,15 +221,20 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 10),
-                            Center(
-                              child: Text(
-                                "${task['name']}",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 27,
-                                    fontWeight: FontWeight.w700,
-                                    color: kSecondColor),
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    "${task['name']}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 27,
+                                        fontWeight: FontWeight.w700,
+                                        color: kSecondColor),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 15),
                             Row(
