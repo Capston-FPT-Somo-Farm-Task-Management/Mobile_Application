@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_draft_todo_update_page.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 
@@ -89,14 +89,22 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                           ),
                           onPressed: () {
                             // Thực hiện hành động khi người dùng chấp nhận
-                            Navigator.of(context).push(
+                            Navigator.of(context)
+                                .push(
                               MaterialPageRoute(
-                                builder: (context) => UpdateTaskPage(
+                                builder: (context) => UpdateTaskDraftTodoPage(
+                                  changeTodo: true,
+                                  reDo: true,
                                   task: widget.task,
                                   role: widget.role,
                                 ),
                               ),
-                            );
+                            )
+                                .then((value) {
+                              if (value != null) {
+                                Navigator.of(context).pop("ok");
+                              }
+                            });
                           },
                           child: Text("Giao lại"),
                         ),

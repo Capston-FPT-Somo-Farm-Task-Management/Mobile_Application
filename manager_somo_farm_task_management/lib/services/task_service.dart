@@ -449,6 +449,28 @@ class TaskService {
     }
   }
 
+  Future<bool> updateTaskDisagreeAndChangeToToDo(
+      Map<String, dynamic> taskData, int taskId) async {
+    final String apiUrl =
+        "$baseUrl/FarmTask/(${taskId})/UpdateTaskDisagreeAndChangeToToDo";
+    var body = jsonEncode(taskData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> hideTask(int taskId) async {
     final String apiUrl = "$baseUrl/FarmTask/DeleteTask/$taskId";
 

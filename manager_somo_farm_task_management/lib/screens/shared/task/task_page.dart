@@ -1192,6 +1192,7 @@ class TaskPageState extends State<TaskPage> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               UpdateTaskDraftTodoPage(
+                                                  reDo: false,
                                                   changeTodo: false,
                                                   task: task,
                                                   role: role),
@@ -1223,7 +1224,10 @@ class TaskPageState extends State<TaskPage> {
                                 .push(
                               MaterialPageRoute(
                                 builder: (context) => UpdateTaskDraftTodoPage(
-                                    changeTodo: true, task: task, role: role),
+                                    reDo: false,
+                                    changeTodo: true,
+                                    task: task,
+                                    role: role),
                               ),
                             )
                                 .then((value) {
@@ -1713,31 +1717,22 @@ class TaskPageState extends State<TaskPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context1) {
-                                  return ConfirmDeleteDialog(
-                                    title: "Công việc đang thực hiện",
-                                    content:
-                                        'Công việc sẽ chuyển sang trạng thái "Đang thực hiện"',
-                                    onConfirm: () {
-                                      Navigator.of(context).pop();
-                                      TaskService()
-                                          .changeStatusToDoing(task['id'])
-                                          .then((value) {
-                                        if (value) {
-                                          removeTask(task['id']);
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Đổi thành công!", false);
-                                        } else {
-                                          SnackbarShowNoti.showSnackbar(
-                                              "Xảy ra lỗi!", true);
-                                        }
-                                      });
-                                    },
-                                    buttonConfirmText: "Đồng ý",
-                                  );
-                                });
+                            Navigator.of(context)
+                                .push(
+                              MaterialPageRoute(
+                                builder: (context) => UpdateTaskDraftTodoPage(
+                                  changeTodo: true,
+                                  reDo: true,
+                                  task: task,
+                                  role: role,
+                                ),
+                              ),
+                            )
+                                .then((value) {
+                              if (value != null) {
+                                Navigator.of(context).pop("ok");
+                              }
+                            });
                           },
                           child: buildOptionTask(
                               Icons.change_circle, 'Giao lại', null),
@@ -1748,13 +1743,12 @@ class TaskPageState extends State<TaskPage> {
                                 context: context,
                                 builder: (BuildContext context1) {
                                   return ConfirmDeleteDialog(
-                                    title: "Công việc đang thực hiện",
+                                    title: "Không chấp nhận từ chối công việc",
                                     content:
-                                        'Công việc sẽ chuyển sang trạng thái "Đang thực hiện"',
+                                        'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
                                     onConfirm: () {
                                       Navigator.of(context).pop();
-                                      TaskService()
-                                          .changeStatusToDoing(task['id'])
+                                      cancelRejectTaskStatus(task['id'])
                                           .then((value) {
                                         if (value) {
                                           removeTask(task['id']);

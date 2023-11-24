@@ -147,6 +147,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                   .push(
                                 MaterialPageRoute(
                                   builder: (context) => UpdateTaskDraftTodoPage(
+                                      reDo: false,
                                       changeTodo: false,
                                       task: task,
                                       role: role!),
@@ -921,7 +922,10 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             .push(
                               MaterialPageRoute(
                                 builder: (context) => UpdateTaskDraftTodoPage(
-                                    changeTodo: true, task: task, role: role!),
+                                    reDo: false,
+                                    changeTodo: true,
+                                    task: task,
+                                    role: role!),
                               ),
                             )
                             .then(
