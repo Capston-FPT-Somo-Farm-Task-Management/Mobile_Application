@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
+import 'package:manager_somo_farm_task_management/componets/explosion.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/evidence/evidence_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/sub_task/sub_task_page.dart';
@@ -186,7 +187,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                               itemBuilder: (context, index) {
                                 if (index < filteredTaskList.length) {
                                   final task = filteredTaskList[index];
-
+                                  print(task);
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context)
@@ -359,35 +360,65 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                           ),
                                                       ]),
                                                       const SizedBox(height: 5),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Flexible(
-                                                            child: Text(
-                                                              '#${task['codeTask']}',
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle:
-                                                                    TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontStyle:
-                                                                      FontStyle
-                                                                          .italic, // Chữ in nghiêng
-                                                                  color: Priority
-                                                                      .getBGClr(
-                                                                          task[
-                                                                              'priority']),
+                                                      Stack(children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Flexible(
+                                                              child: Text(
+                                                                '#${task['codeTask']}',
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .lato(
+                                                                  textStyle:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontStyle:
+                                                                        FontStyle
+                                                                            .italic, // Chữ in nghiêng
+                                                                    color: Priority
+                                                                        .getBGClr(
+                                                                            task['priority']),
+                                                                  ),
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        if (task['isExpired'])
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 110),
+                                                            child: CustomPaint(
+                                                              painter:
+                                                                  ExplosionPainter(),
+                                                              child: Container(
+                                                                width: 25,
+                                                                height: 20,
+                                                                color: Colors
+                                                                    .amber,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    "Trễ",
+                                                                    style: TextStyle(
+                                                                        fontStyle:
+                                                                            FontStyle
+                                                                                .italic,
+                                                                        fontSize:
+                                                                            13),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                      ]),
                                                       const SizedBox(
                                                           height: 20),
                                                       Row(
@@ -496,19 +527,20 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                         ],
                                                       ),
                                                       const SizedBox(
-                                                          height: 30),
+                                                          height: 20),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
                                                           Flexible(
+                                                            flex: 2,
                                                             child: RichText(
                                                               text: TextSpan(
                                                                 children: [
                                                                   TextSpan(
                                                                     text:
-                                                                        'Giám sát: ',
+                                                                        'Giờ làm dự kiến: ',
                                                                     style:
                                                                         TextStyle(
                                                                       fontWeight:
@@ -522,7 +554,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${task['supervisorName']}',
+                                                                        '${task['effortOfTask']}',
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
@@ -538,47 +570,86 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                       .ellipsis,
                                                             ),
                                                           ),
-                                                          RichText(
-                                                            text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Vị trí: ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black87,
+                                                          Flexible(
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Người làm: ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: task['isPlant'] !=
-                                                                          null
-                                                                      ? task['fieldName'] ??
-                                                                          "Chưa có"
-                                                                      : (task['addressDetail'].toString().isEmpty ||
-                                                                              task['addressDetail'] ==
-                                                                                  null
-                                                                          ? "Chưa có"
-                                                                          : task[
-                                                                              'addressDetail']),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .black87,
+                                                                  TextSpan(
+                                                                    text: task[
+                                                                        'totaslEmployee'],
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                ],
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 5),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Flexible(
+                                                            flex: 2,
+                                                            child: RichText(
+                                                              text: TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Giờ làm thực tế (cá nhân): ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                        '${task['actualEffortHour']} giờ ${task['actualEfforMinutes']} phút',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .black87,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -743,7 +814,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                       endDate: task['endDate'],
                                       taskId: task['id'],
                                       taskName: task['name'],
-                                      taskCode: task['code']),
+                                      taskCode: task['codeTask']),
                                 ),
                               )
                               .then((value) => {
@@ -761,13 +832,14 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                   .push(
                                   MaterialPageRoute(
                                     builder: (context) => SubTaskPage(
-                                        isRecordTime: true,
+                                        isRecordTime: false,
                                         taskStatus: task['status'],
                                         startDate: task['startDate'],
                                         endDate: task['endDate'],
                                         taskId: task['id'],
                                         taskName: task['name'],
-                                        taskCode: task['code']),
+                                        taskCode: task['codeTask'],
+                                        employeeId: widget.employeeId),
                                   ),
                                 )
                                   .then((value) {

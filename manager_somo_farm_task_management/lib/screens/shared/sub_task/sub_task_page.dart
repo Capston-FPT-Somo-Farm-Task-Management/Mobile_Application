@@ -16,6 +16,7 @@ class SubTaskPage extends StatefulWidget {
   final String taskStatus;
   final String startDate, endDate;
   final bool isRecordTime;
+  final int? employeeId;
   const SubTaskPage(
       {Key? key,
       required this.taskId,
@@ -24,7 +25,8 @@ class SubTaskPage extends StatefulWidget {
       required this.startDate,
       required this.endDate,
       required this.taskStatus,
-      required this.isRecordTime})
+      required this.isRecordTime,
+      this.employeeId})
       : super(key: key);
 
   @override
@@ -61,7 +63,9 @@ class SubTaskPageState extends State<SubTaskPage> {
   }
 
   Future<void> _getSubTask() async {
-    SubTaskService().getSubTaskByTaskId(widget.taskId).then((value) {
+    SubTaskService()
+        .getSubTaskByTaskId(widget.taskId, widget.employeeId)
+        .then((value) {
       setState(() {
         isLoading = false;
         filteredTaskList = value;
