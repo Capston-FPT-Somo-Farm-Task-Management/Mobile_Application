@@ -393,7 +393,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now().subtract(Duration(days: 30)),
-      lastDate: DateTime.now().add(Duration(days: 30)),
+      lastDate: DateTime.now(),
     );
 
     if (selectedDate != null) {

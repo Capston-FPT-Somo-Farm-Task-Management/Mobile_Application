@@ -22,11 +22,13 @@ class UpdateTaskDraftTodoPage extends StatefulWidget {
   final Map<String, dynamic> task;
   final String role;
   final bool changeTodo;
+  final bool reDo;
   const UpdateTaskDraftTodoPage(
       {super.key,
       required this.task,
       required this.role,
-      required this.changeTodo});
+      required this.changeTodo,
+      required this.reDo});
 
   @override
   State<UpdateTaskDraftTodoPage> createState() => _UpdateTaskDraftTodoPage();
@@ -1214,7 +1216,10 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                         Container(),
                         GestureDetector(
                           onTap: () {
-                            if (widget.changeTodo &&
+                            if (widget.reDo)
+                              validateUpdateTodo(
+                                  context, widget.task['isPlant']);
+                            else if (widget.changeTodo &&
                                 widget.task['status'] == "Bản nháp")
                               validateUpdateTodo(
                                   context, widget.task['isPlant']);
@@ -1234,8 +1239,8 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                             ),
                             alignment: Alignment
                                 .center, // Đặt alignment thành Alignment.center
-                            child: const Text(
-                              "Cập nhật",
+                            child: Text(
+                              widget.reDo == true ? "Giao lại" : "Cập nhật",
                               style: TextStyle(
                                 color: kTextWhiteColor,
                               ),
@@ -1417,7 +1422,11 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
           (_selectedRepeat!.toLowerCase() == "Có".toLowerCase() &&
                   selectedDatesRepeat.isNotEmpty ||
               _selectedRepeat!.toLowerCase() == "Không".toLowerCase())) {
-        widget.changeTodo ? updateTaskandChangeTdo(isPlant) : update(isPlant);
+        widget.reDo
+            ? updateTaskandRedo(isPlant)
+            : widget.changeTodo
+                ? updateTaskandChangeTdo(isPlant)
+                : update(isPlant);
       } else {
         setState(() {
           isLoading = false;
@@ -1467,6 +1476,27 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
   void updateTaskandChangeTdo(isPlant) {
     TaskService()
         .updateTaskandChangeTodo(createTaskData(isPlant), widget.task['id'])
+        .then((value) {
+      if (value) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop("ok");
+        SnackbarShowNoti.showSnackbar(
+            'Đã chuyển công việc sang chuẩn bị', false);
+      }
+    }).catchError((e) {
+      setState(() {
+        isLoading = false;
+      });
+      SnackbarShowNoti.showSnackbar(e.toString(), true);
+    });
+  }
+
+  void updateTaskandRedo(isPlant) {
+    TaskService()
+        .updateTaskDisagreeAndChangeToToDo(
+            createTaskData(isPlant), widget.task['id'])
         .then((value) {
       if (value) {
         setState(() {
