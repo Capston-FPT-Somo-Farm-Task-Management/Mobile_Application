@@ -833,23 +833,30 @@ class TaskPageState extends State<TaskPage> {
                                                     ),
                                                   ],
                                                 ),
-                                                CustomPaint(
-                                                  painter: ExplosionPainter(),
-                                                  child: Container(
-                                                    width: 25,
-                                                    height: 20,
-                                                    color: Colors.amber,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Trễ",
-                                                        style: TextStyle(
-                                                          fontStyle:
-                                                              FontStyle.italic,
+                                                if (task['isExpired'])
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 110),
+                                                    child: CustomPaint(
+                                                      painter:
+                                                          ExplosionPainter(),
+                                                      child: Container(
+                                                        width: 25,
+                                                        height: 20,
+                                                        color: Colors.amber,
+                                                        child: Center(
+                                                          child: Text(
+                                                            "Trễ",
+                                                            style: TextStyle(
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .italic,
+                                                                fontSize: 13),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
                                               ]),
                                               const SizedBox(height: 20),
                                               Stack(children: [

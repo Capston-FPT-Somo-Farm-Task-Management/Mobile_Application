@@ -947,13 +947,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          _selectedStartDate != null
-                              ? widget.task['status'] == "Đang thực hiện" ||
-                                      _selectedStartDate!
-                                          .isBefore(DateTime.now())
-                                  ? null
-                                  : _getDateTimeFromUser(true)
-                              : _getDateTimeFromUser(true);
+                          _getDateTimeFromUser(true);
                         },
                       ),
                     ),

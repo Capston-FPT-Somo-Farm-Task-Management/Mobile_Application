@@ -50,7 +50,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
         _minutesController.clear();
         _hoursController.clear();
         employees = List<Map<String, dynamic>>.from(value['subtasks']);
-        print(value);
+
         isHaveSubtask = value['isHaveSubtask'];
         if (isHaveSubtask!) isSaveEnabled = true;
         for (int i = 0; i < employees.length; i++) {
@@ -65,11 +65,12 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
           if (value['subtasks'][i]['daySubmit'] != null)
             _selectedDate.add(DateFormat('dd/MM/yyyy')
                 .format(DateTime.parse(value['subtasks'][i]['daySubmit'])));
-          _selectedDate.add("");
+          else
+            _selectedDate.add("");
           _minutesController.add(minutesController);
           _hoursController.add(hoursController);
         }
-        print(_selectedDate);
+
         isLoading = false;
       });
     });
@@ -80,7 +81,6 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
   }
 
   bool areChangesMade() {
-    print(checkChanges());
     return checkEmpty() && checkChanges();
   }
 
@@ -368,7 +368,6 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                         // Data rows
                         int dataIndex = index - 1;
                         Map<String, dynamic> employee = employees[dataIndex];
-
                         return Container(
                             margin: EdgeInsets.symmetric(vertical: 10),
                             child: Row(
@@ -396,10 +395,12 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    _getDateTimeFromUser(dataIndex)
-                                        .then((value) {
-                                      isSaveEnabled = areChangesMade();
-                                    });
+                                    role == "Manager"
+                                        ? null
+                                        : _getDateTimeFromUser(dataIndex)
+                                            .then((value) {
+                                            isSaveEnabled = areChangesMade();
+                                          });
                                   },
                                   child: Container(
                                     width: 110,
@@ -517,7 +518,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now().subtract(Duration(days: 30)),
-      lastDate: DateTime.now().add(Duration(days: 30)),
+      lastDate: DateTime.now(),
     );
 
     if (selectedDate != null) {

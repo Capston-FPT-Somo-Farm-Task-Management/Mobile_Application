@@ -98,7 +98,8 @@ class EvidencePageState extends State<EvidencePage> {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: "#${widget.task['code']}",
+                        text:
+                            "#${widget.task['codeTask'] ?? widget.task['code']}",
                         style: TextStyle(
                           fontSize: 23.0, // Kích thước nhỏ hơn
                           fontStyle: FontStyle.italic, // Chữ in nghiêng

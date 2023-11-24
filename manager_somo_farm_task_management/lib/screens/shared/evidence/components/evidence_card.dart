@@ -177,7 +177,8 @@ class _EvidenceCardState extends State<EvidenceCard> {
                     ),
                   ],
                 ),
-                if (widget.role != "Manager")
+                if (widget.role != "Manager" &&
+                    widget.evidence['managerName'] == null)
                   PopupMenuButton<String>(
                     icon: Icon(Icons.more_horiz_outlined),
                     onSelected: (value) {

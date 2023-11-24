@@ -3,9 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
 class SubTaskService {
-  Future<List<Map<String, dynamic>>> getSubTaskByTaskId(int taskId) async {
-    final String getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)';
-
+  Future<List<Map<String, dynamic>>> getSubTaskByTaskId(
+      int taskId, int? employeeId) async {
+    final String getTasksUrl;
+    if (employeeId == null)
+      getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)';
+    else
+      getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)?employeeId=$employeeId';
+    print(getTasksUrl);
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
       headers: {
