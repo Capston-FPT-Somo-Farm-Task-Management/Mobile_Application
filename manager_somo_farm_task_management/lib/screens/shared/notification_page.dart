@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:manager_somo_farm_task_management/componets/alert_dialog_confirm.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
@@ -299,8 +300,10 @@ class _NotificationPageState extends State<NotificationPage>
                                               .isReadNoti(noti['id'])
                                               .then((value) {
                                             showUnreadOnly
-                                                ? getNotSeenNoti(1, 10, true)
-                                                : getAllNoti(1, 10, true);
+                                                ? getNotSeenNoti(
+                                                    1, 10 * page, true)
+                                                : getAllNoti(
+                                                    1, 10 * page, true);
                                           }).catchError((e) {
                                             SnackbarShowNoti.showSnackbar(
                                                 e.toString(), true);
@@ -379,14 +382,69 @@ class _NotificationPageState extends State<NotificationPage>
                                                       color: Colors.grey[700],
                                                     ),
                                                     onSelected:
-                                                        (String selected) {},
+                                                        (String selected) {
+                                                      if (selected ==
+                                                          'delete') {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context1) {
+                                                            return ConfirmDeleteDialog(
+                                                              title:
+                                                                  "Xóa thông báo",
+                                                              content:
+                                                                  "Bạn có chắc muốn xóa thông báo này?",
+                                                              onConfirm: () {
+                                                                NotiService()
+                                                                    .deleteNotiById(
+                                                                        userId!,
+                                                                        noti[
+                                                                            'id'])
+                                                                    .then(
+                                                                        (value) {
+                                                                  if (value) {
+                                                                    showUnreadOnly
+                                                                        ? getNotSeenNoti(
+                                                                            1,
+                                                                            10 *
+                                                                                page,
+                                                                            true)
+                                                                        : getAllNoti(
+                                                                            1,
+                                                                            10 *
+                                                                                page,
+                                                                            true);
+                                                                    SnackbarShowNoti
+                                                                        .showSnackbar(
+                                                                            "Xóa thành công!",
+                                                                            false);
+                                                                  }
+                                                                }).catchError(
+                                                                        (e) {
+                                                                  SnackbarShowNoti
+                                                                      .showSnackbar(
+                                                                          "Xảy ra lỗi!",
+                                                                          true);
+                                                                });
+                                                              },
+                                                              buttonConfirmText:
+                                                                  "Xóa",
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    },
                                                     itemBuilder:
                                                         (BuildContext context) {
                                                       return [
                                                         PopupMenuItem<String>(
                                                           value: 'delete',
                                                           child: Text(
-                                                              'Xóa thông báo'),
+                                                            'Xóa thông báo',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
                                                         ),
                                                         PopupMenuItem<String>(
                                                           value: 'markAsUnread',
@@ -424,44 +482,66 @@ class _NotificationPageState extends State<NotificationPage>
       context: context,
       builder: (BuildContext context) {
         return Container(
-          padding: const EdgeInsets.only(top: 4),
-          height: MediaQuery.of(context).size.height * 0.18,
           color: kBackgroundColor,
-          child: Column(
-            children: [
-              Container(
-                height: 6,
-                width: 120,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kTextGreyColor,
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                Container(
+                  height: 6,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: kTextGreyColor,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              _bottomSheetButton(
-                label: "Đánh dấu đã đọc tất cả",
-                onTap: () {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  NotiService().makeAllNotiIsRead(userId!).then((value) {
-                    if (value) {
-                      showUnreadOnly
-                          ? getNotSeenNoti(1, 10, true)
-                          : getAllNoti(1, 10, true);
-                    }
+                const SizedBox(height: 30),
+                _bottomSheetButton(
+                  label: "Đánh dấu đã đọc tất cả",
+                  onTap: () {
                     setState(() {
-                      isLoading = false;
+                      isLoading = true;
                     });
-                  });
-                  Navigator.of(context).pop();
-                },
-                cls: kPrimaryColor,
-                context: context,
-              ),
-              const Spacer(),
-              const SizedBox(height: 10),
-            ],
+                    NotiService().makeAllNotiIsRead(userId!).then((value) {
+                      if (value) {
+                        showUnreadOnly
+                            ? getNotSeenNoti(1, 10 * page, true)
+                            : getAllNoti(1, 10 * page, true);
+                      }
+                      setState(() {
+                        isLoading = false;
+                      });
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  cls: kPrimaryColor,
+                  context: context,
+                ),
+                _bottomSheetButton(
+                  label: "Xóa tất cả thông báo",
+                  onTap: () {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    NotiService()
+                        .deleteAllNotiByMemberId(userId!)
+                        .then((value) {
+                      if (value) {
+                        showUnreadOnly
+                            ? getNotSeenNoti(1, 10 * page, true)
+                            : getAllNoti(1, 10 * page, true);
+                      }
+                      setState(() {
+                        isLoading = false;
+                      });
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  cls: Colors.red[300]!,
+                  context: context,
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
           ),
         );
       },
