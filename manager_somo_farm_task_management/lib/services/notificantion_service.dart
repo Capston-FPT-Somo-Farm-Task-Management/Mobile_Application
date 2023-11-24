@@ -154,4 +154,43 @@ class NotiService {
       return Future.error(data['message']);
     }
   }
+
+  Future<bool> deleteNotiById(int memberId, int notificaitonId) async {
+    final String getAreasUrl =
+        '$baseUrl/Notification/$notificaitonId/Member($memberId)';
+
+    final http.Response response = await http.delete(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> deleteAllNotiByMemberId(int memberId) async {
+    final String getAreasUrl = '$baseUrl/Notification/Member($memberId)';
+
+    final http.Response response = await http.delete(
+      Uri.parse(getAreasUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }
