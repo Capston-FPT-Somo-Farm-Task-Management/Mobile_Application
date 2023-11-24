@@ -1361,14 +1361,22 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                   if (task['status'] == "Từ chối")
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => UpdateTaskPage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (context) => UpdateTaskDraftTodoPage(
+                                  changeTodo: true,
+                                  reDo: true,
+                                  task: task,
+                                  role: role!,
+                                ),
+                              ),
+                            )
+                            .then(
+                              (value) => {
+                                if (value != null) {getTask()}
+                              },
+                            );
                       },
                       style: ButtonStyle(
                         backgroundColor:
@@ -1382,7 +1390,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                           ),
                         ),
                       ),
-                      child: Text("Chỉnh sửa"),
+                      child: Text("Giao lại"),
                     ),
 
                   //Status từ chối -> Manager bấm xem báo cáo tại sao từ chối
@@ -1397,6 +1405,10 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               role: role!,
                               task: task,
                             );
+                          },
+                        ).then(
+                          (value) => {
+                            if (value != null) {getTask()}
                           },
                         );
                       },
