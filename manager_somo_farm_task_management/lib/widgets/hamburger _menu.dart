@@ -127,6 +127,32 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 25),
+                Container(
+                  padding:
+                      EdgeInsets.only(left: padingForAll, right: padingForAll),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: IntroducingFarmPage(farmId: farmId!),
+                          ),
+                        ));
+                      },
+                      child: const Row(children: [
+                        Icon(Icons.info_outline),
+                        SizedBox(width: 15),
+                        Text(
+                          "Thông tin nông trại",
+                          style: TextStyle(fontSize: 21),
+                        ),
+                      ]),
+                    ),
+                  ),
+                ),
               ],
               if (role == "Manager") ...[
                 Container(
