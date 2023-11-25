@@ -139,8 +139,8 @@ class TaskService {
     }
   }
 
-  Future<bool> createTask(Map<String, dynamic> taskData, int managerId) async {
-    final String apiUrl = "$baseUrl/FarmTask?memberId=${managerId}";
+  Future<bool> createTask(Map<String, dynamic> taskData) async {
+    final String apiUrl = "$baseUrl/FarmTask/supervisor/CreateAsignTask";
     var body = jsonEncode(taskData);
     final response = await http.post(
       Uri.parse(apiUrl),

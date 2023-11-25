@@ -177,8 +177,9 @@ class _EvidenceCardState extends State<EvidenceCard> {
                     ),
                   ],
                 ),
-                if (widget.role != "Manager" &&
-                    widget.evidence['managerName'] == null)
+                if (widget.role == "Supervisor" &&
+                    (widget.evidence['managerName'] == null ||
+                        widget.evidence['managerName'] == ""))
                   PopupMenuButton<String>(
                     icon: Icon(Icons.more_horiz_outlined),
                     onSelected: (value) {
@@ -200,7 +201,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
                                   }
                                 }).catchError((e) {
                                   SnackbarShowNoti.showSnackbar(
-                                      "Xảy ra lỗi!", true);
+                                      e.toString(), true);
                                 });
                               },
                               buttonConfirmText: "Xóa",
