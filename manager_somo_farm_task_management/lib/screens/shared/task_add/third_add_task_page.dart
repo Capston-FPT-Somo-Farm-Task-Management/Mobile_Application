@@ -6,6 +6,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,8 +79,8 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
     });
   }
 
-  Future<bool> createTask(Map<String, dynamic> taskData, int managerId) {
-    return TaskService().createTask(taskData, managerId);
+  Future<bool> createTask(Map<String, dynamic> taskData) {
+    return TaskService().createTask(taskData);
   }
 
   @override
@@ -385,7 +386,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
       };
       print(taskData);
       print(userId!);
-      createTask(taskData, userId!).then((value) {
+      createTask(taskData).then((value) {
         if (value) {
           setState(() {
             isLoading = false;
@@ -395,7 +396,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                 builder: (BuildContext context) => BottomNavBar(
                       farmId: farmId!,
                       index: 1,
-                      page: ManagerHomePage(farmId: farmId!),
+                      page: TaskPage(),
                     )),
             (route) => false,
           );
