@@ -186,7 +186,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                 // ),
                 // const SizedBox(height: 25),
 
-                SizedBox(height: 15),
+                // SizedBox(height: 15),
                 Stack(children: [
                   InkWell(
                     child: Container(
@@ -675,7 +675,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         ));
                       },
                       child: const Row(children: [
-                        Icon(Icons.list, size: 30),
+                        Icon(Icons.list, size: 25),
                         SizedBox(width: 15),
                         Text(
                           "Loại công việc",
