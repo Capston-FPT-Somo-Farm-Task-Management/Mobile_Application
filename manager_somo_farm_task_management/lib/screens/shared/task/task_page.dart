@@ -760,10 +760,11 @@ class TaskPageState extends State<TaskPage> {
                                                         Alignment.topRight,
                                                     padding: task['status'] !=
                                                                 "Bản nháp" &&
-                                                            role ==
-                                                                "Supervisor" &&
-                                                            task['status'] !=
-                                                                "Chuẩn bị"
+                                                            (role == "Supervisor" &&
+                                                                    task['status'] !=
+                                                                        "Chuẩn bị" ||
+                                                                role ==
+                                                                    "Manager")
                                                         ? const EdgeInsets
                                                             .symmetric(
                                                             horizontal: 35)
