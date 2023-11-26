@@ -185,32 +185,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                 //   ),
                 // ),
                 // const SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                            page: TaskTypePage(),
-                          ),
-                        ));
-                      },
-                      child: const Row(children: [
-                        Icon(Icons.list, size: 30),
-                        SizedBox(width: 15),
-                        Text(
-                          "Loại công việc",
-                          style: TextStyle(fontSize: 21),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
+
                 SizedBox(height: 15),
                 Stack(children: [
                   InkWell(
@@ -677,6 +652,33 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                         SizedBox(width: 15),
                         Text(
                           "Nhân viên",
+                          style: TextStyle(fontSize: 21),
+                        ),
+                      ]),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Container(
+                  padding:
+                      EdgeInsets.only(left: padingForAll, right: padingForAll),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomNavBar(
+                            farmId: farmId!,
+                            index: 0,
+                            page: TaskTypePage(),
+                          ),
+                        ));
+                      },
+                      child: const Row(children: [
+                        Icon(Icons.list, size: 30),
+                        SizedBox(width: 15),
+                        Text(
+                          "Loại công việc",
                           style: TextStyle(fontSize: 21),
                         ),
                       ]),
