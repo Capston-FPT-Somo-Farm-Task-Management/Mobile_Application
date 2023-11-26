@@ -69,34 +69,34 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
           child: Column(
             children: [
               if (role == "Supervisor") ...[
-                SizedBox(height: 25),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: padingForAll, right: padingForAll),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                            page: TaskPage(),
-                          ),
-                        ));
-                      },
-                      child: const Row(children: [
-                        Icon(Icons.check_circle),
-                        SizedBox(width: 15),
-                        Text(
-                          "Công việc",
-                          style: TextStyle(fontSize: 21),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
+                // SizedBox(height: 25),
+                // Container(
+                //   padding:
+                //       EdgeInsets.only(left: padingForAll, right: padingForAll),
+                //   child: Align(
+                //     alignment: Alignment.centerLeft, // Căn lề trái
+                //     child: InkWell(
+                //       onTap: () {
+                //         Navigator.of(context).push(MaterialPageRoute(
+                //           builder: (context) => BottomNavBar(
+                //             farmId: farmId!,
+                //             index: 0,
+                //             page: TaskPage(),
+                //           ),
+                //         ));
+                //       },
+                //       child: const Row(children: [
+                //         Icon(Icons.check_circle),
+                //         SizedBox(width: 15),
+                //         Text(
+                //           "Công việc",
+                //           style: TextStyle(fontSize: 21),
+                //         ),
+                //       ]),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: 25),
                 Container(
                   padding:
                       EdgeInsets.only(left: padingForAll, right: padingForAll),
@@ -155,36 +155,36 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                 ),
               ],
               if (role == "Manager") ...[
-                Container(
-                  padding: EdgeInsets.only(
-                    left: padingForAll,
-                    right: padingForAll,
-                    top: padingForAll,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // Căn lề trái
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavBar(
-                            farmId: farmId!,
-                            index: 0,
-                            page: TaskPage(),
-                          ),
-                        ));
-                      },
-                      child: const Row(children: [
-                        Icon(Icons.check_circle),
-                        SizedBox(width: 15),
-                        Text(
-                          "Công việc",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
+                // Container(
+                //   padding: EdgeInsets.only(
+                //     left: padingForAll,
+                //     right: padingForAll,
+                //     top: padingForAll,
+                //   ),
+                //   child: Align(
+                //     alignment: Alignment.centerLeft, // Căn lề trái
+                //     child: InkWell(
+                //       onTap: () {
+                //         Navigator.of(context).push(MaterialPageRoute(
+                //           builder: (context) => BottomNavBar(
+                //             farmId: farmId!,
+                //             index: 0,
+                //             page: TaskPage(),
+                //           ),
+                //         ));
+                //       },
+                //       child: const Row(children: [
+                //         Icon(Icons.check_circle),
+                //         SizedBox(width: 15),
+                //         Text(
+                //           "Công việc",
+                //           style: TextStyle(fontSize: 20),
+                //         ),
+                //       ]),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: 25),
                 Container(
                   padding:
                       EdgeInsets.only(left: padingForAll, right: padingForAll),
