@@ -294,7 +294,6 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           onChanged: (data) {
                             selectedEmployees =
                                 data.cast<Map<String, dynamic>>();
-                            print(selectedEmployees);
                           },
                           chipBuilder: (context, state, employee) {
                             return InputChip(
@@ -434,7 +433,6 @@ class _SecondAddTaskPage extends State<SecondAddTaskPage> {
                           onChanged: (data) {
                             selectedMaterials =
                                 data.cast<Map<String, dynamic>>();
-                            print(data);
                           },
                           chipBuilder: (context, state, material) {
                             return InputChip(

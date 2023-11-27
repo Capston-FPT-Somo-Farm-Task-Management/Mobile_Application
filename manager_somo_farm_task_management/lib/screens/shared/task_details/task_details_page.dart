@@ -1750,7 +1750,12 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             .push(
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    AssignTaskPage(task: task),
+                                    task['managerName'] == null
+                                        ? UpdateTaskPage(
+                                            role: role!,
+                                            task: task,
+                                          )
+                                        : AssignTaskPage(task: task),
                               ),
                             )
                             .then(

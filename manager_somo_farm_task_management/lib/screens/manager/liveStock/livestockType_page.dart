@@ -6,7 +6,6 @@ import 'package:manager_somo_farm_task_management/componets/hamburger_show_menu.
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
 import 'package:manager_somo_farm_task_management/componets/wrap_words_with_ellipsis.dart';
-import 'package:manager_somo_farm_task_management/models/livestock.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/habitantTpe_detail/habitantType_detail_popup.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/liveStock_add/add_liveStockType_page.dart';
 import 'package:manager_somo_farm_task_management/services/habittantType_service.dart';

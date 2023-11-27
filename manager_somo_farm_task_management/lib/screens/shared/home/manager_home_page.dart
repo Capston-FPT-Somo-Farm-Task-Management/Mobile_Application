@@ -92,7 +92,6 @@ class ManagerHomePageState extends State<ManagerHomePage> {
     } else {
       selectedDateTasks = await TaskService().getTasksBySupervisorIdDateStatus(
           index, pageSize, userId!, selectedDate, status, searchValue, 1);
-      print(selectedDateTasks);
     }
     if (reset) {
       setState(() {

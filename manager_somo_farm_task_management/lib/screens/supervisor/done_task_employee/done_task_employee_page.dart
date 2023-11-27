@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -187,7 +186,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                               itemBuilder: (context, index) {
                                 if (index < filteredTaskList.length) {
                                   final task = filteredTaskList[index];
-                                  print(task);
+
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context)

@@ -36,7 +36,6 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
   List<Map<String, dynamic>> employees = [];
   Map<String, dynamic>? employeeSelected;
   bool isLoading = true;
-  DateTime? _selectedStartDate;
   DateTime? _selectedDate;
   Future<bool> updateSubTask(Map<String, dynamic> subTaskData) {
     return SubTaskService()
@@ -52,9 +51,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
             .firstOrNull;
         isLoading = false;
       });
-    }).catchError((e) {
-      print(e.toString());
-    });
+    }).catchError((e) {});
   }
 
   @override
@@ -63,7 +60,6 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
     getEmployees();
     _titleController.text = widget.subtask['name'];
     _desController.text = widget.subtask['description'];
-    _selectedStartDate = DateTime.parse((widget.startDate));
 
     _selectedDate = DateTime.parse(widget.subtask['daySubmit']);
     _minutesController.text = widget.subtask['actualEfforMinutes'] == 0
@@ -381,7 +377,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
             _hoursController.text.isEmpty ? 0 : _hoursController.text,
         "name": _titleController.text
       };
-      print(data);
+
       updateSubTask(data).then((value) {
         if (value) {
           setState(() {

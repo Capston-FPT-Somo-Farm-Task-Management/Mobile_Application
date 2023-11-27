@@ -2,7 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/taskType/taskType_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
 
 import '../../../componets/input_field.dart';

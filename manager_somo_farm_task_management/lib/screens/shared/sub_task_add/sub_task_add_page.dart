@@ -44,9 +44,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
         employees = value;
         isLoading = false;
       });
-    }).catchError((e) {
-      print(e.toString());
-    });
+    }).catchError((e) {});
   }
 
   @override

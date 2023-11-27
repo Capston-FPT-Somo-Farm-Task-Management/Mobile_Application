@@ -331,8 +331,9 @@ class TaskService {
   }
 
   Future<bool> updateTask(Map<String, dynamic> taskData, int taskId) async {
-    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTask";
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTaskAsign";
     var body = jsonEncode(taskData);
+
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: {
@@ -471,6 +472,27 @@ class TaskService {
     }
   }
 
+  Future<bool> updateTaskAsign(
+      Map<String, dynamic> taskData, int taskId) async {
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTaskAsign";
+    var body = jsonEncode(taskData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> hideTask(int taskId) async {
     final String apiUrl = "$baseUrl/FarmTask/DeleteTask/$taskId";
 
@@ -548,7 +570,7 @@ class TaskService {
       url =
           '$baseUrl/FarmTask/($taskId)/ChangeStatusToPendingAndCancel?status=$status';
     Dio dio = Dio();
-    print(url);
+
     // Tạo FormData để chứa dữ liệu multipart
     FormData formData = FormData();
 

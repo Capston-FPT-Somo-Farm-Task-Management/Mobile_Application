@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_number.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/manager/area/area_page.dart';
 import 'package:manager_somo_farm_task_management/services/area_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

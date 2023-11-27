@@ -21,7 +21,6 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
     EffortService()
         .getTotalEffortByEmployeeId(widget.employeeId, start, end)
         .then((value) {
-      print(value);
       setState(() {
         data = value;
         isLoading = false;
