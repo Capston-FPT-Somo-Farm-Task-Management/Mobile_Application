@@ -12,7 +12,6 @@ import 'package:manager_somo_farm_task_management/screens/manager/plant/plant_pa
 import 'package:manager_somo_farm_task_management/screens/manager/taskType/taskType_page.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/zone/zone_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/Introducing_farm_page.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
