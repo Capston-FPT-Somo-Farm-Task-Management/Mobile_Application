@@ -283,6 +283,7 @@ class _NotificationPageState extends State<NotificationPage>
                                   Map<String, dynamic> noti =
                                       filteredNoti[index];
                                   bool isRead = noti['isRead'] ?? false;
+
                                   String message = noti['message'];
                                   return AnimationConfiguration.staggeredList(
                                     position: index,
@@ -320,139 +321,144 @@ class _NotificationPageState extends State<NotificationPage>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                ListTile(
-                                                  leading: Icon(
-                                                    Icons.notifications,
-                                                    color: Colors.black,
-                                                  ),
-                                                  title: message.contains("'")
-                                                      ? RichText(
-                                                          text: TextSpan(
-                                                            style: DefaultTextStyle
-                                                                    .of(context)
-                                                                .style
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        16),
-                                                            children: [
-                                                              TextSpan(
-                                                                text: message
-                                                                    .substring(
-                                                                        0,
-                                                                        message.indexOf("'") +
-                                                                            1),
-                                                              ),
-                                                              TextSpan(
-                                                                text: message
-                                                                    .substring(
-                                                                  message.indexOf(
-                                                                          "'") +
-                                                                      1,
-                                                                  message
-                                                                      .lastIndexOf(
-                                                                          "'"),
+                                                Flexible(
+                                                  child: ListTile(
+                                                    leading: Icon(
+                                                      Icons.notifications,
+                                                      color: Colors.black,
+                                                    ),
+                                                    title: message.contains("'")
+                                                        ? RichText(
+                                                            text: TextSpan(
+                                                              style: DefaultTextStyle
+                                                                      .of(
+                                                                          context)
+                                                                  .style
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          16),
+                                                              children: [
+                                                                TextSpan(
+                                                                  text: message
+                                                                      .substring(
+                                                                          0,
+                                                                          message.indexOf("'") +
+                                                                              1),
                                                                 ),
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                              TextSpan(
-                                                                text: message
-                                                                    .substring(message
+                                                                TextSpan(
+                                                                  text: message
+                                                                      .substring(
+                                                                    message.indexOf(
+                                                                            "'") +
+                                                                        1,
+                                                                    message
                                                                         .lastIndexOf(
-                                                                            "'")),
-                                                                // Không cần style ở đây vì đã được thiết lập ở style chung
-                                                              ),
-                                                            ],
+                                                                            "'"),
+                                                                  ),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                TextSpan(
+                                                                  text: message
+                                                                      .substring(
+                                                                          message
+                                                                              .lastIndexOf("'")),
+                                                                  // Không cần style ở đây vì đã được thiết lập ở style chung
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : Text(
+                                                            noti['message'],
                                                           ),
-                                                        )
-                                                      : Text(noti['message']),
-                                                  subtitle: Text(
-                                                    noti['time'],
-                                                    style: TextStyle(
-                                                      height: 2,
-                                                      color: Colors.grey[700],
+                                                    subtitle: Text(
+                                                      noti['time'],
+                                                      style: TextStyle(
+                                                        height: 2,
+                                                        color: Colors.grey[700],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  trailing:
-                                                      PopupMenuButton<String>(
-                                                    icon: Icon(
-                                                      Icons.more_horiz,
-                                                      color: Colors.grey[700],
-                                                    ),
-                                                    onSelected:
-                                                        (String selected) {
-                                                      if (selected ==
-                                                          'delete') {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context1) {
-                                                            return ConfirmDeleteDialog(
-                                                              title:
-                                                                  "Xóa thông báo",
-                                                              content:
-                                                                  "Bạn có chắc muốn xóa thông báo này?",
-                                                              onConfirm: () {
-                                                                NotiService()
-                                                                    .deleteNotiById(
-                                                                        userId!,
-                                                                        noti[
-                                                                            'id'])
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value) {
-                                                                    showUnreadOnly
-                                                                        ? getNotSeenNoti(
-                                                                            1,
-                                                                            10 *
-                                                                                page,
-                                                                            true)
-                                                                        : getAllNoti(
-                                                                            1,
-                                                                            10 *
-                                                                                page,
-                                                                            true);
+                                                    trailing:
+                                                        PopupMenuButton<String>(
+                                                      icon: Icon(
+                                                        Icons.more_horiz,
+                                                        color: Colors.grey[700],
+                                                      ),
+                                                      onSelected:
+                                                          (String selected) {
+                                                        if (selected ==
+                                                            'delete') {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context1) {
+                                                              return ConfirmDeleteDialog(
+                                                                title:
+                                                                    "Xóa thông báo",
+                                                                content:
+                                                                    "Bạn có chắc muốn xóa thông báo này?",
+                                                                onConfirm: () {
+                                                                  NotiService()
+                                                                      .deleteNotiById(
+                                                                          userId!,
+                                                                          noti[
+                                                                              'id'])
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value) {
+                                                                      showUnreadOnly
+                                                                          ? getNotSeenNoti(
+                                                                              1,
+                                                                              10 *
+                                                                                  page,
+                                                                              true)
+                                                                          : getAllNoti(
+                                                                              1,
+                                                                              10 * page,
+                                                                              true);
+                                                                      SnackbarShowNoti.showSnackbar(
+                                                                          "Xóa thành công!",
+                                                                          false);
+                                                                    }
+                                                                  }).catchError(
+                                                                          (e) {
                                                                     SnackbarShowNoti
                                                                         .showSnackbar(
-                                                                            "Xóa thành công!",
-                                                                            false);
-                                                                  }
-                                                                }).catchError(
-                                                                        (e) {
-                                                                  SnackbarShowNoti
-                                                                      .showSnackbar(
-                                                                          "Xảy ra lỗi!",
-                                                                          true);
-                                                                });
-                                                              },
-                                                              buttonConfirmText:
-                                                                  "Xóa",
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-                                                    },
-                                                    itemBuilder:
-                                                        (BuildContext context) {
-                                                      return [
-                                                        PopupMenuItem<String>(
-                                                          value: 'delete',
-                                                          child: Text(
-                                                            'Xóa thông báo',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.red),
+                                                                            "Xảy ra lỗi!",
+                                                                            true);
+                                                                  });
+                                                                },
+                                                                buttonConfirmText:
+                                                                    "Xóa",
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      },
+                                                      itemBuilder: (BuildContext
+                                                          context) {
+                                                        return [
+                                                          PopupMenuItem<String>(
+                                                            value: 'delete',
+                                                            child: Text(
+                                                              'Xóa thông báo',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red),
+                                                            ),
                                                           ),
-                                                        ),
-                                                        PopupMenuItem<String>(
-                                                          value: 'markAsUnread',
-                                                          child: Text(
-                                                              'Đánh dấu chưa đọc'),
-                                                        ),
-                                                      ];
-                                                    },
+                                                          PopupMenuItem<String>(
+                                                            value:
+                                                                'markAsUnread',
+                                                            child: Text(
+                                                                'Đánh dấu chưa đọc'),
+                                                          ),
+                                                        ];
+                                                      },
+                                                    ),
                                                   ),
                                                 ),
                                               ],

@@ -6,7 +6,7 @@ class HubConnectionService {
   Future<bool> createConnection(Map<String, dynamic> data) async {
     final String url = '$baseUrl/HubConnection';
     var body = jsonEncode(data);
-    print(body);
+
     final response = await http.post(
       Uri.parse(url),
       headers: {

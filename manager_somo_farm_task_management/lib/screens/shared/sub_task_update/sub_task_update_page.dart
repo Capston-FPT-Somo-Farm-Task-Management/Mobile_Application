@@ -52,9 +52,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
             .firstOrNull;
         isLoading = false;
       });
-    }).catchError((e) {
-      print(e.toString());
-    });
+    }).catchError((e) {});
   }
 
   @override
@@ -381,7 +379,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
             _hoursController.text.isEmpty ? 0 : _hoursController.text,
         "name": _titleController.text
       };
-      print(data);
+
       updateSubTask(data).then((value) {
         if (value) {
           setState(() {

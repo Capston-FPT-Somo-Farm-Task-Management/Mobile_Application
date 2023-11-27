@@ -10,7 +10,7 @@ class SubTaskService {
       getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)';
     else
       getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)?employeeId=$employeeId';
-    print(getTasksUrl);
+
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
       headers: {
@@ -79,7 +79,7 @@ class SubTaskService {
       },
       body: body,
     );
-    print(response.body);
+
     if (response.statusCode == 200) {
       return true;
     } else {

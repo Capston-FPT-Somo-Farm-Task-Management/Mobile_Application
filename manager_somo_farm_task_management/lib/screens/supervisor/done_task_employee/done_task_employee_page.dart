@@ -187,7 +187,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                               itemBuilder: (context, index) {
                                 if (index < filteredTaskList.length) {
                                   final task = filteredTaskList[index];
-                                  print(task);
+
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context)

@@ -384,8 +384,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           "isSpecific": widget.isOne
         }
       };
-      print(taskData);
-      print(userId!);
+
       createTask(taskData).then((value) {
         if (value) {
           setState(() {

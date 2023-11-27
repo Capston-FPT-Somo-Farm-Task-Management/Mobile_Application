@@ -540,7 +540,6 @@ class CreateEmployeeState extends State<CreateEmployee> {
                                 onChanged: (data) {
                                   selectedTaskTypes =
                                       data.cast<Map<String, dynamic>>();
-                                  print(data);
                                 },
                                 chipBuilder: (context, state, material) {
                                   return InputChip(

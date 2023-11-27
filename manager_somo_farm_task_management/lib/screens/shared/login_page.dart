@@ -37,7 +37,6 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   Future<bool> getDeviceToken(int userId) async {
     await FirebaseMessaging.instance.getToken().then((value) {
-      print(value);
       var data = {"connectionId": value, "memberId": userId};
       HubConnectionService().createConnection(data).then((r) {
         saveTokenDevice(value!);
@@ -178,7 +177,6 @@ class _LoginPageState extends State<LoginPage> {
                             prefs.setInt('farmId', value['data']['farmId']);
                             return value['data']['farmId'];
                           }).catchError((e) {
-                            print(e);
                             SnackbarShowNoti.showSnackbar(e, true);
                             return 0; // Trả về giá trị mặc định nếu có lỗi
                           });

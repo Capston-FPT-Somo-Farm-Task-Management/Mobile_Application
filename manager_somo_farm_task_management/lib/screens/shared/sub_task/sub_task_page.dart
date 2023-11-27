@@ -53,7 +53,6 @@ class SubTaskPageState extends State<SubTaskPage> {
     setState(() {
       role = roleStored;
     });
-    print(role);
   }
 
   void removeTask(int subTaskId) {
@@ -163,7 +162,7 @@ class SubTaskPageState extends State<SubTaskPage> {
                           );
                         });
                   },
-                  child: widget.isRecordTime
+                  child: widget.isRecordTime && widget.taskStatus != "Đã đóng"
                       ? Container(
                           margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
                           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -326,7 +325,7 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                                     FontStyle
                                                                         .italic,
                                                                 color:
-                                                                    kPrimaryColor,
+                                                                    kSecondColor,
                                                               ),
                                                             ),
                                                             TextSpan(

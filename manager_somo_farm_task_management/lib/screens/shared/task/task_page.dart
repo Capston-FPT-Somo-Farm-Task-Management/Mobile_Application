@@ -17,6 +17,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/task/components
 import 'package:manager_somo_farm_task_management/screens/shared/task_assign/task_assign_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_details/task_details_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_draft_todo_update_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/task_update/task_update_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/rejection_reason/rejection_reason_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/time_keeping/time_keeping_task_page.dart';
 import 'package:manager_somo_farm_task_management/screens/supervisor/view_rejection_reason/view_rejection_reason_page.dart';
@@ -834,7 +835,9 @@ class TaskPageState extends State<TaskPage> {
                                                     ),
                                                   ],
                                                 ),
-                                                if (task['isExpired'])
+                                                if (task['isExpired'] &&
+                                                    task['status'] !=
+                                                        "Bản nháp")
                                                   Container(
                                                     margin: EdgeInsets.only(
                                                         left: 110),
@@ -2052,7 +2055,12 @@ class TaskPageState extends State<TaskPage> {
                                       .push(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          AssignTaskPage(task: task),
+                                          task['managerName'] == null
+                                              ? UpdateTaskPage(
+                                                  role: role,
+                                                  task: task,
+                                                )
+                                              : AssignTaskPage(task: task),
                                     ),
                                   )
                                       .then((value) {
