@@ -2111,6 +2111,39 @@ class TaskPageState extends State<TaskPage> {
                           child: buildOptionTask(Icons.change_circle,
                               'Chuyển sang "Đang thực hiện"', null),
                         ),
+                        if (task['managerName'] == null) buildDivider(),
+                        if (task['managerName'] == null)
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context1) {
+                                    return ConfirmDeleteDialog(
+                                      title: "Xóa công việc",
+                                      content:
+                                          'Bạn có chắc muốn xóa công việc này?"',
+                                      onConfirm: () {
+                                        Navigator.of(context).pop();
+                                        TaskService()
+                                            .deleteTaskAssign(task['id'])
+                                            .then((value) {
+                                          if (value) {
+                                            removeTask(task['id']);
+                                            SnackbarShowNoti.showSnackbar(
+                                                "Đổi thành công!", false);
+                                          } else {
+                                            SnackbarShowNoti.showSnackbar(
+                                                "Xảy ra lỗi!", true);
+                                          }
+                                        });
+                                      },
+                                      buttonConfirmText: "Đồng ý",
+                                    );
+                                  });
+                            },
+                            child: buildOptionTask(Icons.change_circle,
+                                'Xóa công việc', Colors.red),
+                          ),
                       ] else if (isDoing) ...[
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,

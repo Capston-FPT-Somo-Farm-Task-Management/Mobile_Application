@@ -139,9 +139,10 @@ class TaskService {
     }
   }
 
-  Future<bool> createTask(Map<String, dynamic> taskData) async {
+  Future<bool> superCreateTask(Map<String, dynamic> taskData) async {
     final String apiUrl = "$baseUrl/FarmTask/supervisor/CreateAsignTask";
     var body = jsonEncode(taskData);
+    print(body);
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -515,6 +516,29 @@ class TaskService {
   Future<bool> deleteTask(int taskId) async {
     try {
       final String apiUrl = "$baseUrl/FarmTask/($taskId)";
+
+      final http.Response response = await http.delete(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> deleteTaskAssign(int taskId) async {
+    try {
+      final String apiUrl = "$baseUrl/FarmTask/($taskId)/DeleteTaskAssign";
 
       final http.Response response = await http.delete(
         Uri.parse(apiUrl),
