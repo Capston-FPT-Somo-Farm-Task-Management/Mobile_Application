@@ -246,18 +246,25 @@ class TaskPageState extends State<TaskPage> {
                     children: [
                       Row(
                         children: [
-                          Checkbox(
-                            value: showRepeatedTasks,
-                            onChanged: (value) {
-                              setState(() {
-                                showRepeatedTasks = value!;
-                                page = 1;
-                              });
-                              _getTasksForSelectedDateAndStatus(1, 10,
-                                  _selectedDate, groupValue, true, searchValue);
-                            },
-                          ),
-                          Text('Chỉ công việc có lặp lại'),
+                          if (role == "Manager")
+                            Checkbox(
+                              value: showRepeatedTasks,
+                              onChanged: (value) {
+                                setState(() {
+                                  showRepeatedTasks = value!;
+                                  page = 1;
+                                });
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              },
+                            ),
+                          if (role == "Manager")
+                            Text('Chỉ công việc có lặp lại'),
                         ],
                       ),
                       Row(
