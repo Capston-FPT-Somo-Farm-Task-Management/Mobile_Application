@@ -63,7 +63,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                   ? ""
                   : employees[i]['totalActualEffortHour'].toString());
           if (value['subtasks'][i]['daySubmit'] != null)
-            _selectedDate.add(DateFormat('dd/MM/yyyy')
+            _selectedDate.add(DateFormat('dd-MM-yyyy')
                 .format(DateTime.parse(value['subtasks'][i]['daySubmit'])));
           else
             _selectedDate.add("");
@@ -99,8 +99,12 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
     }
 
     for (int i = 0; i < employees.length; i++) {
-      if (employees[i]['daySubmit'] ?? "") if (_selectedDate[i] !=
-          employees[i]['daySubmit'].toString()) return true;
+      if (employees[i]['daySubmit'] == null) {
+        employees[i]['daySubmit'] = "";
+      }
+      String date = DateFormat('dd-MM-yyyy')
+          .format(DateTime.parse(employees[i]['daySubmit']));
+      if (_selectedDate[i] != date) return true;
     }
     return false;
   }
