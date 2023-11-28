@@ -1478,8 +1478,10 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                             ? ""
                             : ", ") +
                         _addressDetailController.text.trim()),
-            "overallEfforMinutes": _minutesController.text,
-            "overallEffortHour": _hoursController.text,
+            "overallEfforMinutes":
+                _minutesController.text.isEmpty ? 0 : _minutesController.text,
+            "overallEffortHour":
+                _hoursController.text.isEmpty ? 0 : _hoursController.text,
           }
         };
 
