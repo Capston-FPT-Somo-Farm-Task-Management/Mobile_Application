@@ -95,7 +95,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                 //     ),
                 //   ),
                 // ),
-                // const SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Container(
                   padding:
                       EdgeInsets.only(left: padingForAll, right: padingForAll),
