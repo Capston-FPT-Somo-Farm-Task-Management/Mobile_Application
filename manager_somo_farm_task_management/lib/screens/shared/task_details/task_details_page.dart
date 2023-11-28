@@ -559,7 +559,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                     child: Text(
                                       task['isPlant']
                                           ? 'Cây trồng: ${task['plantName'] ?? "Chưa có"}'
-                                          : 'Con vật: ${task['plantName'] ?? "Chưa có"}',
+                                          : 'Con vật: ${task['liveStockName'] ?? "Chưa có"}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       ),
