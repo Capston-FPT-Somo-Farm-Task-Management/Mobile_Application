@@ -36,7 +36,6 @@ class EvidencePageState extends State<EvidencePage> {
 
   @override
   void initState() {
-    print(widget.role);
     super.initState();
     getEvdidence();
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -187,7 +186,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                               itemBuilder: (context, index) {
                                 if (index < filteredTaskList.length) {
                                   final task = filteredTaskList[index];
-                                  print(task);
+
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context)
@@ -247,6 +246,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                   .spaceBetween,
                                                           children: [
                                                             Flexible(
+                                                              flex: 5,
                                                               child: Text(
                                                                 task['name'],
                                                                 style:
@@ -261,50 +261,49 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                         .ellipsis,
                                                               ),
                                                             ),
-                                                            Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Priority
-                                                                      .getBGClr(
-                                                                          task[
-                                                                              'priority']),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                ),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .push(
-                                                                      MaterialPageRoute(
-                                                                        builder: (context) => SubTaskPage(
-                                                                            isRecordTime:
-                                                                                false,
-                                                                            taskStatus:
-                                                                                task['status'],
-                                                                            startDate: task['startDate'],
-                                                                            endDate: task['endDate'],
-                                                                            taskId: task['id'],
-                                                                            taskName: task['name'],
-                                                                            taskCode: task['codeTask']),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .arrow_forward_ios,
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        200],
-                                                                    size: 15,
+                                                            Flexible(
+                                                              child: Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Priority
+                                                                        .getBGClr(
+                                                                            task['priority']),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(5),
                                                                   ),
-                                                                )),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          5),
+                                                                  child:
+                                                                      GestureDetector(
+                                                                    onTap: () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .push(
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) => SubTaskPage(
+                                                                              isRecordTime: false,
+                                                                              taskStatus: task['status'],
+                                                                              startDate: task['startDate'],
+                                                                              endDate: task['endDate'],
+                                                                              taskId: task['id'],
+                                                                              taskName: task['name'],
+                                                                              taskCode: task['codeTask']),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .arrow_forward_ios,
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          200],
+                                                                      size: 15,
+                                                                    ),
+                                                                  )),
+                                                            ),
                                                           ],
                                                         ),
                                                         if (role == "Manager" &&

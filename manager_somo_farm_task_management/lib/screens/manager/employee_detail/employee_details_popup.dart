@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/title_text_bold.dart';
-import 'package:manager_somo_farm_task_management/componets/wrap_words.dart';
 import 'package:manager_somo_farm_task_management/screens/manager/employee_update/employee_update_page.dart';
 
 class EmployeeDetailsPopup extends StatelessWidget {

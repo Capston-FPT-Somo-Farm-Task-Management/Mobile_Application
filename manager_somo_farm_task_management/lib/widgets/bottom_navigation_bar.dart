@@ -179,9 +179,7 @@ class _BottomNavBarState extends State<BottomNavBar>
                         if (value) {
                           getNewNotiCount();
                         }
-                      }).catchError((e) {
-                        print(e.toString());
-                      });
+                      }).catchError((e) {});
                       setState(() {
                         myCurrentIndex = 2;
                         //p = NotificationPage();

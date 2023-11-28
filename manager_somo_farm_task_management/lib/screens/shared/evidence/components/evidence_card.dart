@@ -36,9 +36,7 @@ class _EvidenceCardState extends State<EvidenceCard> {
   @override
   void initState() {
     super.initState();
-    supAvatar = widget.evidence['avatarManager'].toString().isEmpty
-        ? widget.task['avatarSupervisor']
-        : widget.evidence['avatarManager'];
+
     if (widget.evidence['urlImage'] != null)
       urlImages = widget.evidence['urlImage'];
   }
@@ -100,7 +98,9 @@ class _EvidenceCardState extends State<EvidenceCard> {
                   children: [
                     ClipOval(
                       child: Image.network(
-                        supAvatar ?? "string",
+                        widget.evidence['avatarManager'].toString().isEmpty
+                            ? widget.task['avatarSupervisor']
+                            : widget.evidence['avatarManager'] ?? "string",
                         height: 40,
                         width: 40,
                         fit: BoxFit.cover,

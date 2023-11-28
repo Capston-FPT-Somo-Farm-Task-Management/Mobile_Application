@@ -665,7 +665,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                               onChanged: (newValue) {
                                 setState(() {
                                   fieldSelected = newValue;
-                                  print(newValue!['id']);
+
                                   externalSelected = null;
                                   getExternalIds(newValue!['id'], false);
                                 });
@@ -1387,7 +1387,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
         "remind": _selectedRemind,
       }
     };
-    print(taskData);
+
     return taskData;
   }
 

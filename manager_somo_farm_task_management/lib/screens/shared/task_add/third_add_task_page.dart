@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/input_field.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
-import 'package:manager_somo_farm_task_management/screens/shared/home/manager_home_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/task/task_page.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
@@ -80,7 +79,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
   }
 
   Future<bool> createTask(Map<String, dynamic> taskData) {
-    return TaskService().createTask(taskData);
+    return TaskService().superCreateTask(taskData);
   }
 
   @override
@@ -384,8 +383,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
           "isSpecific": widget.isOne
         }
       };
-      print(taskData);
-      print(userId!);
+
       createTask(taskData).then((value) {
         if (value) {
           setState(() {

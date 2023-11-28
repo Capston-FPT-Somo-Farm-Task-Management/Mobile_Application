@@ -139,9 +139,10 @@ class TaskService {
     }
   }
 
-  Future<bool> createTask(Map<String, dynamic> taskData) async {
+  Future<bool> superCreateTask(Map<String, dynamic> taskData) async {
     final String apiUrl = "$baseUrl/FarmTask/supervisor/CreateAsignTask";
     var body = jsonEncode(taskData);
+    print(body);
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -331,8 +332,9 @@ class TaskService {
   }
 
   Future<bool> updateTask(Map<String, dynamic> taskData, int taskId) async {
-    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTask";
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTaskAsign";
     var body = jsonEncode(taskData);
+
     final response = await http.put(
       Uri.parse(apiUrl),
       headers: {
@@ -471,6 +473,27 @@ class TaskService {
     }
   }
 
+  Future<bool> updateTaskAsign(
+      Map<String, dynamic> taskData, int taskId) async {
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTaskAsign";
+    var body = jsonEncode(taskData);
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
   Future<bool> hideTask(int taskId) async {
     final String apiUrl = "$baseUrl/FarmTask/DeleteTask/$taskId";
 
@@ -493,6 +516,29 @@ class TaskService {
   Future<bool> deleteTask(int taskId) async {
     try {
       final String apiUrl = "$baseUrl/FarmTask/($taskId)";
+
+      final http.Response response = await http.delete(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> deleteTaskAssign(int taskId) async {
+    try {
+      final String apiUrl = "$baseUrl/FarmTask/($taskId)/DeleteTaskAssign";
 
       final http.Response response = await http.delete(
         Uri.parse(apiUrl),
@@ -548,7 +594,7 @@ class TaskService {
       url =
           '$baseUrl/FarmTask/($taskId)/ChangeStatusToPendingAndCancel?status=$status';
     Dio dio = Dio();
-    print(url);
+
     // Tạo FormData để chứa dữ liệu multipart
     FormData formData = FormData();
 
