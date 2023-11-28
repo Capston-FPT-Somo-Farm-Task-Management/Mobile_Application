@@ -1293,23 +1293,18 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
         } else {
           setState(() {
             if (isStart) {
-              if (selectedDateTime.isBefore(DateTime.now())) {
-                SnackbarShowNoti.showSnackbar(
-                    "Ngày giờ thực hiện phải lớn hơn giờ hiện tại", true);
-              } else {
-                _selectedStartDate = selectedDateTime;
+              _selectedStartDate = selectedDateTime;
 
-                if (_selectedEndDate != null) {
-                  if (_selectedStartDate!.isAfter(_selectedEndDate!))
-                    _selectedEndDate = null;
-                  else {
-                    calculateDateDifference(
-                        _selectedStartDate!, _selectedEndDate!);
-                  }
+              if (_selectedEndDate != null) {
+                if (_selectedStartDate!.isAfter(_selectedEndDate!))
+                  _selectedEndDate = null;
+                else {
+                  calculateDateDifference(
+                      _selectedStartDate!, _selectedEndDate!);
                 }
-                selectedDatesRepeat.clear();
-                disabledDates.clear();
               }
+              selectedDatesRepeat.clear();
+              disabledDates.clear();
             } else {
               _selectedEndDate = selectedDateTime;
               _focusedDay = _selectedEndDate!.add(Duration(days: 1));

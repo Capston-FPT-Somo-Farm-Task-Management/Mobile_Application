@@ -332,7 +332,7 @@ class TaskService {
   }
 
   Future<bool> updateTask(Map<String, dynamic> taskData, int taskId) async {
-    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTaskAsign";
+    final String apiUrl = "$baseUrl/FarmTask/(${taskId})/UpdateTask";
     var body = jsonEncode(taskData);
 
     final response = await http.put(
