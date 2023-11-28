@@ -685,71 +685,65 @@ class TaskPageState extends State<TaskPage> {
                                                         task['status'] !=
                                                             "Từ chối")
                                                       Flexible(
-                                                        child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Priority
-                                                                  .getBGClr(task[
-                                                                      'priority']),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                            ),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(5),
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .push(
-                                                                  MaterialPageRoute(
-                                                                    builder: (context) => SubTaskPage(
-                                                                        isRecordTime:
-                                                                            false,
-                                                                        taskStatus:
-                                                                            task[
-                                                                                'status'],
-                                                                        startDate:
-                                                                            task[
-                                                                                'startDate'],
-                                                                        endDate:
-                                                                            task[
-                                                                                'endDate'],
-                                                                        taskId: task[
-                                                                            'id'],
-                                                                        taskName:
-                                                                            task[
-                                                                                'name'],
-                                                                        taskCode:
-                                                                            task['code']),
-                                                                  ),
-                                                                )
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value !=
-                                                                      null) {
-                                                                    _getTasksForSelectedDateAndStatus(
-                                                                        1,
-                                                                        10 *
-                                                                            page,
-                                                                        _selectedDate,
-                                                                        groupValue,
-                                                                        true,
-                                                                        searchValue);
-                                                                  }
-                                                                });
-                                                              },
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder: (context) => SubTaskPage(
+                                                                    isRecordTime:
+                                                                        false,
+                                                                    taskStatus:
+                                                                        task[
+                                                                            'status'],
+                                                                    startDate: task[
+                                                                        'startDate'],
+                                                                    endDate: task[
+                                                                        'endDate'],
+                                                                    taskId: task[
+                                                                        'id'],
+                                                                    taskName: task[
+                                                                        'name'],
+                                                                    taskCode: task[
+                                                                        'code']),
+                                                              ),
+                                                            )
+                                                                .then((value) {
+                                                              if (value !=
+                                                                  null) {
+                                                                _getTasksForSelectedDateAndStatus(
+                                                                    1,
+                                                                    10 * page,
+                                                                    _selectedDate,
+                                                                    groupValue,
+                                                                    true,
+                                                                    searchValue);
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Priority
+                                                                    .getBGClr(task[
+                                                                        'priority']),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                              ),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               child: Icon(
                                                                 Icons
                                                                     .arrow_forward_ios,
                                                                 color: Colors
                                                                     .grey[200],
                                                                 size: 15,
-                                                              ),
-                                                            )),
+                                                              )),
+                                                        ),
                                                       ),
                                                   ],
                                                 ),
