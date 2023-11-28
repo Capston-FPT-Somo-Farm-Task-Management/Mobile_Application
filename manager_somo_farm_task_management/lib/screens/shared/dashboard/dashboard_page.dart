@@ -324,7 +324,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       ),
                       Expanded(
                         child: Container(
-                          margin: EdgeInsets.fromLTRB(10, 5, 5, 10),
+                          margin: EdgeInsets.fromLTRB(5, 5, 10, 10),
                           height: 100,
                           decoration: BoxDecoration(
                               color: Colors.green[300],
