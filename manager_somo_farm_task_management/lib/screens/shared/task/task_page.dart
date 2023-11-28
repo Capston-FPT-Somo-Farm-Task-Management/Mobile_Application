@@ -1358,6 +1358,13 @@ class TaskPageState extends State<TaskPage> {
                                       ),
                                     ),
                                   );
+                                  _getTasksForSelectedDateAndStatus(
+                                      1,
+                                      10 * page,
+                                      _selectedDate,
+                                      groupValue,
+                                      true,
+                                      searchValue);
                                 },
                                 child: buildIconOption(
                                     Icons.post_add, "Xem báo cáo"),
@@ -2153,14 +2160,24 @@ class TaskPageState extends State<TaskPage> {
                             GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pop();
-                                Navigator.of(context).push(
+                                Navigator.of(context)
+                                    .push(
                                   MaterialPageRoute(
                                     builder: (context) => EvidencePage(
                                       role: role,
                                       task: task,
                                     ),
                                   ),
-                                );
+                                )
+                                    .then((value) {
+                                  _getTasksForSelectedDateAndStatus(
+                                      1,
+                                      10 * page,
+                                      _selectedDate,
+                                      groupValue,
+                                      true,
+                                      searchValue);
+                                });
                               },
                               child: buildIconOption(
                                   Icons.post_add, "Báo cáo công việc"),
