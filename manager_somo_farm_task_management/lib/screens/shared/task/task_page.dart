@@ -1741,7 +1741,8 @@ class TaskPageState extends State<TaskPage> {
                             )
                                 .then((value) {
                               if (value != null) {
-                                Navigator.of(context).pop("ok");
+                                Navigator.of(context).pop();
+                                removeTask(task['id']);
                               }
                             });
                           },
