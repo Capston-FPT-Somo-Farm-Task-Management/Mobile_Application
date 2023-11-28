@@ -185,7 +185,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                 // ),
                 // const SizedBox(height: 25),
 
-                // SizedBox(height: 15),
+                SizedBox(height: 5),
                 Stack(children: [
                   InkWell(
                     child: Container(
