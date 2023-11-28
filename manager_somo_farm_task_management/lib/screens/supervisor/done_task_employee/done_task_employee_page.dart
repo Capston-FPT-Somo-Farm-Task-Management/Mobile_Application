@@ -454,7 +454,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}',
+                                                                        '${DateFormat('dd/MM/yyyy   HH:mm').format(DateTime.parse(task['startDate']))}',
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
@@ -507,7 +507,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                   ),
                                                                   TextSpan(
                                                                     text:
-                                                                        '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}',
+                                                                        '${DateFormat('dd/MM/yyyy   HH:mm').format(DateTime.parse(task['endDate']))}',
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:

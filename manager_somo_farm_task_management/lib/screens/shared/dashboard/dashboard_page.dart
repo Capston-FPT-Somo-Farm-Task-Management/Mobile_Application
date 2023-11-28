@@ -24,6 +24,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
   bool rotateEffect = false;
   int? memberId;
   bool isLoading = true;
+  int totalTaskToDo = 0;
+  int totalTaskDoing = 0;
+  int totalTaskClose = 0;
+  int totalTaskPending = 0;
   List<Map<String, dynamic>>? listTotal;
   Map<String, dynamic>? member;
   Future<void> getRole() async {
@@ -40,6 +44,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
       totalTasksLiveStock = listTotal![index]['totalTaskOfLivestock'];
       totalTasksPlant = listTotal![index]['totalTaskOfPlant'];
       totalTasksOther = listTotal![index]['totalTaskOfOther'];
+      totalTaskToDo = listTotal![index]['totalTaskToDo'];
+      totalTaskDoing = listTotal![index]['totalTaskDoing'];
+      totalTaskClose = listTotal![index]['totalTaskClose'];
+      totalTaskPending = listTotal![index]['totalTaskPending'];
       totalTasks = [totalTasksLiveStock, totalTasksPlant, totalTasksOther];
     });
   }
@@ -50,12 +58,20 @@ class _StatisticsPageState extends State<StatisticsPage> {
       totalTasksPlant = 0;
       totalTasksOther = 0;
       totalTasksLiveStock = 0;
+      totalTaskToDo = 0;
+      totalTaskDoing = 0;
+      totalTaskClose = 0;
+      totalTaskPending = 0;
       for (var element in listTotal!) {
         dailyTasks.add(element['taskCount']);
         totalTasksPlant += int.parse(element['totalTaskOfPlant'].toString());
         totalTasksOther += int.parse(element['totalTaskOfOther'].toString());
         totalTasksLiveStock +=
             int.parse(element['totalTaskOfLivestock'].toString());
+        totalTaskToDo += int.parse(element['totalTaskToDo'].toString());
+        totalTaskDoing += int.parse(element['totalTaskDoing'].toString());
+        totalTaskClose += int.parse(element['totalTaskClose'].toString());
+        totalTaskPending += int.parse(element['totalTaskPending'].toString());
       }
       totalTasks = [totalTasksLiveStock, totalTasksPlant, totalTasksOther];
     });
@@ -71,6 +87,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
           totalTasksOther += int.parse(element['totalTaskOfOther'].toString());
           totalTasksLiveStock +=
               int.parse(element['totalTaskOfLivestock'].toString());
+          totalTaskToDo += int.parse(element['totalTaskToDo'].toString());
+          totalTaskDoing += int.parse(element['totalTaskDoing'].toString());
+          totalTaskClose += int.parse(element['totalTaskClose'].toString());
+          totalTaskPending += int.parse(element['totalTaskPending'].toString());
         }
         maxTask = dailyTasks
             .reduce((value, element) => value > element ? value : element);
@@ -176,133 +196,245 @@ class _StatisticsPageState extends State<StatisticsPage> {
           ? Center(
               child: CircularProgressIndicator(color: kPrimaryColor),
             )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 40),
-                Expanded(
-                  child: Container(
-                    child: Column(
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 10),
+                  RichText(
+                    text: TextSpan(
                       children: [
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'Tổng số công việc: ',
-                                      style: TextStyle(
-                                          fontSize: 20, color: Colors.black),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          '${totalTasksLiveStock + totalTasksPlant + totalTasksOther} công việc ',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blue),
-                                    ),
-                                    TextSpan(
-                                      text: selectedColumnIndex == -1
-                                          ? "/ tuần"
-                                          : selectedColumnIndex == 0
-                                              ? "/ CN"
-                                              : "/ T${selectedColumnIndex + 1}",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.3,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: PieChart(
-                                        PieChartData(
-                                          startDegreeOffset:
-                                              rotateEffect ? 360.0 : null,
-                                          sections: generatePieChartSections(),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.all(20),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          buildLegendItem(
-                                              0, 'Động vật', getColor(0)),
-                                          SizedBox(height: 10),
-                                          buildLegendItem(
-                                              1, 'Thực vật', getColor(1)),
-                                          SizedBox(height: 10),
-                                          buildLegendItem(
-                                              2, 'Khác', getColor(2)),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                        TextSpan(
+                          text: 'Tổng số công việc: ',
+                          style: TextStyle(fontSize: 20, color: Colors.black),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              SizedBox(height: 10),
-                              Text(
-                                "Biểu đồ công việc trong tuần:",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              SizedBox(height: 20),
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.3,
-                                child: BarChart(BarChartData(
-                                  maxY: double.parse(maxTask.toString()),
-                                  minY: 0,
-                                  gridData: FlGridData(show: true),
-                                  borderData: FlBorderData(show: false),
-                                  titlesData: FlTitlesData(
-                                      show: true,
-                                      topTitles: AxisTitles(
-                                          sideTitles:
-                                              SideTitles(showTitles: false)),
-                                      rightTitles: AxisTitles(
-                                          sideTitles:
-                                              SideTitles(showTitles: false)),
-                                      bottomTitles: AxisTitles(
-                                        sideTitles: SideTitles(
-                                            showTitles: true,
-                                            getTitlesWidget: getBottomTitles),
-                                      )),
-                                  barGroups: generateBarGroups(),
-                                  barTouchData: BarTouchData(
-                                    touchCallback: onBarTapped,
-                                  ),
-                                )),
-                              ),
-                            ],
-                          ),
+                        TextSpan(
+                          text:
+                              '${totalTasksLiveStock + totalTasksPlant + totalTasksOther} công việc ',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue),
+                        ),
+                        TextSpan(
+                          text: selectedColumnIndex == -1
+                              ? "/ tuần"
+                              : selectedColumnIndex == 0
+                                  ? "/ CN"
+                                  : "/ T${selectedColumnIndex + 1}",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
                         ),
                       ],
                     ),
                   ),
-                )
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.brown[200],
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
+                          height: 100,
+                          // Thay đổi màu sắc tùy ý
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                totalTaskToDo.toString(),
+                                style: TextStyle(
+                                    color: Colors.brown[900],
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "Chuẩn bị",
+                                style: TextStyle(color: Colors.brown[900]),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(5, 10, 10, 5),
+                          height: 100,
+                          decoration: BoxDecoration(
+                              color: Colors.blue[300],
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  15))), // Thay đổi màu sắc tùy ý
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  totalTaskDoing.toString(),
+                                  style: TextStyle(
+                                      color: Colors.blue[900],
+                                      fontSize: 35,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "Đang thực hiện",
+                                  style: TextStyle(color: Colors.blue[900]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(10, 5, 5, 10),
+                          height: 100,
+                          decoration: BoxDecoration(
+                              color: Colors.amber[200],
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  15))), // Thay đổi màu sắc tùy ý
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                totalTaskPending.toString(),
+                                style: TextStyle(
+                                    color: Colors.yellow[900],
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "Tạm hoãn",
+                                style: TextStyle(color: Colors.yellow[900]),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(10, 5, 5, 10),
+                          height: 100,
+                          decoration: BoxDecoration(
+                              color: Colors.green[300],
+                              borderRadius: BorderRadius.all(Radius.circular(
+                                  15))), // Thay đổi màu sắc tùy ý
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                totalTaskClose.toString(),
+                                style: TextStyle(
+                                    color: Colors.green[900],
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "Đã đóng",
+                                style: TextStyle(color: Colors.green[900]),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: PieChart(
+                                      PieChartData(
+                                        startDegreeOffset:
+                                            rotateEffect ? 360.0 : null,
+                                        sections: generatePieChartSections(),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(20),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        buildLegendItem(
+                                            0, 'Động vật', getColor(0)),
+                                        SizedBox(height: 10),
+                                        buildLegendItem(
+                                            1, 'Thực vật', getColor(1)),
+                                        SizedBox(height: 10),
+                                        buildLegendItem(2, 'Khác', getColor(2)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(height: 10),
+                            Text(
+                              "Biểu đồ công việc trong tuần:",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(height: 20),
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              child: BarChart(BarChartData(
+                                maxY: double.parse(maxTask.toString()),
+                                minY: 0,
+                                gridData: FlGridData(show: true),
+                                borderData: FlBorderData(show: false),
+                                titlesData: FlTitlesData(
+                                    show: true,
+                                    topTitles: AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false)),
+                                    rightTitles: AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false)),
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                          showTitles: true,
+                                          getTitlesWidget: getBottomTitles),
+                                    )),
+                                barGroups: generateBarGroups(),
+                                barTouchData: BarTouchData(
+                                  touchCallback: onBarTapped,
+                                ),
+                              )),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
     );
   }
