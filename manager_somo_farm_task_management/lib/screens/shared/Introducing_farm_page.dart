@@ -41,6 +41,7 @@ class _IntroducingFarmPageState extends State<IntroducingFarmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 70,
         backgroundColor: Colors.grey[200],

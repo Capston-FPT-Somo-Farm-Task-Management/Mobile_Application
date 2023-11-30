@@ -90,6 +90,7 @@ class ZonePageState extends State<ZonePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: CustomAppBar(),
