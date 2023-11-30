@@ -1292,7 +1292,13 @@ class TaskPageState extends State<TaskPage> {
                                     Navigator.of(context).pop();
                                     deleteTask(task['id']).then((value) {
                                       if (value) {
-                                        removeTask(task['id']);
+                                        _getTasksForSelectedDateAndStatus(
+                                            1,
+                                            10 * page,
+                                            _selectedDate,
+                                            groupValue,
+                                            true,
+                                            searchValue);
                                         SnackbarShowNoti.showSnackbar(
                                             "Xóa thành công!", false);
                                       } else {
@@ -1702,6 +1708,32 @@ class TaskPageState extends State<TaskPage> {
                           },
                           child: buildOptionTask(Icons.change_circle,
                               'Chuyển sang "Đang thực hiện"', null),
+                        ),
+                        buildDivider(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateEvidencePage(
+                                        taskId: task['id'],
+                                        status: 7,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10 * page,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              }
+                            });
+                          },
+                          child: buildOptionTask(Icons.cancel_outlined,
+                              'Công việc bị hủy bỏ', Colors.red),
                         ),
                       ] else if (isRejected) ...[
                         Row(
@@ -2119,6 +2151,58 @@ class TaskPageState extends State<TaskPage> {
                           },
                           child: buildOptionTask(Icons.change_circle,
                               'Chuyển sang "Đang thực hiện"', null),
+                        ),
+                        buildDivider(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateEvidencePage(
+                                        taskId: task['id'],
+                                        status: 5,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10 * page,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              }
+                            });
+                          },
+                          child: buildOptionTask(Icons.pending_actions,
+                              'Chuyển sang "Tạm hoãn"', null),
+                        ),
+                        buildDivider(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateEvidencePage(
+                                        taskId: task['id'],
+                                        status: 7,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10 * page,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              }
+                            });
+                          },
+                          child: buildOptionTask(Icons.cancel_outlined,
+                              'Công việc bị hủy bỏ', Colors.red),
                         ),
                         if (task['managerName'] == null) buildDivider(),
                         if (task['managerName'] == null)
@@ -2566,6 +2650,32 @@ class TaskPageState extends State<TaskPage> {
                           },
                           child: buildOptionTask(Icons.change_circle,
                               'Chuyển sang "Đang thực hiện"', null),
+                        ),
+                        buildDivider(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateEvidencePage(
+                                        taskId: task['id'],
+                                        status: 7,
+                                      )),
+                            ).then((value) {
+                              if (value != null) {
+                                _getTasksForSelectedDateAndStatus(
+                                    1,
+                                    10 * page,
+                                    _selectedDate,
+                                    groupValue,
+                                    true,
+                                    searchValue);
+                              }
+                            });
+                          },
+                          child: buildOptionTask(Icons.cancel_outlined,
+                              'Công việc bị hủy bỏ', Colors.red),
                         ),
                       ] else if (isRejected) ...[
                         GestureDetector(
