@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/dashboard/dashboard_page.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/reset_password/reset_password_page.dart';
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:manager_somo_farm_task_management/services/login_services.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
@@ -143,13 +144,22 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        "Quên mật khẩu?",
-                        style: TextStyle(
-                          color: kSecondLightColor, // Màu 8CAAB9
-                          fontSize: 16.0,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: const Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "Quên mật khẩu?",
+                          style: TextStyle(
+                            color: kSecondLightColor, // Màu 8CAAB9
+                            fontSize: 16.0,
+                          ),
                         ),
                       ),
                     ),

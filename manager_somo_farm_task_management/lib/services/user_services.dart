@@ -63,4 +63,43 @@ class UserService {
       return false;
     }
   }
+
+  Future<bool> changePassword(int userId, Map<String, dynamic> data) async {
+    final String userUrl = '$baseUrl/Member/$userId/UpdatePassword';
+
+    var body = jsonEncode(data);
+    final response = await http.put(
+      Uri.parse(userUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
+
+  Future<bool> resetPassword(String email) async {
+    final String userUrl = '$baseUrl/Email/ForgotPassword?email=$email';
+    final response = await http.post(
+      Uri.parse(userUrl),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Future.error(data['message']);
+    }
+  }
 }

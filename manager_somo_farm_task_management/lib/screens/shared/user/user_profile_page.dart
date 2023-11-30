@@ -61,7 +61,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       ),
       body: Container(
         color: Colors.grey[200],
-        padding: EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 20),
+        padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 20),
         child: isLoading
             ? Center(
                 child: CircularProgressIndicator(color: kPrimaryColor),
@@ -133,7 +133,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                             SizedBox(height: 35),
                             Container(
-                              padding: EdgeInsets.all(30),
+                              padding: EdgeInsets.all(20),
                               constraints: BoxConstraints(
                                 minHeight: 150, // Chiều cao tối thiểu
                                 minWidth: 300, // Chiều rộng tối thiểu
@@ -280,7 +280,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                             SizedBox(height: 20),
                             Container(
-                              padding: EdgeInsets.all(30),
+                              padding: EdgeInsets.all(20),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:

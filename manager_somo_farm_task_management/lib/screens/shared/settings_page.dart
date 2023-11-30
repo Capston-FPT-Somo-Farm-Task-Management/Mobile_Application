@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
+import 'package:manager_somo_farm_task_management/screens/shared/change_password/change_password_page.dart';
 import 'package:manager_somo_farm_task_management/screens/shared/user/user_profile_page.dart';
 import 'package:manager_somo_farm_task_management/services/hub_connection_service.dart';
 import 'package:manager_somo_farm_task_management/services/user_services.dart';
@@ -57,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: isLoading
           ? null
           : AppBar(
@@ -160,7 +162,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       ListTile(
                         leading: const Icon(Icons.lock),
                         title: const Text('Đổi mật khẩu'),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ChangePasswordPage(userId: userId!),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
