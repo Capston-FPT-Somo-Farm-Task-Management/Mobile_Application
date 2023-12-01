@@ -164,11 +164,41 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
               ),
               centerTitle: true,
               actions: [
-                role == "Manager" && task['managerName'] != null ||
-                        role != "Manager" && task['managerName'] == null
-                    ? (task['status'] == "Từ chối" ||
+                role == "Manager" &&
+                        task['managerName'] != null &&
+                        (task['status'] == "Từ chối" ||
                             task['status'] == "Chuẩn bị" ||
                             task['status'] == "Bản nháp")
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.mode_edit_outline_outlined,
+                          color: kPrimaryColor,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (context) => UpdateTaskDraftTodoPage(
+                                  reDo: false,
+                                  changeTodo: false,
+                                  task: task,
+                                  role: role!),
+                            ),
+                          )
+                              .then((value) {
+                            if (value != null) {
+                              setState(() {
+                                isLoading = true;
+                                isChange = true;
+                              });
+                              getTask();
+                            }
+                          });
+                        },
+                      )
+                    : role == "Supervisor" &&
+                            (task['status'] == "Đã giao" ||
+                                task['status'] == "Đang thực hiện")
                         ? IconButton(
                             icon: const Icon(
                               Icons.mode_edit_outline_outlined,
@@ -177,27 +207,25 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             onPressed: () {
                               Navigator.of(context)
                                   .push(
-                                MaterialPageRoute(
-                                  builder: (context) => UpdateTaskDraftTodoPage(
-                                      reDo: false,
-                                      changeTodo: false,
-                                      task: task,
-                                      role: role!),
-                                ),
-                              )
-                                  .then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    isLoading = true;
-                                    isChange = true;
-                                  });
-                                  getTask();
-                                }
-                              });
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          task['managerName'] == null
+                                              ? UpdateTaskPage(
+                                                  role: role!,
+                                                  task: task,
+                                                )
+                                              : AssignTaskPage(task: task),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {getTask(), isChange = true}
+                                    },
+                                  );
                             },
                           )
                         : Container()
-                    : Container()
               ],
             ),
       body: isLoading
@@ -899,1430 +927,1721 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
           ],
         ),
         child: role == "Manager"
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Status bản nháp -> Manager bấm xóa công việc
-                  if (task['status'] == "Bản nháp")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Xóa công việc",
-                              content: "Bạn có chắc muốn xóa công việc này?",
-                              onConfirm: () {
-                                deleteTask(task['id']).then((value) {
-                                  if (value) {
-                                    Navigator.of(context).pop("ok");
-                                    removeTask(task['id']);
-                                    // isChange = true;
-                                    // getTask();
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xóa thành công!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                }).catchError((e) {
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
-                                });
-                              },
-                              buttonConfirmText: "Xóa",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xóa"),
-                    ),
-
-                  // Status bản nháp -> Manager bấm chuyển sang chuẩn bị
-                  if (task['status'] == "Bản nháp") SizedBox(width: 10),
-                  if (task['status'] == "Bản nháp")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (context) => UpdateTaskDraftTodoPage(
-                                    reDo: false,
-                                    changeTodo: true,
-                                    task: task,
-                                    role: role!),
-                              ),
-                            )
-                            .then(
-                              (value) => {
-                                if (value != null) {getTask(), isChange = true}
-                              },
-                            );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Chuẩn bị"),
-                    ),
-
-                  // Status chuẩn bị -> Manager bấm xóa công việc
-                  if (task['status'] == "Chuẩn bị")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Xóa công việc",
-                              content: "Bạn có chắc muốn xóa công việc này?",
-                              onConfirm: () {
-                                deleteTask(task['id']).then((value) {
-                                  if (value) {
-                                    Navigator.of(context).pop("ok");
-                                    removeTask(task['id']);
-                                    // isChange = true;
-                                    // getTask();
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xóa thành công!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                }).catchError((e) {
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
-                                });
-                              },
-                              buttonConfirmText: "Xóa",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xóa"),
-                    ),
-
-                  // Status chuẩn bị -> Manager bấm sang status bản nháp
-                  if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
-                  if (task['status'] == "Chuẩn bị")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Đổi trạng thái",
-                              content: 'Chuyển công việc sang "Bản nháp"',
-                              onConfirm: () {
-                                TaskService()
-                                    .updateStatusFromTodoToDraft(task['id'])
-                                    .then((value) {
-                                  if (value) {
-                                    getTask();
-                                    isChange = true;
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đổi thành công!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                });
-                              },
-                              buttonConfirmText: "Đồng ý",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Bản nháp"),
-                    ),
-
-                  // Status đã giao -> Manager bấm xem công việc con
-                  if (task['status'] == "Đã giao")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SubTaskPage(
-                                isRecordTime: false,
-                                taskStatus: task['status'],
-                                startDate: task['startDate'],
-                                endDate: task['endDate'],
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                taskCode: task['code']),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem công việc con"),
-                    ),
-
-                  // Status đang thực hiện -> Manager bấm tạm hoãn công việc
-                  if (task['status'] == "Đang thực hiện")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CreateEvidencePage(
-                                    taskId: task['id'],
-                                    status: 5,
-                                  )),
-                        ).then((value) {
-                          if (value != null) {
-                            isChange = true;
-                            getTask();
-                          }
-                        });
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.orange),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Tạm hoãn"),
-                    ),
-
-                  // Status đang thực hiện -> Manager bấm xem báo cáo
-                  if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
-                  if (task['status'] == "Đang thực hiện")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status đang thực hiện -> Manager bấm xem công việc con
-                  if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
-                  if (task['status'] == "Đang thực hiện")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SubTaskPage(
-                                isRecordTime: false,
-                                taskStatus: task['status'],
-                                startDate: task['startDate'],
-                                endDate: task['endDate'],
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                taskCode: task['code']),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem công việc con"),
-                    ),
-
-                  // Status hoàn thành -> Manager bấm đóng công việc
-                  if (task['status'] == "Hoàn thành")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Đóng công việc",
-                              content:
-                                  "Công việc này sẽ không thể chỉnh sửa được nữa?",
-                              onConfirm: () {
-                                TaskService()
-                                    .changeStatusToClose(task['id'])
-                                    .then((value) {
-                                  if (value) {
-                                    getTask();
-                                    isChange = true;
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đã đóng công việc!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                }).catchError((e) {
-                                  SnackbarShowNoti.showSnackbar(
-                                      e.toString(), true);
-                                });
-                              },
-                              buttonConfirmText: "Đồng ý",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Đóng"),
-                    ),
-
-                  // Status hoàn thành -> Manager bấm làm lại công việc
-                  if (task['status'] == "Hoàn thành") SizedBox(width: 10),
-                  if (task['status'] == "Hoàn thành")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return RejectionReasonPopup(
-                              taskId: task['id'],
-                              isRedo: true,
-                            );
-                          },
-                        ).then((value) {
-                          if (value != null) {
-                            getTask();
-                            isChange = true;
-                          }
-                        });
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Làm lại"),
-                    ),
-
-                  // Status hoàn thành -> Manager bấm xem báo cáo
-                  if (task['status'] == "Hoàn thành") SizedBox(width: 10),
-                  if (task['status'] == "Hoàn thành")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status tạm hoãn -> Manager bấm xem báo cáo
-                  if (task['status'] == "Tạm hoãn")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status tạm hoãn -> Manager bấm chuyển sang đang thực hiện
-                  if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
-                  if (task['status'] == "Tạm hoãn")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Đổi trạng thái",
-                              content: 'Chuyển công việc sang "Đang thực hiện"',
-                              onConfirm: () {
-                                TaskService()
-                                    .changeStatusToDoing(task['id'])
-                                    .then((value) {
-                                  if (value) {
-                                    getTask();
-                                    isChange = true;
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đổi thành công!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                });
-                              },
-                              buttonConfirmText: "Đồng ý",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Đang thực hiện"),
-                    ),
-
-                  // Status từ chối -> Manager bấm chỉnh sửa lại công việc
-                  if (task['status'] == "Từ chối")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (context) => UpdateTaskDraftTodoPage(
-                                  changeTodo: true,
-                                  reDo: true,
-                                  task: task,
-                                  role: role!,
-                                ),
-                              ),
-                            )
-                            .then(
-                              (value) => {
-                                if (value != null) {getTask()}
-                              },
-                            );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Giao lại"),
-                    ),
-
-                  //Status từ chối -> Manager bấm xem báo cáo tại sao từ chối
-                  if (task['status'] == "Từ chối") SizedBox(width: 10),
-                  if (task['status'] == "Từ chối")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return ViewRejectionReasonPopup(
-                              role: role!,
-                              task: task,
-                            );
-                          },
-                        ).then(
-                          (value) => {
-                            if (value != null) {getTask()}
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status hùy bỏ -> Manager bấm xem báo cáo
-                  if (task['status'] == "Hủy bỏ")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SubTaskPage(
-                                isRecordTime: false,
-                                taskStatus: task['status'],
-                                startDate: task['startDate'],
-                                endDate: task['endDate'],
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                taskCode: task['code']),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem công việc con"),
-                    ),
-
-                  // Status hùy bỏ -> Manager bấm xem công việc con
-                  if (task['status'] == "Hủy bỏ") SizedBox(width: 10),
-                  if (task['status'] == "Hủy bỏ")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status đóng -> Manager bấm xem báo cáo
-                  if (task['status'] == "Đã đóng")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status đóng -> Manager bấm xem giờ làm
-                  if (task['status'] == "Đã đóng") SizedBox(width: 10),
-                  if (task['status'] == "Đã đóng")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SubTaskPage(
-                                isRecordTime: true,
-                                taskStatus: task['status'],
-                                startDate: task['startDate'],
-                                endDate: task['endDate'],
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                taskCode: task['code']),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem giờ làm"),
-                    ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Status chuẩn bị -> Supervisor từ chối
-                  if (task['status'] == "Chuẩn bị" &&
-                      task['managerName'] != null)
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigator.of(context).pop();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return RejectionReasonPopup(
-                              taskId: task['id'],
-                            );
-                          },
-                        ).then((value) {
-                          if (value != null) {
-                            isChange = true;
-                            removeTask(task['id']);
-                            getTask();
-                          }
-                        });
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Từ chối"),
-                    ),
-
-                  // Status chuẩn bị -> Supervisor đổi status sang giao việc
-                  if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
-                  if (task['status'] == "Chuẩn bị" &&
-                      task['managerName'] != null)
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AssignTaskPage(task: task),
-                              ),
-                            )
-                            .then((value) => {
-                                  if (value != null)
-                                    {
-                                      getTask(),
-                                      isChange = true,
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Status bản nháp -> Manager bấm xóa công việc
+                    if (task['status'] == "Bản nháp")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  deleteTask(task['id']).then((value) {
+                                    if (value) {
+                                      Navigator.of(context).pop("ok");
+                                      removeTask(task['id']);
+                                      // isChange = true;
+                                      // getTask();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
                                     }
-                                });
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Giao công việc"),
-                    ),
-
-                  // Status đã giao -> Supervisor bấm tạo công việc con
-                  if (task['status'] == "Đã giao")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SubTaskPage(
-                                isRecordTime: false,
-                                taskStatus: task['status'],
-                                startDate: task['startDate'],
-                                endDate: task['endDate'],
-                                taskId: task['id'],
-                                taskName: task['name'],
-                                taskCode: task['code']),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Công việc con"),
-                    ),
-
-                  // Status đã giao -> Supervisor bấm chuyển sang đang thực hiện
-                  if (task['status'] == "Đã giao") SizedBox(width: 10),
-                  if (task['status'] == "Đã giao")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Đổi trạng thái",
-                              content: 'Chuyển công việc sang "Đang thực hiện"',
-                              onConfirm: () {
-                                TaskService()
-                                    .changeStatusToDoing(task['id'])
-                                    .then((value) {
-                                  if (value) {
-                                    getTask();
-                                    isChange = true;
+                                  }).catchError((e) {
                                     SnackbarShowNoti.showSnackbar(
-                                        "Đổi thành công!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                });
-                              },
-                              buttonConfirmText: "Đồng ý",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Đang thực hiện"),
-                    ),
-
-                  // Status đã giao -> Supervisor bấm chỉnh sửa thay đổi nhân viên
-                  if (task['status'] == "Đã giao") SizedBox(width: 10),
-                  if (task['status'] == "Đã giao")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    task['managerName'] == null
-                                        ? UpdateTaskPage(
-                                            role: role!,
-                                            task: task,
-                                          )
-                                        : AssignTaskPage(task: task),
-                              ),
-                            )
-                            .then(
-                              (value) => {
-                                if (value != null) {getTask(), isChange = true}
-                              },
-                            );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Chỉnh sửa"),
-                    ),
-
-                  // Status đang thực hiện -> Supervisor đổi status sang hủy bỏ công việc
-                  if (task['status'] == "Đang thực hiện")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CreateEvidencePage(
-                              taskId: task['id'],
-                              status: 7,
+                                        e.toString(), true);
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                        ).then(
-                          (value) => {
-                            if (value != null) {getTask(), isChange = true},
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: Text("Xóa"),
+                      ),
+
+                    // Status bản nháp -> Manager bấm chuyển sang chuẩn bị
+                    if (task['status'] == "Bản nháp") SizedBox(width: 10),
+                    if (task['status'] == "Bản nháp")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => UpdateTaskDraftTodoPage(
+                                      reDo: false,
+                                      changeTodo: true,
+                                      task: task,
+                                      role: role!),
+                                ),
+                              )
+                              .then(
+                                (value) => {
+                                  if (value != null)
+                                    {getTask(), isChange = true}
+                                },
+                              );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
+                        child: Text("Chuẩn bị"),
                       ),
-                      child: Text("Hủy bỏ"),
-                    ),
 
-                  // Status đang thực hiện -> Supervisor đổi status sang tạm hoãn
-                  if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
-                  if (task['status'] == "Đang thực hiện")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
+                    // Status chuẩn bị -> Manager bấm xóa công việc
+                    if (task['status'] == "Chuẩn bị")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  deleteTask(task['id']).then((value) {
+                                    if (value) {
+                                      Navigator.of(context).pop("ok");
+                                      removeTask(task['id']);
+                                      // isChange = true;
+                                      // getTask();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  }).catchError((e) {
+                                    SnackbarShowNoti.showSnackbar(
+                                        e.toString(), true);
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xóa"),
+                      ),
+
+                    // Status chuẩn bị -> Manager bấm sang status bản nháp
+                    if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
+                    if (task['status'] == "Chuẩn bị")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content: 'Chuyển công việc sang "Bản nháp"',
+                                onConfirm: () {
+                                  TaskService()
+                                      .updateStatusFromTodoToDraft(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      getTask();
+                                      isChange = true;
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Bản nháp"),
+                      ),
+
+                    // Status đã giao -> Manager bấm xem công việc con
+                    if (task['status'] == "Đã giao")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem công việc con"),
+                      ),
+
+                    // Status đang thực hiện -> Manager đổi status sang hủy bỏ công việc
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
                               builder: (context) => CreateEvidencePage(
-                                    taskId: task['id'],
-                                    status: 5,
-                                  )),
-                        ).then((value) {
-                          if (value != null) {
-                            isChange = true;
-                            getTask();
-                          }
-                        });
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.orange),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Tạm hoãn"),
-                    ),
-
-                  // Status đang thực hiện -> Supervisor đổi status sang hoàn thành
-                  if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
-                  if (task['status'] == "Đang thực hiện")
-                    ElevatedButton(
-                      onPressed: () {
-                        task['isHaveSubtask']
-                            // Chấm giờ công nếu không có công việc con
-                            ? Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SubTaskPage(
-                                        isRecordTime: true,
-                                        taskStatus: task['status'],
-                                        startDate: task['startDate'],
-                                        endDate: task['endDate'],
-                                        taskId: task['id'],
-                                        taskName: task['name'],
-                                        taskCode: task['code']),
-                                  ),
-                                )
-                                .then(
-                                  (value) => {
-                                    if (value != null)
-                                      {
-                                        getTask(),
-                                        isChange = true,
-                                      }
-                                  },
-                                )
-                            // Xác nhận lại giờ công nếu đã có công việc con
-                            : Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => TimeKeepingInTask(
-                                      codeTask:
-                                          task['code'] ?? task['codeTask'],
-                                      taskId: task['id'],
-                                      taskName: task['name'],
-                                      isCreate: true,
-                                      status: 0,
-                                      task: task,
-                                    ),
-                                  ),
-                                )
-                                .then(
-                                  (value) => {
-                                    if (value != null)
-                                      {
-                                        getTask(),
-                                        isChange = true,
-                                      }
-                                  },
-                                );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Hoàn thành"),
-                    ),
-
-                  // Status hoàn thành -> Supervisor báo cáo công việc
-                  if (task['status'] == "Hoàn thành")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
-                            ),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Báo cáo"),
-                    ),
-
-                  // Status hoàn thành -> Supervisor bấm xem giờ làm của nhân viên
-                  if (task['status'] == "Hoàn thành") SizedBox(width: 10),
-                  if (task['status'] == "Hoàn thành")
-                    ElevatedButton(
-                      onPressed: () {
-                        task['isHaveSubtask']
-                            // Chấm giờ công nếu không có công việc con
-                            ? Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SubTaskPage(
-                                        isRecordTime: true,
-                                        taskStatus: task['status'],
-                                        startDate: task['startDate'],
-                                        endDate: task['endDate'],
-                                        taskId: task['id'],
-                                        taskName: task['name'],
-                                        taskCode: task['code']),
-                                  ),
-                                )
-                                .then(
-                                  (value) => {
-                                    if (value != null)
-                                      {
-                                        getTask(),
-                                        isChange = true,
-                                      }
-                                  },
-                                )
-                            // Xác nhận lại giờ công nếu đã có công việc con
-                            : Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => TimeKeepingInTask(
-                                      codeTask:
-                                          task['code'] ?? task['codeTask'],
-                                      taskId: task['id'],
-                                      taskName: task['name'],
-                                      isCreate: true,
-                                      status: 0,
-                                      task: task,
-                                    ),
-                                  ),
-                                )
-                                .then(
-                                  (value) => {
-                                    if (value != null)
-                                      {
-                                        getTask(),
-                                        isChange = true,
-                                      }
-                                  },
-                                );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem giờ làm"),
-                    ),
-
-                  // Status đã giao -> Supervisor bấm tạo công việc con
-                  if (task['status'] == "Tạm hoãn")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => SubTaskPage(
-                                isRecordTime: false,
-                                taskStatus: task['status'],
-                                startDate: task['startDate'],
-                                endDate: task['endDate'],
                                 taskId: task['id'],
-                                taskName: task['name'],
-                                taskCode: task['code']),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Công việc con"),
-                    ),
-
-                  // Status tạm hoãn -> Supervisor bấm xem báo cáo
-                  if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
-                  if (task['status'] == "Tạm hoãn")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
+                                status: 7,
+                              ),
+                            ),
+                          ).then(
+                            (value) => {
+                              if (value != null) {getTask(), isChange = true},
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: Text("Hủy bỏ"),
+                      ),
+
+                    // Status đang thực hiện -> Manager bấm tạm hoãn công việc
+                    if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateEvidencePage(
+                                      taskId: task['id'],
+                                      status: 5,
+                                    )),
+                          ).then((value) {
+                            if (value != null) {
+                              isChange = true;
+                              getTask();
+                            }
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.orange),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
+                        child: Text("Tạm hoãn"),
                       ),
-                      child: Text("Xem báo cáo"),
-                    ),
 
-                  // Status tạm hoãn -> Supervisor bấm chuyển sang đang thực hiện
-                  if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
-                  if (task['status'] == "Tạm hoãn")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Đổi trạng thái",
-                              content: 'Chuyển công việc sang "Đang thực hiện"',
-                              onConfirm: () {
-                                TaskService()
-                                    .changeStatusToDoing(task['id'])
-                                    .then((value) {
-                                  if (value) {
-                                    getTask();
-                                    isChange = true;
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Đổi thành công!", false);
-                                  } else {
-                                    SnackbarShowNoti.showSnackbar(
-                                        "Xảy ra lỗi!", true);
-                                  }
-                                });
-                              },
-                              buttonConfirmText: "Đồng ý",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                    // Status đang thực hiện -> Manager bấm xem báo cáo
+                    if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
+                        child: Text("Xem báo cáo"),
                       ),
-                      child: Text("Đang thực hiện"),
-                    ),
 
-                  // Status từ chối -> Supervisor Bấm hủy từ chối
-                  if (task['status'] == "Từ chối")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context1) {
-                            return ConfirmDeleteDialog(
-                              title: "Hủy từ chối",
-                              content:
-                                  'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
-                              onConfirm: () {
-                                setState(() {
-                                  cancelRejectTaskStatus(task['id']).then(
-                                    (value) {
-                                      if (value) {
-                                        getTask();
-                                        isChange = true;
-                                        SnackbarShowNoti.showSnackbar(
-                                            "Đổi thành công!", false);
-                                      } else {
-                                        SnackbarShowNoti.showSnackbar(
-                                            "Xảy ra lỗi!", true);
+                    // Status đang thực hiện -> Manager bấm xem công việc con
+                    if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem công việc con"),
+                      ),
+
+                    // Status hoàn thành -> Manager bấm đóng công việc
+                    if (task['status'] == "Hoàn thành")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đóng công việc",
+                                content:
+                                    "Công việc này sẽ không thể chỉnh sửa được nữa?",
+                                onConfirm: () {
+                                  TaskService()
+                                      .changeStatusToClose(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      getTask();
+                                      isChange = true;
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đã đóng công việc!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  }).catchError((e) {
+                                    SnackbarShowNoti.showSnackbar(
+                                        e.toString(), true);
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Đóng"),
+                      ),
+
+                    // Status hoàn thành -> Manager bấm làm lại công việc
+                    if (task['status'] == "Hoàn thành") SizedBox(width: 10),
+                    if (task['status'] == "Hoàn thành")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RejectionReasonPopup(
+                                taskId: task['id'],
+                                isRedo: true,
+                              );
+                            },
+                          ).then((value) {
+                            if (value != null) {
+                              getTask();
+                              isChange = true;
+                            }
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Làm lại"),
+                      ),
+
+                    // Status hoàn thành -> Manager bấm xem báo cáo
+                    if (task['status'] == "Hoàn thành") SizedBox(width: 10),
+                    if (task['status'] == "Hoàn thành")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status tạm hoãn -> Manager  đổi status sang hủy bỏ công việc
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateEvidencePage(
+                                taskId: task['id'],
+                                status: 7,
+                              ),
+                            ),
+                          ).then(
+                            (value) => {
+                              if (value != null) {getTask(), isChange = true},
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Hủy bỏ"),
+                      ),
+
+                    // Status tạm hoãn -> Manager bấm xem báo cáo
+                    if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status tạm hoãn -> Manager bấm chuyển sang đang thực hiện
+                    if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Đang thực hiện"',
+                                onConfirm: () {
+                                  TaskService()
+                                      .changeStatusToDoing(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      getTask();
+                                      isChange = true;
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Đang thực hiện"),
+                      ),
+
+                    // Status từ chối -> Manager bấm giao lại lại công việc
+                    if (task['status'] == "Từ chối")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => UpdateTaskDraftTodoPage(
+                                    changeTodo: true,
+                                    reDo: true,
+                                    task: task,
+                                    role: role!,
+                                  ),
+                                ),
+                              )
+                              .then(
+                                (value) => {
+                                  if (value != null) {getTask()}
+                                },
+                              );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Giao lại"),
+                      ),
+
+                    //Status từ chối -> Manager bấm xem báo cáo tại sao từ chối
+                    if (task['status'] == "Từ chối") SizedBox(width: 10),
+                    if (task['status'] == "Từ chối")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ViewRejectionReasonPopup(
+                                role: role!,
+                                task: task,
+                              );
+                            },
+                          ).then(
+                            (value) => {
+                              if (value != null) {getTask()}
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status hùy bỏ -> Manager bấm xem báo cáo
+                    if (task['status'] == "Hủy bỏ")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem công việc con"),
+                      ),
+
+                    // Status hùy bỏ -> Manager bấm xem công việc con
+                    if (task['status'] == "Hủy bỏ") SizedBox(width: 10),
+                    if (task['status'] == "Hủy bỏ")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status đóng -> Manager bấm xem báo cáo
+                    if (task['status'] == "Đã đóng")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status đóng -> Manager bấm xem giờ làm
+                    if (task['status'] == "Đã đóng") SizedBox(width: 10),
+                    if (task['status'] == "Đã đóng")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: true,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem giờ làm"),
+                      ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Status chuẩn bị -> Supervisor từ chối
+                    if (task['status'] == "Chuẩn bị" &&
+                        task['managerName'] != null)
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RejectionReasonPopup(
+                                taskId: task['id'],
+                              );
+                            },
+                          ).then((value) {
+                            if (value != null) {
+                              isChange = true;
+                              removeTask(task['id']);
+                              getTask();
+                            }
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Từ chối"),
+                      ),
+
+                    // Status chuẩn bị -> Supervisor đổi status sang giao việc
+                    if (task['status'] == "Chuẩn bị") SizedBox(width: 10),
+                    if (task['status'] == "Chuẩn bị" &&
+                        task['managerName'] != null)
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AssignTaskPage(task: task),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {
+                                        getTask(),
+                                        isChange = true,
                                       }
+                                  });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Giao công việc"),
+                      ),
+
+                    // Status đã giao -> Supervisor bấm xóa công việc
+                    if (task['status'] == "Đã giao" &&
+                        task['managerName'] == null)
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Xóa công việc",
+                                content: "Bạn có chắc muốn xóa công việc này?",
+                                onConfirm: () {
+                                  TaskService()
+                                      .deleteTaskAssign(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      Navigator.of(context).pop("ok");
+                                      removeTask(task['id']);
+                                      // isChange = true;
+                                      // getTask();
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xóa thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  }).catchError((e) {
+                                    SnackbarShowNoti.showSnackbar(
+                                        e.toString(), true);
+                                  });
+                                },
+                                buttonConfirmText: "Xóa",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xóa"),
+                      ),
+
+                    // Status đã giao -> Supervisor đổi status sang hủy bỏ công việc
+                    if (task['status'] == "Đã giao" &&
+                        task['managerName'] == null)
+                      SizedBox(width: 10),
+                    if (task['status'] == "Đã giao")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateEvidencePage(
+                                taskId: task['id'],
+                                status: 7,
+                              ),
+                            ),
+                          ).then(
+                            (value) => {
+                              if (value != null) {getTask(), isChange = true},
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Hủy bỏ"),
+                      ),
+
+                    // Status đã giao -> Supervisor đổi status sang tạm hoãn
+                    if (task['status'] == "Đã giao") SizedBox(width: 10),
+                    if (task['status'] == "Đã giao")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateEvidencePage(
+                                      taskId: task['id'],
+                                      status: 5,
+                                    )),
+                          ).then((value) {
+                            if (value != null) {
+                              isChange = true;
+                              getTask();
+                            }
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.orange),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Tạm hoãn"),
+                      ),
+
+                    // Status đã giao -> Supervisor bấm tạo công việc con
+                    if (task['status'] == "Đã giao") SizedBox(width: 10),
+                    if (task['status'] == "Đã giao")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Công việc con"),
+                      ),
+
+                    // Status đã giao -> Supervisor bấm chuyển sang đang thực hiện
+                    if (task['status'] == "Đã giao") SizedBox(width: 10),
+                    if (task['status'] == "Đã giao")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Đang thực hiện"',
+                                onConfirm: () {
+                                  TaskService()
+                                      .changeStatusToDoing(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      getTask();
+                                      isChange = true;
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Đang thực hiện"),
+                      ),
+
+                    // Status đang thực hiện -> Supervisor đổi status sang hủy bỏ công việc
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateEvidencePage(
+                                taskId: task['id'],
+                                status: 7,
+                              ),
+                            ),
+                          ).then(
+                            (value) => {
+                              if (value != null) {getTask(), isChange = true},
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Hủy bỏ"),
+                      ),
+
+                    // Status đang thực hiện -> Supervisor đổi status sang tạm hoãn
+                    if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateEvidencePage(
+                                      taskId: task['id'],
+                                      status: 5,
+                                    )),
+                          ).then((value) {
+                            if (value != null) {
+                              isChange = true;
+                              getTask();
+                            }
+                          });
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.orange),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Tạm hoãn"),
+                      ),
+
+                    // Status đang thực hiện -> Supervisor đổi status sang hoàn thành
+                    if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          task['isHaveSubtask']
+                              // Chấm giờ công nếu không có công việc con
+                              ? Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => SubTaskPage(
+                                          isRecordTime: true,
+                                          taskStatus: task['status'],
+                                          startDate: task['startDate'],
+                                          endDate: task['endDate'],
+                                          taskId: task['id'],
+                                          taskName: task['name'],
+                                          taskCode: task['code']),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {
+                                          getTask(),
+                                          isChange = true,
+                                        }
+                                    },
+                                  )
+                              // Xác nhận lại giờ công nếu đã có công việc con
+                              : Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => TimeKeepingInTask(
+                                        codeTask:
+                                            task['code'] ?? task['codeTask'],
+                                        taskId: task['id'],
+                                        taskName: task['name'],
+                                        isCreate: true,
+                                        status: 0,
+                                        task: task,
+                                      ),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {
+                                          getTask(),
+                                          isChange = true,
+                                        }
                                     },
                                   );
-                                });
-                              },
-                              buttonConfirmText: "Đồng ý",
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Hủy từ chối"),
-                    ),
-
-                  //Status từ chối -> Supervisor bấm xem báo cáo từ chối của mình
-                  if (task['status'] == "Từ chối") SizedBox(width: 10),
-                  if (task['status'] == "Từ chối")
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return ViewRejectionReasonPopup(
-                              role: role!,
-                              task: task,
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text("Xem báo cáo"),
-                    ),
-
-                  // Status hủy bỏ -> Supervisor bấm xem báo cáo
-                  if (task['status'] == "Hủy bỏ")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
                         ),
+                        child: Text("Hoàn thành"),
                       ),
-                      child: Text("Xem báo cáo"),
-                    ),
 
-                  // Status đã đóng -> Supervisor bấm xem báo cáo
-                  if (task['status'] == "Đã đóng")
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EvidencePage(
-                              role: role!,
-                              task: task,
+                    // Status đang thực hiện -> Supervisor bấm xem báo cáo
+                    if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
+                    if (task['status'] == "Đang thực hiện")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status hoàn thành -> Supervisor báo cáo công việc
+                    if (task['status'] == "Hoàn thành")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
+                        child: Text("Báo cáo"),
                       ),
-                      child: Text("Xem báo cáo"),
-                    ),
 
-                  // Status đã đóng -> Supervisor bấm xem giờ làm của nhân viên
-                  if (task['status'] == "Đã đóng") SizedBox(width: 10),
-                  if (task['status'] == "Đã đóng")
-                    ElevatedButton(
-                      onPressed: () {
-                        task['isHaveSubtask']
-                            // Chấm giờ công nếu không có công việc con
-                            ? Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SubTaskPage(
-                                        isRecordTime: true,
-                                        taskStatus: task['status'],
-                                        startDate: task['startDate'],
-                                        endDate: task['endDate'],
+                    // Status hoàn thành -> Supervisor bấm xem giờ làm của nhân viên
+                    if (task['status'] == "Hoàn thành") SizedBox(width: 10),
+                    if (task['status'] == "Hoàn thành")
+                      ElevatedButton(
+                        onPressed: () {
+                          task['isHaveSubtask']
+                              // Chấm giờ công nếu không có công việc con
+                              ? Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => SubTaskPage(
+                                          isRecordTime: true,
+                                          taskStatus: task['status'],
+                                          startDate: task['startDate'],
+                                          endDate: task['endDate'],
+                                          taskId: task['id'],
+                                          taskName: task['name'],
+                                          taskCode: task['code']),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {
+                                          getTask(),
+                                          isChange = true,
+                                        }
+                                    },
+                                  )
+                              // Xác nhận lại giờ công nếu đã có công việc con
+                              : Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => TimeKeepingInTask(
+                                        codeTask:
+                                            task['code'] ?? task['codeTask'],
                                         taskId: task['id'],
                                         taskName: task['name'],
-                                        taskCode: task['code']),
-                                  ),
-                                )
-                                .then(
-                                  (value) => {
-                                    if (value != null)
-                                      {
-                                        getTask(),
-                                        isChange = true,
-                                      }
-                                  },
-                                )
-                            // Xác nhận lại giờ công nếu đã có công việc con
-                            : Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => TimeKeepingInTask(
-                                      codeTask:
-                                          task['code'] ?? task['codeTask'],
-                                      taskId: task['id'],
-                                      taskName: task['name'],
-                                      isCreate: true,
-                                      status: 0,
-                                      task: task,
+                                        isCreate: true,
+                                        status: 0,
+                                        task: task,
+                                      ),
                                     ),
-                                  ),
-                                )
-                                .then(
-                                  (value) => {
-                                    if (value != null)
-                                      {
-                                        getTask(),
-                                        isChange = true,
-                                      }
-                                  },
-                                );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(kPrimaryColor),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(100, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {
+                                          getTask(),
+                                          isChange = true,
+                                        }
+                                    },
+                                  );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
+                        child: Text("Xem giờ làm"),
                       ),
-                      child: Text("Xem giờ làm"),
-                    ),
-                ],
+
+                    // Status tạm hoãn -> Supervisor đổi status sang hủy bỏ công việc
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateEvidencePage(
+                                taskId: task['id'],
+                                status: 7,
+                              ),
+                            ),
+                          ).then(
+                            (value) => {
+                              if (value != null) {getTask(), isChange = true},
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Hủy bỏ"),
+                      ),
+
+                    // Status tạm hoãn -> Supervisor bấm tạo công việc con
+                    if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Công việc con"),
+                      ),
+
+                    // Status tạm hoãn -> Supervisor bấm xem báo cáo
+                    if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status tạm hoãn -> Supervisor bấm chuyển sang đang thực hiện
+                    if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
+                    if (task['status'] == "Tạm hoãn")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Đổi trạng thái",
+                                content:
+                                    'Chuyển công việc sang "Đang thực hiện"',
+                                onConfirm: () {
+                                  TaskService()
+                                      .changeStatusToDoing(task['id'])
+                                      .then((value) {
+                                    if (value) {
+                                      getTask();
+                                      isChange = true;
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Đổi thành công!", false);
+                                    } else {
+                                      SnackbarShowNoti.showSnackbar(
+                                          "Xảy ra lỗi!", true);
+                                    }
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Đang thực hiện"),
+                      ),
+
+                    // Status từ chối -> Supervisor Bấm hủy từ chối
+                    if (task['status'] == "Từ chối")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context1) {
+                              return ConfirmDeleteDialog(
+                                title: "Hủy từ chối",
+                                content:
+                                    'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                onConfirm: () {
+                                  setState(() {
+                                    cancelRejectTaskStatus(task['id']).then(
+                                      (value) {
+                                        if (value) {
+                                          getTask();
+                                          isChange = true;
+                                          SnackbarShowNoti.showSnackbar(
+                                              "Đổi thành công!", false);
+                                        } else {
+                                          SnackbarShowNoti.showSnackbar(
+                                              "Xảy ra lỗi!", true);
+                                        }
+                                      },
+                                    );
+                                  });
+                                },
+                                buttonConfirmText: "Đồng ý",
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.red),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Hủy từ chối"),
+                      ),
+
+                    //Status từ chối -> Supervisor bấm xem báo cáo từ chối của mình
+                    if (task['status'] == "Từ chối") SizedBox(width: 10),
+                    if (task['status'] == "Từ chối")
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ViewRejectionReasonPopup(
+                                role: role!,
+                                task: task,
+                              );
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status hủy bỏ -> Supervisor bấm xem báo cáo
+                    if (task['status'] == "Hủy bỏ")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status hủy bỏ -> Supervisor bấm tạo công việc con
+                    if (task['status'] == "Hủy bỏ") SizedBox(width: 10),
+                    if (task['status'] == "Hủy bỏ")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Công việc con"),
+                      ),
+
+                    // Status đã đóng -> Supervisor bấm xem báo cáo
+                    if (task['status'] == "Đã đóng")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EvidencePage(
+                                role: role!,
+                                task: task,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem báo cáo"),
+                      ),
+
+                    // Status đã đóng -> Supervisor bấm xem giờ làm của nhân viên
+                    if (task['status'] == "Đã đóng") SizedBox(width: 10),
+                    if (task['status'] == "Đã đóng")
+                      ElevatedButton(
+                        onPressed: () {
+                          task['isHaveSubtask']
+                              // Chấm giờ công nếu không có công việc con
+                              ? Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => SubTaskPage(
+                                          isRecordTime: true,
+                                          taskStatus: task['status'],
+                                          startDate: task['startDate'],
+                                          endDate: task['endDate'],
+                                          taskId: task['id'],
+                                          taskName: task['name'],
+                                          taskCode: task['code']),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {
+                                          getTask(),
+                                          isChange = true,
+                                        }
+                                    },
+                                  )
+                              // Xác nhận lại giờ công nếu đã có công việc con
+                              : Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => TimeKeepingInTask(
+                                        codeTask:
+                                            task['code'] ?? task['codeTask'],
+                                        taskId: task['id'],
+                                        taskName: task['name'],
+                                        isCreate: true,
+                                        status: 0,
+                                        task: task,
+                                      ),
+                                    ),
+                                  )
+                                  .then(
+                                    (value) => {
+                                      if (value != null)
+                                        {
+                                          getTask(),
+                                          isChange = true,
+                                        }
+                                    },
+                                  );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Xem giờ làm"),
+                      ),
+
+                    // Status đã đóng -> Supervisor bấm tạo công việc con
+                    if (task['status'] == "Đã đóng") SizedBox(width: 10),
+                    if (task['status'] == "Đã đóng")
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SubTaskPage(
+                                  isRecordTime: false,
+                                  taskStatus: task['status'],
+                                  startDate: task['startDate'],
+                                  endDate: task['endDate'],
+                                  taskId: task['id'],
+                                  taskName: task['name'],
+                                  taskCode: task['code']),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kPrimaryColor),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size(100, 50)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                        child: Text("Công việc con"),
+                      ),
+                  ],
+                ),
               ),
       ),
     );

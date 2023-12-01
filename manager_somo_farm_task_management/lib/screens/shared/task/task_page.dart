@@ -2485,30 +2485,6 @@ class TaskPageState extends State<TaskPage> {
                                   buildIconOption(Icons.task, "Công việc con"),
                             ),
                             GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context)
-                                      .push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AssignTaskPage(task: task),
-                                    ),
-                                  )
-                                      .then((value) {
-                                    if (value != null) {
-                                      _getTasksForSelectedDateAndStatus(
-                                          1,
-                                          10 * page,
-                                          _selectedDate,
-                                          groupValue,
-                                          true,
-                                          searchValue);
-                                    }
-                                  });
-                                },
-                                child: buildIconOption(
-                                    Icons.edit_square, "Chỉnh sửa")),
-                            GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pop();
                                 task['isHaveSubtask']
