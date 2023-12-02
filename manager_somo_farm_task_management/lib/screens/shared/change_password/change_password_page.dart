@@ -26,7 +26,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         elevation: 0,
         backgroundColor: kBackgroundColor,
         title: Text(
-          "Thêm công việc",
+          "Đổi mật khẩu",
           style: headingStyle.copyWith(fontSize: 25),
         ),
         centerTitle: true,
