@@ -23,7 +23,7 @@ class CreateMaterialState extends State<CreateMaterial> {
   File? selectedFiles;
   List<AssetEntity> selectedAssetList = [];
   bool isLoading = false;
-  Future<bool> createMaterial(String name, File image) {
+  Future<bool> createMaterial(String name, File? image) {
     return MaterialService().createMaterial(widget.farmId, name, image);
   }
 
@@ -189,9 +189,26 @@ class CreateMaterialState extends State<CreateMaterial> {
     setState(() {
       isLoading = true;
     });
-    if (_nameController.text.isNotEmpty && selectedAssetList.isNotEmpty) {
-      convertAssetsToFiles(selectedAssetList).then((value) {
-        createMaterial(_nameController.text.trim(), selectedFiles!)
+    if (_nameController.text.isNotEmpty) {
+      if (selectedAssetList.isNotEmpty)
+        convertAssetsToFiles(selectedAssetList).then((value) {
+          createMaterial(_nameController.text.trim(), selectedFiles!)
+              .then((value) {
+            if (value) {
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.pop(context, "ok");
+            }
+          }).catchError((e) {
+            setState(() {
+              isLoading = false;
+            });
+            SnackbarShowNoti.showSnackbar(e.toString(), true);
+          });
+        });
+      else
+        createMaterial(_nameController.text.trim(), selectedFiles)
             .then((value) {
           if (value) {
             setState(() {
@@ -205,7 +222,6 @@ class CreateMaterialState extends State<CreateMaterial> {
           });
           SnackbarShowNoti.showSnackbar(e.toString(), true);
         });
-      });
     } else {
       setState(() {
         isLoading = false;
