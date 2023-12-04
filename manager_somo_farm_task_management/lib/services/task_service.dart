@@ -142,7 +142,6 @@ class TaskService {
   Future<bool> superCreateTask(Map<String, dynamic> taskData) async {
     final String apiUrl = "$baseUrl/FarmTask/supervisor/CreateAsignTask";
     var body = jsonEncode(taskData);
-    print(body);
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -300,8 +299,13 @@ class TaskService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getTasksByDateEmployeeId(int employeeId,
-      DateTime? start, DateTime? end, int index, int pageSize) async {
+  Future<List<Map<String, dynamic>>> getTasksDoneByDateEmployeeId(
+      int employeeId,
+      DateTime? start,
+      DateTime? end,
+      int index,
+      int pageSize,
+      int? status) async {
     var startDate = "";
     if (start != null) {
       startDate = DateFormat('yyyy-MM-dd').format(start);
@@ -310,8 +314,12 @@ class TaskService {
     if (end != null) {
       endDate = DateFormat('yyyy-MM-dd').format(end);
     }
-    final String apiUrl =
+    String apiUrl =
         "$baseUrl/FarmTask/PageIndex($index)/PageSize($pageSize)/Done/Employee($employeeId)?startDay=$startDate&endDay=$endDate";
+    if (status != null)
+      apiUrl =
+          "$baseUrl/FarmTask/PageIndex($index)/PageSize($pageSize)/Done/Employee($employeeId)?startDay=$startDate&endDay=$endDate&status=$status";
+    print(apiUrl);
     final http.Response response = await http.get(
       Uri.parse(apiUrl),
       headers: {
@@ -666,6 +674,30 @@ class TaskService {
       final String apiUrl = "$baseUrl/FarmTask/($taskId)/ChangeStatusToClose";
 
       final http.Response response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Future.error(data['message']);
+      }
+    } catch (error) {
+      print('Error: $error');
+      return false;
+    }
+  }
+
+  Future<bool> cloneTask(int taskId) async {
+    try {
+      final String apiUrl = "$baseUrl/FarmTask/($taskId)/CreateTaskClone";
+
+      final http.Response response = await http.post(
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',

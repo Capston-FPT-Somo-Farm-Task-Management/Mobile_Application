@@ -1217,6 +1217,48 @@ class TaskPageState extends State<TaskPage> {
                                     },
                                     child: buildIconOption(
                                         Icons.edit_square, "Chỉnh sửa")),
+                            if (isDraft || isPreparing)
+                              GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context1) {
+                                        return ConfirmDeleteDialog(
+                                          title: "Tạo bản sao công việc",
+                                          content:
+                                              'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                          onConfirm: () {
+                                            Navigator.of(context).pop();
+                                            TaskService()
+                                                .cloneTask(task['id'])
+                                                .then((value) {
+                                              if (value) {
+                                                _getTasksForSelectedDateAndStatus(
+                                                    1,
+                                                    10 * page,
+                                                    _selectedDate,
+                                                    groupValue,
+                                                    true,
+                                                    searchValue);
+                                                SnackbarShowNoti.showSnackbar(
+                                                    "Tạo bản sao thành công!",
+                                                    false);
+                                              } else {
+                                                SnackbarShowNoti.showSnackbar(
+                                                    "Xảy ra lỗi!", true);
+                                              }
+                                            }).catchError((e) {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  e.toString(), true);
+                                            });
+                                          },
+                                          buttonConfirmText: "Đồng ý",
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: buildIconOption(
+                                      Icons.copy, "Tạo bản sao")),
                           ],
                         ),
                       ),
@@ -1317,6 +1359,51 @@ class TaskPageState extends State<TaskPage> {
                           },
                         ),
                       if (isAsigned) ...[
+                        Row(
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context1) {
+                                      return ConfirmDeleteDialog(
+                                        title: "Tạo bản sao công việc",
+                                        content:
+                                            'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                        onConfirm: () {
+                                          Navigator.of(context).pop();
+                                          TaskService()
+                                              .cloneTask(task['id'])
+                                              .then((value) {
+                                            if (value) {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue);
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Tạo bản sao thành công!",
+                                                  false);
+                                            } else {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Xảy ra lỗi!", true);
+                                            }
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        buttonConfirmText: "Đồng ý",
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    buildIconOption(Icons.copy, "Tạo bản sao")),
+                          ],
+                        ),
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).pop();
@@ -1407,6 +1494,47 @@ class TaskPageState extends State<TaskPage> {
                                 child: buildIconOption(
                                     Icons.task, "Công việc con"),
                               ),
+                              GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context1) {
+                                        return ConfirmDeleteDialog(
+                                          title: "Tạo bản sao công việc",
+                                          content:
+                                              'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                          onConfirm: () {
+                                            Navigator.of(context).pop();
+                                            TaskService()
+                                                .cloneTask(task['id'])
+                                                .then((value) {
+                                              if (value) {
+                                                _getTasksForSelectedDateAndStatus(
+                                                    1,
+                                                    10 * page,
+                                                    _selectedDate,
+                                                    groupValue,
+                                                    true,
+                                                    searchValue);
+                                                SnackbarShowNoti.showSnackbar(
+                                                    "Tạo bản sao thành công!",
+                                                    false);
+                                              } else {
+                                                SnackbarShowNoti.showSnackbar(
+                                                    "Xảy ra lỗi!", true);
+                                              }
+                                            }).catchError((e) {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  e.toString(), true);
+                                            });
+                                          },
+                                          buttonConfirmText: "Đồng ý",
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: buildIconOption(
+                                      Icons.copy, "Tạo bản sao")),
                             ]),
                         buildDivider(),
                         GestureDetector(
@@ -1568,6 +1696,47 @@ class TaskPageState extends State<TaskPage> {
                               child:
                                   buildIconOption(Icons.timer, "Xem giờ làm"),
                             ),
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context1) {
+                                      return ConfirmDeleteDialog(
+                                        title: "Tạo bản sao công việc",
+                                        content:
+                                            'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                        onConfirm: () {
+                                          Navigator.of(context).pop();
+                                          TaskService()
+                                              .cloneTask(task['id'])
+                                              .then((value) {
+                                            if (value) {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue);
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Tạo bản sao thành công!",
+                                                  false);
+                                            } else {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Xảy ra lỗi!", true);
+                                            }
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        buttonConfirmText: "Đồng ý",
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    buildIconOption(Icons.copy, "Tạo bản sao")),
                           ],
                         ),
                         GestureDetector(
@@ -1676,6 +1845,47 @@ class TaskPageState extends State<TaskPage> {
                               child:
                                   buildIconOption(Icons.task, "Công việc con"),
                             ),
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context1) {
+                                      return ConfirmDeleteDialog(
+                                        title: "Tạo bản sao công việc",
+                                        content:
+                                            'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                        onConfirm: () {
+                                          Navigator.of(context).pop();
+                                          TaskService()
+                                              .cloneTask(task['id'])
+                                              .then((value) {
+                                            if (value) {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue);
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Tạo bản sao thành công!",
+                                                  false);
+                                            } else {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Xảy ra lỗi!", true);
+                                            }
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        buttonConfirmText: "Đồng ý",
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    buildIconOption(Icons.copy, "Tạo bản sao")),
                           ],
                         ),
                         GestureDetector(
@@ -1757,6 +1967,47 @@ class TaskPageState extends State<TaskPage> {
                               child: buildIconOption(
                                   Icons.post_add, "Xem báo cáo"),
                             ),
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context1) {
+                                      return ConfirmDeleteDialog(
+                                        title: "Tạo bản sao công việc",
+                                        content:
+                                            'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                        onConfirm: () {
+                                          Navigator.of(context).pop();
+                                          TaskService()
+                                              .cloneTask(task['id'])
+                                              .then((value) {
+                                            if (value) {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue);
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Tạo bản sao thành công!",
+                                                  false);
+                                            } else {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Xảy ra lỗi!", true);
+                                            }
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        buttonConfirmText: "Đồng ý",
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    buildIconOption(Icons.copy, "Tạo bản sao")),
                           ],
                         ),
                         GestureDetector(
@@ -1863,6 +2114,47 @@ class TaskPageState extends State<TaskPage> {
                               child:
                                   buildIconOption(Icons.task, "Công việc con"),
                             ),
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context1) {
+                                      return ConfirmDeleteDialog(
+                                        title: "Tạo bản sao công việc",
+                                        content:
+                                            'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                        onConfirm: () {
+                                          Navigator.of(context).pop();
+                                          TaskService()
+                                              .cloneTask(task['id'])
+                                              .then((value) {
+                                            if (value) {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue);
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Tạo bản sao thành công!",
+                                                  false);
+                                            } else {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Xảy ra lỗi!", true);
+                                            }
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        buttonConfirmText: "Đồng ý",
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    buildIconOption(Icons.copy, "Tạo bản sao")),
                           ],
                         ),
                       ] else if (isClosed) ...[
@@ -1973,6 +2265,47 @@ class TaskPageState extends State<TaskPage> {
                               child:
                                   buildIconOption(Icons.timer, "Xem giờ làm"),
                             ),
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context1) {
+                                      return ConfirmDeleteDialog(
+                                        title: "Tạo bản sao công việc",
+                                        content:
+                                            'Bản sao công việc sẽ được tạo ở trạng thái "Bản nháp"',
+                                        onConfirm: () {
+                                          Navigator.of(context).pop();
+                                          TaskService()
+                                              .cloneTask(task['id'])
+                                              .then((value) {
+                                            if (value) {
+                                              _getTasksForSelectedDateAndStatus(
+                                                  1,
+                                                  10 * page,
+                                                  _selectedDate,
+                                                  groupValue,
+                                                  true,
+                                                  searchValue);
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Tạo bản sao thành công!",
+                                                  false);
+                                            } else {
+                                              SnackbarShowNoti.showSnackbar(
+                                                  "Xảy ra lỗi!", true);
+                                            }
+                                          }).catchError((e) {
+                                            SnackbarShowNoti.showSnackbar(
+                                                e.toString(), true);
+                                          });
+                                        },
+                                        buttonConfirmText: "Đồng ý",
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    buildIconOption(Icons.copy, "Tạo bản sao")),
                           ],
                         ),
                       ] else

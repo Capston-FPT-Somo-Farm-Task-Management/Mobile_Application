@@ -181,7 +181,7 @@ class _TotalTimeEffortPageState extends State<TotalTimeEffortPage> {
                           );
                         },
                         child: _buildInfoCard(
-                            'Tổng số công việc đã hoàn thành',
+                            'Tổng số công việc đã làm',
                             data!["totalTask"].toString(),
                             Icons.sticky_note_2_sharp),
                       ),

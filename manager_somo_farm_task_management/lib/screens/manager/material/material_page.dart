@@ -263,7 +263,22 @@ class MaterialPageState extends State<MaterialsPage> {
                                                             width: 50,
                                                             child:
                                                                 Image.network(
-                                                              task['urlImage'],
+                                                              task['urlImage'] ??
+                                                                  "string",
+                                                              errorBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      Object
+                                                                          error,
+                                                                      StackTrace?
+                                                                          stackTrace) {
+                                                                return Icon(
+                                                                  Icons.image,
+                                                                  size: 25,
+                                                                  color: Colors
+                                                                      .red,
+                                                                );
+                                                              },
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),

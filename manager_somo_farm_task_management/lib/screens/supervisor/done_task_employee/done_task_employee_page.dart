@@ -31,11 +31,6 @@ class DoneTaskEmployeePage extends StatefulWidget {
 }
 
 class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
-  final List<String> filters = [
-    "Tất cả",
-    "Hoàn thành",
-    "Không hoàn thành",
-  ];
   String? role;
   String? selectedFilter;
   int? farmId;
@@ -47,6 +42,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
   int page = 1;
   final scrollController = ScrollController();
   int groupValue = 2;
+  int? selectedStatus;
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -54,18 +50,19 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
         isLoadingMore = true;
       });
       page = page + 1;
-      await getTask(groupValue, false, 10);
+      await getTask(false, 10);
       setState(() {
         isLoadingMore = false;
       });
     }
   }
 
+  List<String> statuss = ["Tất cả", "Đã đóng", "Đã hủy"];
   @override
   initState() {
     super.initState();
-    selectedFilter = filters[0];
-    getTask(2, true, 10);
+    selectedFilter = statuss[0];
+    getTask(true, 10);
     getRole();
     scrollController.addListener(() {
       _scrollListener();
@@ -89,10 +86,10 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
     });
   }
 
-  Future<void> getTask(int status, bool reset, int pageSize) async {
+  Future<void> getTask(bool reset, int pageSize) async {
     await TaskService()
-        .getTasksByDateEmployeeId(
-            widget.employeeId, widget.startDate, widget.endDate, 1, pageSize)
+        .getTasksDoneByDateEmployeeId(widget.employeeId, widget.startDate,
+            widget.endDate, 1, pageSize, selectedStatus)
         .then((value) {
       if (reset) {
         setState(() {
@@ -138,6 +135,45 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
               ),
             ),
             const SizedBox(height: 20),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5.0),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButton<String>(
+                      value: selectedFilter,
+                      isDense: true,
+                      alignment: Alignment.center,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedFilter = newValue;
+                          selectedStatus = newValue == "Tất cả"
+                              ? null
+                              : newValue == "Đã đóng"
+                                  ? 8
+                                  : 7;
+                          getTask(true, 10);
+                        });
+                      },
+                      items: statuss.map<DropdownMenuItem<String>>((value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: isLoading
                   ? Center(
@@ -172,7 +208,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: RefreshIndicator(
                             notificationPredicate: (_) => true,
-                            onRefresh: () => getTask(groupValue, true, 10),
+                            onRefresh: () => getTask(true, 10),
                             child: ListView.separated(
                               physics: AlwaysScrollableScrollPhysics(),
                               controller: scrollController,
@@ -198,7 +234,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                       )
                                           .then((value) {
                                         if (value != null)
-                                          getTask(groupValue, true, 10 * page);
+                                          getTask(true, 10 * page);
                                       });
                                     },
                                     onLongPress: () {
@@ -818,7 +854,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                               )
                               .then((value) => {
                                     if (value != null)
-                                      {getTask(groupValue, true, 10 * page)}
+                                      {getTask(true, 10 * page)}
                                   });
                         },
                         child: buildIconOption(Icons.task, "Công việc con"),
@@ -843,7 +879,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                 )
                                   .then((value) {
                                   if (value != null) {
-                                    getTask(groupValue, true, 10 * page);
+                                    getTask(true, 10 * page);
                                   }
                                 })
                               : Navigator.of(context)
@@ -862,7 +898,7 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                 )
                                   .then((value) {
                                   if (value != null) {
-                                    getTask(groupValue, true, 10 * page);
+                                    getTask(true, 10 * page);
                                   }
                                 });
                         },
