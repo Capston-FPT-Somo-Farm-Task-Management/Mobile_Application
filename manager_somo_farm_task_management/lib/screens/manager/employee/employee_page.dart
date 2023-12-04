@@ -216,15 +216,15 @@ class EmployeekPageState extends State<EmployeekPage> {
                               if (selectedFilter == "Tất cả") {
                                 filteredEmployeeList = employees;
                               }
-                              if (selectedFilter == "Active") {
+                              if (selectedFilter == "Đang làm việc") {
                                 filteredEmployeeList = employees
                                     .where(
                                         (t) => t['status'] == "Đang làm việc")
                                     .toList();
                               }
-                              if (selectedFilter == "Inactive") {
+                              if (selectedFilter == "Đã nghỉ việc") {
                                 filteredEmployeeList = employees
-                                    .where((t) => t['status'] == "Đã nghi việc")
+                                    .where((t) => t['status'] == "Đã nghỉ việc")
                                     .toList();
                               }
                             });
