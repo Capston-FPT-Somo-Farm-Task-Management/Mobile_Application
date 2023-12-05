@@ -857,7 +857,8 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                       {getTask(true, 10 * page)}
                                   });
                         },
-                        child: buildIconOption(Icons.task, "hoạt động"),
+                        child:
+                            buildIconOption(Icons.task, "Ghi nhận hoạt động"),
                       ),
                       GestureDetector(
                         onTap: () {
