@@ -1433,8 +1433,7 @@ class TaskPageState extends State<TaskPage> {
                                         }
                                     });
                           },
-                          child: buildOptionTask(
-                              Icons.task, "Công việc con", null),
+                          child: buildOptionTask(Icons.task, "hoạt động", null),
                         ),
                       ] else if (isDoing) ...[
                         Row(
@@ -1491,8 +1490,7 @@ class TaskPageState extends State<TaskPage> {
                                               }
                                           });
                                 },
-                                child: buildIconOption(
-                                    Icons.task, "Công việc con"),
+                                child: buildIconOption(Icons.task, "hoạt động"),
                               ),
                               GestureDetector(
                                   onTap: () {
@@ -1636,8 +1634,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -1842,8 +1839,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2111,8 +2107,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2205,8 +2200,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -2419,8 +2413,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2628,8 +2621,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2814,8 +2806,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -2924,8 +2915,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                           ],
                         ),
@@ -3071,8 +3061,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                           ],
                         ),
@@ -3124,8 +3113,7 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child:
-                                  buildIconOption(Icons.task, "Công việc con"),
+                              child: buildIconOption(Icons.task, "hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
