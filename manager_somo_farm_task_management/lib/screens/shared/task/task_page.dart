@@ -1433,7 +1433,8 @@ class TaskPageState extends State<TaskPage> {
                                         }
                                     });
                           },
-                          child: buildOptionTask(Icons.task, "hoạt động", null),
+                          child: buildOptionTask(
+                              Icons.task, "Ghi nhận hoạt động", null),
                         ),
                       ] else if (isDoing) ...[
                         Row(
@@ -1490,7 +1491,8 @@ class TaskPageState extends State<TaskPage> {
                                               }
                                           });
                                 },
-                                child: buildIconOption(Icons.task, "hoạt động"),
+                                child: buildIconOption(
+                                    Icons.task, "Ghi nhận hoạt động"),
                               ),
                               GestureDetector(
                                   onTap: () {
@@ -1634,7 +1636,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -1839,7 +1842,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2107,7 +2111,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2200,7 +2205,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -2413,7 +2419,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2621,7 +2628,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -2806,7 +2814,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -2915,7 +2924,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                           ],
                         ),
@@ -3061,7 +3071,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                           ],
                         ),
@@ -3113,7 +3124,8 @@ class TaskPageState extends State<TaskPage> {
                                             }
                                         });
                               },
-                              child: buildIconOption(Icons.task, "hoạt động"),
+                              child: buildIconOption(
+                                  Icons.task, "Ghi nhận hoạt động"),
                             ),
                             GestureDetector(
                               onTap: () {

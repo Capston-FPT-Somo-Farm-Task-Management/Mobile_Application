@@ -1917,7 +1917,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("hoạt động"),
+                        child: Text("Ghi nhận hoạt động"),
                       ),
 
                     // Status đã giao -> Supervisor bấm chuyển sang đang thực hiện
@@ -2293,7 +2293,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("hoạt động"),
+                        child: Text("Ghi nhận hoạt động"),
                       ),
 
                     // Status tạm hoãn -> Supervisor bấm xem báo cáo
@@ -2508,7 +2508,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("hoạt động"),
+                        child: Text("Ghi nhận hoạt động"),
                       ),
 
                     // Status đã đóng -> Supervisor bấm xem báo cáo
@@ -2638,7 +2638,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("hoạt động"),
+                        child: Text("Ghi nhận hoạt động"),
                       ),
                   ],
                 ),
