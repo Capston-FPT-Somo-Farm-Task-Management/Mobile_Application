@@ -213,7 +213,7 @@ class SubTaskPageState extends State<SubTaskPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text("Danh sách các công việc con:",
+                Text("Các hoạt động của công việc:",
                     style: TextStyle(fontSize: 18)),
               ],
             ),
@@ -246,7 +246,7 @@ class SubTaskPageState extends State<SubTaskPage> {
                                 height:
                                     16), // Khoảng cách giữa biểu tượng và văn bản
                             Text(
-                              "Chưa có công việc con nào",
+                              "Chưa có hoạt động nào",
                               style: TextStyle(
                                 fontSize:
                                     20, // Kích thước văn bản có thể điều chỉnh

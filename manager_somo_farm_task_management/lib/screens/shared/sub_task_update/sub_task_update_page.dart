@@ -77,7 +77,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Chỉnh sửa công việc con",
+          "Chỉnh sửa hoạt động",
           style: TextStyle(
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
@@ -115,8 +115,8 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                     ),
                     SizedBox(height: 30),
                     MyInputField(
-                      title: "Tên công việc con",
-                      hint: "Nhập tên công việc con",
+                      title: "Tên hoạt động",
+                      hint: "Nhập tên hoạt động",
                       controller: _titleController,
                     ),
                     Container(
@@ -346,7 +346,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                         ),
                         child: const Center(
                           child: Text(
-                            "Chỉnh sửa công việc con",
+                            "Chỉnh sửa hoạt động",
                             style: TextStyle(fontSize: 19),
                           ),
                         ),

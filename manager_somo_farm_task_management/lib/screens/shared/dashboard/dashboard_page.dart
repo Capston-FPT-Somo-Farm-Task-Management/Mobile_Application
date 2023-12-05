@@ -380,10 +380,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         buildLegendItem(
-                                            0, 'Động vật', getColor(0)),
+                                            0, 'Vật nuôi', getColor(0)),
                                         SizedBox(height: 10),
                                         buildLegendItem(
-                                            1, 'Thực vật', getColor(1)),
+                                            1, 'Cây trồng', getColor(1)),
                                         SizedBox(height: 10),
                                         buildLegendItem(2, 'Khác', getColor(2)),
                                       ],

@@ -46,7 +46,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              !widget.isPlant ? "Động vật" : "Thực vật",
+              !widget.isPlant ? "Vật nuôi" : "Cây trồng",
               style: headingStyle,
             ),
             const Spacer(),
@@ -68,7 +68,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                         ),
                       );
                     },
-                    title: "Con vật cụ thể",
+                    title: "Vật nuôi cụ thể",
                     icon: FontAwesomeIcons.hippo,
                     iconColor: kPrimaryColor,
                     backgroundIconColor:
@@ -91,7 +91,7 @@ class _ChooseOneOrManyState extends State<ChooseOneOrMany> {
                         ),
                       );
                     },
-                    title: "Cây cụ thể",
+                    title: "Cây trồng cụ thể",
                     icon: FontAwesomeIcons.leaf,
                     iconColor: kPrimaryColor,
                     backgroundIconColor:

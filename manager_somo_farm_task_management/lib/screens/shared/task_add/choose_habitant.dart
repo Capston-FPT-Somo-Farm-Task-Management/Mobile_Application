@@ -56,7 +56,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Công việc dành cho:",
+              "Loại công việc:",
               style: headingStyle,
             ),
             const Spacer(),
@@ -69,7 +69,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                   ),
                 );
               },
-              title: "Động vật",
+              title: "Vật nuôi",
               icon: Icons.pets_outlined,
               iconColor: kPrimaryColor,
               backgroundIconColor: const Color.fromARGB(255, 246, 255, 246),
@@ -87,7 +87,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                   ),
                 );
               },
-              title: "Thực vật",
+              title: "Cây trồng",
               icon: FontAwesomeIcons.pagelines,
               iconColor: kPrimaryColor,
               backgroundIconColor: const Color.fromARGB(255, 246, 255, 246),
@@ -107,7 +107,7 @@ class _ChooseHabitantPageState extends State<ChooseHabitantPage> {
                   ),
                 );
               },
-              title: "Khác",
+              title: "Công việc khác",
               icon: Icons.help,
               iconColor: kSecondColor,
               backgroundIconColor: const Color.fromARGB(255, 246, 255, 246),

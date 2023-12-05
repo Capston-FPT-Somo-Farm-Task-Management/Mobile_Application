@@ -1111,7 +1111,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         child: Text("Bản nháp"),
                       ),
 
-                    // Status đã giao -> Manager bấm xem công việc con
+                    // Status đã giao -> Manager bấm xem hoạt động
                     if (task['status'] == "Đã giao")
                       ElevatedButton(
                         onPressed: () {
@@ -1140,7 +1140,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Xem công việc con"),
+                        child: Text("Xem hoạt động"),
                       ),
 
                     // Status đang thực hiện -> Manager đổi status sang hủy bỏ công việc
@@ -1239,7 +1239,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         child: Text("Xem báo cáo"),
                       ),
 
-                    // Status đang thực hiện -> Manager bấm xem công việc con
+                    // Status đang thực hiện -> Manager bấm xem hoạt động
                     if (task['status'] == "Đang thực hiện") SizedBox(width: 10),
                     if (task['status'] == "Đang thực hiện")
                       ElevatedButton(
@@ -1269,7 +1269,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Xem công việc con"),
+                        child: Text("Xem hoạt động"),
                       ),
 
                     // Status hoàn thành -> Manager bấm đóng công việc
@@ -1593,10 +1593,10 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Xem công việc con"),
+                        child: Text("Xem hoạt động"),
                       ),
 
-                    // Status hùy bỏ -> Manager bấm xem công việc con
+                    // Status hùy bỏ -> Manager bấm xem hoạt động
                     if (task['status'] == "Hủy bỏ") SizedBox(width: 10),
                     if (task['status'] == "Hủy bỏ")
                       ElevatedButton(
@@ -1887,7 +1887,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         child: Text("Tạm hoãn"),
                       ),
 
-                    // Status đã giao -> Supervisor bấm tạo công việc con
+                    // Status đã giao -> Supervisor bấm tạo hoạt động
                     if (task['status'] == "Đã giao") SizedBox(width: 10),
                     if (task['status'] == "Đã giao")
                       ElevatedButton(
@@ -1917,7 +1917,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Công việc con"),
+                        child: Text("hoạt động"),
                       ),
 
                     // Status đã giao -> Supervisor bấm chuyển sang đang thực hiện
@@ -2040,7 +2040,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ElevatedButton(
                         onPressed: () {
                           task['isHaveSubtask']
-                              // Chấm giờ công nếu không có công việc con
+                              // Chấm giờ công nếu không có hoạt động
                               ? Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(
@@ -2063,7 +2063,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                         }
                                     },
                                   )
-                              // Xác nhận lại giờ công nếu đã có công việc con
+                              // Xác nhận lại giờ công nếu đã có hoạt động
                               : Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(
@@ -2167,7 +2167,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ElevatedButton(
                         onPressed: () {
                           task['isHaveSubtask']
-                              // Chấm giờ công nếu không có công việc con
+                              // Chấm giờ công nếu không có hoạt động
                               ? Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(
@@ -2190,7 +2190,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                         }
                                     },
                                   )
-                              // Xác nhận lại giờ công nếu đã có công việc con
+                              // Xác nhận lại giờ công nếu đã có hoạt động
                               : Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(
@@ -2263,7 +2263,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         child: Text("Hủy bỏ"),
                       ),
 
-                    // Status tạm hoãn -> Supervisor bấm tạo công việc con
+                    // Status tạm hoãn -> Supervisor bấm tạo hoạt động
                     if (task['status'] == "Tạm hoãn") SizedBox(width: 10),
                     if (task['status'] == "Tạm hoãn")
                       ElevatedButton(
@@ -2293,7 +2293,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Công việc con"),
+                        child: Text("hoạt động"),
                       ),
 
                     // Status tạm hoãn -> Supervisor bấm xem báo cáo
@@ -2478,7 +2478,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         child: Text("Xem báo cáo"),
                       ),
 
-                    // Status hủy bỏ -> Supervisor bấm tạo công việc con
+                    // Status hủy bỏ -> Supervisor bấm tạo hoạt động
                     if (task['status'] == "Hủy bỏ") SizedBox(width: 10),
                     if (task['status'] == "Hủy bỏ")
                       ElevatedButton(
@@ -2508,7 +2508,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Công việc con"),
+                        child: Text("hoạt động"),
                       ),
 
                     // Status đã đóng -> Supervisor bấm xem báo cáo
@@ -2545,7 +2545,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ElevatedButton(
                         onPressed: () {
                           task['isHaveSubtask']
-                              // Chấm giờ công nếu không có công việc con
+                              // Chấm giờ công nếu không có hoạt động
                               ? Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(
@@ -2568,7 +2568,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                         }
                                     },
                                   )
-                              // Xác nhận lại giờ công nếu đã có công việc con
+                              // Xác nhận lại giờ công nếu đã có hoạt động
                               : Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(
@@ -2608,7 +2608,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                         child: Text("Xem giờ làm"),
                       ),
 
-                    // Status đã đóng -> Supervisor bấm tạo công việc con
+                    // Status đã đóng -> Supervisor bấm tạo hoạt động
                     if (task['status'] == "Đã đóng") SizedBox(width: 10),
                     if (task['status'] == "Đã đóng")
                       ElevatedButton(
@@ -2638,7 +2638,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                             ),
                           ),
                         ),
-                        child: Text("Công việc con"),
+                        child: Text("hoạt động"),
                       ),
                   ],
                 ),

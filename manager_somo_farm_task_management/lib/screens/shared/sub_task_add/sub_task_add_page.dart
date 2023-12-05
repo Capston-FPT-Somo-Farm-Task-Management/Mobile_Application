@@ -60,7 +60,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Tạo công việc con",
+          "Tạo hoạt động",
           style: TextStyle(
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
@@ -98,8 +98,8 @@ class CreateSubTaskState extends State<CreateSubTask> {
                     ),
                     SizedBox(height: 30),
                     MyInputField(
-                      title: "Tên công việc con",
-                      hint: "Nhập tên công việc con",
+                      title: "Tên hoạt động",
+                      hint: "Nhập tên hoạt động",
                       controller: _titleController,
                       hintColor: Colors.grey,
                     ),
@@ -331,7 +331,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
                         ),
                         child: const Center(
                           child: Text(
-                            "Tạo công việc con",
+                            "Ghi nhận hoạt động",
                             style: TextStyle(fontSize: 19),
                           ),
                         ),
