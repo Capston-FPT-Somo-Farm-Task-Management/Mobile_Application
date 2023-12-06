@@ -344,7 +344,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 Icon(FontAwesomeIcons.paw),
                                 SizedBox(width: 15),
                                 Text(
-                                  "Động vật",
+                                  "Vật nuôi",
                                   style: TextStyle(fontSize: 21),
                                 ),
                               ],
@@ -485,7 +485,7 @@ class _ReusableBottomSheetState extends State<ReusableBottomSheet> {
                                 Icon(FontAwesomeIcons.pagelines),
                                 SizedBox(width: 15),
                                 Text(
-                                  "Thực vật",
+                                  "Cây trồng",
                                   style: TextStyle(fontSize: 21),
                                 ),
                               ],

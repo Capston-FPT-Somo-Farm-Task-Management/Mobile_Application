@@ -100,8 +100,12 @@ class HabitantTypeDetailPopup extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                TitleText.titleText("Thuộc loại",
-                    wrapWords(" ${habitantType['status']}", 22), 18),
+                TitleText.titleText(
+                    "Thuộc loại",
+                    wrapWords(
+                        " ${habitantType['status'] == "Thực vật" ? "Cây trồng" : habitantType['status'] == "Động vật" ? "Vật nuôi" : ""}",
+                        22),
+                    18),
               ],
             ),
             const SizedBox(height: 25),
