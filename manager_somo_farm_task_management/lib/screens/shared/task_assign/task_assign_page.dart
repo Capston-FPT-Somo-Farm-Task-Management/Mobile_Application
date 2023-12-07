@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:manager_somo_farm_task_management/componets/constants.dart';
 import 'package:manager_somo_farm_task_management/componets/priority.dart';
 import 'package:manager_somo_farm_task_management/componets/snackBar.dart';
 import 'package:manager_somo_farm_task_management/services/employee_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
-import 'package:remove_diacritic/remove_diacritic.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -126,7 +125,6 @@ class _AssignTaskPage extends State<AssignTaskPage> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(top: 8.0),
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         constraints: BoxConstraints(minHeight: 52),
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -136,52 +134,38 @@ class _AssignTaskPage extends State<AssignTaskPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: SingleChildScrollView(
-                          child: ChipsInput(
-                            suggestionsBoxMaxHeight: 200,
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Chọn",
-                                hintStyle: TextStyle(color: Colors.black45)),
-                            initialValue: selectedEmployees,
-                            findSuggestions: (String query) {
-                              if (query.length != 0) {
-                                var lowercaseQuery =
-                                    removeDiacritics(query.toLowerCase());
-                                return employees.where((e) {
-                                  return removeDiacritics(
-                                          e['nameCode'].toLowerCase())
-                                      .contains(lowercaseQuery);
-                                }).toList(growable: false)
-                                  ..sort((a, b) => removeDiacritics(
-                                          a['nameCode'].toLowerCase())
-                                      .indexOf(lowercaseQuery)
-                                      .compareTo(removeDiacritics(
-                                              b['nameCode'].toLowerCase())
-                                          .indexOf(lowercaseQuery)));
-                              } else {
-                                return const <Map<String, dynamic>>[];
-                              }
-                            },
-                            onChanged: (data) {
-                              selectedEmployees =
-                                  data.cast<Map<String, dynamic>>();
-                            },
-                            chipBuilder: (context, state, employee) {
-                              return InputChip(
-                                key: ObjectKey(employee),
-                                label: Text(employee['nameCode']),
-                                onDeleted: () => state.deleteChip(employee),
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
+                          child: MultiSelectDropDown<int>(
+                            borderColor: Colors.transparent,
+                            hint: "Chọn người thực hiện",
+                            showClearIcon: false,
+                            selectedOptions: selectedEmployees.map((employee) {
+                              return ValueItem<int>(
+                                label: employee['nameCode'],
+                                value: employee['id'],
                               );
+                            }).toList(),
+                            onOptionSelected:
+                                (List<ValueItem<int>> selectedOptions) {
+                              // Handle selected options
+                              selectedEmployees = selectedOptions.map((item) {
+                                return {
+                                  'nameCode': item.label,
+                                  'id': item.value,
+                                };
+                              }).toList();
                             },
-                            suggestionBuilder: (context, state, profile) {
-                              return ListTile(
-                                key: ObjectKey(profile),
-                                title: Text(profile['nameCode']),
-                                onTap: () => state.selectSuggestion(profile),
+                            options: employees.map((employee) {
+                              return ValueItem<int>(
+                                label: employee['nameCode'],
+                                value: employee['id'],
                               );
-                            },
+                            }).toList(),
+                            selectionType: SelectionType.multi,
+                            chipConfig:
+                                const ChipConfig(wrapType: WrapType.wrap),
+                            dropdownHeight: 200,
+                            optionTextStyle: const TextStyle(fontSize: 16),
+                            selectedOptionIcon: const Icon(Icons.check_circle),
                           ),
                         ),
                       ),
