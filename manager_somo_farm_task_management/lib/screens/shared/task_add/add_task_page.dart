@@ -17,6 +17,7 @@ import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
 import 'package:manager_somo_farm_task_management/services/zone_service.dart';
 import 'package:manager_somo_farm_task_management/widgets/bottom_navigation_bar.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -818,7 +819,6 @@ class _AddTaskPage extends State<AddTaskPage> {
                           Container(
                             constraints: BoxConstraints(minHeight: 52),
                             margin: const EdgeInsets.only(top: 8.0),
-                            padding: const EdgeInsets.only(left: 14),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.grey,
@@ -827,54 +827,45 @@ class _AddTaskPage extends State<AddTaskPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: SingleChildScrollView(
-                              child: ChipsInput(
-                                suggestionsBoxMaxHeight: 200,
-                                decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Chọn dụng cụ cần thiết",
-                                    hintStyle:
-                                        TextStyle(color: Colors.black45)),
-                                initialValue: [],
-                                findSuggestions: (String query) {
-                                  if (query.length != 0) {
-                                    var lowercaseQuery =
-                                        removeDiacritics(query.toLowerCase());
-                                    return materials.where((m) {
-                                      return removeDiacritics(
-                                              m['name'].toLowerCase())
-                                          .contains(lowercaseQuery);
-                                    }).toList(growable: false)
-                                      ..sort((a, b) => removeDiacritics(
-                                              a['name'].toLowerCase())
-                                          .indexOf(lowercaseQuery)
-                                          .compareTo(removeDiacritics(
-                                                  b['name'].toLowerCase())
-                                              .indexOf(lowercaseQuery)));
-                                  } else {
-                                    return const <Map<String, dynamic>>[];
-                                  }
-                                },
-                                onChanged: (data) {
+                              child: MultiSelectDropDown<int>(
+                                borderColor: Colors.transparent,
+                                hint: "Chọn dụng cụ",
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                showClearIcon: false,
+                                selectedOptions:
+                                    selectedMaterials.map((material) {
+                                  return ValueItem<int>(
+                                    label: material['name'],
+                                    value: material['id'],
+                                  );
+                                }).toList(),
+                                onOptionSelected:
+                                    (List<ValueItem<int>> selectedOptions) {
+                                  // Handle selected options
                                   selectedMaterials =
-                                      data.cast<Map<String, dynamic>>();
+                                      selectedOptions.map((item) {
+                                    return {
+                                      'name': item.label,
+                                      'id': item.value,
+                                    };
+                                  }).toList();
                                 },
-                                chipBuilder: (context, state, material) {
-                                  return InputChip(
-                                    key: ObjectKey(material),
-                                    label: Text(material['name']),
-                                    onDeleted: () => state.deleteChip(material),
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
+                                options: materials.map((material) {
+                                  return ValueItem<int>(
+                                    label: material['name'],
+                                    value: material['id'],
                                   );
-                                },
-                                suggestionBuilder: (context, state, material) {
-                                  return ListTile(
-                                    key: ObjectKey(material),
-                                    title: Text(material['name']),
-                                    onTap: () =>
-                                        state.selectSuggestion(material),
-                                  );
-                                },
+                                }).toList(),
+                                selectionType: SelectionType.multi,
+                                chipConfig:
+                                    const ChipConfig(wrapType: WrapType.wrap),
+                                dropdownHeight: 200,
+                                optionTextStyle: const TextStyle(fontSize: 16),
+                                selectedOptionIcon:
+                                    const Icon(Icons.check_circle),
                               ),
                             ),
                           ),

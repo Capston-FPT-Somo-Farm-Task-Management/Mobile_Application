@@ -12,6 +12,7 @@ import 'package:manager_somo_farm_task_management/services/employee_service.dart
 
 import 'package:manager_somo_farm_task_management/services/provinces_service.dart';
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
@@ -571,7 +572,6 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                           Container(
                             height: 52,
                             margin: const EdgeInsets.only(top: 8.0),
-                            padding: const EdgeInsets.only(left: 14),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.grey,
@@ -580,55 +580,45 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: SingleChildScrollView(
-                              child: ChipsInput(
-                                suggestionsBoxMaxHeight: 200,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Chọn các kĩ năng phù hợp",
-                                    hintStyle:
-                                        TextStyle(color: Colors.black45)),
-                                initialValue: selectedTaskTypes,
-                                key: _keyChange,
-                                findSuggestions: (String query) {
-                                  if (query.length != 0) {
-                                    var lowercaseQuery =
-                                        removeDiacritics(query.toLowerCase());
-                                    return filterTaskType.where((e) {
-                                      return removeDiacritics(
-                                              e['name'].toLowerCase())
-                                          .contains(lowercaseQuery);
-                                    }).toList(growable: false)
-                                      ..sort((a, b) => removeDiacritics(
-                                              a['name'].toLowerCase())
-                                          .indexOf(lowercaseQuery)
-                                          .compareTo(removeDiacritics(
-                                                  b['name'].toLowerCase())
-                                              .indexOf(lowercaseQuery)));
-                                  } else {
-                                    return const <Map<String, dynamic>>[];
-                                  }
-                                },
-                                onChanged: (data) {
+                              child: MultiSelectDropDown<int>(
+                                borderColor: Colors.transparent,
+                                hint: "Chọn kĩ năng phù hợp",
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                showClearIcon: false,
+                                selectedOptions:
+                                    selectedTaskTypes.map((taskType) {
+                                  return ValueItem<int>(
+                                    label: taskType['name'],
+                                    value: taskType['id'],
+                                  );
+                                }).toList(),
+                                onOptionSelected:
+                                    (List<ValueItem<int>> selectedOptions) {
+                                  // Handle selected options
                                   selectedTaskTypes =
-                                      data.cast<Map<String, dynamic>>();
+                                      selectedOptions.map((item) {
+                                    return {
+                                      'name': item.label,
+                                      'id': item.value,
+                                    };
+                                  }).toList();
                                 },
-                                chipBuilder: (context, state, taskType) {
-                                  return InputChip(
-                                    key: ObjectKey(taskType),
-                                    label: Text(taskType['name']),
-                                    onDeleted: () => state.deleteChip(taskType),
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
+                                options: filterTaskType.map((taskType) {
+                                  return ValueItem<int>(
+                                    label: taskType['name'],
+                                    value: taskType['id'],
                                   );
-                                },
-                                suggestionBuilder: (context, state, profile) {
-                                  return ListTile(
-                                    key: ObjectKey(profile),
-                                    title: Text(profile['name']),
-                                    onTap: () =>
-                                        state.selectSuggestion(profile),
-                                  );
-                                },
+                                }).toList(),
+                                selectionType: SelectionType.multi,
+                                chipConfig:
+                                    const ChipConfig(wrapType: WrapType.wrap),
+                                dropdownHeight: 200,
+                                optionTextStyle: const TextStyle(fontSize: 16),
+                                selectedOptionIcon:
+                                    const Icon(Icons.check_circle),
                               ),
                             ),
                           ),

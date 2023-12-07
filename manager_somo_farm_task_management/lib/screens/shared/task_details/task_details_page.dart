@@ -82,6 +82,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     }).catchError((e) {
       isLoading = false;
       SnackbarShowNoti.showSnackbar(e.toString(), true);
+      Navigator.of(context).pop();
     });
   }
 
