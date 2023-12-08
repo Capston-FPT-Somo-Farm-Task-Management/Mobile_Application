@@ -76,6 +76,11 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     await TaskService().getTasksByTaskId(widget.taskId).then((value) {
       setState(() {
         task = value;
+        if (task['status'] == "Bản nháp" && role == "Supervisor") {
+          SnackbarShowNoti.showSnackbar(
+              "Người quản lí đã hoàn tác công viẹc", true);
+          Navigator.of(context).pop();
+        }
         dateRepeat = formatDates(task['dateRepeate']);
         isLoading = false;
       });
