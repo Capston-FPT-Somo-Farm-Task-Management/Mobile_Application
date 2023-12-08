@@ -877,10 +877,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          widget.task['status'] == "Đang thực hiện" ||
-                                  _selectedStartDate!.isBefore(DateTime.now())
-                              ? null
-                              : _getDateTimeFromUser(true);
+                          _getDateTimeFromUser(true);
                         },
                       ),
                     ),
@@ -1314,16 +1311,11 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
         } else {
           setState(() {
             if (isStart) {
-              if (selectedDateTime.isBefore(DateTime.now())) {
-                SnackbarShowNoti.showSnackbar(
-                    "Ngày giờ bắt đầu phải lớn hơn giờ hiện tại", true);
-              } else {
-                _selectedStartDate = selectedDateTime;
+              _selectedStartDate = selectedDateTime;
 
-                if (_selectedEndDate != null) {
-                  if (_selectedStartDate!.isAfter(_selectedEndDate!))
-                    _selectedEndDate = null;
-                }
+              if (_selectedEndDate != null) {
+                if (_selectedStartDate!.isAfter(_selectedEndDate!))
+                  _selectedEndDate = null;
               }
             } else {
               _selectedEndDate = selectedDateTime;
