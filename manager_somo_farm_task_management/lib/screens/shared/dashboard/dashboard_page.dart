@@ -396,7 +396,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         ),
                         Column(
                           children: [
-                            SizedBox(height: 10),
+                            SizedBox(height: 20),
                             Text(
                               "Biểu đồ công việc trong tuần:",
                               style: TextStyle(fontSize: 20),
