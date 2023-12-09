@@ -265,7 +265,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                         ),
                       ),
                     ),
-                    height: 40,
+                    height: 50,
                     padding: const EdgeInsets.only(top: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -276,7 +276,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                               pickImageFromCamera();
                               setState(() {});
                             },
-                            child: Icon(Icons.add_a_photo_sharp, size: 30),
+                            child: Icon(Icons.add_a_photo_sharp, size: 35),
                           ),
                         ),
                         SizedBox(width: 10),
@@ -289,7 +289,7 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
                               );
                               setState(() {});
                             },
-                            child: Icon(Icons.add_photo_alternate, size: 32),
+                            child: Icon(Icons.add_photo_alternate, size: 37),
                           ),
                         ),
                       ],
