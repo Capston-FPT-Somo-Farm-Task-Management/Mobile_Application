@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -9,6 +10,7 @@ import 'package:manager_somo_farm_task_management/screens/shared/evidence_add/co
 import 'package:manager_somo_farm_task_management/screens/shared/evidence_update/components/imange_list_selected.dart';
 import 'package:manager_somo_farm_task_management/services/evidence_service.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:image/image.dart' as img;
 
 class UpdateEvidencePage extends StatefulWidget {
   final int evidenceId;
@@ -41,12 +43,32 @@ class _UpdateEvidencePageState extends State<UpdateEvidencePage> {
     });
   }
 
+  Future<void> fixImageOrientation(String imagePath) async {
+    // Đọc ảnh từ đường dẫn
+    final List<int> imageBytes = await File(imagePath).readAsBytes();
+    final img.Image? capturedImage =
+        img.decodeImage(Uint8List.fromList(imageBytes));
+
+    // Kiểm tra null cho capturedImage
+    if (capturedImage == null) {
+      // Xử lý lỗi hoặc thông báo cho người dùng
+      return;
+    }
+
+    // Điều chỉnh góc độ của ảnh
+    final img.Image orientedImage = img.bakeOrientation(capturedImage);
+
+    // Ghi lại ảnh với góc độ đã được điều chỉnh
+    await File(imagePath).writeAsBytes(img.encodeJpg(orientedImage));
+  }
+
   Future<void> pickImageFromCamera() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
     );
 
     if (pickedFile != null) {
+      await fixImageOrientation(pickedFile.path);
       // Lưu ảnh vào album
       final result = await ImageGallerySaver.saveImage(
         File(pickedFile.path).readAsBytesSync(),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -11,6 +12,7 @@ import 'package:manager_somo_farm_task_management/services/evidence_service.dart
 import 'package:manager_somo_farm_task_management/services/task_service.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image/image.dart' as img;
 
 class CreateEvidencePage extends StatefulWidget {
   final int taskId;
@@ -46,30 +48,55 @@ class _CreateEvidencePageState extends State<CreateEvidencePage> {
     });
   }
 
+  Future<void> fixImageOrientation(String imagePath) async {
+    // Đọc ảnh từ đường dẫn
+    final List<int> imageBytes = await File(imagePath).readAsBytes();
+    final img.Image? capturedImage =
+        img.decodeImage(Uint8List.fromList(imageBytes));
+
+    // Kiểm tra null cho capturedImage
+    if (capturedImage == null) {
+      // Xử lý lỗi hoặc thông báo cho người dùng
+      return;
+    }
+
+    // Điều chỉnh góc độ của ảnh
+    final img.Image orientedImage = img.bakeOrientation(capturedImage);
+
+    // Ghi lại ảnh với góc độ đã được điều chỉnh
+    await File(imagePath).writeAsBytes(img.encodeJpg(orientedImage));
+  }
+
   Future<void> pickImageFromCamera() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
     );
 
     if (pickedFile != null) {
-      // Lưu ảnh vào album
+      await fixImageOrientation(pickedFile.path);
+
+      // Lưu ảnh vào album và kiểm tra lỗi
       final result = await ImageGallerySaver.saveImage(
         File(pickedFile.path).readAsBytesSync(),
       );
-      // Lấy danh sách ảnh từ album
-      final List<AssetEntity> assets = await PhotoManager.getAssetPathList(
-        type: RequestType.image,
-      ).then((value) => value[0]
-          .getAssetListPaged(page: 0, size: 1)); // Số lượng ảnh có thể thay đổi
 
-      if (assets.isNotEmpty) {
-        final AssetEntity assetEntity = assets.first; // Lấy asset đầu tiên
+      if (result != null && result.isNotEmpty) {
+        // Lấy danh sách ảnh từ album
+        final List<AssetEntity> assets = await PhotoManager.getAssetPathList(
+          type: RequestType.image,
+        ).then((value) => value[0].getAssetListPaged(page: 0, size: 1));
 
-        setState(() {
-          selectedAssetList.add(assetEntity);
-          isCreateButtonEnabled = selectedAssetList.isNotEmpty &&
-              _descriptionController.text.trim().isNotEmpty;
-        });
+        if (assets.isNotEmpty) {
+          final AssetEntity assetEntity = assets.first; // Lấy asset đầu tiên
+
+          setState(() {
+            selectedAssetList.add(assetEntity);
+            isCreateButtonEnabled = selectedAssetList.isNotEmpty &&
+                _descriptionController.text.trim().isNotEmpty;
+          });
+        }
+      } else {
+        // Xử lý lỗi khi lưu ảnh
       }
     }
   }
