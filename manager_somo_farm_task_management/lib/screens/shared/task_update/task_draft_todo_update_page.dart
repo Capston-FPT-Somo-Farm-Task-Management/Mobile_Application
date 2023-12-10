@@ -320,8 +320,13 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
   }
 
   void calculateDateDifference(DateTime startDate, DateTime endDate) {
+    DateTime midnightStartDate =
+        DateTime(startDate.year, startDate.month, startDate.day);
+    DateTime midnightEndDate =
+        DateTime(endDate.year, endDate.month, endDate.day);
+
     setState(() {
-      rangeDate = endDate.difference(startDate).inDays;
+      rangeDate = midnightEndDate.difference(midnightStartDate).inDays;
     });
   }
 
