@@ -74,9 +74,9 @@ class EmployeeService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getEmployeesNoSubTaskbyTaskId(
+  Future<List<Map<String, dynamic>>> getEmployeesNoActivitiesbyTaskId(
       int taskId) async {
-    final String url = '$baseUrl/FarmSubTask/EmployeeNoSubtask($taskId)';
+    final String url = '$baseUrl/Activities/EmployeeNoActivities($taskId)';
 
     final http.Response response = await http.get(
       Uri.parse(url),

@@ -48,6 +48,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   final scrollControllerOption = ScrollController();
   final TextEditingController searchController = TextEditingController();
   String searchValue = "";
+  bool isImportant = false;
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -121,7 +122,7 @@ class ManagerHomePageState extends State<ManagerHomePage> {
   }
 
   Future<bool> cancelRejectTaskStatus(int taskId) async {
-    return TaskService().cancelRejectTaskStatus(taskId);
+    return TaskService().cancelRejectTaskStatus(taskId, isImportant);
   }
 
   Future<bool> deleteTask(int taskId) async {
@@ -734,6 +735,13 @@ class ManagerHomePageState extends State<ManagerHomePage> {
                                 title: "Không chấp nhận từ chối",
                                 content:
                                     'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                checkBox: true,
+                                onCheckBoxChanged: (value) {
+                                  // Callback này được gọi khi giá trị isImportant thay đổi
+                                  setState(() {
+                                    isImportant = value;
+                                  });
+                                },
                                 onConfirm: () {
                                   Navigator.of(context).pop();
                                   cancelRejectTaskStatus(task['id'])
