@@ -249,9 +249,10 @@ class TaskService {
     }
   }
 
-  Future<bool> cancelRejectTaskStatus(int taskId) async {
+  Future<bool> cancelRejectTaskStatus(int taskId, bool isImportant) async {
     try {
-      final String apiUrl = "$baseUrl/FarmTask/Task($taskId)/Refuse";
+      final String apiUrl =
+          "$baseUrl/FarmTask/Task($taskId)/Refuse?isImportant=$isImportant";
 
       final http.Response response = await http.put(
         Uri.parse(apiUrl),
@@ -276,7 +277,7 @@ class TaskService {
       int taskId, int status, List<Map<String, dynamic>> data) async {
     try {
       final String apiUrl =
-          "$baseUrl/FarmSubTask/Task($taskId)/UpdateEffortTimeAndStatusTask";
+          "$baseUrl/Activities/Task($taskId)/UpdateEffortTimeAndStatusTask";
       var body = jsonEncode(data);
       final http.Response response = await http.put(
         Uri.parse(apiUrl),
@@ -642,10 +643,10 @@ class TaskService {
   }
 
   Future<bool> changeStatusFromDoneToDoing(
-      int taskId, int managerId, String description) async {
+      int taskId, int managerId, String description, String endDate) async {
     try {
       final String apiUrl =
-          "$baseUrl/FarmTask/($taskId)/ChangeStatusFromDoneToDoing?managerId=$managerId";
+          "$baseUrl/FarmTask/($taskId)/ChangeStatusFromDoneToDoing?managerId=$managerId&endDay=$endDate";
 
       final http.Response response = await http.put(
         Uri.parse(apiUrl),

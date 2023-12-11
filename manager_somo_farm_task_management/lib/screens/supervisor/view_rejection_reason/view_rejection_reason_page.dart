@@ -20,6 +20,7 @@ class ViewRejectionReasonPopup extends StatefulWidget {
 class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
   String rejectionReason = "";
   bool isLoading = true;
+  bool isImportant = false;
   Future<void> getEvdidence() async {
     EvidenceService().getEvidencebyTaskId(widget.task['id']).then((value) {
       setState(() {
@@ -33,7 +34,7 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
     setState(() {
       isLoading = true;
     });
-    return TaskService().cancelRejectTaskStatus(taskId);
+    return TaskService().cancelRejectTaskStatus(taskId, isImportant);
   }
 
   @override
@@ -121,6 +122,13 @@ class _ViewRejectionReasonPopupState extends State<ViewRejectionReasonPopup> {
                                   title: "Không chấp nhận từ chối",
                                   content:
                                       'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                  checkBox: true,
+                                  onCheckBoxChanged: (value) {
+                                    // Callback này được gọi khi giá trị isImportant thay đổi
+                                    setState(() {
+                                      isImportant = value;
+                                    });
+                                  },
                                   onConfirm: () {
                                     cancelRejectTaskStatus(widget.task['id'])
                                         .then((value) {

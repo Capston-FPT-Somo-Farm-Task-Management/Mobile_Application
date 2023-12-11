@@ -55,8 +55,13 @@ class _AssignTaskPage extends State<AssignTaskPage> {
         });
       });
     });
-    _minutesController.text = widget.task['overallEfforMinutes'].toString();
-    _hoursController.text = widget.task['overallEffortHour'].toString();
+    _minutesController.text =
+        widget.task['overallEfforMinutes'].toString() == "0"
+            ? ""
+            : widget.task['overallEfforMinutes'].toString();
+    _hoursController.text = widget.task['overallEffortHour'].toString() == "0"
+        ? ""
+        : widget.task['overallEffortHour'].toString();
   }
 
   @override

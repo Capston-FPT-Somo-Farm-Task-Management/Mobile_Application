@@ -5,7 +5,7 @@ import 'package:manager_somo_farm_task_management/componets/constants.dart';
 
 class EffortService {
   Future<Map<String, dynamic>> getEffortByTaskId(int taskId) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/Task(${taskId})/Effort";
+    final String apiUrl = "$baseUrl/Activities/Task(${taskId})/Effort";
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {
@@ -25,7 +25,7 @@ class EffortService {
   }
 
   Future<bool> createEffort(int taskId, List<Map<String, dynamic>> data) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/Task(${taskId})";
+    final String apiUrl = "$baseUrl/Activities/Task(${taskId})";
     var body = jsonEncode(data);
     final response = await http.put(
       Uri.parse(apiUrl),
@@ -46,7 +46,7 @@ class EffortService {
 
   Future<bool> createEffortBySubtask(
       int subTaskId, Map<String, dynamic> data) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/(${subTaskId})/Effort";
+    final String apiUrl = "$baseUrl/Activities/(${subTaskId})/Effort";
 
     var body = jsonEncode(data);
 
@@ -78,7 +78,7 @@ class EffortService {
       dateTimeEnd = DateFormat('yyyy-MM-dd').format(endDate);
     }
     final String apiUrl =
-        "$baseUrl/FarmSubTask/Employee(${employeeId})/TotalEffort?startDay=$dateTimeStart&endDay=$dateTimeEnd";
+        "$baseUrl/Activities/Employee(${employeeId})/TotalEffort?startDay=$dateTimeStart&endDay=$dateTimeEnd";
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: {

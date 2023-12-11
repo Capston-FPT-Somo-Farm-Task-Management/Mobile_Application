@@ -33,7 +33,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   String? role;
   String? dateRepeat;
   bool isChange = false;
-
+  bool isImportant = false;
   Future<void> getRole() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? roleStored = prefs.getString('role');
@@ -43,7 +43,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   }
 
   Future<bool> cancelRejectTaskStatus(int taskId) async {
-    return TaskService().cancelRejectTaskStatus(taskId);
+    return TaskService().cancelRejectTaskStatus(taskId, isImportant);
   }
 
   Future<bool> changeTaskStatus(int taskId, int newStatus) async {
@@ -1338,6 +1338,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               return RejectionReasonPopup(
                                 taskId: task['id'],
                                 isRedo: true,
+                                endDate: task['endDate'],
                               );
                             },
                           ).then((value) {

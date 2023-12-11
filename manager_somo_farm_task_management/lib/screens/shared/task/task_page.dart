@@ -60,6 +60,7 @@ class TaskPageState extends State<TaskPage> {
   GlobalKey _keyClosed = GlobalKey();
   double _offsetX = 0.0;
   final scrollControllerOption = ScrollController();
+  bool isImportant = false;
   Future<void> _scrollListener() async {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -76,7 +77,7 @@ class TaskPageState extends State<TaskPage> {
   }
 
   Future<bool> cancelRejectTaskStatus(int taskId) async {
-    return TaskService().cancelRejectTaskStatus(taskId);
+    return TaskService().cancelRejectTaskStatus(taskId, isImportant);
   }
 
   void removeTask(int taskId) {
@@ -764,9 +765,13 @@ class TaskPageState extends State<TaskPage> {
                                                         Alignment.topRight,
                                                     padding: task['status'] !=
                                                                 "Bản nháp" &&
+                                                            task['status'] !=
+                                                                "Đã giao" &&
+                                                            task['status'] !=
+                                                                "Từ chối" &&
                                                             (role == "Supervisor" &&
-                                                                    task['status'] !=
-                                                                        "Chuẩn bị" ||
+                                                                    (task['status'] !=
+                                                                        "Chuẩn bị") ||
                                                                 role ==
                                                                     "Manager")
                                                         ? const EdgeInsets
@@ -1785,6 +1790,7 @@ class TaskPageState extends State<TaskPage> {
                                 return RejectionReasonPopup(
                                   taskId: task['id'],
                                   isRedo: true,
+                                  endDate: task['endDate'],
                                 );
                               },
                             ).then((value) {
@@ -2044,6 +2050,13 @@ class TaskPageState extends State<TaskPage> {
                                     title: "Không chấp nhận từ chối công việc",
                                     content:
                                         'Công việc sẽ chuyển sang trạng thái "Chuẩn bị"',
+                                    checkBox: true,
+                                    onCheckBoxChanged: (value) {
+                                      // Callback này được gọi khi giá trị isImportant thay đổi
+                                      setState(() {
+                                        isImportant = value;
+                                      });
+                                    },
                                     onConfirm: () {
                                       Navigator.of(context).pop();
                                       cancelRejectTaskStatus(task['id'])

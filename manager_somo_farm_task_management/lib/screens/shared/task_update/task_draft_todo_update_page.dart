@@ -78,6 +78,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
   List<String> repeatList = ["Không", "Có"];
   List<DateTime> selectedDatesRepeat = [];
   DateTime _focusedDay = DateTime.now();
+  bool isImportant = false;
   String _formatDates(List<DateTime> dates) {
     if (dates.isEmpty) {
       return 'Không có ngày được chọn';
@@ -1203,6 +1204,20 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                         ],
                       ),
                     ),
+                    if (widget.reDo)
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isImportant,
+                            onChanged: (value) {
+                              setState(() {
+                                isImportant = value!;
+                              });
+                            },
+                          ),
+                          Text('Không cho phép từ chối'),
+                        ],
+                      ),
                     SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1375,6 +1390,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                         _addressDetailController.text.trim())
             : null,
         "remind": _selectedRemind,
+        if (widget.reDo) "isImportant": isImportant
       }
     };
 

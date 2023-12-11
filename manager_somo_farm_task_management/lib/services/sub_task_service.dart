@@ -7,9 +7,9 @@ class SubTaskService {
       int taskId, int? employeeId) async {
     final String getTasksUrl;
     if (employeeId == null)
-      getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)';
+      getTasksUrl = '$baseUrl/Activities/Task($taskId)';
     else
-      getTasksUrl = '$baseUrl/FarmSubTask/Task($taskId)?employeeId=$employeeId';
+      getTasksUrl = '$baseUrl/Activities/Task($taskId)?employeeId=$employeeId';
 
     final http.Response response = await http.get(
       Uri.parse(getTasksUrl),
@@ -31,7 +31,7 @@ class SubTaskService {
   }
 
   Future<bool> createSubTask(Map<String, dynamic> taskData) async {
-    final String apiUrl = "$baseUrl/FarmSubTask";
+    final String apiUrl = "$baseUrl/Activities";
     var body = jsonEncode(taskData);
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -50,7 +50,7 @@ class SubTaskService {
   }
 
   Future<bool> deleteSubTask(int subTaskId) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/Delete(${subTaskId})";
+    final String apiUrl = "$baseUrl/Activities/Delete(${subTaskId})";
     final response = await http.delete(
       Uri.parse(apiUrl),
       headers: {
@@ -69,7 +69,7 @@ class SubTaskService {
 
   Future<bool> updateSubTask(
       int subTaskId, Map<String, dynamic> taskData) async {
-    final String apiUrl = "$baseUrl/FarmSubTask/(${subTaskId})";
+    final String apiUrl = "$baseUrl/Activities/(${subTaskId})";
     var body = jsonEncode(taskData);
     final response = await http.put(
       Uri.parse(apiUrl),
