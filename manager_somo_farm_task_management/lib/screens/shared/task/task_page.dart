@@ -819,57 +819,29 @@ class TaskPageState extends State<TaskPage> {
                                                   ),
                                               ]),
                                               const SizedBox(height: 5),
-                                              Stack(children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Flexible(
-                                                      child: Text(
-                                                        '#${task['code']}',
-                                                        style: GoogleFonts.lato(
-                                                          textStyle: TextStyle(
-                                                            fontSize: 15,
-                                                            fontStyle: FontStyle
-                                                                .italic, // Chữ in nghiêng
-                                                            color: Priority
-                                                                .getBGClr(task[
-                                                                    'priority']),
-                                                          ),
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                if (task['isExpired'] &&
-                                                    task['status'] !=
-                                                        "Bản nháp")
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 110),
-                                                    child: CustomPaint(
-                                                      painter:
-                                                          ExplosionPainter(),
-                                                      child: Container(
-                                                        width: 25,
-                                                        height: 20,
-                                                        color: Colors.amber,
-                                                        child: Center(
-                                                          child: Text(
-                                                            "Trễ",
-                                                            style: TextStyle(
-                                                                fontStyle:
-                                                                    FontStyle
-                                                                        .italic,
-                                                                fontSize: 13),
-                                                          ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      '#${task['code']}',
+                                                      style: GoogleFonts.lato(
+                                                        textStyle: TextStyle(
+                                                          fontSize: 15,
+                                                          fontStyle: FontStyle
+                                                              .italic, // Chữ in nghiêng
+                                                          color: Priority
+                                                              .getBGClr(task[
+                                                                  'priority']),
                                                         ),
                                                       ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
-                                              ]),
+                                                ],
+                                              ),
                                               const SizedBox(height: 20),
                                               Stack(children: [
                                                 Row(
@@ -914,6 +886,34 @@ class TaskPageState extends State<TaskPage> {
                                                             .ellipsis,
                                                       ),
                                                     ),
+                                                    if (task['isStartLate'] ==
+                                                            true &&
+                                                        task['status'] ==
+                                                            "Chuẩn bị")
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 10),
+                                                        child: CustomPaint(
+                                                          painter:
+                                                              ExplosionPainter(),
+                                                          child: Container(
+                                                            width: 23,
+                                                            height: 17,
+                                                            color: Colors.amber,
+                                                            child: Center(
+                                                              child: Text(
+                                                                "Trễ",
+                                                                style: TextStyle(
+                                                                    fontStyle:
+                                                                        FontStyle
+                                                                            .italic,
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                   ],
                                                 ),
                                                 if (task['isHaveEvidence'])
@@ -980,6 +980,33 @@ class TaskPageState extends State<TaskPage> {
                                                           TextOverflow.ellipsis,
                                                     ),
                                                   ),
+                                                  if (task['isExpired'] ==
+                                                          true &&
+                                                      task['status'] !=
+                                                          "Bản nháp")
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: CustomPaint(
+                                                        painter:
+                                                            ExplosionPainter(),
+                                                        child: Container(
+                                                          width: 23,
+                                                          height: 17,
+                                                          color: Colors.amber,
+                                                          child: Center(
+                                                            child: Text(
+                                                              "Trễ",
+                                                              style: TextStyle(
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic,
+                                                                  fontSize: 12),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
                                                 ],
                                               ),
                                               const SizedBox(height: 30),

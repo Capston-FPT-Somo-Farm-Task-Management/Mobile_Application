@@ -144,28 +144,6 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  if (task['isExpired'])
-                    Container(
-                      margin: EdgeInsets.only(left: 15),
-                      child: CustomPaint(
-                        painter: ExplosionPainter(),
-                        child: Container(
-                          width: 30,
-                          height: 25,
-                          color: Colors.amber,
-                          child: Center(
-                            child: Text(
-                              "Trễ",
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  fontSize: 15,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  SizedBox(width: 50),
                 ],
               ),
               centerTitle: true,
@@ -507,12 +485,33 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
-                                    'Bắt đầu: ${task['startDate'] == null ? "Chưa có" : '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['startDate']))}'}',
+                                    'Bắt đầu: ${task['startDate'] == null ? "Chưa có" : '${DateFormat('dd/MM/yyyy   HH:mm').format(DateTime.parse(task['startDate']))}'}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),
                                   ),
                                 ),
+                                if (task['isStartLate'] == true)
+                                  Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    child: CustomPaint(
+                                      painter: ExplosionPainter(),
+                                      child: Container(
+                                        width: 25,
+                                        height: 23,
+                                        color: Colors.amber,
+                                        child: Center(
+                                          child: Text(
+                                            "Trễ",
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 12,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                             const SizedBox(height: 16),
@@ -526,12 +525,33 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(
-                                    'Kết thúc: ${task['endDate'] == null ? "Chưa có" : '${DateFormat('dd/MM/yyyy   HH:mm aa').format(DateTime.parse(task['endDate']))}'}',
+                                    'Kết thúc: ${task['endDate'] == null ? "Chưa có" : '${DateFormat('dd/MM/yyyy   HH:mm').format(DateTime.parse(task['endDate']))}'}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),
                                   ),
                                 ),
+                                if (task['isExpired'])
+                                  Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    child: CustomPaint(
+                                      painter: ExplosionPainter(),
+                                      child: Container(
+                                        width: 25,
+                                        height: 23,
+                                        color: Colors.amber,
+                                        child: Center(
+                                          child: Text(
+                                            "Trễ",
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 12,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                             if (task['status'] != "Bản nháp" &&
