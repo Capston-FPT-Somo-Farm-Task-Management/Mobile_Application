@@ -1293,6 +1293,7 @@ class _AddTaskPage extends State<AddTaskPage> {
           SnackbarShowNoti.showSnackbar('Lưu công việc thành công', false);
         }
       }).catchError((e) {
+        isLoading = false;
         SnackbarShowNoti.showSnackbar(e.toString(), true);
       });
     } else {

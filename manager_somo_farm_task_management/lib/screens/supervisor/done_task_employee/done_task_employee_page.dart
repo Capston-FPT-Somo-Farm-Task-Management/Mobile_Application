@@ -395,65 +395,35 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                           ),
                                                       ]),
                                                       const SizedBox(height: 5),
-                                                      Stack(children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Flexible(
-                                                              child: Text(
-                                                                '#${task['codeTask']}',
-                                                                style:
-                                                                    GoogleFonts
-                                                                        .lato(
-                                                                  textStyle:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .italic, // Chữ in nghiêng
-                                                                    color: Priority
-                                                                        .getBGClr(
-                                                                            task['priority']),
-                                                                  ),
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        if (task['isExpired'])
-                                                          Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    left: 110),
-                                                            child: CustomPaint(
-                                                              painter:
-                                                                  ExplosionPainter(),
-                                                              child: Container(
-                                                                width: 25,
-                                                                height: 20,
-                                                                color: Colors
-                                                                    .amber,
-                                                                child: Center(
-                                                                  child: Text(
-                                                                    "Trễ",
-                                                                    style: TextStyle(
-                                                                        fontStyle:
-                                                                            FontStyle
-                                                                                .italic,
-                                                                        fontSize:
-                                                                            13),
-                                                                  ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              '#${task['codeTask']}',
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic, // Chữ in nghiêng
+                                                                  color: Priority
+                                                                      .getBGClr(
+                                                                          task[
+                                                                              'priority']),
                                                                 ),
                                                               ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
-                                                      ]),
+                                                        ],
+                                                      ),
                                                       const SizedBox(
                                                           height: 20),
                                                       Row(
@@ -506,6 +476,36 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                       .ellipsis,
                                                             ),
                                                           ),
+                                                          if (task[
+                                                                  'isStartLate'] ==
+                                                              true)
+                                                            Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      left: 10),
+                                                              child:
+                                                                  CustomPaint(
+                                                                painter:
+                                                                    ExplosionPainter(),
+                                                                child:
+                                                                    Container(
+                                                                  width: 23,
+                                                                  height: 17,
+                                                                  color: Colors
+                                                                      .amber,
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      "Trễ",
+                                                                      style: TextStyle(
+                                                                          fontStyle: FontStyle
+                                                                              .italic,
+                                                                          fontSize:
+                                                                              12),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
                                                         ],
                                                       ),
                                                       const SizedBox(height: 5),
@@ -559,6 +559,36 @@ class DoneTaskEmployeePageState extends State<DoneTaskEmployeePage> {
                                                                       .ellipsis,
                                                             ),
                                                           ),
+                                                          if (task[
+                                                                  'isExpired'] ==
+                                                              true)
+                                                            Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      left: 10),
+                                                              child:
+                                                                  CustomPaint(
+                                                                painter:
+                                                                    ExplosionPainter(),
+                                                                child:
+                                                                    Container(
+                                                                  width: 23,
+                                                                  height: 17,
+                                                                  color: Colors
+                                                                      .amber,
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      "Trễ",
+                                                                      style: TextStyle(
+                                                                          fontStyle: FontStyle
+                                                                              .italic,
+                                                                          fontSize:
+                                                                              12),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
                                                         ],
                                                       ),
                                                       const SizedBox(
