@@ -130,7 +130,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                     MyInputField(
                       title: "Ngày giờ thực hiện",
                       hint: _selectedStartDate == null
-                          ? "dd/MM/yyyy HH:mm a"
+                          ? "Chọn ngày giờ thực hiện"
                           : DateFormat('dd/MM/yyyy HH:mm a')
                               .format(_selectedStartDate!),
                       widget: IconButton(
@@ -146,7 +146,7 @@ class _ThirdAddTaskPage extends State<ThirdAddTaskPage> {
                     MyInputField(
                       title: "Ngày giờ kết thúc",
                       hint: _selectedEndDate == null
-                          ? "dd/MM/yyyy HH:mm a"
+                          ? "Chọn ngày giờ kết thúc"
                           : DateFormat('dd/MM/yyyy HH:mm a')
                               .format(_selectedEndDate!),
                       widget: IconButton(

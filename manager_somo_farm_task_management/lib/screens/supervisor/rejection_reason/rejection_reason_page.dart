@@ -83,7 +83,7 @@ class _RejectionPopupState extends State<RejectionReasonPopup> {
                             MyInputField(
                               title: "Ngày giờ kết thúc",
                               hint: _selectedEndDate == null
-                                  ? "dd/MM/yyyy HH:mm a"
+                                  ? "Chọn ngày giờ kết thúc"
                                   : DateFormat('dd/MM/yyyy HH:mm a')
                                       .format(_selectedEndDate!),
                               widget: IconButton(
