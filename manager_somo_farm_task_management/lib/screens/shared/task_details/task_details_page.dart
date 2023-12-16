@@ -1282,18 +1282,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Đã giao")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -1390,18 +1395,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Đang thực hiện")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -1606,18 +1616,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Hoàn thành")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -1800,18 +1815,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Tạm hoãn")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -2204,18 +2224,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Hủy bỏ")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -2237,14 +2262,19 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Hủy bỏ")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => EvidencePage(
-                                role: role!,
-                                task: task,
-                              ),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => EvidencePage(
+                                    role: role!,
+                                    task: task,
+                                  ),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -2597,6 +2627,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ),
 
                     // Status đã giao -> Supervisor đổi status sang hủy bỏ công việc
+                    if (task['status'] == "Đã giao") SizedBox(width: 10),
                     if (task['status'] == "Đã giao" &&
                         task['managerName'] == null)
                       SizedBox(width: 10),
@@ -2690,18 +2721,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Đang thực hiện")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -2888,18 +2924,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Hoàn thành")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
@@ -3019,18 +3060,23 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     if (task['status'] == "Tạm hoãn")
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SubTaskPage(
-                                  isRecordTime: false,
-                                  taskStatus: task['status'],
-                                  startDate: task['startDate'],
-                                  endDate: task['endDate'],
-                                  taskId: task['id'],
-                                  taskName: task['name'],
-                                  taskCode: task['code']),
-                            ),
-                          );
+                          Navigator.of(context)
+                              .push(
+                                MaterialPageRoute(
+                                  builder: (context) => SubTaskPage(
+                                      isRecordTime: false,
+                                      taskStatus: task['status'],
+                                      startDate: task['startDate'],
+                                      endDate: task['endDate'],
+                                      taskId: task['id'],
+                                      taskName: task['name'],
+                                      taskCode: task['code']),
+                                ),
+                              )
+                              .then((value) => {
+                                    if (value != null)
+                                      {getTask(), isChange = true}
+                                  });
                         },
                         style: ButtonStyle(
                           backgroundColor:
