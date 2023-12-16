@@ -151,7 +151,7 @@ class CreateSubTaskState extends State<CreateSubTask> {
                     MyInputField(
                       title: "Ngày thực hiện",
                       hint: _selectedDate == null
-                          ? "dd/MM/yyyy"
+                          ? "Chọn ngày thực hiện"
                           : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                       widget: IconButton(
                         icon: const Icon(
