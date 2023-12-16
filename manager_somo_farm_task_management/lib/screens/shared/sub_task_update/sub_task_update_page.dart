@@ -166,7 +166,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                     MyInputField(
                       title: "Ngày thực hiện",
                       hint: _selectedDate == null
-                          ? "dd/MM/yyyy"
+                          ? "Chọn ngày thực hiện"
                           : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                       widget: IconButton(
                         icon: const Icon(
@@ -406,7 +406,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
       context: context,
       initialDate: _selectedDate!,
       firstDate: DateTime.now().subtract(Duration(days: 30)),
-      lastDate: DateTime.now().add(Duration(days: 30)),
+      lastDate: DateTime.now(),
     );
 
     if (selectedDate != null) {

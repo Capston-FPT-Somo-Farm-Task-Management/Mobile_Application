@@ -454,6 +454,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                                   ),
                                                 ),
                                               ),
+                                              SizedBox(width: 3),
                                               Text(
                                                 "G",
                                                 style: TextStyle(fontSize: 12),
@@ -495,6 +496,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                                   ),
                                                 ),
                                               ),
+                                              SizedBox(width: 3),
                                               Text(
                                                 "p",
                                                 style: TextStyle(fontSize: 12),
