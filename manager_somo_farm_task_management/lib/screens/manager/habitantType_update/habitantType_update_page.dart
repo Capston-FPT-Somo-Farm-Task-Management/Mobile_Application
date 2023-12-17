@@ -113,6 +113,7 @@ class UpdateHabitantTypeState extends State<UpdateHabitantType> {
                       style: headingStyle,
                     ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên loại",
                 hint: "Nhập tên loại",
                 controller: _titleNameController,

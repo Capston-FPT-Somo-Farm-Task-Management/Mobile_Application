@@ -264,11 +264,13 @@ class UpdateUserState extends State<UpdateUser> {
                       hintColor: Colors.grey,
                     ),
                     MyInputField(
+                      maxLength: 20,
                       title: "Mã nhân viên",
                       hint: "Nhập mã nhân viên",
                       controller: _codeController,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Họ và tên",
                       hint: "Nhập họ và tên của nhân viên",
                       controller: _fullnameController,
@@ -279,6 +281,7 @@ class UpdateUserState extends State<UpdateUser> {
                       controller: _emailController,
                     ),
                     MyInputNumber(
+                      maxLength: 10,
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,

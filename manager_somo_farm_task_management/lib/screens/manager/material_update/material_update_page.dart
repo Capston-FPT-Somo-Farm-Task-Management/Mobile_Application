@@ -102,6 +102,7 @@ class UpdateMaterialState extends State<UpdateMaterial> {
                     ),
                     const SizedBox(height: 30),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên công cụ",
                       hint: "Nhập tên công cụ",
                       controller: _nameController,

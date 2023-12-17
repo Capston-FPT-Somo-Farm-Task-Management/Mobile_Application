@@ -98,11 +98,13 @@ class CreateZoneState extends State<CreateZone> {
                       style: headingStyle,
                     ),
                     MyInputField(
+                      maxLength: 20,
                       title: "Mã vùng",
                       hint: "Nhập mã vùng",
                       controller: _fZoneCodeController,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên vùng",
                       hint: "Nhập tên vùng",
                       controller: _nameController,

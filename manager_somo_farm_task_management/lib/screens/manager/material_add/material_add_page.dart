@@ -133,6 +133,7 @@ class CreateMaterialState extends State<CreateMaterial> {
                       style: headingStyle,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên công cụ",
                       hint: "Nhập tên công cụ",
                       controller: _nameController,

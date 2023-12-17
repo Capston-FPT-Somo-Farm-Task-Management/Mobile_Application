@@ -7,13 +7,15 @@ class MyInputField extends StatelessWidget {
   final String hint;
   final TextEditingController? controller;
   final Widget? widget;
+  final int? maxLength;
   const MyInputField(
       {super.key,
       required this.title,
       required this.hint,
       this.controller,
       this.widget,
-      this.hintColor});
+      this.hintColor,
+      this.maxLength});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class MyInputField extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFormField(
+                    maxLength: maxLength,
                     readOnly: widget == null ? false : true,
                     autofocus: false,
                     controller: controller,

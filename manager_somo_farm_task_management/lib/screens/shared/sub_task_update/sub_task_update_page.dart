@@ -115,6 +115,7 @@ class UpdateSubTaskState extends State<UpdateSubTask> {
                     ),
                     SizedBox(height: 30),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên hoạt động",
                       hint: "Nhập tên hoạt động",
                       controller: _titleController,

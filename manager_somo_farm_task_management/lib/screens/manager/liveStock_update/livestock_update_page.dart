@@ -173,11 +173,13 @@ class UpdateLiveStockState extends State<UpdateLiveStock> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 20,
                 title: "Mã vật nuôi",
                 hint: "Nhập mã vật nuôi",
                 controller: _titleIdController,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên vật nuôi",
                 hint: "Nhập tên vật nuôi",
                 controller: _titleNameController,
