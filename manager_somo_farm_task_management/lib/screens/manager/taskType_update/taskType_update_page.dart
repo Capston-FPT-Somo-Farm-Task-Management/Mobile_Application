@@ -88,6 +88,7 @@ class UpdateTaskTypeState extends State<UpdateTaskType> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên loại",
                 hint: "Nhập tên loại",
                 controller: _nameController,

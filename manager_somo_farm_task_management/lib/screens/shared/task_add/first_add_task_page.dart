@@ -113,7 +113,7 @@ class _FirstAddTaskPage extends State<FirstAddTaskPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Báo cáo công việc đã giao (1/3)",
+                "Thêm công việc (1/3)",
                 style: headingStyle,
               ),
               Container(

@@ -412,6 +412,22 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                                 String>>[
                                                               PopupMenuItem<
                                                                   String>(
+                                                                value: 'Edit',
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(Icons
+                                                                        .edit_note_rounded),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            5),
+                                                                    Text(
+                                                                      'Chỉnh sửa',
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              PopupMenuItem<
+                                                                  String>(
                                                                 value: 'Delete',
                                                                 child: Row(
                                                                   children: [
@@ -428,22 +444,6 @@ class SubTaskPageState extends State<SubTaskPage> {
                                                                       style: TextStyle(
                                                                           color:
                                                                               Colors.red),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              PopupMenuItem<
-                                                                  String>(
-                                                                value: 'Edit',
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(Icons
-                                                                        .edit_note_rounded),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            5),
-                                                                    Text(
-                                                                      'Chỉnh sửa',
                                                                     ),
                                                                   ],
                                                                 ),

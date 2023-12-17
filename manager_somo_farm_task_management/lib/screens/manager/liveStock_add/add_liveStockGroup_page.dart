@@ -93,11 +93,13 @@ class CreateLiveStockGroupState extends State<CreateLiveStockGroup> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 20,
                 title: "Mã chuồng",
                 hint: "Nhập mã chuồng",
                 controller: _fieldCodeController,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên chuồng",
                 hint: "Nhập tên chuồng",
                 controller: _nameController,

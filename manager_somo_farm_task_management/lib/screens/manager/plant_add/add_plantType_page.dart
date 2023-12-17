@@ -62,6 +62,7 @@ class CreatePlantTypeState extends State<CreatePlantType> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên loại cây trồng",
                 hint: "Nhập tên loại",
                 controller: _nameController,

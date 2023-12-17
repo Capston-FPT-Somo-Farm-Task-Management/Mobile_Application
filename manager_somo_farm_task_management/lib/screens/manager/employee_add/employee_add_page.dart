@@ -203,16 +203,19 @@ class CreateEmployeeState extends State<CreateEmployee> {
                         child: buildAssetWidget(selectedAssetList[0]),
                       ),
                     MyInputField(
+                      maxLength: 20,
                       title: "Mã nhân viên",
                       hint: "Nhập mã nhân viên",
                       controller: _codeController,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Họ và tên",
                       hint: "Nhập họ và tên của nhân viên",
                       controller: _fullnameController,
                     ),
                     MyInputNumber(
+                      maxLength: 10,
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,

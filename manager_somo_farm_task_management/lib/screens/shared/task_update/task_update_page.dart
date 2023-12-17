@@ -633,6 +633,7 @@ class _FirstUpdateTaskPage extends State<UpdateTaskPage> {
                         hintColor: Colors.grey,
                       ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên công việc",
                       hint: "Nhập tên công việc",
                       controller: _titleController,

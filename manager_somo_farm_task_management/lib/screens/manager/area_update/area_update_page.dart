@@ -81,11 +81,13 @@ class UpdateAreaState extends State<UpdateArea> {
                       style: headingStyle,
                     ),
                     MyInputField(
+                      maxLength: 20,
                       title: "Mã khu vực",
                       hint: "Nhập mã khu vực",
                       controller: _fareaCodeController,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên khu vực",
                       hint: "Nhập tên khu vực",
                       controller: _nameController,

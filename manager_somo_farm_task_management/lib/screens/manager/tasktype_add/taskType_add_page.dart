@@ -66,6 +66,7 @@ class CreateTaskTypeState extends State<CreateTaskType> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên loại công việc",
                 hint: "Nhập tên",
                 controller: _nameController,
