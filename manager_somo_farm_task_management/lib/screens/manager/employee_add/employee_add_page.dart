@@ -68,7 +68,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
     });
   }
 
-  Future<bool> createEmployee(Map<String, dynamic> employeeData, File image) {
+  Future<bool> createEmployee(Map<String, dynamic> employeeData, File? image) {
     return EmployeeService().createEmployee(employeeData, image);
   }
 
@@ -76,7 +76,7 @@ class CreateEmployeeState extends State<CreateEmployee> {
     for (var i = 0; i < assetEntities.length; i++) {
       final File? file = await assetEntities[i].originFile;
       setState(() {
-        selectedFiles = file!;
+        selectedFiles = file;
       });
     }
   }
@@ -625,8 +625,25 @@ class CreateEmployeeState extends State<CreateEmployee> {
             "dateOfBirth": _birthday
           }
         };
-        convertAssetsToFiles(selectedAssetList).then((value) {
-          createEmployee(employeekData, selectedFiles!).then((value) {
+        print(selectedAssetList.length);
+        if (selectedAssetList.isNotEmpty)
+          convertAssetsToFiles(selectedAssetList).then((value) {
+            createEmployee(employeekData, selectedFiles).then((value) {
+              if (value) {
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.pop(context, "newEmployee");
+              }
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+              SnackbarShowNoti.showSnackbar(e.toString(), true);
+            });
+          });
+        else {
+          createEmployee(employeekData, selectedFiles).then((value) {
             if (value) {
               setState(() {
                 isLoading = false;
@@ -637,9 +654,10 @@ class CreateEmployeeState extends State<CreateEmployee> {
             setState(() {
               isLoading = false;
             });
+            print(e.toString());
             SnackbarShowNoti.showSnackbar(e.toString(), true);
           });
-        });
+        }
       }
     } else {
       setState(() {

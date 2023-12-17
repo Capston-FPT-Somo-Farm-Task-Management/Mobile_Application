@@ -188,6 +188,9 @@ class _LoginPageState extends State<LoginPage> {
                             return value['data']['farmId'];
                           }).catchError((e) {
                             SnackbarShowNoti.showSnackbar(e, true);
+                            setState(() {
+                              isLoading = false;
+                            });
                             return 0; // Trả về giá trị mặc định nếu có lỗi
                           });
 

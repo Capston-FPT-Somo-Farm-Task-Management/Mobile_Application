@@ -27,6 +27,7 @@ class LoginService {
       final String refreshToken = responseData['refreshToken'];
 
       accessToken = aToken;
+      print(accessToken);
       Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
 
       final String role = decodedToken[
