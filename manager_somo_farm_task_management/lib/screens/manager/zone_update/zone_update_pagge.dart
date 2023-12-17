@@ -136,11 +136,13 @@ class UpdateZoneState extends State<UpdateZone> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 20,
                 title: "Mã vùng",
                 hint: "Nhập mã vùng",
                 controller: _titleIdController,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên vùng",
                 hint: "Nhập tên vùng",
                 controller: _titleNameController,

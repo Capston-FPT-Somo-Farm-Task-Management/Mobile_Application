@@ -113,6 +113,7 @@ class CreateSupervisorState extends State<CreateSupervisor> {
                       style: headingStyle,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Họ và tên",
                       hint: "Nhập họ và tên của nhân viên",
                       controller: _fullnameController,
@@ -244,6 +245,7 @@ class CreateSupervisorState extends State<CreateSupervisor> {
                       controller: _emailController,
                     ),
                     MyInputNumber(
+                      maxLength: 10,
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,

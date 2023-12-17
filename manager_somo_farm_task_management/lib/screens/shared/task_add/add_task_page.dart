@@ -331,6 +331,7 @@ class _AddTaskPage extends State<AddTaskPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên công việc",
                       hint: "Nhập tên công việc",
                       hintColor: kTextGreyColor,

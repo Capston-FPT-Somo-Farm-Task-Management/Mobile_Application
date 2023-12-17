@@ -276,16 +276,19 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
                       thickness: 1, // Độ dày của dòng gạch (có thể thay đổi)
                     ),
                     MyInputField(
+                      maxLength: 20,
                       title: "Mã nhân viên",
                       hint: "Nhập mã nhân viên",
                       controller: _codeController,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Họ và tên",
                       hint: "Nhập họ và tên của nhân viên",
                       controller: _fullnameController,
                     ),
                     MyInputNumber(
+                      maxLength: 10,
                       title: "Số điện thoại",
                       hint: "Nhập số điện thoại",
                       controller: _phoneController,

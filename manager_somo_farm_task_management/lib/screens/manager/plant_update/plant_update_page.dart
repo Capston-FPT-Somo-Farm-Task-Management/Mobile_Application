@@ -168,11 +168,13 @@ class UpdatePlantState extends State<UpdatePlant> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 20,
                 title: "Mã cây trồng",
                 hint: "Nhập mã cây trồng",
                 controller: _titleIdController,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên cây trồng",
                 hint: "Nhập tên cây trồng",
                 controller: _titleNameController,

@@ -97,11 +97,13 @@ class CreatePlantFieldState extends State<CreatePlantField> {
                 style: headingStyle,
               ),
               MyInputField(
+                maxLength: 20,
                 title: "Mã vườn",
                 hint: "Nhập mã vườn cây",
                 controller: _fieldCodeController,
               ),
               MyInputField(
+                maxLength: 100,
                 title: "Tên vườn",
                 hint: "Nhập tên vườn cây",
                 controller: _nameController,

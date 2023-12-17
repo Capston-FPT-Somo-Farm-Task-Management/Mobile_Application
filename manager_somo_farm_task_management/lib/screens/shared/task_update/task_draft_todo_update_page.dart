@@ -459,6 +459,7 @@ class _UpdateTaskDraftTodoPage extends State<UpdateTaskDraftTodoPage> {
                       style: headingStyle,
                     ),
                     MyInputField(
+                      maxLength: 100,
                       title: "Tên công việc",
                       hint: "Nhập tên công việc",
                       controller: _titleController,
