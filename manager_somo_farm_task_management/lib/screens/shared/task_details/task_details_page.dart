@@ -548,10 +548,12 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                               ],
                             ),
                             if (task['status'] != "Bản nháp" &&
-                                task['status'] != "Chuẩn bị")
+                                task['status'] != "Chuẩn bị" &&
+                                task['status'] != "Từ chối")
                               SizedBox(height: 16),
                             if (task['status'] != "Bản nháp" &&
-                                task['status'] != "Chuẩn bị")
+                                task['status'] != "Chuẩn bị" &&
+                                task['status'] != "Từ chối")
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
