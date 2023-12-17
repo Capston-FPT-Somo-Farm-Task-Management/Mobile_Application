@@ -123,6 +123,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
       appBar: isLoading
           ? null
           : AppBar(
+              centerTitle: true,
               backgroundColor: Colors.white,
               elevation: 0,
               leading: GestureDetector(
@@ -132,21 +133,13 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     // : Navigator.of(context).pop();
                   },
                   child: Icon(Icons.close_sharp, color: kSecondColor)),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      "# ${task['code']}",
-                      style: TextStyle(
-                          color: kPrimaryColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+              title: Text(
+                "# ${task['code']}",
+                style: TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
-              centerTitle: true,
               actions: [
                 role == "Manager" &&
                         task['managerName'] != null &&
@@ -264,16 +257,16 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                                     child: RichText(
                                       text: TextSpan(
                                         children: [
-                                          TextSpan(
-                                            text: "Ưu tiên: ",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w700,
-                                              color: Priority.getBGClr(
-                                                task['priority'],
-                                              ),
-                                            ),
-                                          ),
+                                          // TextSpan(
+                                          //   text: "Ưu tiên: ",
+                                          //   style: TextStyle(
+                                          //     fontSize: 18,
+                                          //     fontWeight: FontWeight.w700,
+                                          //     color: Priority.getBGClr(
+                                          //       task['priority'],
+                                          //     ),
+                                          //   ),
+                                          // ),
                                           TextSpan(
                                             text: "${task['priority']}",
                                             style: TextStyle(
