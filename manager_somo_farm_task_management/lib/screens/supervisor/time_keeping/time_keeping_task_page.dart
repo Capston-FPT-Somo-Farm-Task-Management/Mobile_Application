@@ -383,6 +383,7 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                 child: Text(employee['employeeCode']),
                               ),
                               Expanded(
+                                flex: 2,
                                 child: Container(
                                   padding: EdgeInsets.only(right: 10),
                                   child: Text(
