@@ -126,22 +126,27 @@ class EmployeeService {
         'imageFile',
         await MultipartFile.fromFile(image.path),
       ));
+    try {
+      // Gửi request POST với FormData
+      Response response = await dio.post(
+        apiUrl,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
 
-    Response response = await dio.post(
-      apiUrl,
-      data: formData,
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': 'Bearer $accessToken',
-        },
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+      // Kiểm tra status code
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw response.data["message"] ?? "Xảy ra lỗi!";
+      }
+    } catch (error) {
+      throw ("Mã không thể trùng");
     }
   }
 
@@ -193,21 +198,27 @@ class EmployeeService {
         await MultipartFile.fromFile(image.path),
       ));
 
-    Response response = await dio.put(
-      apiUrl,
-      data: formData,
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': 'Bearer $accessToken',
-        },
-      ),
-    );
+    try {
+      // Gửi request POST với FormData
+      Response response = await dio.put(
+        apiUrl,
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+      // Kiểm tra status code
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw response.data["message"] ?? "Xảy ra lỗi!";
+      }
+    } catch (error) {
+      throw ("Mã không thể trùng");
     }
   }
 }

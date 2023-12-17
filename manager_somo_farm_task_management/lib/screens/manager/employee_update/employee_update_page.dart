@@ -14,7 +14,6 @@ import 'package:manager_somo_farm_task_management/services/provinces_service.dar
 import 'package:manager_somo_farm_task_management/services/task_type_service.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../../../componets/input_field.dart';
 
@@ -161,7 +160,7 @@ class UpdateEmployeeState extends State<UpdateEmployee> {
     _fullnameController.text = widget.employee['name'];
     _phoneController.text = widget.employee['phoneNumber'];
     _selectedGender = widget.employee['gender'] == "Male" ? "Nam" : "Nữ";
-    urlImage = widget.employee['avatar'];
+    urlImage = widget.employee['avatar'] ?? "";
     _birthday = widget.employee['dateOfBirth'];
     _dateTime = DateTime.parse(_birthday!);
   }
