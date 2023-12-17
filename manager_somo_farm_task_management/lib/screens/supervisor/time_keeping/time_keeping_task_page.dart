@@ -373,49 +373,49 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                         int dataIndex = index - 1;
                         Map<String, dynamic> employee = employees[dataIndex];
                         return Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(right: 10),
+                                width: 65,
+                                child: Text(employee['employeeCode']),
+                              ),
+                              Expanded(
+                                child: Container(
                                   padding: EdgeInsets.only(right: 10),
-                                  width: 65,
-                                  child: Flexible(
-                                      child: Text(employee['employeeCode'])),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Text(
-                                      employee['employeeName'],
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      softWrap: true,
+                                  child: Text(
+                                    employee['employeeName'],
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
+                                    softWrap: true,
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    role == "Manager"
-                                        ? null
-                                        : _getDateTimeFromUser(dataIndex)
-                                            .then((value) {
-                                            isSaveEnabled = areChangesMade();
-                                          });
-                                  },
-                                  child: Container(
-                                    width: 110,
-                                    child: Text(
-                                      _selectedDate[dataIndex].isEmpty
-                                          ? "dd/mm/yyy"
-                                          : _selectedDate[dataIndex],
-                                    ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  role == "Manager"
+                                      ? null
+                                      : _getDateTimeFromUser(dataIndex)
+                                          .then((value) {
+                                          isSaveEnabled = areChangesMade();
+                                        });
+                                },
+                                child: Container(
+                                  width: 110,
+                                  child: Text(
+                                    _selectedDate[dataIndex].isEmpty
+                                        ? "dd/mm/yyy"
+                                        : _selectedDate[dataIndex],
                                   ),
                                 ),
-                                Container(
+                              ),
+                              Flexible(
+                                child: Container(
                                   width: 70,
                                   margin: EdgeInsets.only(right: 10),
                                   child: Row(
@@ -508,8 +508,10 @@ class _TimeKeepingInTaskState extends State<TimeKeepingInTask> {
                                     ],
                                   ),
                                 ),
-                              ],
-                            ));
+                              ),
+                            ],
+                          ),
+                        );
                       },
                     ),
                   ),
