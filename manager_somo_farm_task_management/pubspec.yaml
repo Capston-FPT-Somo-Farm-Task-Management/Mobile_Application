@@ -60,7 +60,7 @@ dependencies:
   firebase_analytics: ^10.5.1
   image_picker: ^1.0.4
   multiple_images_picker: ^1.0.1
-  photo_manager: ^2.8.1
+  photo_manager: ^2.7.2
   iconsax: ^0.0.8
   scrollable_positioned_list: ^0.3.8
   dio: ^5.3.3
