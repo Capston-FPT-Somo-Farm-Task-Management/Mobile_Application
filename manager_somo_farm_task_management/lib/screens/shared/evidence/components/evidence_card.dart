@@ -227,6 +227,18 @@ class _EvidenceCardState extends State<EvidenceCard> {
                     itemBuilder: (BuildContext context) {
                       return <PopupMenuEntry<String>>[
                         PopupMenuItem<String>(
+                          value: 'Edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit_note_rounded),
+                              SizedBox(width: 5),
+                              Text(
+                                'Chỉnh sửa',
+                              ),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem<String>(
                           value: 'Delete',
                           child: Row(
                             children: [
@@ -235,18 +247,6 @@ class _EvidenceCardState extends State<EvidenceCard> {
                               Text(
                                 'Xóa',
                                 style: TextStyle(color: Colors.red),
-                              ),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem<String>(
-                          value: 'Edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit_note_rounded),
-                              SizedBox(width: 5),
-                              Text(
-                                'Chỉnh sửa',
                               ),
                             ],
                           ),
