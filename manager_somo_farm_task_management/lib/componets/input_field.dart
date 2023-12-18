@@ -61,7 +61,7 @@ class MyInputField extends StatelessWidget {
                         borderSide:
                             BorderSide(color: kBackgroundColor, width: 0),
                       ),
-                      counterText: '',
+                      counterText: '', // check input check
                     ),
                   ),
                 ),
