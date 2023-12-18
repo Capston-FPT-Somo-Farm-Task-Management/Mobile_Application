@@ -58,6 +58,7 @@ class MyInputNumber extends StatelessWidget {
                         borderSide:
                             BorderSide(color: kBackgroundColor, width: 0),
                       ),
+                      counterText: '',
                     ),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly,

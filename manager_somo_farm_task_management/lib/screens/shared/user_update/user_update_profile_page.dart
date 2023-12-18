@@ -210,21 +210,19 @@ class UpdateUserState extends State<UpdateUser> {
                         child: Container(
                           width: MediaQuery.of(context).size.height * 0.2,
                           height: MediaQuery.of(context).size.height * 0.2,
-                          child: Positioned.fill(
-                            child: AssetEntityImage(
-                              selectedAssetList[0],
-                              isOriginal: false,
-                              thumbnailSize: const ThumbnailSize.square(1000),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Center(
-                                  child: Icon(
-                                    Icons.error,
-                                    color: Colors.red,
-                                  ),
-                                );
-                              },
-                            ),
+                          child: AssetEntityImage(
+                            selectedAssetList[0],
+                            isOriginal: false,
+                            thumbnailSize: const ThumbnailSize.square(1000),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.error,
+                                  color: Colors.red,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -233,21 +231,17 @@ class UpdateUserState extends State<UpdateUser> {
                         child: Container(
                           height: MediaQuery.of(context).size.height * 0.2,
                           width: MediaQuery.of(context).size.height * 0.2,
-                          child: Positioned.fill(
-                            child: ClipOval(
-                              child: Image.network(
-                                urlImage!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Center(
-                                    child: Icon(
-                                      Icons.error,
-                                      color: Colors.red,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
+                          child: Image.network(
+                            urlImage!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(
+                                  Icons.error,
+                                  color: Colors.red,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
