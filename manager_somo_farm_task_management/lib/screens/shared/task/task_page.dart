@@ -1438,38 +1438,38 @@ class TaskPageState extends State<TaskPage> {
                                     buildIconOption(Icons.copy, "Tạo bản sao")),
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => SubTaskPage(
-                                        isRecordTime: false,
-                                        taskStatus: task['status'],
-                                        startDate: task['startDate'],
-                                        endDate: task['endDate'],
-                                        taskId: task['id'],
-                                        taskName: task['name'],
-                                        taskCode: task['code']),
-                                  ),
-                                )
-                                .then((value) => {
-                                      if (value != null)
-                                        {
-                                          _getTasksForSelectedDateAndStatus(
-                                              1,
-                                              10 * page,
-                                              _selectedDate,
-                                              groupValue,
-                                              true,
-                                              searchValue)
-                                        }
-                                    });
-                          },
-                          child: buildOptionTask(
-                              Icons.task, "Ghi nhận hoạt động", null),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.of(context).pop();
+                        //     Navigator.of(context)
+                        //         .push(
+                        //           MaterialPageRoute(
+                        //             builder: (context) => SubTaskPage(
+                        //                 isRecordTime: false,
+                        //                 taskStatus: task['status'],
+                        //                 startDate: task['startDate'],
+                        //                 endDate: task['endDate'],
+                        //                 taskId: task['id'],
+                        //                 taskName: task['name'],
+                        //                 taskCode: task['code']),
+                        //           ),
+                        //         )
+                        //         .then((value) => {
+                        //               if (value != null)
+                        //                 {
+                        //                   _getTasksForSelectedDateAndStatus(
+                        //                       1,
+                        //                       10 * page,
+                        //                       _selectedDate,
+                        //                       groupValue,
+                        //                       true,
+                        //                       searchValue)
+                        //                 }
+                        //             });
+                        //   },
+                        //   child: buildOptionTask(
+                        //       Icons.task, "Ghi nhận hoạt động", null),
+                        // ),
                       ] else if (isDoing) ...[
                         Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
