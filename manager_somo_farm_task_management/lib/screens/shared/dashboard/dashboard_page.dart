@@ -241,7 +241,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(15))),
                           margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-                          height: 100,
+                          height: 90,
                           // Thay đổi màu sắc tùy ý
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -265,7 +265,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.fromLTRB(5, 10, 10, 5),
-                          height: 100,
+                          height: 90,
                           decoration: BoxDecoration(
                               color: Colors.blue[300],
                               borderRadius: BorderRadius.all(Radius.circular(
@@ -299,7 +299,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.fromLTRB(10, 5, 5, 10),
-                          height: 100,
+                          height: 90,
                           decoration: BoxDecoration(
                               color: Colors.amber[200],
                               borderRadius: BorderRadius.all(Radius.circular(
@@ -326,7 +326,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.fromLTRB(5, 5, 10, 10),
-                          height: 100,
+                          height: 90,
                           decoration: BoxDecoration(
                               color: Colors.green[300],
                               borderRadius: BorderRadius.all(Radius.circular(
@@ -359,7 +359,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         Column(
                           children: [
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.25,
+                              height: MediaQuery.of(context).size.height * 0.22,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -403,7 +403,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             ),
                             SizedBox(height: 20),
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.25,
+                              height: MediaQuery.of(context).size.height * 0.22,
                               child: BarChart(BarChartData(
                                 maxY: double.parse(maxTask.toString()),
                                 minY: 0,

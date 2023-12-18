@@ -1273,42 +1273,42 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                       ),
 
                     // Status đã giao -> Manager bấm xem hoạt động
-                    if (task['status'] == "Đã giao") SizedBox(width: 10),
-                    if (task['status'] == "Đã giao")
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(
-                                MaterialPageRoute(
-                                  builder: (context) => SubTaskPage(
-                                      isRecordTime: false,
-                                      taskStatus: task['status'],
-                                      startDate: task['startDate'],
-                                      endDate: task['endDate'],
-                                      taskId: task['id'],
-                                      taskName: task['name'],
-                                      taskCode: task['code']),
-                                ),
-                              )
-                              .then((value) => {
-                                    if (value != null)
-                                      {getTask(), isChange = true}
-                                  });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(kPrimaryColor),
-                          minimumSize:
-                              MaterialStateProperty.all<Size>(Size(100, 50)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                        ),
-                        child: Text("Xem hoạt động"),
-                      ),
+                    // if (task['status'] == "Đã giao") SizedBox(width: 10),
+                    // if (task['status'] == "Đã giao")
+                    //   ElevatedButton(
+                    //     onPressed: () {
+                    //       Navigator.of(context)
+                    //           .push(
+                    //             MaterialPageRoute(
+                    //               builder: (context) => SubTaskPage(
+                    //                   isRecordTime: false,
+                    //                   taskStatus: task['status'],
+                    //                   startDate: task['startDate'],
+                    //                   endDate: task['endDate'],
+                    //                   taskId: task['id'],
+                    //                   taskName: task['name'],
+                    //                   taskCode: task['code']),
+                    //             ),
+                    //           )
+                    //           .then((value) => {
+                    //                 if (value != null)
+                    //                   {getTask(), isChange = true}
+                    //               });
+                    //     },
+                    //     style: ButtonStyle(
+                    //       backgroundColor:
+                    //           MaterialStateProperty.all<Color>(kPrimaryColor),
+                    //       minimumSize:
+                    //           MaterialStateProperty.all<Size>(Size(100, 50)),
+                    //       shape:
+                    //           MaterialStateProperty.all<RoundedRectangleBorder>(
+                    //         RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(20.0),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     child: Text("Xem hoạt động"),
+                    //   ),
 
                     // Status đang thực hiện -> Manager bấm chuyển tạo bản saoo
                     if (task['status'] == "Đang thực hiện")
