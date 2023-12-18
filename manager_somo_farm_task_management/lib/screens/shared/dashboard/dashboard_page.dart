@@ -448,7 +448,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
           color: getColor(index),
           value: totalTasks[index].toDouble(),
           title: '${totalTasks[index]}',
-          radius: 120,
+          radius: 100,
           titleStyle: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
